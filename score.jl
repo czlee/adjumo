@@ -13,61 +13,116 @@ where
     δ(p)   is the penalty for adjudicator-adjudicator conflicts and history
 """
 
-"Alias for a list of lists of integers."
-typealias FeasiblePanelsList{T<:Integer}Vector{Vector{T}}
-
-@enum Wudc2015AdjudicatorRank TraineeMinus Trainee TraineePlus PanellistMinus Panellist PanellistPlus ChairMinus Chair ChairPlus
-
 """
 Returns the score matrix using the information about the round.
 
 The score matrix (denoted `Σ`) will be an `ndebates`-by-`npanels` matrix, where
 `ndebates` is the number of debates in the round and `npanels` is the number of
-feasible panels. The element `Σ[d,p]` is the score of allocating debate `d` to
-panel `p`.
-- `feasible_panels` is a list of lists, each list containing the indices of
-adjudicators on a feasible panel.
-- `round_info` is a round information Dict (see above definition).
+feasible panels. The element `Σ[d,p]` is the score of allocating debate of index
+`d` to the panel `feasiblepanels[p]`.
+- `feasiblepanels` is a list of feasible panels (see definition of
+`FeasiblePanelsList`).
+`roundinfo` is a RoundInfo instance.
 """
-function score_matrix(feasible_panels::FeasiblePanelsList, round_info::Dict)
-    ndebates = round_info["ndebates"]
-    npanels = length(feasible_panels)
-    α = quality(feasible_panels, round_info["adjrankings"])
-    β = diversity(feasible_panels, round_info)
-    γ = teamadjconflicts(feasible_panels, round_info)
-    δ = adjadjconflicts(feasible_panels, round_info)
+function scorematrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    ndebates = roundinfo.ndebates
+    npanels = length(feasiblepanels)
+    α = quality(feasiblepanels, roundinfo.adjrankings)
+    # β = diversity(feasiblepanels, roundinfo)
+    # γ = teamadjconflicts(feasiblepanels, roundinfo)
+    # δ = adjadjconflicts(feasiblepanels, roundinfo)
     # Σ = α + β + γ + δ
-    return 10rand(ndebates, npanels)
+    Σ = repmat(α, ndebates, 1)
+    return Σ
 end
 
 """
-Returns a vector of quality scores, denoted `α`. The `p`th element of the
-vector, `α[p]`, is the quality of panel `p`. "Quality" means the raw quality of
-the panel, not accounting for any sort of diversity or conflict considerations.
-- `feasible_panels` is a list of lists, each list containing the indices of
-adjudicators on a feasible panel.
+Returns a vector of quality scores, denoted `α`. The element `α[p]` is the
+quality of the panel given by `feasiblepanels[p]`. "Quality" means the raw
+quality of the panel, not accounting for any sort of diversity or conflict
+considerations.
+- `feasiblepanels` is a list of feasible panels (see definition of
+`FeasiblePanelsList`).
 - `rankings` is a list of rankings, where `rankings[a]` is the ranking of
 adjudicator `a`.
 """
-function quality(feasible_panels::FeasiblePanelsList, rankings::Vector)
-    npanels = length(feasible_panels)
-    α = zeros(npanels)
-    for (i, panel) in enumerate(feasible_panels)
+function quality(feasiblepanels::FeasiblePanelsList, rankings::Vector)
+    npanels = length(feasiblepanels)
+    α = zeros(1, npanels)
+    for (i, panel) in enumerate(feasiblepanels)
         combination = [rankings[adj] for adj in panel]
         α[i] = panelquality(combination)
     end
+    return α
 end
 
 """
-Returns the quality of a panel whose adjudicators have the given `rankings`.
+Returns the quality of a panel whose adjudicators have the given rankings.
 """
-function panelquality(combination::Vector{Wudc2015AdjudicatorRank})
+function panelquality(rankings::Vector{Wudc2015AdjudicatorRank})
+    sort!(rankings, rev=true)
+    score = 0
 
+    # Score for chair: 25 if there is a Chair or above, -25 if there are no
+    # chairs but there is a PanellistPlus, -75 if the best-ranked judge is
+    # Panellist or lower.
+    const GOOD_CHAIR = 25
+    const CHAIR_IS_PANELLIST_PLUS = -25
+    const CHAIR_IS_PANELLIST_OR_LOWER = -75
+
+    if rankings[1] >= Chair
+        score += GOOD_CHAIR
+    elseif rankings[1] == PanellistPlus
+        score += CHAIR_IS_PANELLIST_PLUS
+    elseif rankings[1] <= Panellist
+        score += CHAIR_IS_PANELLIST_OR_LOWER
+    end
+
+    # Score for trainees: -100 if there is more than one trainee, -10 if there
+    # is a trainee on the panel but a majority comprises PanellistPlus or
+    # higher, -50 if there is a trainee on the panel but no 'safe majority'.
+    const MORE_THAN_ONE_TRAINEE = -100
+    const ONE_TRAINEE_SAFE_MAJORITY = -10
+    const ONE_TRAINEE_UNSAFE_MAJORITY = -50
+    numtrainees = count(x -> x <= TraineePlus, rankings)
+    if numtrainees > 1
+        score += MORE_THAN_ONE_TRAINEE
+    elseif numtrainees == 1
+        numsafejudges = count(x -> x >= PanellistPlus, rankings)
+        if numsafejudges >= 2
+            score += ONE_TRAINEE_SAFE_MAJORITY
+        else
+            score += ONE_TRAINEE_UNSAFE_MAJORITY
+        end
+    end
+
+    # Score for safe majority: 15 if there is a safe majority, 5 for tolerable
+    # majority, 0 otherwise.
+    const SAFE_MAJORITY = 15
+    const TOLERABLE_MAJORITY = 5
+    values_safe = Dict(zip(instances(Wudc2015AdjudicatorRank), (0, 0, 0, 0, 0, 1, 1, 2, 2)))
+    total_safe = sum([values_safe[r] for r in rankings])
+    if total_safe > 2
+        score += SAFE_MAJORITY
+    else
+        values_tolerable = Dict(zip(instances(Wudc2015AdjudicatorRank), (0, 0, 0, 0, 1, 2, 2, 2, 4)))
+        total_tolerable = sum([values_tolerable[r] for r in rankings])
+        if total_tolerable > 2
+            score += TOLERABLE_MAJORITY
+        end
+    end
+
+    return score
 end
 
 """
-Returns a matrix of diversity scores.
+Returns a matrix of diversity scores, denoted β. The element `β[d,p] is the
+diversity score achieved when panel given by `feasiblepanels[p]` is allocated
+to debate of index `d`.
+- `feasiblepanels` is a list of feasible panels (see definition of
+`FeasiblePanelsList`).
+`roundinfo` is a RoundInfo instance.
 """
-function diversity(feasible_panels::FeasiblePanelsList, round_info::Dict)
+function diversity(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
 
 end
