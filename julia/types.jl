@@ -1,8 +1,16 @@
 "Container type for all information about a round."
 type RoundInfo
-    ndebates::Int64         # number of debates
-    nadjs::Int64            # number of adjudicators
-    adjrankings::Vector     # adjudicator rankings, must have nadjs elements
+    ndebates::Int           # number of debates
+    nadjs::Int              # number of adjudicators
+    adjrankings::Vector     # adjudicator rankings, must have nadjs
+end
+
+@enum Gender GenderMale GenderFemale GenderOther
+@enum Region Oceania NorthAmerica SouthAmerica IONA Europe Africa SouthEastAsia EastAsia SouthAsia
+
+type Team
+    gender::Gender
+    region::Region
 end
 
 "A list of \"feasible panels\" is a list of lists of integers. Each (inner) list

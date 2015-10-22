@@ -44,7 +44,7 @@ considerations.
 - `feasiblepanels` is a list of feasible panels (see definition of
 `FeasiblePanelsList`).
 - `rankings` is a list of rankings, where `rankings[a]` is the ranking of
-adjudicator `a`.
+adjudicator at index `a`.
 """
 function quality(feasiblepanels::FeasiblePanelsList, rankings::Vector)
     npanels = length(feasiblepanels)
@@ -121,7 +121,7 @@ diversity score achieved when panel given by `feasiblepanels[p]` is allocated
 to debate of index `d`.
 - `feasiblepanels` is a list of feasible panels (see definition of
 `FeasiblePanelsList`).
-`roundinfo` is a RoundInfo instance.
+- `roundinfo` is a RoundInfo instance.
 """
 function diversity(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
 

@@ -2,8 +2,13 @@
 # Top-level file.
 # allocateadjudicators() is the top-level function.
 
-using JuMP
+# Solvers. Comment in one of the following three lines, depending on which
+# solver you want to use.
 using Gurobi
+# using Cbc
+# using GLPKMathProgInterface
+
+using JuMP
 using Iterators
 include("types.jl")
 include("score.jl")
@@ -82,7 +87,16 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool})
 
     (ndebates, npanels) = size(Σ)
 
-    m = Model(solver=GurobiSolver(MIPGap=1e-2, TimeLimit=30))
+    if isdefined(:GurobiSolver)
+        m = Model(solver=GurobiSolver(MIPGap=1e-2))
+    elseif isdefined(:CbcSolver)
+        m = Model(solver=CbcSolver(ratioGap=1e-2))
+    elseif isdefined(:GLPKSolverMIP)
+        m = Model(solver=GLPKSolverMIP(tol_obj=1e-2))
+    else
+        error("Either Gurobi or Cbc should be used.")
+    end
+
     @defVar(m, X[1:ndebates,1:npanels], Bin)
     @setObjective(m, Max, sum(Σ.*X))
     @addConstraint(m, X*ones(npanels) .== 1)
@@ -97,7 +111,7 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool})
     return allocation
 end
 
-ndebates = 10
+ndebates = 20
 nadjs = 3ndebates
 adjrankings = rand([instances(Wudc2015AdjudicatorRank)...], nadjs)
 sort!(adjrankings, rev=true)
