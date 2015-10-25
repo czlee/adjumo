@@ -25,9 +25,9 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 `roundinfo` is a RoundInfo instance.
 """
 function scorematrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
-    ndebates = roundinfo.ndebates
+    ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
-    α = quality(feasiblepanels, roundinfo.adjrankings)
+    α = quality(feasiblepanels, roundinfo.adjudicators)
     # β = diversity(feasiblepanels, roundinfo)
     # γ = teamadjconflicts(feasiblepanels, roundinfo)
     # δ = adjadjconflicts(feasiblepanels, roundinfo)
@@ -37,21 +37,21 @@ function scorematrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
 end
 
 """
-Returns a vector of quality scores, denoted `α`. The element `α[p]` is the
-quality of the panel given by `feasiblepanels[p]`. "Quality" means the raw
-quality of the panel, not accounting for any sort of diversity or conflict
-considerations.
+Returns a 1-by-`npanels` array of quality scores, denoted `α`. The element
+`α[p]` is the quality of the panel given by `feasiblepanels[p]`. "Quality" means
+the raw quality of the panel, not accounting for any sort of diversity or
+conflict considerations.
 - `feasiblepanels` is a list of feasible panels (see definition of
 `FeasiblePanelsList`).
 - `rankings` is a list of rankings, where `rankings[a]` is the ranking of
 adjudicator at index `a`.
 """
-function quality(feasiblepanels::FeasiblePanelsList, rankings::Vector)
+function quality(feasiblepanels::FeasiblePanelsList, adjudicators::Vector{Adjudicator})
     npanels = length(feasiblepanels)
-    α = zeros(1, npanels)
+    α = Array{Float64}(1, npanels)
     for (i, panel) in enumerate(feasiblepanels)
-        combination = [rankings[adj] for adj in panel]
-        α[i] = panelquality(combination)
+        adjrankings = [adjudicators[adj].ranking for adj in panel]
+        α[i] = panelquality(adjrankings)
     end
     return α
 end
@@ -126,3 +126,4 @@ to debate of index `d`.
 function diversity(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
 
 end
+

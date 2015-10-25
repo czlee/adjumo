@@ -21,7 +21,7 @@ function allocateadjudicators(roundinfo::RoundInfo)
     feasiblepanels = generatefeasiblepanels(roundinfo)
     Σ = scorematrix(feasiblepanels, roundinfo)
 
-    Q = panelmembershipmatrix(feasiblepanels, roundinfo.nadjs)
+    Q = panelmembershipmatrix(feasiblepanels, numadjs(roundinfo))
     allocation = solveoptimizationproblem(Σ, Q)
 
     println("Result:")
@@ -39,8 +39,8 @@ Returns a list of tuples of adjudicator indices, e.g.,
     [(4, 10, 56), (35, 13, 28), (45, 13, 39), (4, 10, 57), ...]
 """
 function generatefeasiblepanels(roundinfo::RoundInfo)
-    nchairs = roundinfo.ndebates
-    nadjs = roundinfo.nadjs
+    nchairs = numdebates(roundinfo)
+    nadjs = numadjs(roundinfo)
     chairs = 1:nchairs
     panellists = nchairs+1:nadjs
     panellistcombs = combinations(panellists, 2)
@@ -94,7 +94,7 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool})
     elseif isdefined(:GLPKSolverMIP)
         m = Model(solver=GLPKSolverMIP(tol_obj=1e-2))
     else
-        error("Either Gurobi or Cbc should be used.")
+        error("Either Gurobi, Cbc or GLPK should be used.")
     end
 
     @defVar(m, X[1:ndebates,1:npanels], Bin)
@@ -111,9 +111,18 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool})
     return allocation
 end
 
-ndebates = 20
+ndebates = 10
 nadjs = 3ndebates
-adjrankings = rand([instances(Wudc2015AdjudicatorRank)...], nadjs)
-sort!(adjrankings, rev=true)
-roundinfo = RoundInfo(ndebates, nadjs, adjrankings)
+nteams = 4ndebates
+ninstitutions = 30
+
+institutions = [Institution("Institution $(i)") for i = 1:ninstitutions]
+teams = [Team("Team $(i)", rand(institutions)) for i = 1:nteams]
+adjudicators = [Adjudicator("Adjudicator $(i)", rand(institutions), rand([instances(Wudc2015AdjudicatorRank)...]))
+        for i = 1:nadjs]
+sort!(adjudicators, by=adj->adj.ranking, rev=true)
+teams_shuffled = reshape(shuffle(teams), (4, ndebates))
+debates = [(teams_shuffled[:,i]...) for i in 1:ndebates]
+
+roundinfo = RoundInfo(institutions, teams, adjudicators, debates)
 allocateadjudicators(roundinfo)
