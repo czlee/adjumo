@@ -1,17 +1,16 @@
-"""Score matrix calculator.
-Contains functions that generate the score matrix, using information about the
-round.
+# Score matrix calculator.
+# Contains functions that generate the score matrix, using information about the
+# round.
 
-The (d,p)-th element of the score matrix Σ is the score for allocating panel p
-to debate d, and is calculated as
-    Σ[d,p] = w(d)[α(p) + β(d,p) - γ(d,p) - δ(p)]
-where
-    w(d)   is the weighting of the debate (a.k.a. importance, "energy")
-    α(p)   is the score given to panel p based on its quality
-    β(d,p) is the score for allocating panel p to debate d based on diversity
-    γ(d,p) is the penalty for team-adjudicator conflicts and history
-    δ(p)   is the penalty for adjudicator-adjudicator conflicts and history
-"""
+# The (d,p)-th element of the score matrix Σ is the score for allocating panel p
+# to debate d, and is calculated as
+#     Σ[d,p] = w(d)[α(p) + β(d,p) - γ(d,p) - δ(p)]
+# where
+#     w(d)   is the weighting of the debate (a.k.a. importance, "energy")
+#     α(p)   is the score given to panel p based on its quality
+#     β(d,p) is the score for allocating panel p to debate d based on diversity
+#     γ(d,p) is the penalty for team-adjudicator conflicts and history
+#     δ(p)   is the penalty for adjudicator-adjudicator conflicts and history
 
 using DataStructures
 
