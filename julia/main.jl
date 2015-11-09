@@ -111,11 +111,12 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool})
     return allocation
 end
 
-ndebates = 10
+ndebates = 15
 nadjs = 3ndebates
 nteams = 4ndebates
 ninstitutions = 30
 
+@time begin
 institutions = [Institution("Institution $(i)") for i = 1:ninstitutions]
 teams = [Team("Team $(i)", rand(institutions)) for i = 1:nteams]
 adjudicators = [Adjudicator("Adjudicator $(i)", rand(institutions), rand([instances(Wudc2015AdjudicatorRank)...]))
@@ -123,6 +124,7 @@ adjudicators = [Adjudicator("Adjudicator $(i)", rand(institutions), rand([instan
 sort!(adjudicators, by=adj->adj.ranking, rev=true)
 teams_shuffled = reshape(shuffle(teams), (4, ndebates))
 debates = [(teams_shuffled[:,i]...) for i in 1:ndebates]
-
 roundinfo = RoundInfo(institutions, teams, adjudicators, debates)
+end
+
 allocateadjudicators(roundinfo)

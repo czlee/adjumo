@@ -13,6 +13,8 @@ where
     δ(p)   is the penalty for adjudicator-adjudicator conflicts and history
 """
 
+using DataStructures
+
 """
 Returns the score matrix using the information about the round.
 
@@ -27,14 +29,18 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 function scorematrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
-    α = quality(feasiblepanels, roundinfo.adjudicators)
-    # β = diversity(feasiblepanels, roundinfo)
-    # γ = teamadjconflicts(feasiblepanels, roundinfo)
-    # δ = adjadjconflicts(feasiblepanels, roundinfo)
+    α = qualitymatrix(feasiblepanels, roundinfo.adjudicators)
+    # β = diversitymatrix(feasiblepanels, roundinfo)
+    # γ = teamadjconflictsmatrix(feasiblepanels, roundinfo)
+    # δ = adjadjconflictsmatrix(feasiblepanels, roundinfo)
     # Σ = α + β + γ + δ
     Σ = repmat(α, ndebates, 1)
     return Σ
 end
+
+# ==============================================================================
+# Quality
+# ==============================================================================
 
 """
 Returns a 1-by-`npanels` array of quality scores, denoted `α`. The element
@@ -46,7 +52,7 @@ conflict considerations.
 - `rankings` is a list of rankings, where `rankings[a]` is the ranking of
 adjudicator at index `a`.
 """
-function quality(feasiblepanels::FeasiblePanelsList, adjudicators::Vector{Adjudicator})
+function qualitymatrix(feasiblepanels::FeasiblePanelsList, adjudicators::Vector{Adjudicator})
     npanels = length(feasiblepanels)
     α = Array{Float64}(1, npanels)
     for (i, panel) in enumerate(feasiblepanels)
@@ -115,15 +121,181 @@ function panelquality(rankings::Vector{Wudc2015AdjudicatorRank})
     return score
 end
 
+# ==============================================================================
+# Diversity
+# ==============================================================================
+
 """
-Returns a matrix of diversity scores, denoted β. The element `β[d,p] is the
+Returns a matrix of diversity scores, denoted β. The element `β[d,p]` is the
 diversity score achieved when panel given by `feasiblepanels[p]` is allocated
 to debate of index `d`.
 - `feasiblepanels` is a list of feasible panels (see definition of
 `FeasiblePanelsList`).
 - `roundinfo` is a RoundInfo instance.
 """
-function diversity(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+function diversitymatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    βr = regionaldiversitymatrix(feasiblepanels, roundinfo)
+    βl = languagediversitymatrix(feasiblepanels, roundinfo)
+    βg = genderdiversitymatrix(feasiblepanels, roundinfo)
+    return βr + βl + βg
+end
+
+"""
+Returns a matrix of diversity scores for regions, denoted βr. Elements
+correspond to elements in `diversity()`. Arguments are as for `diversity()`.
+
+In rough terms, we expect regions in the debate to be represented in
+adjudicators on the panel. This function returns zero if that is the case; a
+negative number if any region in the debate is not on the panel.
+"""
+function regionaldiversitymatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    ndebates = length(roundinfo.debates)
+    npanels = length(feasiblepanels)
+
+    teamregions = Vector{Region}(ndebates)
+    for (i, debate) in enumerate(roundinfo.debates)
+        teamregions[i] = Region[t.region for t in debate]
+    end
+
+    adjregions = Vector{Region}(npanels)
+    for (i, panel) in enumerate(feasiblepanels)
+        adjregions[i] = Region[roundinfo.adjudicators[adj].region for adj in panel]
+    end
+
+    βr = Matrix{Float64}(ndebates, npanels)
+    for ((d, tr), (p, ar)) in product(enumerate(teamregions), enumerate(adjregions))
+        βr[d,p] = panelregionaldiversityscore(tr, ar)
+    end
+end
+
+@enum DebateRegionClass RegionClassA RegionClassB RegionClassC RegionClassD RegionClassE
+
+"""
+Infers the 'region class' of a debate whose teams have the given regions.
+The 'region class' is:
+    - RegionClassA if all four teams are from the same region
+    - RegionClassB if three teams are from one region
+    - RegionClassC if two teams are from each of two regions
+    - RegionClassD if two teams are from one region, and the other two are from different regions
+    - RegionClassE if all four teams are from different regions
+Returns a tuple with two elements. The first is the class (an integer), and the
+second is
+"""
+function debateregionclass(teamregions::Vector{Region})
+    assert(length(teamregions) == 4)
+    regioncounts = collect(Pair{Region,Int64}, counter(teamregions))
+    sort!(regioncounts, by=x->x.second, rev=true) # e.g. [NorthAsia=>3, Oceania=>1]
+    regions = [x.first for x in regioncounts]     # e.g. [NorthAsia, Oceania]
+    counts = [x.second for x in regioncounts]     # e.g. [3, 1]
+    if counts == [4]
+        return RegionClassA, regions
+    elseif counts == [3, 1]
+        return RegionClassB, regions
+    elseif counts == [2, 2]
+        return RegionClassC, regions
+    elseif counts == [2, 1, 1]
+        return RegionClassD, regions
+    elseif counts == [1, 1, 1, 1]
+        return RegionClassE, regions
+    else
+        throw(ArgumentError("Region counts were invalid."))
+    end
+end
+
+"Returns the regional diversity score for a debate whose teams have the given
+regions, and whose adjudicators have the given regions."
+function panelregionaldiversityscore(teamregions::Vector{Region}, adjregions::Vector{Region})
+    nadjs = length(adjregions)
+    regionclass, teamregionsordered = debateregionclass(teamregions)
+    panelregioncounts = counter(adjregions)
+    cost = 0
+
+    if nadjs == 3
+
+        if regionclass == RegionClassA
+            # There must be at least two regions on the panel.
+            costfactor = 10
+            if length(panelregioncounts) < 3
+                cost += 20
+            end
+
+        elseif regionclass == RegionClassB
+            costfactor = 100
+            for tr in teamregionsordered
+                if tr ∉ adjregions
+                    cost += 20
+                end
+            end
+            if all([ar ∈ teamregionsordered for ar in adjregions])
+                cost += 100
+            end
+
+        elseif regionclass == RegionClassC
+            costfactor = 80
+            for tr in teamregionsordered
+                if tr ∉ adjregions
+                    cost += 10
+                end
+            end
+            if all([ar ∈ teamregionsordered for ar in adjregions])
+                cost += 80
+            end
+
+        elseif regionclass == RegionClassD
+            costfactor = 60
+            for tr in teamregionsordered
+                if tr ∉ adjregions
+                    cost += 40
+                end
+            end
+
+        elseif regionclass == RegionClassE
+            costfactor =  60
+            externaladjs = count(ar -> ar ∉ teamregionsordered, adjregions)
+            if externaladjs == 0
+                cost += 30
+            elseif externaladjs == 1
+                cost += 10
+            end
+            if length(teamregionsordered) < 2
+                cost += 5
+            end
+
+        end
+
+
+    elseif nadjs == 2
+        return 0
+
+    elseif nadjs == 4
+        return 0
+
+
+    elseif nadjs == 1
+        return 0
+
+    else
+        return 0
+
+    end
+
+    return -costfactor * cost
+
+end
+
+"""
+Returns a matrix of diversity scores for language, denoted βl. Elements
+correspond to elements in `diversity()`. Arguments are as for `diversity()`.
+"""
+function languagediversity(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+
+end
+
+"""
+Returns a matrix of diversity scores for gender, denoted βg. Elements
+correspond to elements in `diversity()`. Arguments are as for `diversity()`.
+"""
+function genderdiversity(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
 
 end
 
