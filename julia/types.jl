@@ -21,6 +21,8 @@ end
 
 Team(name::UTF8String, institution::Institution) = Team(name, institution, NoGender, NoRegion, NoLanguage)
 Team(name::AbstractString, institution::Institution) = Team(UTF8String(name), institution, NoGender, NoRegion, NoLanguage)
+Team(name::UTF8String, institution::Institution, region::Region) = Team(name, institution, NoGender, region, NoLanguage)
+Team(name::AbstractString, institution::Institution, region::Region) = Team(UTF8String(name), institution, NoGender, region, NoLanguage)
 
 type Adjudicator
     name::UTF8String

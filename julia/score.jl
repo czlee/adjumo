@@ -29,11 +29,11 @@ function scorematrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     α = qualitymatrix(feasiblepanels, roundinfo.adjudicators)
-    # β = diversitymatrix(feasiblepanels, roundinfo)
+    β = diversitymatrix(feasiblepanels, roundinfo)
     # γ = teamadjconflictsmatrix(feasiblepanels, roundinfo)
     # δ = adjadjconflictsmatrix(feasiblepanels, roundinfo)
     # Σ = α + β + γ + δ
-    Σ = repmat(α, ndebates, 1)
+    Σ = repmat(α, ndebates, 1) + β
     return Σ
 end
 
@@ -151,12 +151,12 @@ function regionaldiversitymatrix(feasiblepanels::FeasiblePanelsList, roundinfo::
     ndebates = length(roundinfo.debates)
     npanels = length(feasiblepanels)
 
-    teamregions = Vector{Region}(ndebates)
+    teamregions = Vector{Vector{Region}}(ndebates)
     for (i, debate) in enumerate(roundinfo.debates)
         teamregions[i] = Region[t.region for t in debate]
     end
 
-    adjregions = Vector{Region}(npanels)
+    adjregions = Vector{Vector{Region}}(npanels)
     for (i, panel) in enumerate(feasiblepanels)
         adjregions[i] = Region[roundinfo.adjudicators[adj].region for adj in panel]
     end
