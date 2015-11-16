@@ -8,11 +8,15 @@
 # where
 #     w(d)   is the weighting of the debate (a.k.a. importance, "energy")
 #     α(p)   is the score given to panel p based on its quality
-#     β(d,p) is the score for allocating panel p to debate d based on diversity
+#     β(d,p) is the score for allocating panel p to debate d based on representation
 #     γ(d,p) is the penalty for team-adjudicator conflicts and history
 #     δ(p)   is the penalty for adjudicator-adjudicator conflicts and history
 
 using DataStructures
+
+# ==============================================================================
+# Top-level functions
+# ==============================================================================
 
 """
 Returns the score matrix using the information about the round.
@@ -28,42 +32,53 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 function scorematrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
-    α = qualitymatrix(feasiblepanels, roundinfo.adjudicators)
-    β = diversitymatrix(feasiblepanels, roundinfo)
-    # γ = teamadjconflictsmatrix(feasiblepanels, roundinfo)
-    # δ = adjadjconflictsmatrix(feasiblepanels, roundinfo)
-    # Σ = α + β + γ + δ
-    Σ = repmat(α, ndebates, 1) + β
+    weights = roundinfo.weights
+    Σ = weights.quality * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
+    Σ += weights.regional * regionalrepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += weights.language * languagerepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += weights.gender * genderrepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += weights.teamhistory * teamadjhistorymatrix(feasiblepanels, roundinfo)
+    Σ += weights.adjhistory * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
+    Σ += weights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
+    Σ += weights.adjconflict * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
     return Σ
+end
+
+function matrixfromvector(f::Function, feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    v = f(feasiblepanels, roundinfo)
+    ndebates = numdebates(roundinfo)
+    return repmat(v, ndebates, 1)
 end
 
 # ==============================================================================
 # Quality
 # ==============================================================================
 
+qualityvector(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo) = qualityvector(feasiblepanels, roundinfo.adjudicators)
+
 """
-Returns a 1-by-`npanels` array of quality scores, denoted `α`. The element
+Returns a 1-by-`npanels` row vector of quality scores, denoted `α`. The element
 `α[p]` is the quality of the panel given by `feasiblepanels[p]`. "Quality" means
-the raw quality of the panel, not accounting for any sort of diversity or
+the raw quality of the panel, not accounting for any sort of representation or
 conflict considerations.
 - `feasiblepanels` is a list of feasible panels (see definition of
 `FeasiblePanelsList`).
 - `rankings` is a list of rankings, where `rankings[a]` is the ranking of
 adjudicator at index `a`.
 """
-function qualitymatrix(feasiblepanels::FeasiblePanelsList, adjudicators::Vector{Adjudicator})
+function qualityvector(feasiblepanels::FeasiblePanelsList, adjudicators::Vector{Adjudicator})
     npanels = length(feasiblepanels)
     α = Array{Float64}(1, npanels)
     for (i, panel) in enumerate(feasiblepanels)
-        adjrankings = [adjudicators[adj].ranking for adj in panel]
-        α[i] = panelquality(adjrankings)
+        adjs = [adjudicators[adj] for adj in panel]
+        α[i] = panelquality(adjs)
     end
     return α
 end
 
-"""
-Returns the quality of a panel whose adjudicators have the given rankings.
-"""
+panelquality(panel::Vector{Adjudicator}) = panelquality([adj.ranking for adj in panel])
+
+"Returns the quality of a panel whose adjudicators have the given rankings."
 function panelquality(rankings::Vector{Wudc2015AdjudicatorRank})
     sort!(rankings, rev=true)
     score = 0
@@ -121,33 +136,20 @@ function panelquality(rankings::Vector{Wudc2015AdjudicatorRank})
 end
 
 # ==============================================================================
-# Diversity
+# Regional representation
 # ==============================================================================
 
 """
-Returns a matrix of diversity scores, denoted β. The element `β[d,p]` is the
-diversity score achieved when panel given by `feasiblepanels[p]` is allocated
-to debate of index `d`.
+Returns a matrix of representation scores for regions, denoted βr.
 - `feasiblepanels` is a list of feasible panels (see definition of
 `FeasiblePanelsList`).
 - `roundinfo` is a RoundInfo instance.
-"""
-function diversitymatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
-    βr = regionaldiversitymatrix(feasiblepanels, roundinfo)
-    βl = languagediversitymatrix(feasiblepanels, roundinfo)
-    βg = genderdiversitymatrix(feasiblepanels, roundinfo)
-    return βr + βl + βg
-end
-
-"""
-Returns a matrix of diversity scores for regions, denoted βr. Elements
-correspond to elements in `diversity()`. Arguments are as for `diversity()`.
 
 In rough terms, we expect regions in the debate to be represented in
 adjudicators on the panel. This function returns zero if that is the case; a
 negative number if any region in the debate is not on the panel.
 """
-function regionaldiversitymatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+function regionalrepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
     ndebates = length(roundinfo.debates)
     npanels = length(feasiblepanels)
 
@@ -158,16 +160,19 @@ function regionaldiversitymatrix(feasiblepanels::FeasiblePanelsList, roundinfo::
 
     adjregions = Vector{Vector{Region}}(npanels)
     for (i, panel) in enumerate(feasiblepanels)
-        adjregions[i] = Region[roundinfo.adjudicators[adj].region for adj in panel]
+        adjregions[i] = vcat(Vector{Region}[roundinfo.adjudicators[adj].regions for adj in panel]...)
     end
 
     βr = Matrix{Float64}(ndebates, npanels)
     for ((d, tr), (p, ar)) in product(enumerate(teamregions), enumerate(adjregions))
-        βr[d,p] = panelregionaldiversityscore(tr, ar)
+        βr[d,p] = panelregionalrepresentationscore(tr, ar)
     end
+    return βr
 end
 
 @enum DebateRegionClass RegionClassA RegionClassB RegionClassC RegionClassD RegionClassE
+
+debateregionclass(teams::Vector{Team}) = debateregionclass(Region[t.region for t in teams])
 
 """
 Infers the 'region class' of a debate whose teams have the given regions.
@@ -201,9 +206,9 @@ function debateregionclass(teamregions::Vector{Region})
     end
 end
 
-"Returns the regional diversity score for a debate whose teams have the given
+"Returns the regional representation score for a debate whose teams have the given
 regions, and whose adjudicators have the given regions."
-function panelregionaldiversityscore(teamregions::Vector{Region}, adjregions::Vector{Region})
+function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregions::Vector{Region})
     nadjs = length(adjregions)
     regionclass, teamregionsordered = debateregionclass(teamregions)
     panelregioncounts = counter(adjregions)
@@ -282,19 +287,126 @@ function panelregionaldiversityscore(teamregions::Vector{Region}, adjregions::Ve
 
 end
 
-"""
-Returns a matrix of diversity scores for language, denoted βl. Elements
-correspond to elements in `diversity()`. Arguments are as for `diversity()`.
-"""
-function languagediversity(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+# ==============================================================================
+# Language representation
+# ==============================================================================
 
+"""
+Returns a matrix of representation scores for language, denoted βl. Elements
+correspond to elements in `representation()`. Arguments are as for `representation()`.
+"""
+function languagerepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    ndebates = length(roundinfo.debates)
+    npanels = length(feasiblepanels)
+    return zeros(ndebates, npanels)
 end
 
-"""
-Returns a matrix of diversity scores for gender, denoted βg. Elements
-correspond to elements in `diversity()`. Arguments are as for `diversity()`.
-"""
-function genderdiversity(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+# ==============================================================================
+# Gender representation
+# ==============================================================================
 
+"""
+Returns a matrix of representation scores for gender, denoted βg. Elements
+correspond to elements in `representation()`. Arguments are as for `representation()`.
+"""
+function genderrepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    ndebates = length(roundinfo.debates)
+    npanels = length(feasiblepanels)
+    return zeros(ndebates, npanels)
 end
 
+# ==============================================================================
+# Team-team history
+# ==============================================================================
+
+"""
+Returns a matrix of team-adjudicator history penalties, denoted γ. The element
+`γ[d,p]` is the penalty incurred when panel given by `feasiblepanels[p]` is
+allocated to debate of index `d`.
+- `feasiblepanels` is a list of feasible panels (see definition of
+`FeasiblePanelsList`).
+- `roundinfo` is a RoundInfo instance.
+"""
+function teamadjhistorymatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    ndebates = length(roundinfo.debates)
+    npanels = length(feasiblepanels)
+    γ = Array{Float64}(ndebates, npanels)
+    # todo refactor to do it by team and judge first, then multiply
+    for ((d, debate), (p, panel)) in product(enumerate(roundinfo.debates), enumerate(feasiblepanels))
+        adjs = Adjudicator[roundinfo.adjudicators[a] for a in panel]
+        γ[d,p] = teamadjhistoryscore(roundinfo, debate, adjs)
+    end
+    return γ
+end
+
+function teamadjhistoryscore(roundinfo::RoundInfo, debate::Vector{Team}, adjudicators::Vector{Adjudicator})
+    score = 0
+    for (team, adj) in product(debate, adjudicators)
+        score += teamadjhistoryscore(roundinfo, team, adj)
+    end
+    return score
+end
+
+function teamadjhistoryscore(roundinfo::RoundInfo, team::Team, adj::Adjudicator)
+    score = 0
+    for round in roundsseen(roundinfo, adj, team)
+        @assert round < roundinfo.currentround
+        score += 1 / (roundinfo.currentround - round)
+    end
+    return score
+end
+
+
+# ==============================================================================
+# Team-team conflicts
+# ==============================================================================
+
+"""
+Returns a matrix of team-adjudicator conflict penalties, denoted γ. The element
+`γ[d,p]` is the penalty incurred when panel given by `feasiblepanels[p]` is
+allocated to debate of index `d`.
+- `feasiblepanels` is a list of feasible panels (see definition of
+`FeasiblePanelsList`).
+- `roundinfo` is a RoundInfo instance.
+"""
+function teamadjconflictsmatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    ndebates = length(roundinfo.debates)
+    npanels = length(feasiblepanels)
+
+    return zeros(ndebates, npanels)
+end
+
+
+# ==============================================================================
+# Adjudicator-team history
+# ==============================================================================
+
+"""
+Returns a 1-by-`npanels` array of adjudicator-adjudicator history penalties,
+denoted δ. The element `δ[p]` is the penalty incurred for panel given by
+`feasiblepanels[p]`.
+- `feasiblepanels` is a list of feasible panels (see definition of
+`FeasiblePanelsList`).
+- `roundinfo` is a RoundInfo instance.
+"""
+function adjadjhistoryvector(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    npanels = length(feasiblepanels)
+    return zeros(1, npanels)
+end
+
+# ==============================================================================
+# Adjudicator-team conflicts
+# ==============================================================================
+
+"""
+Returns a 1-by-`npanels` array of adjudicator-adjudicator conflict penalties,
+denoted δ. The element `δ[p]` is the penalty incurred for panel given by
+`feasiblepanels[p]`.
+- `feasiblepanels` is a list of feasible panels (see definition of
+`FeasiblePanelsList`).
+- `roundinfo` is a RoundInfo instance.
+"""
+function adjadjconflictsvector(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    npanels = length(feasiblepanels)
+    return zeros(1, npanels)
+end

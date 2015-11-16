@@ -42,6 +42,24 @@ contains the indices of adjudicators on a feasible panel."
 typealias FeasiblePanelsList{T<:Integer} Vector{Vector{Int64}}
 
 # ==============================================================================
+# Factor weightings
+# ==============================================================================
+
+type AdjumoWeights
+    quality::Float64
+    regional::Float64
+    language::Float64
+    gender::Float64
+    teamhistory::Float64
+    adjhistory::Float64
+    teamconflict::Float64
+    adjconflict::Float64
+end
+
+AdjumoWeights() = AdjumoWeights(1,1,1,1,1,1,1,1)
+AdjumoWeights(v::Vector) = AdjumoWeights(v...)
+
+# ==============================================================================
 # Round information
 # ==============================================================================
 
@@ -54,7 +72,7 @@ type RoundInfo
 
     # For adjudicators and debates, indices are important to the solver.
     adjudicators::Vector{Adjudicator}
-    debates::Vector{Tuple{Team,Team,Team,Team}}
+    debates::Vector{Vector{Team}}
 
     # Conflicts are considered hard: test for presence or absence only
     # Note: (adj1, adj2) and (adj2, adj1) mean the same thing, need to check for both
@@ -64,15 +82,23 @@ type RoundInfo
     # For history, the integer refers to the round of the conflict
     adjadjhistory::Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}
     adjteamhistory::Dict{Tuple{Adjudicator,Team},Vector{Int}}
+
+    # Special constraints
+    adjondebate::Vector{Tuple{Adjudicator,Int}}
+    adjoffdeate::Vector{Tuple{Adjudicator,Int}}
+
+    # Weights
+    weights::AdjumoWeights
+    currentround::Int
 end
 
-RoundInfo() = RoundInfo([],[],[],[],[],[],Dict(),Dict())
-RoundInfo(institutions, teams, adjudicators, debates) = RoundInfo(institutions, teams, adjudicators, debates, [], [], Dict(), Dict())
+RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict(),Dict(),[],[],AdjumoWeights(),currentround)
+RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],AdjumoWeights(), currentround)
 
 conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts
 conflicted(rinfo::RoundInfo, adj::Adjudicator, team::Team) = (adj, team) ∈ rinfo.adjteamconflicts
-seen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = [get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])]
-seen(rinfo::RoundInfo, adj::Adjudicator, team::Adjudicator) = get(rinfo.adjadjhistory, (adj1, adj2), Int[])
+roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = [get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])]
+roundsseen(rinfo::RoundInfo, adj::Adjudicator, team::Team) = get(rinfo.adjadjhistory, (adj, team), Int[])
 
 numdebates(rinfo::RoundInfo) = length(rinfo.debates)
 numadjs(rinfo::RoundInfo) = length(rinfo.adjudicators)
