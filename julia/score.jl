@@ -33,14 +33,14 @@ function scorematrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     weights = roundinfo.weights
-    Σ = weights.quality * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
-    Σ += weights.regional * regionalrepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += weights.language * languagerepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += weights.gender * genderrepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += weights.teamhistory * teamadjhistorymatrix(feasiblepanels, roundinfo)
-    Σ += weights.adjhistory * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
+    Σ  = weights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
+    Σ += weights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += weights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += weights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += weights.teamhistory  * teamadjhistorymatrix(feasiblepanels, roundinfo)
+    Σ += weights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
     Σ += weights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
-    Σ += weights.adjconflict * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
+    Σ += weights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
     return Σ
 end
 
@@ -316,97 +316,136 @@ function genderrepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundinf
 end
 
 # ==============================================================================
-# Team-team history
+# History and conflicts
 # ==============================================================================
 
 """
-Returns a matrix of team-adjudicator history penalties, denoted γ. The element
-`γ[d,p]` is the penalty incurred when panel given by `feasiblepanels[p]` is
-allocated to debate of index `d`.
-- `feasiblepanels` is a list of feasible panels (see definition of
-`FeasiblePanelsList`).
-- `roundinfo` is a RoundInfo instance.
+For scores that can be modelled as the sum of scores between a team and an
+adjudicator, `f(team,adj)`, returns a matrix of scores, one for each debate and
+each panel, that is the sum of team-adjudicator scores among teams in that
+debate and adjudicators in that panel:
+    `Γ[debate,panel] = Σ{team∈debate} Σ{adj∈panel} f(team,adj)`
+where Γ is the returned matrix and Σ denotes summation.
+
+The returned matrix will be of size `ndebates = length(roundinfo.debates)` by
+`npanels = length(feasiblepanels)`. The argument `teamadjscore` should be a
+function that takes `(::RoundInfo, ::Team, ::Adjudicator)` and returns a score
+for that team and adjudicator, denoted `f` above.
 """
-function teamadjhistorymatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+function sumteamadjscoresmatrix(teamadjscore::Function,
+        feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    # First, find the score for each team/adj combination. We'll need all of
+    # them at some point, so just do them all.
+    ξ = Dict{Tuple{Team,Int64},Float64}()
+    for (team, (adjindex, adj)) in product(roundinfo.teams, enumerate(roundinfo.adjudicators))
+        ξ[(team,adjindex)] = teamadjscore(roundinfo, team, adj)
+    end
+
+    # Then, populate the history matrix.
     ndebates = length(roundinfo.debates)
     npanels = length(feasiblepanels)
-    γ = Array{Float64}(ndebates, npanels)
-    # todo refactor to do it by team and judge first, then multiply
+    Γ = zeros(ndebates, npanels)
     for ((d, debate), (p, panel)) in product(enumerate(roundinfo.debates), enumerate(feasiblepanels))
-        adjs = Adjudicator[roundinfo.adjudicators[a] for a in panel]
-        γ[d,p] = teamadjhistoryscore(roundinfo, debate, adjs)
+        for (team, adjindex) in product(debate, panel)
+            Γ[d,p] += ξ[(team,adjindex)]
+        end
+    end
+
+    return Γ
+end
+
+"""
+For scores that can be modelled as the sum of scores between a team and an
+adjudicator, `f(team,adj)`, returns the sum of team-adjudicator scores among
+teams in the given debate and adjudicators in the given panel:
+    Σ{team∈debate} Σ{adj∈panel} f(team,adj)
+where Σ denotes summation.
+"""
+function sumteamadjscores(teamadjscore::Function, roundinfo::RoundInfo,
+        debate::Vector{Team}, adjudicators::Vector{Adjudicator})
+    score = 0
+    for (team, adj) in product(debate, adjudicators)
+        score += teamadjscore(roundinfo, team, adj)
+    end
+    return score
+end
+
+"""
+For scores that can be modelled as the sum of scores between each pair of
+adjudicators on a panel, `f(adj1,adj2)`, returns a vector of scores, one for
+each panel, that is the sum of pairwise scores among adjudicators on that panel:
+    `γ[panel] = Σ{{adj1,adj2}⊆panel} f(adj1,adj2)`
+where γ is the returned matrix and Σ denotes summation.
+
+`f` is assumed to be commutative, so only one of `f(a,b)` and `f(b,a)` will be
+evaluated.
+
+The returned matrix will be `npanels` by `npanels`, where `npanels =
+length(feasiblepanels). The argument `adjadjscore` should be a function that
+takes `(::RoundInfo, ::Adjudicator, ::Adjudicator) and returns a score for that
+pair of adjudicators, denoted `f` above.
+"""
+function sumadjadjscoresvector(adjadjscore::Function, feasiblepanels::FeasiblePanelsList,
+        roundinfo::RoundInfo)
+    # We won't necessarily need all pairs of adjudicators, so calculate them
+    # as we go, but store them in a dict to avoid having to calculate multiple
+    # times.
+    ξ = Dict{Tuple{Int64,Int64},Float64}()
+    npanels = length(feasiblepanels)
+    γ = zeros(1, npanels)
+    for (p, panel) in enumerate(feasiblepanels)
+        for (a1, a2) in subsets(panel, 2) # a1, a2 are integer indices, not Adjudicators
+            γ[p] += get!(ξ, (a1, a2)) do
+                adj1 = roundinfo.adjudicators[a1]
+                adj2 = roundinfo.adjudicators[a2]
+                adjadjscore(roundinfo, adj1, adj2)
+            end
+        end
     end
     return γ
 end
 
-function teamadjhistoryscore(roundinfo::RoundInfo, debate::Vector{Team}, adjudicators::Vector{Adjudicator})
+"""
+For scores that can be modelled as the sum of scores betwene each pair of
+adjudicators on a panel, `f(adj1,adj2)`, returns the sum of pairwise scores
+among adjudicators on the given panel:
+    Σ{{adj1,adj2}⊆panel} f(adj1,adj2)`
+where Σ denotes summation.
+
+`f` is assumed to be commutative, so only one of `f(a,b)` and `f(b,a)` will be
+evaluated.
+"""
+function sumadjadjscores(adjadjscore::Function, roundinfo::RoundInfo, adjudicators::Vector{Adjudicator})
     score = 0
-    for (team, adj) in product(debate, adjudicators)
-        score += teamadjhistoryscore(roundinfo, team, adj)
+    for (a1, a2) in subsets(panel)
+        score += adjadjscore(roundinfo, adj1, adj2)
     end
     return score
 end
 
-function teamadjhistoryscore(roundinfo::RoundInfo, team::Team, adj::Adjudicator)
+teamadjhistorymatrix(fp, rinfo) = sumteamadjscoresmatrix(historyscore, fp, rinfo)
+teamadjhistoryscore(rinfo, debate, adjs) = sumteamadjscores(historyscore, rinfo, debate, adjs)
+teamadjconflictsmatrix(fp, rinfo) = sumteamadjscoresmatrix(conflictsscore, fp, rinfo)
+teamadjconflictsscore(rinfo, debate, adjs) = sumteamadjscores(conflictsscore, rinfo, debate, adjs)
+adjadjhistoryvector(fp, rinfo) = sumadjadjscoresvector(historyscore, fp, rinfo)
+adjadjhistoryscore(rinfo, adjs) = sumadjadjscores(historyscore, rinfo, adjs)
+adjadjconflictsvector(fp, rinfo) = sumadjadjscoresvector(conflictsscore, fp, rinfo)
+adjadjconflictsscore(rinfo, adjs) = sumadjadjscores(conflictsscore, rinfo, adjs)
+
+"""The conflicts score is just -1 if they conflict or 0 if they don't."""
+conflictsscore(rinfo, args...) = -conflicted(rinfo, args...)
+
+"""The history score is given by
+    `Σ{r∈roundsseen} 1/(currentround - r)`
+where `roundsseen` is the set of all rounds where the arguments have seen each
+other, `currentround` is the current round, and the difference between two
+rounds is the number of rounds between them (e.g. round6 - round2 = 4).
+"""
+function historyscore(roundinfo::RoundInfo, args...)
     score = 0
-    for round in roundsseen(roundinfo, adj, team)
+    for round in roundsseen(roundinfo, args...)
         @assert round < roundinfo.currentround
-        score += 1 / (roundinfo.currentround - round)
+        score -= 1 / (roundinfo.currentround - round)
     end
     return score
-end
-
-
-# ==============================================================================
-# Team-team conflicts
-# ==============================================================================
-
-"""
-Returns a matrix of team-adjudicator conflict penalties, denoted γ. The element
-`γ[d,p]` is the penalty incurred when panel given by `feasiblepanels[p]` is
-allocated to debate of index `d`.
-- `feasiblepanels` is a list of feasible panels (see definition of
-`FeasiblePanelsList`).
-- `roundinfo` is a RoundInfo instance.
-"""
-function teamadjconflictsmatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
-    ndebates = length(roundinfo.debates)
-    npanels = length(feasiblepanels)
-
-    return zeros(ndebates, npanels)
-end
-
-
-# ==============================================================================
-# Adjudicator-team history
-# ==============================================================================
-
-"""
-Returns a 1-by-`npanels` array of adjudicator-adjudicator history penalties,
-denoted δ. The element `δ[p]` is the penalty incurred for panel given by
-`feasiblepanels[p]`.
-- `feasiblepanels` is a list of feasible panels (see definition of
-`FeasiblePanelsList`).
-- `roundinfo` is a RoundInfo instance.
-"""
-function adjadjhistoryvector(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
-    npanels = length(feasiblepanels)
-    return zeros(1, npanels)
-end
-
-# ==============================================================================
-# Adjudicator-team conflicts
-# ==============================================================================
-
-"""
-Returns a 1-by-`npanels` array of adjudicator-adjudicator conflict penalties,
-denoted δ. The element `δ[p]` is the penalty incurred for panel given by
-`feasiblepanels[p]`.
-- `feasiblepanels` is a list of feasible panels (see definition of
-`FeasiblePanelsList`).
-- `roundinfo` is a RoundInfo instance.
-"""
-function adjadjconflictsvector(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
-    npanels = length(feasiblepanels)
-    return zeros(1, npanels)
 end

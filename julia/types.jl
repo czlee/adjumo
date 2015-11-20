@@ -96,9 +96,9 @@ RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict(),Dict(),[],[],Adjumo
 RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],AdjumoWeights(), currentround)
 
 conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts
-conflicted(rinfo::RoundInfo, adj::Adjudicator, team::Team) = (adj, team) ∈ rinfo.adjteamconflicts
+conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (adj, team) ∈ rinfo.adjteamconflicts
 roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = [get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])]
-roundsseen(rinfo::RoundInfo, adj::Adjudicator, team::Team) = get(rinfo.adjadjhistory, (adj, team), Int[])
+roundsseen(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.adjadjhistory, (adj, team), Int[])
 
 numdebates(rinfo::RoundInfo) = length(rinfo.debates)
 numadjs(rinfo::RoundInfo) = length(rinfo.adjudicators)
