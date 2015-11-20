@@ -1,3 +1,6 @@
+using Iterators
+import Base.show
+
 # ==============================================================================
 # Models
 # ==============================================================================
@@ -9,7 +12,10 @@
 
 type Institution
     name::UTF8String
+    code::UTF8String
 end
+
+Institution(name::UTF8String) = Institution(name, name[1:5])
 
 type Team
     name::UTF8String
@@ -23,6 +29,7 @@ Team(name::UTF8String, institution::Institution) = Team(name, institution, NoGen
 Team(name::AbstractString, institution::Institution) = Team(UTF8String(name), institution, NoGender, NoRegion, NoLanguage)
 Team(name::UTF8String, institution::Institution, region::Region) = Team(name, institution, NoGender, region, NoLanguage)
 Team(name::AbstractString, institution::Institution, region::Region) = Team(UTF8String(name), institution, NoGender, region, NoLanguage)
+show(io::Base.IO, team::Team) = print(io, "Team(\"$(team.name)\")")
 
 type Adjudicator
     name::UTF8String
@@ -36,6 +43,7 @@ end
 Adjudicator(name::UTF8String, institution::Institution) = Adjudicator(name, institution, Panellist, NoGender, Region[], NoLanguage)
 Adjudicator(name::AbstractString, institution::Institution) = Adjudicator(UTF8String(name), institution, Panellist, NoGender, Region[], NoLanguage)
 Adjudicator(name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(UTF8String(name), institution, ranking, NoGender, Region[], NoLanguage)
+show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator(\"$(adj.name)\", \"$(adj.institution.code)\")")
 
 "A list of \"feasible panels\" is a list of lists of integers. Each (inner) list
 contains the indices of adjudicators on a feasible panel."
@@ -77,11 +85,11 @@ type RoundInfo
     # Conflicts are considered hard: test for presence or absence only
     # Note: (adj1, adj2) and (adj2, adj1) mean the same thing, need to check for both
     adjadjconflicts::Vector{Tuple{Adjudicator,Adjudicator}}
-    adjteamconflicts::Vector{Tuple{Adjudicator,Team}}
+    teamadjconflicts::Vector{Tuple{Team,Adjudicator}}
 
     # For history, the integer refers to the round of the conflict
     adjadjhistory::Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}
-    adjteamhistory::Dict{Tuple{Adjudicator,Team},Vector{Int}}
+    teamadjhistory::Dict{Tuple{Team,Adjudicator},Vector{Int}}
 
     # Special constraints
     adjondebate::Vector{Tuple{Adjudicator,Int}}
@@ -96,11 +104,69 @@ RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict(),Dict(),[],[],Adjumo
 RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],AdjumoWeights(), currentround)
 
 conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts
-conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (adj, team) ∈ rinfo.adjteamconflicts
+conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts
 roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = [get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])]
-roundsseen(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.adjadjhistory, (adj, team), Int[])
+roundsseen(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.teamadjhistory, (team, adj), Int[])
 
 numdebates(rinfo::RoundInfo) = length(rinfo.debates)
 numadjs(rinfo::RoundInfo) = length(rinfo.adjudicators)
+
+addinstitution!(rinfo::RoundInfo, args...) = push!(rinfo.institutions, Institution(args...))
+addteam!(rinfo::RoundInfo, args...) = push!(rinfo.teams, Team(args...))
+addadjudicator!(rinfo::RoundInfo, args...) = push!(rinfo.adjudicators, Adjudicator(args...))
+
+# These functions don't check for validity; that is, they don't check to see
+# that the teams and adjudicators in question are actually in rinfo.teams
+# and rinfo.adjudicators. It is the responsibility of the caller to make sure
+# this is the case.
+addadjadjconflict!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = push!(rinfo.adjadjconflicts, (adj1, adj2))
+addteamadjconflict!(rinfo::RoundInfo, team::Team, adj::Adjudicator) = push!(rinfo.teamadjconflicts, (team, adj))
+addadjadjhistory!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator, round::Int) = push!(get!(rinfo.adjadjhistory, (adj1, adj2), Int[]), round)
+addteamadjhistory!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int) = push!(get!(rinfo.teamadjhistory, (team, adj), Int[]), round)
+
+# ==============================================================================
+# Random round generator
+# ==============================================================================
+function randomroundinfo(ndebates::Int, currentround::Int)
+    nadjs = 3ndebates
+    nteams = 4ndebates
+    ninstitutions = 2ndebates
+
+
+    institutions = [Institution("Institution $(i)", "I$(i)") for i = 1:ninstitutions]
+    teams = [Team("Team $(i)", rand(institutions)) for i = 1:nteams]
+    adjudicators = [Adjudicator("Adjudicator $(i)", rand(institutions),
+            rand([instances(Wudc2015AdjudicatorRank)...]))
+            for i = 1:nadjs]
+    sort!(adjudicators, by=adj->adj.ranking, rev=true)
+    teams_shuffled = reshape(shuffle(teams), (4, ndebates))
+    debates = [teams_shuffled[:,i] for i in 1:ndebates]
+    roundinfo = RoundInfo(institutions, teams, adjudicators, debates, currentround)
+
+    for i in 1:nadjs
+        addadjadjconflict!(roundinfo, rand(adjudicators), rand(adjudicators))
+        addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
+        addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
+    end
+
+    for r in 1:currentround-1
+        teams_shuffled = reshape(shuffle(teams), (4, ndebates))
+        debates = [teams_shuffled[:,i] for i in 1:ndebates]
+        adjs_shuffled = reshape(shuffle(adjudicators), (3, ndebates))
+        panels = [adjs_shuffled[:,i] for i in 1:ndebates]
+        for panel in panels
+            for (adj1, adj2) in subsets(panel, 2)
+                addadjadjhistory!(roundinfo, adj1, adj2, r)
+            end
+        end
+        for (debate, panel) in zip(debates, panels)
+            for (team, adj) in product(debate, panel)
+                addteamadjhistory!(roundinfo, team, adj, r)
+            end
+        end
+    end
+
+    return roundinfo
+end
 
 ;

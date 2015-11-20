@@ -150,7 +150,7 @@ adjudicators on the panel. This function returns zero if that is the case; a
 negative number if any region in the debate is not on the panel.
 """
 function regionalrepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
-    ndebates = length(roundinfo.debates)
+    ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
 
     teamregions = Vector{Vector{Region}}(ndebates)
@@ -296,7 +296,7 @@ Returns a matrix of representation scores for language, denoted βl. Elements
 correspond to elements in `representation()`. Arguments are as for `representation()`.
 """
 function languagerepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
-    ndebates = length(roundinfo.debates)
+    ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     return zeros(ndebates, npanels)
 end
@@ -310,7 +310,7 @@ Returns a matrix of representation scores for gender, denoted βg. Elements
 correspond to elements in `representation()`. Arguments are as for `representation()`.
 """
 function genderrepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
-    ndebates = length(roundinfo.debates)
+    ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     return zeros(ndebates, npanels)
 end
@@ -327,7 +327,7 @@ debate and adjudicators in that panel:
     `Γ[debate,panel] = Σ{team∈debate} Σ{adj∈panel} f(team,adj)`
 where Γ is the returned matrix and Σ denotes summation.
 
-The returned matrix will be of size `ndebates = length(roundinfo.debates)` by
+The returned matrix will be of size `ndebates = numdebates(roundinfo)` by
 `npanels = length(feasiblepanels)`. The argument `teamadjscore` should be a
 function that takes `(::RoundInfo, ::Team, ::Adjudicator)` and returns a score
 for that team and adjudicator, denoted `f` above.
@@ -342,7 +342,7 @@ function sumteamadjscoresmatrix(teamadjscore::Function,
     end
 
     # Then, populate the history matrix.
-    ndebates = length(roundinfo.debates)
+    ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     Γ = zeros(ndebates, npanels)
     for ((d, debate), (p, panel)) in product(enumerate(roundinfo.debates), enumerate(feasiblepanels))
