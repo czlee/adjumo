@@ -54,8 +54,6 @@ end
 # Quality
 # ==============================================================================
 
-qualityvector(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo) = qualityvector(feasiblepanels, roundinfo.adjudicators)
-
 """
 Returns a 1-by-`npanels` row vector of quality scores, denoted `α`. The element
 `α[p]` is the quality of the panel given by `feasiblepanels[p]`. "Quality" means
@@ -66,11 +64,11 @@ conflict considerations.
 - `rankings` is a list of rankings, where `rankings[a]` is the ranking of
 adjudicator at index `a`.
 """
-function qualityvector(feasiblepanels::FeasiblePanelsList, adjudicators::Vector{Adjudicator})
+function qualityvector(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
     npanels = length(feasiblepanels)
     α = Array{Float64}(1, npanels)
     for (i, panel) in enumerate(feasiblepanels)
-        adjs = [adjudicators[adj] for adj in panel]
+        adjs = adjudicatorsfromindices(roundinfo, panel)
         α[i] = panelquality(adjs)
     end
     return α

@@ -105,6 +105,7 @@ RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(
 
 conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts
 conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts
+hasconflict(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = any(pair -> conflicted(roundinfo, pair...), subsets(adjs, 2))
 roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = [get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])]
 roundsseen(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.teamadjhistory, (team, adj), Int[])
 
@@ -123,6 +124,8 @@ addadjadjconflict!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = pus
 addteamadjconflict!(rinfo::RoundInfo, team::Team, adj::Adjudicator) = push!(rinfo.teamadjconflicts, (team, adj))
 addadjadjhistory!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator, round::Int) = push!(get!(rinfo.adjadjhistory, (adj1, adj2), Int[]), round)
 addteamadjhistory!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int) = push!(get!(rinfo.teamadjhistory, (team, adj), Int[]), round)
+
+adjudicatorsfromindices(roundinfo::RoundInfo, indices::Vector{Int64}) = Adjudicator[roundinfo.adjudicators[a] for a in indices]
 
 # ==============================================================================
 # Random round generator

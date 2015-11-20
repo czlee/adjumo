@@ -22,12 +22,15 @@ function allocateadjudicators(roundinfo::RoundInfo)
     @time Σ = scorematrix(feasiblepanels, roundinfo)
 
     @time Q = panelmembershipmatrix(feasiblepanels, numadjs(roundinfo))
-    allocation = solveoptimizationproblem(Σ, Q)
+    debateindices, panelindices = solveoptimizationproblem(Σ, Q)
 
-    println("Result:")
-    for (d, p) in zip(allocation...)
-        @printf("Debate %2d gets panel %5d, comprising %s\n", d, p, feasiblepanels[p])
+    panels = Vector{Vector{Adjudicator}}()
+    for p in panelindices
+        adjindices = feasiblepanels[p]
+        push!(panels, adjudicatorsfromindices(roundinfo, adjindices))
     end
+
+    return debateindices, panels
 end
 
 """
@@ -44,9 +47,9 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
     panellists = nchairs+1:nadjs
     panellistcombs = combinations(panellists, 2)
     panels = Vector{Int64}[[c; p] for (c, p) in Iterators.product(chairs, panellistcombs)]
+    filter!(panel -> !hasconflict(roundinfo, Adjudicator[roundinfo.adjudicators[a] for a in panel]), panels) # remove panels with adj-adj conflicts
     return panels
 end
-
 
 """
 Returns the panel membership matrix for a list of feasible panels.
@@ -71,7 +74,7 @@ end
 
 """
 Solves the optimization problem for score matrix `Σ` and panel membership
-    matrix.
+    matrix `Q`.
 `Σ` is a matrix with `ndebates` rows and `npanels` columns, where `ndebates` is
     the number of debates and `npanels` is the number of feasible panels.
 `Q` is a matrix with `npanels` rows and `nadjs` columns, where `npanels` is the
@@ -101,6 +104,8 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool})
     @addConstraint(m, X*ones(npanels) .== 1)
     @addConstraint(m, ones(1,ndebates)*X*Q .== 1)
 
+    # TODO add team-adj conflict constraint
+
     @printf("There are %d panels to choose from.\n", npanels)
 
     @time status = solve(m)
@@ -110,6 +115,18 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool})
     return allocation
 end
 
+function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator})
+    println("Teams:")
+    for team in debate
+        println("   $(team.name)  $(team.institution.name) $(team.region) $(team.gender) $(team.language)")
+    end
+    println("Adjudicators:")
+    for adj in panel
+        println("   $(adj.name)   $(adj.ranking) $(adj.institution.name) $(adj.regions) $(adj.gender) $(adj.language)")
+    end
+    println("")
+end
+showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicator}) = showdebatedetail(roundinfo, roundinfo.debates[debateindex], panel)
 
 # Start here
 
@@ -119,4 +136,9 @@ end
     roundinfo = randomroundinfo(ndebates, currentround)
 end
 
-allocateadjudicators(roundinfo)
+debateindices, panels = allocateadjudicators(roundinfo)
+
+println("Result:")
+for (d, panel) in zip(debateindices, panels)
+    showdebatedetail(roundinfo, d, panel)
+end
