@@ -124,7 +124,14 @@ function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vec
     for adj in panel
         println("   $(adj.name)   $(adj.ranking) $(adj.institution.name) $(adj.regions) $(adj.gender) $(adj.language)")
     end
-    println("")
+    println("Scores:")
+    println("             Panel quality: $(panelquality(panel))")
+    println("   Regional representation: $(panelregionalrepresentationscore(debate, panel))")
+    println("          Team-adj history: $(teamadjhistoryscore(roundinfo, debate, panel))")
+    println("        Team-adj conflicts: $(teamadjconflictsscore(roundinfo, debate, panel))")
+    println("           Adj-adj history: $(adjadjhistoryscore(roundinfo, panel))")
+    println("         Adj-adj conflicts: $(adjadjconflictsscore(roundinfo, panel))")
+    println()
 end
 showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicator}) = showdebatedetail(roundinfo, roundinfo.debates[debateindex], panel)
 

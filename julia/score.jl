@@ -50,6 +50,7 @@ function matrixfromvector(f::Function, feasiblepanels::FeasiblePanelsList, round
     return repmat(v, ndebates, 1)
 end
 
+
 # ==============================================================================
 # Quality
 # ==============================================================================
@@ -202,6 +203,12 @@ function debateregionclass(teamregions::Vector{Region})
     else
         throw(ArgumentError("Region counts were invalid."))
     end
+end
+
+function panelregionalrepresentationscore(debate::Vector{Team}, adjs::Vector{Adjudicator})
+    teamregions = Region[t.region for t in debate]
+    adjregions = vcat(Vector{Region}[adj.regions for adj in adjs]...)
+    return panelregionalrepresentationscore(teamregions, adjregions)
 end
 
 "Returns the regional representation score for a debate whose teams have the given
@@ -415,7 +422,7 @@ evaluated.
 """
 function sumadjadjscores(adjadjscore::Function, roundinfo::RoundInfo, adjudicators::Vector{Adjudicator})
     score = 0
-    for (a1, a2) in subsets(panel)
+    for (adj1, adj2) in subsets(adjudicators, 2)
         score += adjadjscore(roundinfo, adj1, adj2)
     end
     return score
