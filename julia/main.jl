@@ -10,6 +10,7 @@ using Gurobi
 
 using JuMP
 using Iterators
+using Formatting
 include("types.jl")
 include("score.jl")
 
@@ -118,11 +119,12 @@ end
 function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator})
     println("Teams:")
     for team in debate
-        println("   $(team.name)  $(team.institution.name) $(team.region) $(team.gender) $(team.language)")
+        printfmtln("   {1:<20}  {2:<20}  {3:<20} {4:<10} {5:<10}",
+                team.name, team.institution.name, team.region, team.gender, team.language)
     end
     println("Adjudicators:")
     for adj in panel
-        println("   $(adj.name)   $(adj.ranking) $(adj.institution.name) $(adj.regions) $(adj.gender) $(adj.language)")
+        println("   $(adj.name)   $(adj.ranking) [$(adj.institution.name)] $(adj.regions) $(adj.gender) $(adj.language)")
     end
     println("Scores:")
     println("             Panel quality: $(panelquality(panel))")

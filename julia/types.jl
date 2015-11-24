@@ -13,6 +13,7 @@ import Base.show
 type Institution
     name::UTF8String
     code::UTF8String
+    region::Region
 end
 
 Institution(name::UTF8String) = Institution(name, name[1:5])
@@ -25,8 +26,8 @@ type Team
     language::LanguageStatus
 end
 
-Team(name::UTF8String, institution::Institution) = Team(name, institution, NoGender, NoRegion, NoLanguage)
-Team(name::AbstractString, institution::Institution) = Team(UTF8String(name), institution, NoGender, NoRegion, NoLanguage)
+Team(name::UTF8String, institution::Institution) = Team(name, institution, NoGender, institution.region, NoLanguage)
+Team(name::AbstractString, institution::Institution) = Team(UTF8String(name), institution, NoGender, institution.region, NoLanguage)
 Team(name::UTF8String, institution::Institution, region::Region) = Team(name, institution, NoGender, region, NoLanguage)
 Team(name::AbstractString, institution::Institution, region::Region) = Team(UTF8String(name), institution, NoGender, region, NoLanguage)
 show(io::Base.IO, team::Team) = print(io, "Team(\"$(team.name)\")")
@@ -136,7 +137,8 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     ninstitutions = 2ndebates
 
 
-    institutions = [Institution("Institution $(i)", "I$(i)") for i = 1:ninstitutions]
+    institutions = [Institution("Institution $(i)", "I$(i)",
+            rand([instances(Region)...])) for i = 1:ninstitutions]
     teams = [Team("Team $(i)", rand(institutions)) for i = 1:nteams]
     adjudicators = [Adjudicator("Adjudicator $(i)", rand(institutions),
             rand([instances(Wudc2015AdjudicatorRank)...]))
