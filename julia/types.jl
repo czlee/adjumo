@@ -103,7 +103,8 @@ type RoundInfo
 
     # Special constraints
     adjondebate::Vector{Tuple{Adjudicator,Int}}
-    adjoffdeate::Vector{Tuple{Adjudicator,Int}}
+    adjoffdebate::Vector{Tuple{Adjudicator,Int}}
+    adjstogether::Vector{Vector{Adjudicator}}
 
     # Weights
     componentweights::AdjumoComponentWeights
@@ -111,9 +112,9 @@ type RoundInfo
     currentround::Int
 end
 
-RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict(),Dict(),[],[],AdjumoComponentWeights(),[],currentround)
-RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],AdjumoComponentWeights(), ones(length(debates)), currentround)
-RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],AdjumoComponentWeights(), debateweights, currentround)
+RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict(),Dict(),[],[],[],AdjumoComponentWeights(),[],currentround)
+RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],[].AdjumoComponentWeights(), ones(length(debates)), currentround)
+RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],[],AdjumoComponentWeights(), debateweights, currentround)
 
 conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts
 conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts
@@ -136,5 +137,9 @@ addadjadjconflict!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = pus
 addteamadjconflict!(rinfo::RoundInfo, team::Team, adj::Adjudicator) = push!(rinfo.teamadjconflicts, (team, adj))
 addadjadjhistory!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator, round::Int) = push!(get!(rinfo.adjadjhistory, (adj1, adj2), Int[]), round)
 addteamadjhistory!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int) = push!(get!(rinfo.teamadjhistory, (team, adj), Int[]), round)
+addadjondebate!(rinfo::RoundInfo, adj::Adjudicator, debateindex::Int) = push!(rinfo.adjondebate, (adj, debateindex))
+addadjoffdebate!(rinfo::RoundInfo, adj::Adjudicator, debateindex::Int) = push!(rinfo.adjoffdebate, (adj, debateindex))
+addadjstogether!(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = push!(rinfo.adjstogether, adjs)
 
 adjudicatorsfromindices(roundinfo::RoundInfo, indices::Vector{Int64}) = Adjudicator[roundinfo.adjudicators[a] for a in indices]
+indicesfromadjudicators(roundinfo::RoundInfo, adjs::Vector{Adjudicator}) = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjs]
