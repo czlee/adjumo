@@ -119,28 +119,36 @@ end
 function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator})
     println("Teams:")
     for team in debate
-        printfmtln("   {1:<20}  {2:<20}  {3:<20} {4:<10} {5:<10}",
-                team.name, team.institution.name, team.region, team.gender, team.language)
+        printfmtln("   {:<20}     {:<10}  {:1} {:<3} {:<6}",
+                team.name, team.institution.code, abbr(team.gender), abbr(team.language), abbr(team.region))
     end
     println("Adjudicators:")
     for adj in panel
-        println("   $(adj.name)   $(adj.ranking) [$(adj.institution.name)] $(adj.regions) $(adj.gender) $(adj.language)")
+        printfmtln("   {:<20}  {:<2} {:<10}  {:1} {:<3} {}",
+                adj.name, abbr(adj.ranking), adj.institution.code, abbr(adj.gender), abbr(adj.language), join([abbr(r) for r in adj.regions], ","))
     end
     println("Scores:")
-    println("             Panel quality: $(panelquality(panel))")
-    println("   Regional representation: $(panelregionalrepresentationscore(debate, panel))")
-    println("          Team-adj history: $(teamadjhistoryscore(roundinfo, debate, panel))")
-    println("        Team-adj conflicts: $(teamadjconflictsscore(roundinfo, debate, panel))")
-    println("           Adj-adj history: $(adjadjhistoryscore(roundinfo, panel))")
-    println("         Adj-adj conflicts: $(adjadjconflictsscore(roundinfo, panel))")
+    components = [
+        ("Panel quality", panelquality(panel)),
+        ("Regional representation", panelregionalrepresentationscore(debate, panel)),
+        ("Team-adj history", teamadjhistoryscore(roundinfo, debate, panel)),
+        ("Team-adj conflicts", teamadjconflictsscore(roundinfo, debate, panel)),
+        ("Adj-adj history", adjadjhistoryscore(roundinfo, panel)),
+        ("Adj-adj conflicts", adjadjconflictsscore(roundinfo, panel)),
+        ("Overall", score(roundinfo, debate, panel)),
+    ]
+    for component in components
+        printfmtln("{:>25}: {:>9.3f}", component...)
+    end
     println()
 end
 showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicator}) = showdebatedetail(roundinfo, roundinfo.debates[debateindex], panel)
 
 # Start here
 
+include("random.jl")
 @time begin
-    ndebates = 10
+    ndebates = 6
     currentround = 5
     roundinfo = randomroundinfo(ndebates, currentround)
 end

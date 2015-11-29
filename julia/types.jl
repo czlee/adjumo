@@ -5,10 +5,17 @@ import Base.show
 # Models
 # ==============================================================================
 
-@enum Gender NoGender GenderMale GenderFemale GenderOther
+@enum TeamGender TeamNoGender TeamMale TeamFemale TeamMixed
+@enum PersonGender PersonNoGender PersonMale PersonFemale PersonOther
 @enum Region NoRegion NorthAsia SouthEastAsia MiddleEast SouthAsia Africa Oceania NorthAmerica LatinAmerica Europe IONA
 @enum LanguageStatus NoLanguage EnglishPrimary EnglishSecond EnglishForeign
 @enum Wudc2015AdjudicatorRank TraineeMinus Trainee TraineePlus PanellistMinus Panellist PanellistPlus ChairMinus Chair ChairPlus
+
+abbr(g::TeamGender) = ["-", "M", "F", "X"][Integer(g)+1]
+abbr(g::PersonGender) = ["-", "m", "f", "o"][Integer(g)+1]
+abbr(r::Region) = ["-", "NAsia", "SEAsia", "MEast", "SAsia", "Africa", "Ocean", "NAmer", "LAmer", "Europe", "IONA"][Integer(r)+1]
+abbr(l::LanguageStatus) = ["-", "EPL", "ESL", "EFL"][Integer(l)+1]
+abbr(r::Wudc2015AdjudicatorRank) = ["T-", "T", "T+", "P-", "P", "P+", "C-", "C", "C+"][Integer(r)+1]
 
 type Institution
     name::UTF8String
@@ -16,34 +23,36 @@ type Institution
     region::Region
 end
 
-Institution(name::UTF8String) = Institution(name, name[1:5])
+Institution(name::UTF8String) = Institution(name, name[1:5], NoRegion)
+Institution(name::UTF8String, code::UTF8String) = Institution(name, code, NoRegion)
+Institution(name::AbstractString, code::AbstractString) = Institution(UTF8String(name), UTF8String(code), NoRegion)
 
 type Team
     name::UTF8String
     institution::Institution
-    gender::Gender
+    gender::TeamGender
     region::Region
     language::LanguageStatus
 end
 
-Team(name::UTF8String, institution::Institution) = Team(name, institution, NoGender, institution.region, NoLanguage)
-Team(name::AbstractString, institution::Institution) = Team(UTF8String(name), institution, NoGender, institution.region, NoLanguage)
-Team(name::UTF8String, institution::Institution, region::Region) = Team(name, institution, NoGender, region, NoLanguage)
-Team(name::AbstractString, institution::Institution, region::Region) = Team(UTF8String(name), institution, NoGender, region, NoLanguage)
+Team(name::UTF8String, institution::Institution) = Team(name, institution, TeamNoGender, institution.region, NoLanguage)
+Team(name::AbstractString, institution::Institution) = Team(UTF8String(name), institution, TeamNoGender, institution.region, NoLanguage)
+Team(name::UTF8String, institution::Institution, region::Region) = Team(name, institution, TeamNoGender, region, NoLanguage)
+Team(name::AbstractString, institution::Institution, region::Region) = Team(UTF8String(name), institution, TeamNoGender, region, NoLanguage)
 show(io::Base.IO, team::Team) = print(io, "Team(\"$(team.name)\")")
 
 type Adjudicator
     name::UTF8String
     institution::Institution
     ranking::Wudc2015AdjudicatorRank
-    gender::Gender
+    gender::PersonGender
     regions::Vector{Region}
     language::LanguageStatus
 end
 
-Adjudicator(name::UTF8String, institution::Institution) = Adjudicator(name, institution, Panellist, NoGender, Region[], NoLanguage)
-Adjudicator(name::AbstractString, institution::Institution) = Adjudicator(UTF8String(name), institution, Panellist, NoGender, Region[], NoLanguage)
-Adjudicator(name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(UTF8String(name), institution, ranking, NoGender, Region[], NoLanguage)
+Adjudicator(name::UTF8String, institution::Institution) = Adjudicator(name, institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
+Adjudicator(name::AbstractString, institution::Institution) = Adjudicator(UTF8String(name), institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
+Adjudicator(name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(UTF8String(name), institution, ranking, PersonNoGender, Region[institution.region], NoLanguage)
 show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator(\"$(adj.name)\", \"$(adj.institution.code)\")")
 
 "A list of \"feasible panels\" is a list of lists of integers. Each (inner) list
@@ -127,51 +136,3 @@ addadjadjhistory!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator, round:
 addteamadjhistory!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int) = push!(get!(rinfo.teamadjhistory, (team, adj), Int[]), round)
 
 adjudicatorsfromindices(roundinfo::RoundInfo, indices::Vector{Int64}) = Adjudicator[roundinfo.adjudicators[a] for a in indices]
-
-# ==============================================================================
-# Random round generator
-# ==============================================================================
-function randomroundinfo(ndebates::Int, currentround::Int)
-    nadjs = 3ndebates
-    nteams = 4ndebates
-    ninstitutions = 2ndebates
-
-
-    institutions = [Institution("Institution $(i)", "I$(i)",
-            rand([instances(Region)...])) for i = 1:ninstitutions]
-    teams = [Team("Team $(i)", rand(institutions)) for i = 1:nteams]
-    adjudicators = [Adjudicator("Adjudicator $(i)", rand(institutions),
-            rand([instances(Wudc2015AdjudicatorRank)...]))
-            for i = 1:nadjs]
-    sort!(adjudicators, by=adj->adj.ranking, rev=true)
-    teams_shuffled = reshape(shuffle(teams), (4, ndebates))
-    debates = [teams_shuffled[:,i] for i in 1:ndebates]
-    roundinfo = RoundInfo(institutions, teams, adjudicators, debates, currentround)
-
-    for i in 1:nadjs
-        addadjadjconflict!(roundinfo, rand(adjudicators), rand(adjudicators))
-        addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
-        addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
-    end
-
-    for r in 1:currentround-1
-        teams_shuffled = reshape(shuffle(teams), (4, ndebates))
-        debates = [teams_shuffled[:,i] for i in 1:ndebates]
-        adjs_shuffled = reshape(shuffle(adjudicators), (3, ndebates))
-        panels = [adjs_shuffled[:,i] for i in 1:ndebates]
-        for panel in panels
-            for (adj1, adj2) in subsets(panel, 2)
-                addadjadjhistory!(roundinfo, adj1, adj2, r)
-            end
-        end
-        for (debate, panel) in zip(debates, panels)
-            for (team, adj) in product(debate, panel)
-                addteamadjhistory!(roundinfo, team, adj, r)
-            end
-        end
-    end
-
-    return roundinfo
-end
-
-;

@@ -50,6 +50,19 @@ function matrixfromvector(f::Function, feasiblepanels::FeasiblePanelsList, round
     return repmat(v, ndebates, 1)
 end
 
+function score(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator})
+    weights = roundinfo.weights
+    σ  = weights.quality      * panelquality(panel)
+    σ += weights.regional     * panelregionalrepresentationscore(debate, panel)
+    σ += weights.language     * 0
+    σ += weights.gender       * 0
+    σ += weights.teamhistory  * teamadjhistoryscore(roundinfo, debate, panel)
+    σ += weights.adjhistory   * teamadjconflictsscore(roundinfo, debate, panel)
+    σ += weights.teamconflict * adjadjhistoryscore(roundinfo, panel)
+    σ += weights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
+    return σ
+end
+
 
 # ==============================================================================
 # Quality
