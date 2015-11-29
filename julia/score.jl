@@ -19,7 +19,7 @@ using DataStructures
 # ==============================================================================
 
 """
-Returns the score matrix using the information about the round.
+Returns the score matrix using the round information.
 
 The score matrix (denoted `Σ`) will be an `ndebates`-by-`npanels` matrix, where
 `ndebates` is the number of debates in the round and `npanels` is the number of
@@ -50,6 +50,9 @@ function matrixfromvector(f::Function, feasiblepanels::FeasiblePanelsList, round
     return repmat(v, ndebates, 1)
 end
 
+"""
+Returns the score for the given panel and debate, using the round information.
+"""
 function score(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator})
     weights = roundinfo.weights
     σ  = weights.quality      * panelquality(panel)

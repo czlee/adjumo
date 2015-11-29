@@ -127,19 +127,47 @@ function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vec
         printfmtln("   {:<20}  {:<2} {:<10}  {:1} {:<3} {}",
                 adj.name, abbr(adj.ranking), adj.institution.code, abbr(adj.gender), abbr(adj.language), join([abbr(r) for r in adj.regions], ","))
     end
+    println("Conflicts:")
+    for (team, adj) in product(debate, panel)
+        if conflicted(roundinfo, team, adj)
+            printfmtln("   {} conflicts with {}", adj.name, team.name)
+        end
+    end
+    for (adj1, adj2) in subsets(panel, 2)
+        if conflicted(roundinfo, adj1, adj2)
+            printfmtln("   {} conflicts with {}", adj1.name, adj2.name)
+        end
+    end
+    println("History:")
+    for (team, adj) in product(debate, panel)
+        history = roundsseen(roundinfo, team, adj)
+        if length(history) > 0
+            printfmtln("   {} saw {} in round{} {}", adj.name, team.name,
+                    (length(history) > 1) ? "s" : "", join([string(r) for r in history], ", "))
+        end
+    end
+    for (adj1, adj2) in subsets(panel, 2)
+        history = roundsseen(roundinfo, adj1, adj2)
+        if length(history) > 0
+            printfmtln("   {} was with {} in round{} {}", adj1.name, adj2.name,
+                    (length(history) > 1) ? "s" : "", join([string(r) for r in history], ", "))
+        end
+    end
     println("Scores:")
     components = [
-        ("Panel quality", panelquality(panel)),
-        ("Regional representation", panelregionalrepresentationscore(debate, panel)),
-        ("Team-adj history", teamadjhistoryscore(roundinfo, debate, panel)),
-        ("Team-adj conflicts", teamadjconflictsscore(roundinfo, debate, panel)),
-        ("Adj-adj history", adjadjhistoryscore(roundinfo, panel)),
-        ("Adj-adj conflicts", adjadjconflictsscore(roundinfo, panel)),
-        ("Overall", score(roundinfo, debate, panel)),
+        ("Panel quality", :quality, panelquality(panel)),
+        ("Regional representation", :regional, panelregionalrepresentationscore(debate, panel)),
+        ("Team-adj history", :teamhistory, teamadjhistoryscore(roundinfo, debate, panel)),
+        ("Adj-adj history", :adjhistory, adjadjhistoryscore(roundinfo, panel)),
+        ("Team-adj conflicts", :teamconflict, teamadjconflictsscore(roundinfo, debate, panel)),
+        ("Adj-adj conflicts", :adjconflict, adjadjconflictsscore(roundinfo, panel)),
     ]
     for component in components
-        printfmtln("{:>25}: {:>9.3f}", component...)
+        name, weightfield, score = component
+        weight = getfield(roundinfo.weights, weightfield)
+        printfmtln("{:>25}: {:>9.3f}  {:>12.3f}", name, score, score * weight)
     end
+    printfmtln("{:>25}:            {:>12.3f}", "Overall", score(roundinfo, debate, panel))
     println()
 end
 showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicator}) = showdebatedetail(roundinfo, roundinfo.debates[debateindex], panel)
@@ -148,9 +176,19 @@ showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicat
 
 include("random.jl")
 @time begin
-    ndebates = 6
+    ndebates = 10
     currentround = 5
+    weights = AdjumoWeights()
+    weights.quality = 1
+    weights.regional = 1
+    weights.language = 1
+    weights.gender = 1
+    weights.teamhistory = 100
+    weights.adjhistory = 100
+    weights.teamconflict = 1e6
+    weights.adjconflict = 1e6
     roundinfo = randomroundinfo(ndebates, currentround)
+    roundinfo.weights = weights
 end
 
 debateindices, panels = allocateadjudicators(roundinfo)
