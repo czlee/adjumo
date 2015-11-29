@@ -58,10 +58,15 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
     panellists = nchairs+1:nadjs
     panellistcombs = combinations(panellists, 2)
     panels = Vector{Int64}[[c; p] for (c, p) in Iterators.product(chairs, panellistcombs)]
+
+    # panels with judges that conflict with each other are not feasible
     filter!(panel -> !hasconflict(roundinfo, adjudicatorsfromindices(roundinfo, panel)), panels) # remove panels with adj-adj conflicts
+
+    # panels with some but not all of a list of judges that must judge together are not feasible
     for adjs in roundinfo.adjstogether
         filter!(panel -> count(a -> a ∈ adjudicatorsfromindices(roundinfo, panel), adjs) ∈ [0, length(adjs)], panels)
     end
+
     return panels
 end
 
@@ -198,7 +203,7 @@ showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicat
 
 include("random.jl")
 @time begin
-    ndebates = 8
+    ndebates = 12
     currentround = 5
     componentweights = AdjumoComponentWeights()
     componentweights.quality = 1
