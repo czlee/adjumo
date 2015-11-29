@@ -57,7 +57,8 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     sort!(adjudicators, by=adj->adj.ranking, rev=true)
     teams_shuffled = reshape(shuffle(teams), (4, ndebates))
     debates = [teams_shuffled[:,i] for i in 1:ndebates]
-    roundinfo = RoundInfo(institutions, teams, adjudicators, debates, currentround)
+    debateweights = rand(length(debates)) * 10
+    roundinfo = RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentround)
 
     for i in 1:nadjs
         addadjadjconflict!(roundinfo, rand(adjudicators), rand(adjudicators))

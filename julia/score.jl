@@ -31,17 +31,19 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 `roundinfo` is a RoundInfo instance.
 """
 function scorematrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    @assert length(roundinfo.debates) == length(roundinfo.debateweights)
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
-    weights = roundinfo.weights
-    Σ  = weights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
-    Σ += weights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += weights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += weights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += weights.teamhistory  * teamadjhistorymatrix(feasiblepanels, roundinfo)
-    Σ += weights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
-    Σ += weights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
-    Σ += weights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
+    componentweights = roundinfo.componentweights
+    Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
+    Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += componentweights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += componentweights.teamhistory  * teamadjhistorymatrix(feasiblepanels, roundinfo)
+    Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
+    Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
+    Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
+    Σ = spdiagm(roundinfo.debateweights) * Σ
     return Σ
 end
 
@@ -53,17 +55,18 @@ end
 
 """
 Returns the score for the given panel and debate, using the round information.
+This score does *not* account for the weight of the debate.
 """
 function score(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator})
-    weights = roundinfo.weights
-    σ  = weights.quality      * panelquality(panel)
-    σ += weights.regional     * panelregionalrepresentationscore(debate, panel)
-    σ += weights.language     * panellanguagerepresentationscore(debate, panel)
-    σ += weights.gender       * panelgenderrepresentationscore(debate, panel)
-    σ += weights.teamhistory  * teamadjhistoryscore(roundinfo, debate, panel)
-    σ += weights.adjhistory   * adjadjhistoryscore(roundinfo, panel)
-    σ += weights.teamconflict * teamadjconflictsscore(roundinfo, debate, panel)
-    σ += weights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
+    componentweights = roundinfo.componentweights
+    σ  = componentweights.quality      * panelquality(panel)
+    σ += componentweights.regional     * panelregionalrepresentationscore(debate, panel)
+    σ += componentweights.language     * panellanguagerepresentationscore(debate, panel)
+    σ += componentweights.gender       * panelgenderrepresentationscore(debate, panel)
+    σ += componentweights.teamhistory  * teamadjhistoryscore(roundinfo, debate, panel)
+    σ += componentweights.adjhistory   * adjadjhistoryscore(roundinfo, panel)
+    σ += componentweights.teamconflict * teamadjconflictsscore(roundinfo, debate, panel)
+    σ += componentweights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
     return σ
 end
 

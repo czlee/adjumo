@@ -116,7 +116,7 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool})
     return allocation
 end
 
-function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator})
+function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator}, debateweight::Float64)
     println("Teams:")
     for team in debate
         printfmtln("   {:<20}     {:<10}  {:1} {:<3} {:<5}",
@@ -168,31 +168,32 @@ function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vec
     ]
     for component in components
         name, weightfield, score = component
-        weight = getfield(roundinfo.weights, weightfield)
+        weight = getfield(roundinfo.componentweights, weightfield)
         printfmtln("{:>25}: {:>9.3f}  {:>12.3f}", name, score, score * weight)
     end
-    printfmtln("{:>25}:            {:>12.3f}", "Overall", score(roundinfo, debate, panel))
+    debatescore = score(roundinfo, debate, panel)
+    printfmtln("{:>25}:            {:>12.3f}  {:>12.3f}", "Overall", debatescore, debatescore * debateweight)
     println()
 end
-showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicator}) = showdebatedetail(roundinfo, roundinfo.debates[debateindex], panel)
+showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicator}) = showdebatedetail(roundinfo, roundinfo.debates[debateindex], panel, roundinfo.debateweights[debateindex])
 
 # Start here
 
 include("random.jl")
 @time begin
-    ndebates = 10
+    ndebates = 20
     currentround = 5
-    weights = AdjumoWeights()
-    weights.quality = 1
-    weights.regional = 0.01
-    weights.language = 1
-    weights.gender = 1
-    weights.teamhistory = 100
-    weights.adjhistory = 100
-    weights.teamconflict = 1e6
-    weights.adjconflict = 1e6
+    componentweights = AdjumoComponentWeights()
+    componentweights.quality = 1
+    componentweights.regional = 0.01
+    componentweights.language = 1
+    componentweights.gender = 1
+    componentweights.teamhistory = 100
+    componentweights.adjhistory = 100
+    componentweights.teamconflict = 1e6
+    componentweights.adjconflict = 1e6
     roundinfo = randomroundinfo(ndebates, currentround)
-    roundinfo.weights = weights
+    roundinfo.componentweights = componentweights
 end
 
 debateindices, panels = allocateadjudicators(roundinfo)

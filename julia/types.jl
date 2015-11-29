@@ -63,7 +63,7 @@ typealias FeasiblePanelsList{T<:Integer} Vector{Vector{Int64}}
 # Factor weightings
 # ==============================================================================
 
-type AdjumoWeights
+type AdjumoComponentWeights
     quality::Float64
     regional::Float64
     language::Float64
@@ -74,8 +74,8 @@ type AdjumoWeights
     adjconflict::Float64
 end
 
-AdjumoWeights() = AdjumoWeights(1,1,1,1,1,1,1,1)
-AdjumoWeights(v::Vector) = AdjumoWeights(v...)
+AdjumoComponentWeights() = AdjumoComponentWeights(1,1,1,1,1,1,1,1)
+AdjumoComponentWeights(v::Vector) = AdjumoComponentWeights(v...)
 
 # ==============================================================================
 # Round information
@@ -106,12 +106,14 @@ type RoundInfo
     adjoffdeate::Vector{Tuple{Adjudicator,Int}}
 
     # Weights
-    weights::AdjumoWeights
+    componentweights::AdjumoComponentWeights
+    debateweights::Vector{Float64}
     currentround::Int
 end
 
-RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict(),Dict(),[],[],AdjumoWeights(),currentround)
-RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],AdjumoWeights(), currentround)
+RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict(),Dict(),[],[],AdjumoComponentWeights(),[],currentround)
+RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],AdjumoComponentWeights(), ones(length(debates)), currentround)
+RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],AdjumoComponentWeights(), debateweights, currentround)
 
 conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts
 conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts
