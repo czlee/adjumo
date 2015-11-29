@@ -213,19 +213,20 @@ include("random.jl")
     roundinfo.componentweights = componentweights
 end
 
+debateindices, panels = allocateadjudicators(roundinfo)
+
+println("Adjudicator constraints:")
 for (adj, debateindex) in roundinfo.adjondebate
     debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
-    printfmtln("{} is forced to be on debate {}", adj.name, debatestr)
+    printfmtln("   {} is forced to be on debate [{}]", adj.name, debatestr)
 end
 for (adj, debateindex) in roundinfo.adjoffdebate
     debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
-    printfmtln("{} is banned from being on debate {}", adj.name, debatestr)
+    printfmtln("   {} is banned from being on debate [{}]", adj.name, debatestr)
 end
 for adjs in roundinfo.adjstogether
-    printfmtln("{} are forced to judge together", join([adj.name for adj in adjs], ", "))
+    printfmtln("   {} are forced to judge together", join([adj.name for adj in adjs], ", "))
 end
-
-debateindices, panels = allocateadjudicators(roundinfo)
 
 println("Result:")
 for (d, panel) in zip(debateindices, panels)
