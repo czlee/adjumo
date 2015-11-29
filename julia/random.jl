@@ -84,5 +84,3 @@ function randomroundinfo(ndebates::Int, currentround::Int)
 
     return roundinfo
 end
-
-;

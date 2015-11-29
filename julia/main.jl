@@ -122,6 +122,8 @@ function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vec
         printfmtln("   {:<20}     {:<10}  {:1} {:<3} {:<6}",
                 team.name, team.institution.code, abbr(team.gender), abbr(team.language), abbr(team.region))
     end
+    drc, teamregionsordered = debateregionclass(debate)
+    printfmtln("   {}  {}", drc, join([abbr(r) for r in teamregionsordered], ", "))
     println("Adjudicators:")
     for adj in panel
         printfmtln("   {:<20}  {:<2} {:<10}  {:1} {:<3} {}",

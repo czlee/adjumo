@@ -13,6 +13,7 @@
 #     δ(p)   is the penalty for adjudicator-adjudicator conflicts and history
 
 using DataStructures
+import Base.string
 
 # ==============================================================================
 # Top-level functions
@@ -174,18 +175,22 @@ function regionalrepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundi
     end
 
     adjregions = Vector{Vector{Region}}(npanels)
+    panelsizes = Vector{Int}(npanels)
     for (i, panel) in enumerate(feasiblepanels)
         adjregions[i] = vcat(Vector{Region}[roundinfo.adjudicators[adj].regions for adj in panel]...)
+        panelsizes[i] = length(panel)
     end
 
     βr = Matrix{Float64}(ndebates, npanels)
-    for ((d, tr), (p, ar)) in product(enumerate(teamregions), enumerate(adjregions))
-        βr[d,p] = panelregionalrepresentationscore(tr, ar)
+    for ((d, tr), (p, (ar, sz))) in product(enumerate(teamregions), enumerate(zip(adjregions, panelsizes)))
+        βr[d,p] = panelregionalrepresentationscore(tr, ar, sz)
     end
     return βr
 end
 
 @enum DebateRegionClass RegionClassA RegionClassB RegionClassC RegionClassD RegionClassE
+
+string(drc::DebateRegionClass) = "region class " * ["A", "B", "C", "D", "E"][Integer(drc)+1]
 
 debateregionclass(teams::Vector{Team}) = debateregionclass(Region[t.region for t in teams])
 
@@ -224,13 +229,13 @@ end
 function panelregionalrepresentationscore(debate::Vector{Team}, adjs::Vector{Adjudicator})
     teamregions = Region[t.region for t in debate]
     adjregions = vcat(Vector{Region}[adj.regions for adj in adjs]...)
-    return panelregionalrepresentationscore(teamregions, adjregions)
+    nadjs = length(adjs)
+    return panelregionalrepresentationscore(teamregions, adjregions, nadjs)
 end
 
 "Returns the regional representation score for a debate whose teams have the given
 regions, and whose adjudicators have the given regions."
-function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregions::Vector{Region})
-    nadjs = length(adjregions)
+function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregions::Vector{Region}, nadjs::Int)
     regionclass, teamregionsordered = debateregionclass(teamregions)
     panelregioncounts = counter(adjregions)
     cost = 0
@@ -290,17 +295,17 @@ function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregion
 
 
     elseif nadjs == 2
-        return 0
+        return -0.1
 
     elseif nadjs == 4
-        return 0
+        return -0.1
 
 
     elseif nadjs == 1
-        return 0
+        return -0.1
 
     else
-        return 0
+        return -0.1
 
     end
 
