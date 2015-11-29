@@ -13,7 +13,7 @@ import Base.show
 
 abbr(g::TeamGender) = ["-", "M", "F", "X"][Integer(g)+1]
 abbr(g::PersonGender) = ["-", "m", "f", "o"][Integer(g)+1]
-abbr(r::Region) = ["-", "NAsia", "SEAsia", "MEast", "SAsia", "Africa", "Ocean", "NAmer", "LAmer", "Europe", "IONA"][Integer(r)+1]
+abbr(r::Region) = ["-", "NAsia", "SEAsi", "MEast", "SAsia", "Afric", "Ocean", "NAmer", "LAmer", "Europ", "IONA"][Integer(r)+1]
 abbr(l::LanguageStatus) = ["-", "EPL", "ESL", "EFL"][Integer(l)+1]
 abbr(r::Wudc2015AdjudicatorRank) = ["T-", "T", "T+", "P-", "P", "P+", "C-", "C", "C+"][Integer(r)+1]
 

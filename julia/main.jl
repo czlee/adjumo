@@ -119,7 +119,7 @@ end
 function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator})
     println("Teams:")
     for team in debate
-        printfmtln("   {:<20}     {:<10}  {:1} {:<3} {:<6}",
+        printfmtln("   {:<20}     {:<10}  {:1} {:<3} {:<5}",
                 team.name, team.institution.code, abbr(team.gender), abbr(team.language), abbr(team.region))
     end
     drc, teamregionsordered = debateregionclass(debate)
@@ -159,6 +159,8 @@ function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vec
     components = [
         ("Panel quality", :quality, panelquality(panel)),
         ("Regional representation", :regional, panelregionalrepresentationscore(debate, panel)),
+        ("Language representation", :language, panellanguagerepresentationscore(debate, panel)),
+        ("Gender representation", :gender, panelgenderrepresentationscore(debate, panel)),
         ("Team-adj history", :teamhistory, teamadjhistoryscore(roundinfo, debate, panel)),
         ("Adj-adj history", :adjhistory, adjadjhistoryscore(roundinfo, panel)),
         ("Team-adj conflicts", :teamconflict, teamadjconflictsscore(roundinfo, debate, panel)),
@@ -182,7 +184,7 @@ include("random.jl")
     currentround = 5
     weights = AdjumoWeights()
     weights.quality = 1
-    weights.regional = 1
+    weights.regional = 0.01
     weights.language = 1
     weights.gender = 1
     weights.teamhistory = 100

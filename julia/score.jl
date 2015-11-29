@@ -58,11 +58,11 @@ function score(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudic
     weights = roundinfo.weights
     σ  = weights.quality      * panelquality(panel)
     σ += weights.regional     * panelregionalrepresentationscore(debate, panel)
-    σ += weights.language     * 0
-    σ += weights.gender       * 0
+    σ += weights.language     * panellanguagerepresentationscore(debate, panel)
+    σ += weights.gender       * panelgenderrepresentationscore(debate, panel)
     σ += weights.teamhistory  * teamadjhistoryscore(roundinfo, debate, panel)
-    σ += weights.adjhistory   * teamadjconflictsscore(roundinfo, debate, panel)
-    σ += weights.teamconflict * adjadjhistoryscore(roundinfo, panel)
+    σ += weights.adjhistory   * adjadjhistoryscore(roundinfo, panel)
+    σ += weights.teamconflict * teamadjconflictsscore(roundinfo, debate, panel)
     σ += weights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
     return σ
 end
@@ -174,16 +174,14 @@ function regionalrepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundi
         teamregions[i] = Region[t.region for t in debate]
     end
 
-    adjregions = Vector{Vector{Region}}(npanels)
-    panelsizes = Vector{Int}(npanels)
+    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels) # adjregions, panelsize
     for (i, panel) in enumerate(feasiblepanels)
-        adjregions[i] = vcat(Vector{Region}[roundinfo.adjudicators[adj].regions for adj in panel]...)
-        panelsizes[i] = length(panel)
+        panelinfos[i] = (length(panel), vcat(Vector{Region}[roundinfo.adjudicators[adj].regions for adj in panel]...))
     end
 
     βr = Matrix{Float64}(ndebates, npanels)
-    for ((d, tr), (p, (ar, sz))) in product(enumerate(teamregions), enumerate(zip(adjregions, panelsizes)))
-        βr[d,p] = panelregionalrepresentationscore(tr, ar, sz)
+    for ((d, tr), (p, pinfo)) in product(enumerate(teamregions), enumerate(panelinfos))
+        βr[d,p] = panelregionalrepresentationscore(tr, pinfo[2], pinfo[1])
     end
     return βr
 end
@@ -327,6 +325,10 @@ function languagerepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundi
     return zeros(ndebates, npanels)
 end
 
+function panellanguagerepresentationscore(debate::Vector{Team}, adjs::Vector{Adjudicator})
+    return 0.0
+end
+
 # ==============================================================================
 # Gender representation
 # ==============================================================================
@@ -339,6 +341,10 @@ function genderrepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundinf
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     return zeros(ndebates, npanels)
+end
+
+function panelgenderrepresentationscore(debate::Vector{Team}, adjs::Vector{Adjudicator})
+    return 0.0
 end
 
 # ==============================================================================
