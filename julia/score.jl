@@ -13,13 +13,14 @@
 #     δ(p)   is the penalty for adjudicator-adjudicator conflicts and history
 
 using DataStructures
+import Base.string
 
 # ==============================================================================
 # Top-level functions
 # ==============================================================================
 
 """
-Returns the score matrix using the information about the round.
+Returns the score matrix using the round information.
 
 The score matrix (denoted `Σ`) will be an `ndebates`-by-`npanels` matrix, where
 `ndebates` is the number of debates in the round and `npanels` is the number of
@@ -30,17 +31,19 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 `roundinfo` is a RoundInfo instance.
 """
 function scorematrix(feasiblepanels::FeasiblePanelsList, roundinfo::RoundInfo)
+    @assert length(roundinfo.debates) == length(roundinfo.debateweights)
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
-    weights = roundinfo.weights
-    Σ  = weights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
-    Σ += weights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += weights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += weights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += weights.teamhistory  * teamadjhistorymatrix(feasiblepanels, roundinfo)
-    Σ += weights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
-    Σ += weights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
-    Σ += weights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
+    componentweights = roundinfo.componentweights
+    Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
+    Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += componentweights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
+    Σ += componentweights.teamhistory  * teamadjhistorymatrix(feasiblepanels, roundinfo)
+    Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
+    Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
+    Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
+    Σ = spdiagm(roundinfo.debateweights) * Σ
     return Σ
 end
 
@@ -48,6 +51,23 @@ function matrixfromvector(f::Function, feasiblepanels::FeasiblePanelsList, round
     v = f(feasiblepanels, roundinfo)
     ndebates = numdebates(roundinfo)
     return repmat(v, ndebates, 1)
+end
+
+"""
+Returns the score for the given panel and debate, using the round information.
+This score does *not* account for the weight of the debate.
+"""
+function score(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator})
+    componentweights = roundinfo.componentweights
+    σ  = componentweights.quality      * panelquality(panel)
+    σ += componentweights.regional     * panelregionalrepresentationscore(debate, panel)
+    σ += componentweights.language     * panellanguagerepresentationscore(debate, panel)
+    σ += componentweights.gender       * panelgenderrepresentationscore(debate, panel)
+    σ += componentweights.teamhistory  * teamadjhistoryscore(roundinfo, debate, panel)
+    σ += componentweights.adjhistory   * adjadjhistoryscore(roundinfo, panel)
+    σ += componentweights.teamconflict * teamadjconflictsscore(roundinfo, debate, panel)
+    σ += componentweights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
+    return σ
 end
 
 
@@ -157,19 +177,21 @@ function regionalrepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundi
         teamregions[i] = Region[t.region for t in debate]
     end
 
-    adjregions = Vector{Vector{Region}}(npanels)
+    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels) # adjregions, panelsize
     for (i, panel) in enumerate(feasiblepanels)
-        adjregions[i] = vcat(Vector{Region}[roundinfo.adjudicators[adj].regions for adj in panel]...)
+        panelinfos[i] = (length(panel), vcat(Vector{Region}[roundinfo.adjudicators[adj].regions for adj in panel]...))
     end
 
     βr = Matrix{Float64}(ndebates, npanels)
-    for ((d, tr), (p, ar)) in product(enumerate(teamregions), enumerate(adjregions))
-        βr[d,p] = panelregionalrepresentationscore(tr, ar)
+    for ((d, tr), (p, pinfo)) in product(enumerate(teamregions), enumerate(panelinfos))
+        βr[d,p] = panelregionalrepresentationscore(tr, pinfo[2], pinfo[1])
     end
     return βr
 end
 
 @enum DebateRegionClass RegionClassA RegionClassB RegionClassC RegionClassD RegionClassE
+
+string(drc::DebateRegionClass) = "region class " * ["A", "B", "C", "D", "E"][Integer(drc)+1]
 
 debateregionclass(teams::Vector{Team}) = debateregionclass(Region[t.region for t in teams])
 
@@ -208,13 +230,13 @@ end
 function panelregionalrepresentationscore(debate::Vector{Team}, adjs::Vector{Adjudicator})
     teamregions = Region[t.region for t in debate]
     adjregions = vcat(Vector{Region}[adj.regions for adj in adjs]...)
-    return panelregionalrepresentationscore(teamregions, adjregions)
+    nadjs = length(adjs)
+    return panelregionalrepresentationscore(teamregions, adjregions, nadjs)
 end
 
 "Returns the regional representation score for a debate whose teams have the given
 regions, and whose adjudicators have the given regions."
-function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregions::Vector{Region})
-    nadjs = length(adjregions)
+function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregions::Vector{Region}, nadjs::Int)
     regionclass, teamregionsordered = debateregionclass(teamregions)
     panelregioncounts = counter(adjregions)
     cost = 0
@@ -274,17 +296,17 @@ function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregion
 
 
     elseif nadjs == 2
-        return 0
+        return -0.1
 
     elseif nadjs == 4
-        return 0
+        return -0.1
 
 
     elseif nadjs == 1
-        return 0
+        return -0.1
 
     else
-        return 0
+        return -0.1
 
     end
 
@@ -306,6 +328,10 @@ function languagerepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundi
     return zeros(ndebates, npanels)
 end
 
+function panellanguagerepresentationscore(debate::Vector{Team}, adjs::Vector{Adjudicator})
+    return 0.0
+end
+
 # ==============================================================================
 # Gender representation
 # ==============================================================================
@@ -318,6 +344,10 @@ function genderrepresentationmatrix(feasiblepanels::FeasiblePanelsList, roundinf
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     return zeros(ndebates, npanels)
+end
+
+function panelgenderrepresentationscore(debate::Vector{Team}, adjs::Vector{Adjudicator})
+    return 0.0
 end
 
 # ==============================================================================

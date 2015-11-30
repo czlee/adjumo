@@ -14,6 +14,14 @@ using Formatting
 include("types.jl")
 include("score.jl")
 
+function convertconstraints(adjudicators::Vector{Adjudicator}, original::Vector{Tuple{Adjudicator,Int}})
+    converted = Vector{Tuple{Int,Int}}(length(original))
+    for (i, (adj, debateindex)) in enumerate(original)
+        converted[i] = (findfirst(adjudicators, adj), debateindex)
+    end
+    return converted
+end
+
 """
 Top-level adjudicator allocation function.
 `roundinfo` is a RoundInfo instance.
@@ -23,7 +31,9 @@ function allocateadjudicators(roundinfo::RoundInfo)
     @time Σ = scorematrix(feasiblepanels, roundinfo)
 
     @time Q = panelmembershipmatrix(feasiblepanels, numadjs(roundinfo))
-    debateindices, panelindices = solveoptimizationproblem(Σ, Q)
+    adjson = convertconstraints(roundinfo.adjudicators, roundinfo.adjondebate)
+    adjsoff = convertconstraints(roundinfo.adjudicators, roundinfo.adjoffdebate)
+    debateindices, panelindices = solveoptimizationproblem(Σ, Q, adjson, adjsoff)
 
     panels = Vector{Vector{Adjudicator}}()
     for p in panelindices
@@ -48,7 +58,15 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
     panellists = nchairs+1:nadjs
     panellistcombs = combinations(panellists, 2)
     panels = Vector{Int64}[[c; p] for (c, p) in Iterators.product(chairs, panellistcombs)]
-    filter!(panel -> !hasconflict(roundinfo, Adjudicator[roundinfo.adjudicators[a] for a in panel]), panels) # remove panels with adj-adj conflicts
+
+    # panels with judges that conflict with each other are not feasible
+    filter!(panel -> !hasconflict(roundinfo, adjudicatorsfromindices(roundinfo, panel)), panels) # remove panels with adj-adj conflicts
+
+    # panels with some but not all of a list of judges that must judge together are not feasible
+    for adjs in roundinfo.adjstogether
+        filter!(panel -> count(a -> a ∈ adjudicatorsfromindices(roundinfo, panel), adjs) ∈ [0, length(adjs)], panels)
+    end
+
     return panels
 end
 
@@ -86,7 +104,7 @@ Solves the optimization problem for score matrix `Σ` and panel membership
 Returns a list of 2-tuples, `(debate, panel)`, where `debate` is the column
     number of the debate and `panel` is the row number of the panel.
 """
-function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool})
+function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool}, adjson::Vector{Tuple{Int,Int}}, adjsoff::Vector{Tuple{Int,Int}})
 
     (ndebates, npanels) = size(Σ)
 
@@ -104,8 +122,12 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool})
     @setObjective(m, Max, sum(Σ.*X))
     @addConstraint(m, X*ones(npanels) .== 1)
     @addConstraint(m, ones(1,ndebates)*X*Q .== 1)
-
-    # TODO add team-adj conflict constraint
+    for (a, d) in adjson
+        @addConstraint(m, (X*Q)[d,a] == 1)
+    end
+    for (a, d) in adjsoff
+        @addConstraint(m, (X*Q)[d,a] == 0)
+    end
 
     @printf("There are %d panels to choose from.\n", npanels)
 
@@ -116,36 +138,100 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool})
     return allocation
 end
 
-function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator})
+function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator}, debateweight::Float64)
     println("Teams:")
     for team in debate
-        printfmtln("   {1:<20}  {2:<20}  {3:<20} {4:<10} {5:<10}",
-                team.name, team.institution.name, team.region, team.gender, team.language)
+        printfmtln("   {:<20}     {:<10}  {:1} {:<3} {:<5}",
+                team.name, team.institution.code, abbr(team.gender), abbr(team.language), abbr(team.region))
     end
+    drc, teamregionsordered = debateregionclass(debate)
+    printfmtln("   {}: {}", drc, join([abbr(r) for r in teamregionsordered], ", "))
     println("Adjudicators:")
     for adj in panel
-        println("   $(adj.name)   $(adj.ranking) [$(adj.institution.name)] $(adj.regions) $(adj.gender) $(adj.language)")
+        printfmtln("   {:<20}  {:<2} {:<10}  {:1} {:<3} {}",
+                adj.name, abbr(adj.ranking), adj.institution.code, abbr(adj.gender), abbr(adj.language), join([abbr(r) for r in adj.regions], ","))
+    end
+    println("Conflicts:")
+    for (team, adj) in product(debate, panel)
+        if conflicted(roundinfo, team, adj)
+            printfmtln("   {} conflicts with {}", adj.name, team.name)
+        end
+    end
+    for (adj1, adj2) in subsets(panel, 2)
+        if conflicted(roundinfo, adj1, adj2)
+            printfmtln("   {} conflicts with {}", adj1.name, adj2.name)
+        end
+    end
+    println("History:")
+    for (team, adj) in product(debate, panel)
+        history = roundsseen(roundinfo, team, adj)
+        if length(history) > 0
+            printfmtln("   {} saw {} in round{} {}", adj.name, team.name,
+                    (length(history) > 1) ? "s" : "", join([string(r) for r in history], ", "))
+        end
+    end
+    for (adj1, adj2) in subsets(panel, 2)
+        history = roundsseen(roundinfo, adj1, adj2)
+        if length(history) > 0
+            printfmtln("   {} was with {} in round{} {}", adj1.name, adj2.name,
+                    (length(history) > 1) ? "s" : "", join([string(r) for r in history], ", "))
+        end
     end
     println("Scores:")
-    println("             Panel quality: $(panelquality(panel))")
-    println("   Regional representation: $(panelregionalrepresentationscore(debate, panel))")
-    println("          Team-adj history: $(teamadjhistoryscore(roundinfo, debate, panel))")
-    println("        Team-adj conflicts: $(teamadjconflictsscore(roundinfo, debate, panel))")
-    println("           Adj-adj history: $(adjadjhistoryscore(roundinfo, panel))")
-    println("         Adj-adj conflicts: $(adjadjconflictsscore(roundinfo, panel))")
+    components = [
+        ("Panel quality", :quality, panelquality(panel)),
+        ("Regional representation", :regional, panelregionalrepresentationscore(debate, panel)),
+        ("Language representation", :language, panellanguagerepresentationscore(debate, panel)),
+        ("Gender representation", :gender, panelgenderrepresentationscore(debate, panel)),
+        ("Team-adj history", :teamhistory, teamadjhistoryscore(roundinfo, debate, panel)),
+        ("Adj-adj history", :adjhistory, adjadjhistoryscore(roundinfo, panel)),
+        ("Team-adj conflicts", :teamconflict, teamadjconflictsscore(roundinfo, debate, panel)),
+        ("Adj-adj conflicts", :adjconflict, adjadjconflictsscore(roundinfo, panel)),
+    ]
+    for component in components
+        name, weightfield, score = component
+        weight = getfield(roundinfo.componentweights, weightfield)
+        printfmtln("{:>25}: {:>9.3f}  {:>12.3f}", name, score, score * weight)
+    end
+    debatescore = score(roundinfo, debate, panel)
+    printfmtln("{:>25}: ({:>8.3f}) {:>12.3f}  {:>12.3f}", "Overall", debateweight, debatescore, debatescore * debateweight)
     println()
 end
-showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicator}) = showdebatedetail(roundinfo, roundinfo.debates[debateindex], panel)
+showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicator}) = showdebatedetail(roundinfo, roundinfo.debates[debateindex], panel, roundinfo.debateweights[debateindex])
 
 # Start here
 
+include("random.jl")
 @time begin
-    ndebates = 10
+    ndebates = 12
     currentround = 5
+    componentweights = AdjumoComponentWeights()
+    componentweights.quality = 1
+    componentweights.regional = 0.01
+    componentweights.language = 1
+    componentweights.gender = 1
+    componentweights.teamhistory = 100
+    componentweights.adjhistory = 100
+    componentweights.teamconflict = 1e6
+    componentweights.adjconflict = 1e6
     roundinfo = randomroundinfo(ndebates, currentround)
+    roundinfo.componentweights = componentweights
 end
 
 debateindices, panels = allocateadjudicators(roundinfo)
+
+println("Adjudicator constraints:")
+for (adj, debateindex) in roundinfo.adjondebate
+    debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
+    printfmtln("   {} is forced to be on debate [{}]", adj.name, debatestr)
+end
+for (adj, debateindex) in roundinfo.adjoffdebate
+    debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
+    printfmtln("   {} is banned from being on debate [{}]", adj.name, debatestr)
+end
+for adjs in roundinfo.adjstogether
+    printfmtln("   {} are forced to judge together", join([adj.name for adj in adjs], ", "))
+end
 
 println("Result:")
 for (d, panel) in zip(debateindices, panels)

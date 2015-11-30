@@ -1,3 +1,21 @@
+To do
+=====
+Add semantic information about chair to panel, create a Panel class, one that
+relies on integers and a different more friendly one that involves Adjudicators.
+
+Variables
+=========
+`X[d,p]` (nd by np) is 1 if panel `p` is assigned to debate `d`, and 0 if not.
+`Σ[d,p]` (nd by np) is the score when assigning panel `p` to debate `d`.
+`Q[p,a]` (np by na) is 1 if panel `p` contains adjudicator `a`, and 0 if not.
+
+`(Σ.*X)[d,p]` (nd by np) are the scores for the assigned panels, 0 if not assigned.
+`(X*1)[d]`    (nd by 1)  is the number of panels assigned to debate `d`.
+`1'*X[p]`     (1 by np)  is the number of debates assigned to panel `p`.
+`(X*Q)[d,a]`  (nd by na) is the number of times adjudicator `a` is assigned to debate `d`.
+`(1*X*Q)[a]`  (1 by na)  is the number of times adjudicator `a` is assigned.
+
+
 Information required by the system
 ==================================
  - Meta-information
