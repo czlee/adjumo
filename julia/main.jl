@@ -226,7 +226,7 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{
         printfmtln("   {} are forced to judge together", join([adj.name for adj in adjs], ", "))
     end
 
-    println("Scores:")
+    println("Scores:                          raw      weighted")
     components = [
         ("Panel quality", :quality, panelquality(panel)),
         ("Regional representation", :regional, panelregionalrepresentationscore(debate, panel)),
@@ -243,7 +243,7 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{
         printfmtln("{:>25}: {:>9.3f}  {:>12.3f}", name, score, score * weight)
     end
     debatescore = score(roundinfo, debate, panel)
-    printfmtln("{:>25}: ({:>8.3f}) {:>12.3f}  {:>12.3f}", "Overall", debateweight, debatescore, debatescore * debateweight)
+    printfmtln("{:>25}:            {:>12.3f}  ({:>6.3f})  {:>12.3f}", "Overall", debatescore, debateweight, debatescore * debateweight)
     println()
 end
 
