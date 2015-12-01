@@ -1,2 +1,22 @@
 
-@import "../bower_components/bootstrap/scss/bootstrap"
+@import "../bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
+
+.debate-panel-holder {
+}
+.debate-panel {
+  background: #EFE;
+  overflow: auto;
+  padding: 8px 0;
+}
+
+.debate-adjudicator {
+  min-width: 175px;
+  text-align: left;
+  padding: 6px;
+  &:hover {
+    cursor: move;
+  }
+}
+.drag-handle {
+  float: right;
+}
