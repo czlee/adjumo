@@ -11,6 +11,7 @@ using Gurobi
 using JuMP
 using Iterators
 using Formatting
+using ArgParse
 include("types.jl")
 include("score.jl")
 
@@ -246,47 +247,64 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{
     println()
 end
 
+function showconstraints(roundinfo::RoundInfo)
+    println("Adjudicator constraints:")
+    for (adj1, adj2) in roundinfo.adjadjconflicts
+        printfmtln("   {} and {} conflict with each other", adj1.name, adj2.name)
+    end
+    for (team, adj) in roundinfo.teamadjconflicts
+        printfmtln("   {} conflicts with {}", adj.name, team.name)
+    end
+    for (adj, debateindex) in roundinfo.adjondebate
+        debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
+        printfmtln("   {} is forced to judge debate [{}]", adj.name, debatestr)
+    end
+    for (adj, debateindex) in roundinfo.adjoffdebate
+        debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
+        printfmtln("   {} is banned from judging debate [{}]", adj.name, debatestr)
+    end
+    for adjs in roundinfo.adjstogether
+        printfmtln("   {} are forced to judge together", join([adj.name for adj in adjs], ", "))
+    end
+    println()
+end
+
+
 # Start here
 
 include("random.jl")
-@time begin
-    ndebates = 5
-    currentround = 5
-    componentweights = AdjumoComponentWeights()
-    componentweights.quality = 1
-    componentweights.regional = 0.01
-    componentweights.language = 1
-    componentweights.gender = 1
-    componentweights.teamhistory = 100
-    componentweights.adjhistory = 100
-    componentweights.teamconflict = 1e6
-    componentweights.adjconflict = 1e6
-    roundinfo = randomroundinfo(ndebates, currentround)
-    roundinfo.componentweights = componentweights
+
+s = ArgParseSettings()
+@add_arg_table s begin
+    "ndebates"
+        help = "Number of debates in round"
+        arg_type = Int
+        default = 5
+    "currentround"
+        help = "Current round number"
+        arg_type = Int
+        default = 5
 end
+args = parse_args(ARGS, s)
+
+ndebates = args["ndebates"]
+currentround = args["currentround"]
+componentweights = AdjumoComponentWeights()
+componentweights.quality = 1
+componentweights.regional = 0.01
+componentweights.language = 1
+componentweights.gender = 1
+componentweights.teamhistory = 100
+componentweights.adjhistory = 100
+componentweights.teamconflict = 1e6
+componentweights.adjconflict = 1e6
+@time roundinfo = randomroundinfo(ndebates, currentround)
+roundinfo.componentweights = componentweights
 
 debateindices, panels = allocateadjudicators(roundinfo)
 
-println("Adjudicator constraints:")
-for (adj1, adj2) in roundinfo.adjadjconflicts
-    printfmtln("   {} and {} conflict with each other", adj1.name, adj2.name)
-end
-for (team, adj) in roundinfo.teamadjconflicts
-    printfmtln("   {} conflicts with {}", adj.name, team.name)
-end
-for (adj, debateindex) in roundinfo.adjondebate
-    debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
-    printfmtln("   {} is forced to judge debate [{}]", adj.name, debatestr)
-end
-for (adj, debateindex) in roundinfo.adjoffdebate
-    debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
-    printfmtln("   {} is banned from judging debate [{}]", adj.name, debatestr)
-end
-for adjs in roundinfo.adjstogether
-    printfmtln("   {} are forced to judge together", join([adj.name for adj in adjs], ", "))
-end
+showconstraints(roundinfo)
 
-println("Result:")
 for (d, panel) in zip(debateindices, panels)
     showdebatedetail(roundinfo, d, panel)
 end
