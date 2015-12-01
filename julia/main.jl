@@ -27,13 +27,20 @@ Top-level adjudicator allocation function.
 `roundinfo` is a RoundInfo instance.
 """
 function allocateadjudicators(roundinfo::RoundInfo)
-    feasiblepanels = generatefeasiblepanels(roundinfo)
+
+    feasible = checkfeasibility(roundinfo)
+    if !feasible
+        println("Error: Incompatible constraints found.")
+        return ([], [])
+    end
+
+    @time feasiblepanels = generatefeasiblepanels(roundinfo)
     @time Σ = scorematrix(feasiblepanels, roundinfo)
 
-    @time Q = panelmembershipmatrix(feasiblepanels, numadjs(roundinfo))
+    Q = panelmembershipmatrix(feasiblepanels, numadjs(roundinfo))
     adjson = convertconstraints(roundinfo.adjudicators, roundinfo.adjondebate)
     adjsoff = convertconstraints(roundinfo.adjudicators, roundinfo.adjoffdebate)
-    debateindices, panelindices = solveoptimizationproblem(Σ, Q, adjson, adjsoff)
+    @time debateindices, panelindices = solveoptimizationproblem(Σ, Q, adjson, adjsoff)
 
     panels = Vector{Vector{Adjudicator}}()
     for p in panelindices
@@ -42,6 +49,23 @@ function allocateadjudicators(roundinfo::RoundInfo)
     end
 
     return debateindices, panels
+end
+
+
+"""Checks the given round information for conditions that would definitely
+make the problem infeasible."""
+function checkfeasibility(roundinfo::RoundInfo)
+    feasible = true
+    for adjs in roundinfo.adjstogether
+        for (adj1, adj2) in combinations(adjs, 2)
+            if conflicted(roundinfo, adj1, adj2)
+                printfmtln("Error: {} and {} are both forced to judge together and conflicted.",
+                        adj1.name, adj2.name)
+                feasible = false
+            end
+        end
+    end
+    return feasible
 end
 
 """
@@ -133,24 +157,35 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool}, adjso
 
     @time status = solve(m)
 
+    if status == :Infeasible
+        println("Error: Problem is infeasible.")
+        return ([], [])
+    end
+
     println("Objective value: ", getObjectiveValue(m))
     allocation = findn(getValue(X))
     return allocation
 end
 
-function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vector{Adjudicator}, debateweight::Float64)
+function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicator})
+    debate = roundinfo.debates[debateindex]
+    debateweight = roundinfo.debateweights[debateindex]
+    println("== Debate $debateindex ==")
+
     println("Teams:")
     for team in debate
-        printfmtln("   {:<20}     {:<10}  {:1} {:<3} {:<5}",
+        printfmtln("   {:<20}     {:<20}  {:1} {:<3} {:<5}",
                 team.name, team.institution.code, abbr(team.gender), abbr(team.language), abbr(team.region))
     end
     drc, teamregionsordered = debateregionclass(debate)
     printfmtln("   {}: {}", drc, join([abbr(r) for r in teamregionsordered], ", "))
+
     println("Adjudicators:")
     for adj in panel
-        printfmtln("   {:<20}  {:<2} {:<10}  {:1} {:<3} {}",
+        printfmtln("   {:<20}  {:<2} {:<20}  {:1} {:<3} {}",
                 adj.name, abbr(adj.ranking), adj.institution.code, abbr(adj.gender), abbr(adj.language), join([abbr(r) for r in adj.regions], ","))
     end
+
     println("Conflicts:")
     for (team, adj) in product(debate, panel)
         if conflicted(roundinfo, team, adj)
@@ -162,6 +197,7 @@ function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vec
             printfmtln("   {} conflicts with {}", adj1.name, adj2.name)
         end
     end
+
     println("History:")
     for (team, adj) in product(debate, panel)
         history = roundsseen(roundinfo, team, adj)
@@ -177,6 +213,18 @@ function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vec
                     (length(history) > 1) ? "s" : "", join([string(r) for r in history], ", "))
         end
     end
+
+    println("Constraints:")
+    for adj in adjsondebate(roundinfo, debateindex)
+        println("   $(adj.name) is forced to judge this debate")
+    end
+    for adj in adjsoffdebate(roundinfo, debateindex)
+        printfmtln("   $(adj.name) is banned from judging this debate")
+    end
+    for adjs in adjstogether(roundinfo, panel)
+        printfmtln("   {} are forced to judge together", join([adj.name for adj in adjs], ", "))
+    end
+
     println("Scores:")
     components = [
         ("Panel quality", :quality, panelquality(panel)),
@@ -197,13 +245,12 @@ function showdebatedetail(roundinfo::RoundInfo, debate::Vector{Team}, panel::Vec
     printfmtln("{:>25}: ({:>8.3f}) {:>12.3f}  {:>12.3f}", "Overall", debateweight, debatescore, debatescore * debateweight)
     println()
 end
-showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Vector{Adjudicator}) = showdebatedetail(roundinfo, roundinfo.debates[debateindex], panel, roundinfo.debateweights[debateindex])
 
 # Start here
 
 include("random.jl")
 @time begin
-    ndebates = 12
+    ndebates = 5
     currentround = 5
     componentweights = AdjumoComponentWeights()
     componentweights.quality = 1
@@ -221,13 +268,19 @@ end
 debateindices, panels = allocateadjudicators(roundinfo)
 
 println("Adjudicator constraints:")
+for (adj1, adj2) in roundinfo.adjadjconflicts
+    printfmtln("   {} and {} conflict with each other", adj1.name, adj2.name)
+end
+for (team, adj) in roundinfo.teamadjconflicts
+    printfmtln("   {} conflicts with {}", adj.name, team.name)
+end
 for (adj, debateindex) in roundinfo.adjondebate
     debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
-    printfmtln("   {} is forced to be on debate [{}]", adj.name, debatestr)
+    printfmtln("   {} is forced to judge debate [{}]", adj.name, debatestr)
 end
 for (adj, debateindex) in roundinfo.adjoffdebate
     debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
-    printfmtln("   {} is banned from being on debate [{}]", adj.name, debatestr)
+    printfmtln("   {} is banned from judging debate [{}]", adj.name, debatestr)
 end
 for adjs in roundinfo.adjstogether
     printfmtln("   {} are forced to judge together", join([adj.name for adj in adjs], ", "))

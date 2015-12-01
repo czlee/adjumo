@@ -429,7 +429,7 @@ function sumadjadjscoresvector(adjadjscore::Function, feasiblepanels::FeasiblePa
     npanels = length(feasiblepanels)
     γ = zeros(1, npanels)
     for (p, panel) in enumerate(feasiblepanels)
-        for (a1, a2) in subsets(panel, 2) # a1, a2 are integer indices, not Adjudicators
+        for (a1, a2) in combinations(panel, 2) # a1, a2 are integer indices, not Adjudicators
             γ[p] += get!(ξ, (a1, a2)) do
                 adj1 = roundinfo.adjudicators[a1]
                 adj2 = roundinfo.adjudicators[a2]
@@ -452,7 +452,7 @@ evaluated.
 """
 function sumadjadjscores(adjadjscore::Function, roundinfo::RoundInfo, adjudicators::Vector{Adjudicator})
     score = 0
-    for (adj1, adj2) in subsets(adjudicators, 2)
+    for (adj1, adj2) in combinations(adjudicators, 2)
         score += adjadjscore(roundinfo, adj1, adj2)
     end
     return score

@@ -1,7 +1,4 @@
-function randomregion!(item)
-    # TODO replace these with more realistic distributions
-    item.region = rand([instances(Region)[2:end]...])
-end
+include("testdata.jl")
 
 function addrandomregions!(adj::Adjudicator)
     # TODO replace these with more realistic distributions
@@ -35,13 +32,26 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     nteams = 4ndebates
     ninstitutions = 2ndebates
 
+    roundinfo = RoundInfo(currentround)
 
-    institutions = [Institution("Institution $(i)", "Inst$(i)") for i = 1:ninstitutions]
-    for inst in institutions
-        randomregion!(inst)
+    institutions = roundinfo.institutions
+    teams = roundinfo.teams
+    adjudicators = roundinfo.adjudicators
+
+    for args in rand(INSTITUTIONS, ninstitutions)
+        addinstitution!(roundinfo, args...)
     end
-    teams = [Team("Team $(i)", rand(institutions)) for i = 1:nteams]
-    adjudicators = [Adjudicator("Adjudicator $(i)", rand(institutions)) for i = 1:nadjs]
+
+    for i in 1:nteams
+        inst = rand(institutions)
+        existing = numteamsfrominstitution(roundinfo, inst)
+        addteam!(roundinfo, "$(inst.code) $(existing+1)", inst)
+    end
+
+    adjnames = rand(PERSON_NAMES, nadjs)
+    for (name, gender) in adjnames
+        addadjudicator!(roundinfo, name, rand(institutions), gender)
+    end
 
     for team in teams
         randomgender!(team)
@@ -49,7 +59,6 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     end
     for adj in adjudicators
         randomranking!(adj)
-        randomgender!(adj)
         randomlanguage!(adj)
         addrandomregions!(adj)
     end
@@ -58,11 +67,14 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     teams_shuffled = reshape(shuffle(teams), (4, ndebates))
     debates = [teams_shuffled[:,i] for i in 1:ndebates]
     debateweights = rand(length(debates)) * 10
-    roundinfo = RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentround)
 
-    for i in 1:nadjs
-        addadjadjconflict!(roundinfo, rand(adjudicators), rand(adjudicators))
-        addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
+    setdebates!(roundinfo, debates)
+    setdebateweights!(roundinfo, debateweights)
+
+    println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
+
+    for i in 1:nadjs÷3
+        addadjadjconflict!(roundinfo, rand(adjudicators, 2)...)
         addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
     end
 
@@ -91,3 +103,4 @@ function randomroundinfo(ndebates::Int, currentround::Int)
 
     return roundinfo
 end
+

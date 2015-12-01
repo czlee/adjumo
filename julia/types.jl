@@ -52,6 +52,7 @@ end
 
 Adjudicator(name::UTF8String, institution::Institution) = Adjudicator(name, institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
 Adjudicator(name::AbstractString, institution::Institution) = Adjudicator(UTF8String(name), institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
+Adjudicator(name::AbstractString, institution::Institution, gender::PersonGender) = Adjudicator(UTF8String(name), institution, Panellist, gender, Region[institution.region], NoLanguage)
 Adjudicator(name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(UTF8String(name), institution, ranking, PersonNoGender, Region[institution.region], NoLanguage)
 show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator(\"$(adj.name)\", \"$(adj.institution.code)\")")
 
@@ -116,8 +117,8 @@ RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict(),Dict(),[],[],[],Adj
 RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],[].AdjumoComponentWeights(), ones(length(debates)), currentround)
 RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],[],AdjumoComponentWeights(), debateweights, currentround)
 
-conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts
-conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts
+conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts || adj1.institution == adj2.institution
+conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts || team.institution == adj.institution
 hasconflict(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = any(pair -> conflicted(roundinfo, pair...), subsets(adjs, 2))
 roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = [get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])]
 roundsseen(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.teamadjhistory, (team, adj), Int[])
@@ -128,6 +129,15 @@ numadjs(rinfo::RoundInfo) = length(rinfo.adjudicators)
 addinstitution!(rinfo::RoundInfo, args...) = push!(rinfo.institutions, Institution(args...))
 addteam!(rinfo::RoundInfo, args...) = push!(rinfo.teams, Team(args...))
 addadjudicator!(rinfo::RoundInfo, args...) = push!(rinfo.adjudicators, Adjudicator(args...))
+
+function setdebates!(rinfo::RoundInfo, debates)
+    rinfo.debates = debates
+end
+function setdebateweights!(rinfo::RoundInfo, debateweights)
+    rinfo.debateweights = debateweights
+end
+
+numteamsfrominstitution(rinfo::RoundInfo, inst::Institution) = count(x -> x.institution == inst, rinfo.teams)
 
 # These functions don't check for validity; that is, they don't check to see
 # that the teams and adjudicators in question are actually in rinfo.teams
@@ -140,6 +150,10 @@ addteamadjhistory!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int) =
 addadjondebate!(rinfo::RoundInfo, adj::Adjudicator, debateindex::Int) = push!(rinfo.adjondebate, (adj, debateindex))
 addadjoffdebate!(rinfo::RoundInfo, adj::Adjudicator, debateindex::Int) = push!(rinfo.adjoffdebate, (adj, debateindex))
 addadjstogether!(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = push!(rinfo.adjstogether, adjs)
+
+adjsondebate(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filter(y -> y[2] == debateindex, rinfo.adjondebate)]
+adjsoffdebate(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filter(y -> y[2] == debateindex, rinfo.adjoffdebate)]
+adjstogether(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = filter(x -> x ⊆ adjs, rinfo.adjstogether)
 
 adjudicatorsfromindices(roundinfo::RoundInfo, indices::Vector{Int64}) = Adjudicator[roundinfo.adjudicators[a] for a in indices]
 indicesfromadjudicators(roundinfo::RoundInfo, adjs::Vector{Adjudicator}) = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjs]
