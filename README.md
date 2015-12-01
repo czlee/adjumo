@@ -12,6 +12,9 @@ You then need to install the required packages:
 ``` julia
 julia> Pkg.add("JuMP")
 julia> Pkg.add("Iterators")
+julia> Pkg.add("ArgParse")
+julia> Pkg.add("Formatting")
+julia> Pkg.add("DataStructures")
 ```
 
 At the moment, I'm using Gurobi on an academic license. Gurobi is a commercial optimization solver.
@@ -42,3 +45,16 @@ to try harder with GLPK at some point.
 - ```$ python -m SimpleHTTPServer 8000```
 - Compile and watch styles.scss > styles.css using the SASS compiler of your choice
 
+## Running
+
+#### Julia part only
+
+The main file is called `main.jl` and can be run directly from the shell:
+``` bash
+$ julia main.jl
+```
+
+This generates random data for a pretend round and runs the algorithm on it. You can run it with a different number of debates, or pretend the current round is something else. For example, to run it with a round comprising 10 debates, pretending it is currently round 3:
+``` bash
+$ julia main.jl -n 10 -r 3
+```

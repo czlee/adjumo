@@ -276,11 +276,11 @@ include("random.jl")
 
 s = ArgParseSettings()
 @add_arg_table s begin
-    "ndebates"
+    "-n", "--ndebates"
         help = "Number of debates in round"
         arg_type = Int
         default = 5
-    "currentround"
+    "-r", "--currentround"
         help = "Current round number"
         arg_type = Int
         default = 5
