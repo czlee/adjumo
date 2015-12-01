@@ -6,7 +6,7 @@
 #### Julia & Julia Packages
 
 You need to install Julia, and then install a bunch of Julia packages. Julia downloads are at http://julialang.org/downloads/.
-Download and install the latest **stable** version, which is currently **0.4.0**.
+Download and install the latest **stable** version, which is currently **0.4.1**.
 
 You then need to install the required packages:
 ``` julia
