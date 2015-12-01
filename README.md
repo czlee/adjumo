@@ -3,7 +3,9 @@
 
 ## Getting started
 
-You need to install Julia, and then install a bunch of Julia packages. Julia downloads are at http://julialang.org/downloads/. 
+#### Julia & Julia Packages
+
+You need to install Julia, and then install a bunch of Julia packages. Julia downloads are at http://julialang.org/downloads/.
 Download and install the latest **stable** version, which is currently **0.4.0**.
 
 You then need to install the required packages:
@@ -12,7 +14,7 @@ julia> Pkg.add("JuMP")
 julia> Pkg.add("Iterators")
 ```
 
-At the moment, I'm using Gurobi on an academic license. Gurobi is a commercial optimization solver. 
+At the moment, I'm using Gurobi on an academic license. Gurobi is a commercial optimization solver.
 To use it, you need to register for an account at http://www.gurobi.com/ and request an academic
 license. Naturally, this requires you to be a student or staff member at a degree-granting institution.
 If you can get hold of a Gurobi license:
@@ -32,3 +34,11 @@ I've also got a line in for `GLPKMathProgInterface`, but it doesn't work very we
 sure why. GLPK (and Gurobi) supports MIP callbacks and CBC doesn't, and we might want MIP callbacks
 in order to pull multiple solutions and have premature termination in there, so I'll probably want
 to try harder with GLPK at some point.
+
+#### Front-End
+
+- [Install Bower](http://bower.io) (requires git, node and the npm)
+- ```$ bower install```
+- ```$ python -m SimpleHTTPServer 8000```
+- Compile and watch styles.scss > styles.css using the SASS compiler of your choice
+
