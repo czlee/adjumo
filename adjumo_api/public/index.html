@@ -2,9 +2,9 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta Philip Belesky (VUW)="viewport" content="width=device-width, initial-scale=1">
+  <meta  name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" href="/stylesheets/styles.css">
-  <title>Bower</title>
+  <title>Test</title>
 </head>
 
 <body>
@@ -49,12 +49,14 @@
        <div id="main" class="row">
 
           <div id="alerts-holder"></div>
-          <table id="" class="table table-bordered" cellpadding="0" cellspacing="0">
+          <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
             <thead>
               <tr>
                 <th>Venue</th>
-                <th>Aff<span class="hidden-xs">irmative</span></th>
-                <th>Neg<span class="hidden-xs">ative</span></th>
+                <th>OG</th>
+                <th>OO</th>
+                <th>CO</th>
+                <th>CG</th>
                 <th>Quality</th>
                 <th>
                   <div class="col-md-2">
@@ -73,8 +75,10 @@
             <tbody>
               <tr id="">
                 <td></td>
-                <td>Aff</td>
-                <td>Neg</td>
+                <td>A</td>
+                <td>B</td>
+                <td>C</td>
+                <td>D</td>
                 <td>
                   <ul>
                     <li>Debate important: (1.748)</li>
@@ -157,9 +161,31 @@
 
   </div>
 
-
   <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="/bower_components/bootstrap/dist/js/bootstrap-sass.min.js"></script>
+  <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
+  <script>
+
+    jQuery(document).ready(function(){
+
+      $.ajax({
+        url: "/importround",
+        dataType: 'json',
+        type: 'GET',
+        success: function (data) {
+          $.each(JSON.parse(data), function (index, element) {
+            console.log(element);
+            $("#allocation tbody").append(
+              "<tr><td>test</td><td>" + element.OG + "</td><td>" + element.OO + "</td><td>" + element.CG + "</td><td>" + element.CO + "</td><td></td><td></td><td></td></tr>"
+            );
+          });
+        },
+        error: function () {
+          console.log("it broke");
+        }
+      });
+
+    });
+  </script>
 
 </body>
 </html>
