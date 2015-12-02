@@ -81,7 +81,7 @@
                 <td>D</td>
                 <td>
                   <ul>
-                    <li>Debate important: (1.748)</li>
+                    <li>Debate importance: (1.748)</li>
                     <li>Regional representation: xx</li>
                     <li>Language representation: xx</li>
                     <li>Gender representation: xx</li>
@@ -173,17 +173,35 @@
         type: 'GET',
         success: function (data) {
           $.each(JSON.parse(data), function (index, element) {
-            console.log(element);
-            $("#allocation tbody").append(
-              "<tr><td>test</td><td>" + element.OG + "</td><td>" + element.OO + "</td><td>" + element.CG + "</td><td>" + element.CO + "</td><td></td><td></td><td></td></tr>"
-            );
+
+            // Render rooms from round import
+            var newline = $("<tr><td></td><td class='og'></td><td class='oo'></td><td  class='cg'></td><td class='co'></td><td class='stats'>importance <span></span></td><td></td><td></td></tr>");
+            $("#allocation tbody").append(newline);
+            $(".og", newline).text(element.OG_name);
+            $(".oo", newline).text(element.OO_name);
+            $(".cg", newline).text(element.CG_name);
+            $(".co", newline).text(element.CO_name);
+            var dummy_importance = element.OG_importance + element.OO_importance + element.CG_importance + element.CO_importance;
+
+            // Calculate importance
+            $.ajax({
+              url: "/room_importance/44",
+              dataType: 'json',
+              type: 'GET',
+              success: function (data) {
+                $(".stats span", newline).text(data.importance);
+              },
+              error: function () {
+                console.log("it broke");
+              }
+            });
+
           });
         },
         error: function () {
           console.log("it broke");
         }
       });
-
     });
   </script>
 

@@ -16,21 +16,24 @@ router.get('/importround', function(req, res, next) {
 
   request(url, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log(body);
+      res.setHeader('Content-Type', 'application/json');
       res.json(body);
     }
   });
 
-  // request(url, function (error, response, body) {
-  //   if (!error && response.statusCode == 200) {
-  //     var info = JSON.parse(body)
-  //     res.send(info);
-  //     // res.send('{         \
-  //     //     "debates": 10,  \
-  //     //     "round":"7",    \
-  //     //});
-  //   }
-  // });
+});
+
+router.get('/room_importance/:parameter', function(req, res, next) {
+
+  // Import the relevant script
+  var julia = require('node-julia');
+  julia.exec('include','julia/test.jl');
+
+  // Call into the julia script
+  var room_value = julia.exec('testfunction', parseInt(req.params.parameter));
+
+  res.setHeader('Content-Type', 'application/json');
+  res.json({ importance: room_value });
 
 });
 

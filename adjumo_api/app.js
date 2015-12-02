@@ -56,5 +56,6 @@ app.use(function(err, req, res, next) {
   });
 });
 
+app.set('json spaces', 4);
 
 module.exports = app;

@@ -1,1 +1,12 @@
-[{ "OG": "Uni A", "OO": "Uni B", "CG": "Uni C", "CO": "Uni D" }, { "OG": "Uni 1", "OO": "Uni 2", "CG": "Uni 3", "CO": "Uni 4" }]
+[
+    {   "OG_name": "Uni A", "OG_importance": 44,
+        "OO_name": "Uni B", "OO_importance": 21,
+        "CG_name": "Uni C", "CG_importance": 10,
+        "CO_name": "Uni D", "CO_importance": 5
+    },
+    {   "OG_name": "Uni 1", "OG_importance": 35,
+        "OO_name": "Uni 2", "OO_importance": 27,
+        "CG_name": "Uni 3", "CG_importance": 25,
+        "CO_name": "Uni 4", "CO_importance": 16
+     }
+]
