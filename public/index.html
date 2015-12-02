@@ -161,8 +161,8 @@
 
   </div>
 
-  <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
+  <script src="/vendor/jquery/dist/jquery.min.js"></script>
+  <script src="/vendor/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
   <script>
 
     jQuery(document).ready(function(){
@@ -181,11 +181,11 @@
             $(".oo", newline).text(element.OO_name);
             $(".cg", newline).text(element.CG_name);
             $(".co", newline).text(element.CO_name);
-            var dummy_importance = element.OG_importance + element.OO_importance + element.CG_importance + element.CO_importance;
+            var dummy_importance = element.OG_importance + element.OO_importance + element.CG_importance + element.CO_importance * Math.random();
 
             // Calculate importance
             $.ajax({
-              url: "/room_importance/44",
+              url: "/room_importance/" + dummy_importance,
               dataType: 'json',
               type: 'GET',
               success: function (data) {

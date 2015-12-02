@@ -1,4 +1,2 @@
-bower_components/*
-adjumo_api/public/bower_components/*
-adjumo_api/node_modules/*
+public/vendor/*
 node_modules/*

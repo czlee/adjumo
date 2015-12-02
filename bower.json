@@ -1,7 +1,13 @@
 {
-    "name": "Adjumo",
-    "version": "0.0.1",
-    "dependencies": {
-        "bootstrap-sass": "3.3.6"
-    }
+  "name": "adjumo",
+  "description": "",
+  "main": "",
+  "authors": [
+  ],
+  "license": "MIT",
+  "moduleType": [],
+  "private": true,
+  "dependencies": {
+    "bootstrap-sass": "~3.3.6"
+  }
 }

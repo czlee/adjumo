@@ -40,10 +40,12 @@ to try harder with GLPK at some point.
 
 #### Front-End
 
-- [Install Bower](http://bower.io) (requires git, node and the npm)
-- ```$ bower install```
-- ```$ python -m SimpleHTTPServer 8000```
-- Compile and watch styles.scss > styles.css using the SASS compiler of your choice
+- [Install Node.js](https://nodejs.org/en/)
+- ```npm install```
+- [Install Bower](http://bower.io)
+- ```bower install```
+- To start the server: ```DEBUG=adjumo:* npm start```
+- Open ```http://0.0.0.0:3000/index.html```
 
 ## Running
 
