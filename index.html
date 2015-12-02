@@ -37,10 +37,14 @@
 
       <div class="row page-header">
         <div class="col-md-12">
-          <h1 class="h2 pull-left">Head title</h1>
+          <h1 class="h2 pull-left">Allocations UI</h1>
         </div>
-       </div>
+      </div>
 
+      <div id="main" class="row">
+
+
+      </div>
 
        <div id="main" class="row">
 
@@ -51,6 +55,7 @@
                 <th>Venue</th>
                 <th>Aff<span class="hidden-xs">irmative</span></th>
                 <th>Neg<span class="hidden-xs">ative</span></th>
+                <th>Quality</th>
                 <th>
                   <div class="col-md-2">
                     Chair
@@ -62,6 +67,7 @@
                     Trainee
                   </div>
                 </th>
+                <th>Bans</th>
               </tr>
             </thead>
             <tbody>
@@ -69,38 +75,65 @@
                 <td></td>
                 <td>Aff</td>
                 <td>Neg</td>
+                <td>
+                  <ul>
+                    <li>Debate important: (1.748)</li>
+                    <li>Regional representation: xx</li>
+                    <li>Language representation: xx</li>
+                    <li>Gender representation: xx</li>
+                  </ul>
+                </td>
                 <td id="" class="debate-panel-holder">
                   <div class="debate-panel">
+                    <div class="col-md-1 position-holder">
+                      Panel Quality: x
+                      Adj-adj history: x
+                    </div>
                     <div class="col-md-2 debate-chair-holder position-holder">
                       <button type="button" class="btn debate-adjudicator">
-                        Philip Belesky (VUW)
+                        <span class="glyphicon glyphicon-ok-circle"></span>
+                        Philip Belesky (VUW) Chair+
                         <span class="glyphicon glyphicon-move drag-handle"></span>
                       </button>
                     </div>
-                    <div class="col-md-7 position-holder">
+                    <div class="col-md-6 position-holder">
                       <button type="button" class="btn debate-adjudicator">
-                        Philip Belesky (VUW)
+                        <span class="glyphicon glyphicon glyphicon-record"></span>
+                        Philip Belesky (VUW) Pair+
                         <span class="glyphicon glyphicon-move drag-handle"></span>
                       </button>
                       <button type="button" class="btn debate-adjudicator">
-                        Philip Belesky (VUW)
+                        <span class="glyphicon glyphicon glyphicon-record"></span>
+                        Philip Belesky (VUW) Pair
                         <span class="glyphicon glyphicon-move drag-handle"></span>
                       </button>
                       <button type="button" class="btn debate-adjudicator">
-                        Philip Belesky (VUW)
+                        <span class="glyphicon glyphicon-ok-circle"></span>
+                        Philip Belesky (VUW) Pair-
                         <span class="glyphicon glyphicon-move drag-handle"></span>
                       </button>
                     </div>
                     <div class="col-md-2 position-holder">
-                      <button type="button" class="btn btn-primary">
-                        Philip Belesky (VUW)
+                      <button type="button" class="btn debate-adjudicator">
+                        <span class="glyphicon glyphicon glyphicon-record"></span>
+                        Philip Belesky (VUW) Train+
                         <span class="glyphicon glyphicon-move drag-handle"></span>
                       </button>
                     </div>
                     <div>
+                      <span class="glyphicon glyphicon glyphicon-record drag-handle"></span>
                       <span class="glyphicon glyphicon-move drag-handle"></span>
                     </div>
                   </div>
+                </td>
+                <td>
+                    <div class="col-md-2 debate-chair-holder position-holder">
+                      <button type="button" class="btn debate-adjudicator">
+                        <span class="glyphicon glyphicon-ban-circle"></span>
+                        CZ Lee (UoA) Chair+
+                        <span class="glyphicon glyphicon-move drag-handle"></span>
+                      </button>
+                    </div>
                 </td>
               </tr>
             </tbody>

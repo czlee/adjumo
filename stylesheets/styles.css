@@ -5811,14 +5811,16 @@ button.close {
   .hidden-print {
     display: none !important; } }
 .debate-panel {
-  background: #EFE;
+  background: silver;
   overflow: auto;
-  padding: 8px 0; }
+  padding: 8px 0;
+  border-radius: 4px; }
 
 .debate-adjudicator {
   min-width: 175px;
   text-align: left;
-  padding: 6px; }
+  padding: 6px;
+  border-color: #FFF; }
   .debate-adjudicator:hover {
     cursor: move; }
 

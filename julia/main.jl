@@ -4,8 +4,8 @@
 
 # Solvers. Comment in one of the following three lines, depending on which
 # solver you want to use.
-using Gurobi
-# using Cbc
+# using Gurobi
+using Cbc
 # using GLPKMathProgInterface
 
 using JuMP
