@@ -158,8 +158,8 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool}, adjso
 
     @time status = solve(m)
 
-    if status == :Infeasible
-        println("Error: Problem is infeasible.")
+    if status != :Optimal
+        println("Error: Problem was not solved to optimality. Status was: $status")
         return ([], [])
     end
 

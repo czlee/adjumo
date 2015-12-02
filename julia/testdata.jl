@@ -27,7 +27,7 @@ INSTITUTIONS = [
     ("Clemson University", "Clemson", NorthAmerica),
     ("Colgate University", "Colgate", NorthAmerica),
     ("University of Colombo", "Colombo", SouthAsia),
-    ("Universidad Cooperativa de Colombia", "Cooperativa Colombia", LatinAmerica),
+    ("Universidad Cooperativa de Colombia", "Coop Colombia", LatinAmerica),
     ("Copenhagen Business School (CBS)", "Copenhangen", Europe),
     ("De La Salle University (DLSU)", "De La Salle", SouthEastAsia),
     ("Universidad de Alcala de Henares", "Extremadura", Europe),
