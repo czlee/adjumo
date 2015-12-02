@@ -2,18 +2,14 @@
 # Top-level file.
 # allocateadjudicators() is the top-level function.
 
-# Solvers. Comment in one of the following three lines, depending on which
-# solver you want to use.
-# using Gurobi
-using Cbc
-# using GLPKMathProgInterface
-
 using JuMP
 using Iterators
 using Formatting
 using ArgParse
 include("types.jl")
 include("score.jl")
+
+# The solvers are imported below, after arguments are parsed.
 
 function convertconstraints(adjudicators::Vector{Adjudicator}, original::Vector{Tuple{Adjudicator,Int}})
     converted = Vector{Tuple{Int,Int}}(length(original))
@@ -158,8 +154,8 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::Matrix{Bool}, adjso
 
     @time status = solve(m)
 
-    if status == :Infeasible
-        println("Error: Problem is infeasible.")
+    if status != :Optimal
+        println("Error: Problem was not solved to optimality. Status was: $status")
         return ([], [])
     end
 
@@ -284,8 +280,20 @@ s = ArgParseSettings()
         help = "Current round number"
         arg_type = Int
         default = 5
+    "--solver"
+        help = "Solver to use ('gurobi', 'cbc' or 'glpk')"
+        default = nothing
 end
 args = parse_args(ARGS, s)
+
+SOLVERS = Dict("gurobi" => "Gurobi", "cbc" => "Cbc", "glpk" => "GLPKMathProgInterface")
+for (argvalue, package) in SOLVERS
+    if args["solver"] == argvalue || (args["solver"] == nothing && Pkg.installed(package) != nothing)
+        println("Using solver: $package")
+        eval(parse("using " * package))
+        break
+    end
+end
 
 ndebates = args["ndebates"]
 currentround = args["currentround"]

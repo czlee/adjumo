@@ -58,6 +58,7 @@ show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator(\"$(adj.name)\", \"
 
 "A list of \"feasible panels\" is a list of lists of integers. Each (inner) list
 contains the indices of adjudicators on a feasible panel."
+# TODO Add more semantic information (chairs, panellists, trainees) to a composite type here
 typealias FeasiblePanelsList{T<:Integer} Vector{Vector{Int64}}
 
 # ==============================================================================

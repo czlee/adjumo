@@ -3,6 +3,8 @@ To do
 Add semantic information about chair to panel, create a Panel class, one that
 relies on integers and a different more friendly one that involves Adjudicators.
 
+Change "force" to "lock".
+
 Variables
 =========
 `X[d,p]` (nd by np) is 1 if panel `p` is assigned to debate `d`, and 0 if not.
