@@ -36,14 +36,19 @@ julia> Pkg.add("Cbc")
 
 This will take a while and you'll see lots of gibberish printed on the screen. You need a C compiler, a C++ compiler and Make installed in order to build CBC. If you get error messages complaining about the lack of any of them, exit Julia and run these from the shell:
 ``` bash
-sudo apt-get install gcc
-sudo apt-get install g++
-sudo apt-get install make
+$ sudo apt-get install gcc
+$ sudo apt-get install g++
+$ sudo apt-get install make
 ```
 
 Then try again.
 
-**Option 3: GLPK.** I haven't tried GLPK so much, but it seems to work now:
+**Option 3: GLPK.** To install GLPK, first install the `libgmp-dev` package, from the shell (outside Julia):
+``` bash
+$ sudo apt-get install libgmp-dev
+```
+
+Then install in Julia:
 ``` julia
 julia> Pkg.add("GLPKMathProgInterface")
 ```
