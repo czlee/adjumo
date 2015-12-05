@@ -11,7 +11,6 @@ Download and install the latest **stable** version, which is currently **0.4.1**
 You then need to install the required packages:
 ``` julia
 julia> Pkg.add("JuMP")
-julia> Pkg.add("Iterators")
 julia> Pkg.add("ArgParse")
 julia> Pkg.add("Formatting")
 ```

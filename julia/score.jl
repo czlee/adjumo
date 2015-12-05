@@ -174,7 +174,7 @@ function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, 
     end
 
     βr = Matrix{Float64}(ndebates, npanels)
-    for ((d, tr), (p, pinfo)) in product(enumerate(teamregions), enumerate(panelinfos))
+    for (p, pinfo) in enumerate(panelinfos), (d, tr) in enumerate(teamregions)
         βr[d,p] = panelregionalrepresentationscore(tr, pinfo[2], pinfo[1])
     end
     return βr
@@ -360,28 +360,27 @@ for that team and adjudicator, denoted `f` above.
 """
 function sumteamadjscoresmatrix(teamadjscore::Function,
         feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
-    # First, find the score for each team/adj combination. We'll need all of
-    # them at some point, so just do them all.
-    ξ = Dict{Tuple{Team,Adjudicator},Float64}()
-    for (team, adj) in product(roundinfo.teams, roundinfo.adjudicators)
-        ξ[(team,adj)] = teamadjscore(roundinfo, team, adj)
-    end
 
-    # Then, populate the history matrix.
-    ndebates = numdebates(roundinfo)
+    nteams = length(roundinfo.teams)
+    nadjs = length(roundinfo.adjudicators)
+    ndebates = length(roundinfo.debates)
     npanels = length(feasiblepanels)
-    Γ = zeros(ndebates, npanels)
-    for (d, debate) in enumerate(roundinfo.debates)
-        for (p, panel) in enumerate(feasiblepanels)
-            for team in debate
-                for adj in adjlist(panel)
-                    Γ[d,p] += ξ[(team,adj)]
-                end
-            end
-        end
+    D = zeros(Bool, ndebates, nteams) # debate membership matrix
+    Ξ = zeros(nteams, nadjs)          # matrix of team-adj scores
+    Q = zeros(Bool, nadjs, npanels)   # panel membership matrix
+    # TODO consider pre-doing D and Q outside this function and storing the result
+    for (a, adj) in enumerate(roundinfo.adjudicators), (t, team) in enumerate(roundinfo.teams)
+        Ξ[t,a] = teamadjscore(roundinfo, team, adj)
     end
-
-    return Γ
+    for (d, debate) in enumerate(roundinfo.debates)
+        indices = Int64[findfirst(roundinfo.teams, team) for team in debate]
+        D[d, indices] = true
+    end
+    for (p, panel) in enumerate(feasiblepanels)
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        Q[indices, p] = true
+    end
+    return D*Ξ*Q
 end
 
 """
@@ -394,7 +393,7 @@ where Σ denotes summation.
 function sumteamadjscores(teamadjscore::Function, roundinfo::RoundInfo,
         debate::Vector{Team}, panel::AdjudicatorPanel)
     score = 0
-    for (team, adj) in product(debate, adjlist(panel))
+    for team in debate, adj in adjlist(panel)
         score += teamadjscore(roundinfo, team, adj)
     end
     return score

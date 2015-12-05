@@ -3,7 +3,6 @@
 # allocateadjudicators() is the top-level function.
 
 using JuMP
-using Iterators
 using Formatting
 using ArgParse
 include("types.jl")
@@ -64,7 +63,7 @@ end
 
 """
 Generates a list of feasible panels using the information about the round.
-`roundinfo` is a RoundInfo instance.
+`roundinfo` a RoundInfo instance.
 
 Returns a list of AdjudicatorPanel instances.
 """
@@ -74,10 +73,10 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
     chairs = roundinfo.adjudicators[1:nchairs]
     panellists = roundinfo.adjudicators[nchairs+1:end]
     panellistcombs = combinations(panellists, 2)
-    panels = AdjudicatorPanel[AdjudicatorPanel(c, [p...]) for (c, p) in Iterators.product(chairs, panellistcombs)]
+    panels = AdjudicatorPanel[AdjudicatorPanel(c, [p...]) for c in chairs, p in panellistcombs]
 
     # panels with judges that conflict with each other are not feasible
-    filter!(panel -> !hasconflict(roundinfo, panel), panels) # remove panels with adj-adj conflicts
+    panels = filter(panel -> !hasconflict(roundinfo, panel), panels) # remove panels with adj-adj conflicts
 
     # panels with some but not all of a list of judges that must judge together are not feasible
     for adjs in roundinfo.groupedadjs
@@ -103,7 +102,7 @@ function panelmembershipmatrix(feasiblepanels::Vector{AdjudicatorPanel}, roundin
     nadjs = numadjs(roundinfo)
     Q = spzeros(Bool, npanels, nadjs)
     for (i, panel) in enumerate(feasiblepanels)
-        Q[i, indices(roundinfo, panel)] = 1
+        Q[i, indices(roundinfo, panel)] = true
     end
     return Q
 end
@@ -181,26 +180,26 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Adjudic
     end
 
     println("Conflicts:")
-    for (team, adj) in product(debate, adjlist(panel))
+    for team in debate, adj in adjlist(panel)
         if conflicted(roundinfo, team, adj)
             printfmtln("   {} conflicts with {}", adj.name, team.name)
         end
     end
-    for (adj1, adj2) in subsets(adjlist(panel), 2)
+    for (adj1, adj2) in combinations(adjlist(panel), 2)
         if conflicted(roundinfo, adj1, adj2)
             printfmtln("   {} conflicts with {}", adj1.name, adj2.name)
         end
     end
 
     println("History:")
-    for (team, adj) in product(debate, adjlist(panel))
+    for team in debate, adj in adjlist(panel)
         history = roundsseen(roundinfo, team, adj)
         if length(history) > 0
             printfmtln("   {} saw {} in round{} {}", adj.name, team.name,
                     (length(history) > 1) ? "s" : "", join([string(r) for r in history], ", "))
         end
     end
-    for (adj1, adj2) in subsets(adjlist(panel), 2)
+    for (adj1, adj2) in combinations(adjlist(panel), 2)
         history = roundsseen(roundinfo, adj1, adj2)
         if length(history) > 0
             printfmtln("   {} was with {} in round{} {}", adj1.name, adj2.name,

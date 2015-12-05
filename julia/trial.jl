@@ -14,6 +14,9 @@ s = ArgParseSettings()
     "--solver"
         help = "Solver to use ('gurobi', 'cbc' or 'glpk')"
         default = nothing
+    "--profile"
+        help = "Print profiling information"
+        action = :store_true
 end
 args = parse_args(ARGS, s)
 
@@ -50,5 +53,7 @@ for (d, panel) in zip(debateindices, panels)
     showdebatedetail(roundinfo, d, panel)
 end
 
-Profile.print()
-Profile.print(format=:flat, sortedby=:count)
+if args["profile"]
+    Profile.print()
+    Profile.print(format=:flat, sortedby=:count)
+end

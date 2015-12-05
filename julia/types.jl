@@ -1,5 +1,5 @@
-using Iterators
 import Base.show
+import Base.in
 
 # ==============================================================================
 # Models
@@ -177,7 +177,7 @@ RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentroun
 
 conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts || adj1.institution == adj2.institution
 conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts || team.institution == adj.institution
-hasconflict(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = any(pair -> conflicted(rinfo, pair...), subsets(adjs, 2))
+hasconflict(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = any(pair -> conflicted(rinfo, pair...), combinations(adjs, 2))
 roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = [get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])]
 roundsseen(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.teamadjhistory, (team, adj), Int[])
 

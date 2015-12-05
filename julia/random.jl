@@ -84,12 +84,12 @@ function randomroundinfo(ndebates::Int, currentround::Int)
         adjs_shuffled = reshape(shuffle(adjudicators), (3, ndebates))
         panels = [adjs_shuffled[:,i] for i in 1:ndebates]
         for panel in panels
-            for (adj1, adj2) in subsets(panel, 2)
+            for (adj1, adj2) in combinations(panel, 2)
                 addadjadjhistory!(roundinfo, adj1, adj2, r)
             end
         end
         for (debate, panel) in zip(debates, panels)
-            for (team, adj) in product(debate, panel)
+            for team in debate, adj in panel
                 addteamadjhistory!(roundinfo, team, adj, r)
             end
         end
