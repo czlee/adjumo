@@ -53,10 +53,6 @@ Then install in Julia:
 julia> Pkg.add("GLPKMathProgInterface")
 ```
 
-GLPK (and Gurobi) supports MIP callbacks and CBC doesn't, and we might want MIP callbacks
-in order to pull multiple solutions and have premature termination in there, so I'll probably want
-to try harder with GLPK at some point.
-
 ### Front-End
 
 - [Install Node.js](https://nodejs.org/en/)
@@ -79,3 +75,13 @@ This generates random data for a pretend round and runs the algorithm on it. You
 ``` bash
 $ julia trial.jl -n 10 -r 3
 ```
+
+If you installed more than one of the solvers above, you can choose which one to use with `--solver`. For example, to use GLPK:
+``` bash
+$ julia trial.jl --solver glpk
+```
+The other options are `cbc` and `gurobi`. If you don't specify, it'll try Gurobi, then CBC if Gurobi isn't installed, then GLPK if neither of the other two are installed.
+
+GLPK (and Gurobi) supports MIP callbacks and CBC doesn't, and we might want MIP callbacks
+in order to pull multiple solutions and have premature termination in there, so I'll probably want
+to try harder with GLPK at some point.
