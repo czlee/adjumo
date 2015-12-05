@@ -1,9 +1,5 @@
 To do
 =====
-Add semantic information about chair to panel, create a Panel class, one that
-relies on integers and a different more friendly one that involves Adjudicators.
-
-Change "force" to "lock".
 
 Variables
 =========
