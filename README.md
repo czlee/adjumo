@@ -3,7 +3,7 @@
 
 ## Getting started
 
-#### Julia & Julia Packages
+### Julia & Julia Packages
 
 You need to install Julia, and then install a bunch of Julia packages. Julia downloads are at http://julialang.org/downloads/.
 Download and install the latest **stable** version, which is currently **0.4.1**.
@@ -16,7 +16,9 @@ julia> Pkg.add("ArgParse")
 julia> Pkg.add("Formatting")
 ```
 
-At the moment, I'm using Gurobi on an academic license. Gurobi is a commercial optimization solver.
+You also need to install a solver. There are three options: Gurobi, CBC and GLPK. You only need one of them.
+
+**Option 1: Gurobi.** At the moment, I'm using Gurobi on an academic license. Gurobi is a commercial optimization solver.
 To use it, you need to register for an account at http://www.gurobi.com/ and request an academic
 license. Naturally, this requires you to be a student or staff member at a degree-granting institution.
 If you can get hold of a Gurobi license:
@@ -25,19 +27,32 @@ julia> Pkg.add("Gurobi")
 ```
 *Note: This will fail if you don't have Gurobi installed.*
 
-If you can't get a Gurobi license, then we can use one of the open-source solvers. I've tried CBC:
+If you can't get a Gurobi license, then we can use one of the open-source solvers, CBC or GLPK.
+
+**Option 2: CBC.** To install CBC:
 ``` julia
 julia> Pkg.add("Cbc")
 ```
 
-You only need one of Gurobi and CBC.
+This will take a while and you'll see lots of gibberish printed on the screen. You need a C compiler, a C++ compiler and Make installed in order to build CBC. If you get error messages complaining about the lack of any of them, exit Julia and run these from the shell:
+``` bash
+sudo apt-get install gcc
+sudo apt-get install g++
+sudo apt-get install make
+```
 
-I've also got a line in for `GLPKMathProgInterface`, but it doesn't work very well right now, not
-sure why. GLPK (and Gurobi) supports MIP callbacks and CBC doesn't, and we might want MIP callbacks
+Then try again.
+
+**Option 3: GLPK.** I haven't tried GLPK so much, but it seems to work now:
+``` julia
+julia> Pkg.add("GLPKMathProgInterface")
+```
+
+GLPK (and Gurobi) supports MIP callbacks and CBC doesn't, and we might want MIP callbacks
 in order to pull multiple solutions and have premature termination in there, so I'll probably want
 to try harder with GLPK at some point.
 
-#### Front-End
+### Front-End
 
 - [Install Node.js](https://nodejs.org/en/)
 - ```npm install```
@@ -48,14 +63,14 @@ to try harder with GLPK at some point.
 
 ## Running
 
-#### Julia part only
+### Julia part only
 
-The main file is called `main.jl` and can be run directly from the shell:
+The file that tests the Julia part is called `trial.jl` and can be run directly from the shell:
 ``` bash
-$ julia main.jl
+$ julia trial.jl
 ```
 
 This generates random data for a pretend round and runs the algorithm on it. You can run it with a different number of debates, or pretend the current round is something else. For example, to run it with a round comprising 10 debates, pretending it is currently round 3:
 ``` bash
-$ julia main.jl -n 10 -r 3
+$ julia trial.jl -n 10 -r 3
 ```
