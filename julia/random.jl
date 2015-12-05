@@ -96,10 +96,10 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     end
 
     for i in 1:2
-        addadjondebate!(roundinfo, rand(adjudicators), rand(1:ndebates))
-        addadjoffdebate!(roundinfo, rand(adjudicators), rand(1:ndebates))
+        addlockedadj!(roundinfo, rand(adjudicators), rand(1:ndebates))
+        addblockedadj!(roundinfo, rand(adjudicators), rand(1:ndebates))
     end
-    addadjstogether!(roundinfo, rand(adjudicators, 2))
+    addgroupedadjs!(roundinfo, rand(adjudicators, 2))
 
     return roundinfo
 end

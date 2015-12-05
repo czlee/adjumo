@@ -35,8 +35,8 @@ function allocateadjudicators(roundinfo::RoundInfo)
     @time Σ = scorematrix(feasiblepanels, roundinfo)
 
     Q = panelmembershipmatrix(feasiblepanels, roundinfo)
-    adjson = convertconstraints(roundinfo.adjudicators, roundinfo.adjondebate)
-    adjsoff = convertconstraints(roundinfo.adjudicators, roundinfo.adjoffdebate)
+    adjson = convertconstraints(roundinfo.adjudicators, roundinfo.lockedadjs)
+    adjsoff = convertconstraints(roundinfo.adjudicators, roundinfo.blockedadjs)
     @time debateindices, panelindices = solveoptimizationproblem(Σ, Q, adjson, adjsoff)
 
     panels = AdjudicatorPanel[feasiblepanels[p] for p in panelindices]
@@ -48,7 +48,7 @@ end
 make the problem infeasible."""
 function checkfeasibility(roundinfo::RoundInfo)
     feasible = true
-    for adjs in roundinfo.adjstogether
+    for adjs in roundinfo.groupedadjs
         for (adj1, adj2) in combinations(adjs, 2)
             if conflicted(roundinfo, adj1, adj2)
                 printfmtln("Error: {} and {} are both forced to judge together and conflicted.",
@@ -78,7 +78,7 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
     filter!(panel -> !hasconflict(roundinfo, panel), panels) # remove panels with adj-adj conflicts
 
     # panels with some but not all of a list of judges that must judge together are not feasible
-    for adjs in roundinfo.adjstogether
+    for adjs in roundinfo.groupedadjs
         filter!(panel -> count(a -> a ∈ adjlist(panel), adjs) ∈ [0, length(adjs)], panels)
     end
 
@@ -207,14 +207,14 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Adjudic
     end
 
     println("Constraints:")
-    for adj in adjsondebate(roundinfo, debateindex)
-        println("   $(adj.name) is forced to judge this debate")
+    for adj in lockedadjs(roundinfo, debateindex)
+        println("   $(adj.name) is locked to this debate")
     end
-    for adj in adjsoffdebate(roundinfo, debateindex)
-        printfmtln("   $(adj.name) is banned from judging this debate")
+    for adj in blockedadjs(roundinfo, debateindex)
+        printfmtln("   $(adj.name) is blocked from this debate")
     end
-    for adjs in adjstogether(roundinfo, adjlist(panel))
-        printfmtln("   {} are forced to judge together", join([adj.name for adj in adjs], ", "))
+    for adjs in groupedadjs(roundinfo, adjlist(panel))
+        printfmtln("   {} are grouped together", join([adj.name for adj in adjs], ", "))
     end
 
     println("Scores:                          raw      weighted")
@@ -246,16 +246,16 @@ function showconstraints(roundinfo::RoundInfo)
     for (team, adj) in roundinfo.teamadjconflicts
         printfmtln("   {} conflicts with {}", adj.name, team.name)
     end
-    for (adj, debateindex) in roundinfo.adjondebate
+    for (adj, debateindex) in roundinfo.lockedadjs
         debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
-        printfmtln("   {} is forced to judge debate [{}]", adj.name, debatestr)
+        printfmtln("   {} is locked to debate [{}]", adj.name, debatestr)
     end
-    for (adj, debateindex) in roundinfo.adjoffdebate
+    for (adj, debateindex) in roundinfo.blockedadjs
         debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
-        printfmtln("   {} is banned from judging debate [{}]", adj.name, debatestr)
+        printfmtln("   {} is blocked from debate [{}]", adj.name, debatestr)
     end
-    for adjs in roundinfo.adjstogether
-        printfmtln("   {} are forced to judge together", join([adj.name for adj in adjs], ", "))
+    for adjs in roundinfo.groupedadjs
+        printfmtln("   {} are grouped together", join([adj.name for adj in adjs], ", "))
     end
     println()
 end

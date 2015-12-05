@@ -43,8 +43,6 @@ roundinfo.componentweights = componentweights
 debateindices, panels = allocateadjudicators(roundinfo)
 
 showconstraints(roundinfo)
-@show debateindices
-@show panels
 
 zip(debateindices, panels)
 

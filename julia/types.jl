@@ -137,9 +137,9 @@ type RoundInfo
     teamadjhistory::Dict{Tuple{Team,Adjudicator},Vector{Int}}
 
     # Special constraints
-    adjondebate::Vector{Tuple{Adjudicator,Int}}
-    adjoffdebate::Vector{Tuple{Adjudicator,Int}}
-    adjstogether::Vector{Vector{Adjudicator}}
+    lockedadjs::Vector{Tuple{Adjudicator,Int}}
+    blockedadjs::Vector{Tuple{Adjudicator,Int}}
+    groupedadjs::Vector{Vector{Adjudicator}}
 
     # Weights
     componentweights::AdjumoComponentWeights
@@ -181,13 +181,13 @@ addadjadjconflict!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = pus
 addteamadjconflict!(rinfo::RoundInfo, team::Team, adj::Adjudicator) = push!(rinfo.teamadjconflicts, (team, adj))
 addadjadjhistory!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator, round::Int) = push!(get!(rinfo.adjadjhistory, (adj1, adj2), Int[]), round)
 addteamadjhistory!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int) = push!(get!(rinfo.teamadjhistory, (team, adj), Int[]), round)
-addadjondebate!(rinfo::RoundInfo, adj::Adjudicator, debateindex::Int) = push!(rinfo.adjondebate, (adj, debateindex))
-addadjoffdebate!(rinfo::RoundInfo, adj::Adjudicator, debateindex::Int) = push!(rinfo.adjoffdebate, (adj, debateindex))
-addadjstogether!(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = push!(rinfo.adjstogether, adjs)
+addlockedadj!(rinfo::RoundInfo, adj::Adjudicator, debateindex::Int) = push!(rinfo.lockedadjs, (adj, debateindex))
+addblockedadj!(rinfo::RoundInfo, adj::Adjudicator, debateindex::Int) = push!(rinfo.blockedadjs, (adj, debateindex))
+addgroupedadjs!(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = push!(rinfo.groupedadjs, adjs)
 
-adjsondebate(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filter(y -> y[2] == debateindex, rinfo.adjondebate)]
-adjsoffdebate(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filter(y -> y[2] == debateindex, rinfo.adjoffdebate)]
-adjstogether(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = filter(x -> x ⊆ adjs, rinfo.adjstogether)
+lockedadjs(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filter(y -> y[2] == debateindex, rinfo.lockedadjs)]
+blockedadjs(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filter(y -> y[2] == debateindex, rinfo.blockedadjs)]
+groupedadjs(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = filter(x -> x ⊆ adjs, rinfo.groupedadjs)
 
 adjudicatorsfromindices(roundinfo::RoundInfo, indices::Vector{Int64}) = Adjudicator[roundinfo.adjudicators[a] for a in indices]
 indicesfromadjudicators(roundinfo::RoundInfo, adjs::Vector{Adjudicator}) = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjs]
