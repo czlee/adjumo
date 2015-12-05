@@ -62,44 +62,59 @@ show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator(\"$(adj.name)\", \"
 
 # In algorithm code, these are created once (lots of them!) and never change.
 immutable AdjudicatorPanel
-    chair::Adjudicator
-    panellists::Tuple{Vararg{Adjudicator}}
-    trainees::Tuple{Vararg{Adjudicator}}
+    adjs::Vector{Adjudicator} # ordered: chair; [panellists...]; [trainees...]
+    np::Integer # number of panellists
     # TODO: benchmark whether storing indices helps performance a lot
 end
 
-AdjudicatorPanel(chair::Adjudicator, panellists::Tuple{Vararg{Adjudicator}}) = AdjudicatorPanel(chair, panellists, ())
-AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}) = AdjudicatorPanel(chair, (panellists...), ())
-AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}, trainees::Vector{Adjudicator}) = AdjudicatorPanel(chair, (panellists...), (trainees...))
-numadjs(panel::AdjudicatorPanel) = 1 + length(panel.panellists) + length(panel.trainees)
-
-in(adj::Adjudicator, panel::AdjudicatorPanel) = in(adj, list(panel))
-
-"Returns the adjudicators on the panel as a Vector{Adjudicator}"
-function adjlist(panel::AdjudicatorPanel)
-    np = length(panel.panellists)
-    nt = length(panel.trainees)
+function AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}, trainees::Vector{Adjudicator})
+    np = length(panellists)
+    nt = length(trainees)
     adjs = Vector{Adjudicator}(1+np+nt)
-    adjs[1] = panel.chair
-    adjs[2:np+1] = [panel.panellists...]
-    adjs[np+2:end] = [panel.trainees...]
-    return adjs
+    adjs[1] = chair
+    if np > 0
+        adjs[2:np+1] = panellists
+    end
+    if nt > 0
+        adjs[np+2:end] = trainees
+    end
+    return AdjudicatorPanel(adjs, np)
 end
 
+# AdjudicatorPanel(chair::Adjudicator, panellists::Tuple{Vararg{Adjudicator}}) = AdjudicatorPanel(chair, panellists, ())
+AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}) = AdjudicatorPanel(chair, panellists, Adjudicator[])
+# AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}, trainees::Vector{Adjudicator}) = AdjudicatorPanel(chair, (panellists...), (trainees...))
+numadjs(panel::AdjudicatorPanel) = length(panel.adjs)
+
+in(adj::Adjudicator, panel::AdjudicatorPanel) = in(adj, panel.adjs)
+adjlist(panel::AdjudicatorPanel) = panel.adjs
+
+# "Returns the adjudicators on the panel as a Vector{Adjudicator}"
+# function adjlist(panel::AdjudicatorPanel)
+#     np = length(panel.panellists)
+#     nt = length(panel.trainees)
+#     adjs = Vector{Adjudicator}(1+np+nt)
+#     adjs[1] = panel.chair
+#     adjs[2:np+1] = [panel.panellists...]
+#     adjs[np+2:end] = [panel.trainees...]
+#     return adjs
+# end
+
 function rolelist(panel::AdjudicatorPanel)
-    return Tuple{UTF8String,Adjudicator}[
-        (" (c)", panel.chair);
-        [("", adj) for adj in panel.panellists];
-        [(" (t)", adj) for adj in panel.trainees]
-    ]
+    n = length(panel.adjs)
+    roles = Vector{UTF8String}(n)
+    roles[1] = " (c)"
+    if panel.np > 0
+        roles[2:panel.np+1] = ""
+    end
+    if n > panel.np+1
+        roles[panel.np+2:n] = " (t)"
+    end
+    return zip(roles, panel.adjs)
 end
 
 function show(io::Base.IO, panel::AdjudicatorPanel)
-    names = UTF8String[
-        "$(panel.chair.name) (c)";
-        [adj.name for adj in panel.panellists];
-        [adj.name * " (t)" for adj in panel.trainees];
-    ]
+    names = [adj.name * role for (role, adj) in rolelist(panel)]
     print(io, "Panel[" * join(names, ", ") * "]")
 end
 

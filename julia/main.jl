@@ -74,7 +74,7 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
     chairs = roundinfo.adjudicators[1:nchairs]
     panellists = roundinfo.adjudicators[nchairs+1:end]
     panellistcombs = combinations(panellists, 2)
-    panels = AdjudicatorPanel[AdjudicatorPanel(c, p) for (c, p) in Iterators.product(chairs, panellistcombs)]
+    panels = AdjudicatorPanel[AdjudicatorPanel(c, [p...]) for (c, p) in Iterators.product(chairs, panellistcombs)]
 
     # panels with judges that conflict with each other are not feasible
     filter!(panel -> !hasconflict(roundinfo, panel), panels) # remove panels with adj-adj conflicts
