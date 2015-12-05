@@ -32,7 +32,9 @@ function allocateadjudicators(roundinfo::RoundInfo)
     end
 
     @time feasiblepanels = generatefeasiblepanels(roundinfo)
+    println("Score matrix:")
     @time Σ = scorematrix(feasiblepanels, roundinfo)
+    @profile scorematrix(feasiblepanels, roundinfo)
 
     Q = panelmembershipmatrix(feasiblepanels, roundinfo)
     adjson = convertconstraints(roundinfo.adjudicators, roundinfo.lockedadjs)

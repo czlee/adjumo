@@ -371,9 +371,13 @@ function sumteamadjscoresmatrix(teamadjscore::Function,
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     Γ = zeros(ndebates, npanels)
-    for ((d, debate), (p, panel)) in product(enumerate(roundinfo.debates), enumerate(feasiblepanels))
-        for (team, adj) in product(debate, adjlist(panel))
-            Γ[d,p] += ξ[(team,adj)]
+    for (d, debate) in enumerate(roundinfo.debates)
+        for (p, panel) in enumerate(feasiblepanels)
+            for team in debate
+                for adj in adjlist(panel)
+                    Γ[d,p] += ξ[(team,adj)]
+                end
+            end
         end
     end
 

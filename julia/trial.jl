@@ -49,3 +49,6 @@ zip(debateindices, panels)
 for (d, panel) in zip(debateindices, panels)
     showdebatedetail(roundinfo, d, panel)
 end
+
+Profile.print()
+Profile.print(format=:flat, sortedby=:count)

@@ -73,9 +73,18 @@ AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}) = Adjudica
 AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}, trainees::Vector{Adjudicator}) = AdjudicatorPanel(chair, (panellists...), (trainees...))
 numadjs(panel::AdjudicatorPanel) = 1 + length(panel.panellists) + length(panel.trainees)
 
-"Returns the adjudicators on the panel as a Vector{Adjudicator}"
-adjlist(panel::AdjudicatorPanel) = Adjudicator[panel.chair; panel.panellists...; panel.trainees...]
 in(adj::Adjudicator, panel::AdjudicatorPanel) = in(adj, list(panel))
+
+"Returns the adjudicators on the panel as a Vector{Adjudicator}"
+function adjlist(panel::AdjudicatorPanel)
+    np = length(panel.panellists)
+    nt = length(panel.trainees)
+    adjs = Vector{Adjudicator}(1+np+nt)
+    adjs[1] = panel.chair
+    adjs[2:np+1] = [panel.panellists...]
+    adjs[np+2:end] = [panel.trainees...]
+    return adjs
+end
 
 function rolelist(panel::AdjudicatorPanel)
     return Tuple{UTF8String,Adjudicator}[
