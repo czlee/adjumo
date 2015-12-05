@@ -14,7 +14,6 @@ julia> Pkg.add("JuMP")
 julia> Pkg.add("Iterators")
 julia> Pkg.add("ArgParse")
 julia> Pkg.add("Formatting")
-julia> Pkg.add("DataStructures")
 ```
 
 At the moment, I'm using Gurobi on an academic license. Gurobi is a commercial optimization solver.
