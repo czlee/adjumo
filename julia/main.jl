@@ -52,7 +52,7 @@ function checkfeasibility(roundinfo::RoundInfo)
     for adjs in roundinfo.groupedadjs
         for (adj1, adj2) in combinations(adjs, 2)
             if conflicted(roundinfo, adj1, adj2)
-                printfmtln("Error: {} and {} are both forced to judge together and conflicted.",
+                printfmtln("Error: {} and {} are both grouped and conflicted.",
                         adj1.name, adj2.name)
                 feasible = false
             end
