@@ -33,6 +33,8 @@ function allocateadjudicators(roundinfo::RoundInfo)
     @time feasiblepanels = generatefeasiblepanels(roundinfo)
     println("Score matrix:")
     @time Σ = scorematrix(feasiblepanels, roundinfo)
+    return (Int[], AdjudicatorPanel[])
+
     @profile scorematrix(feasiblepanels, roundinfo)
 
     Q = panelmembershipmatrix(feasiblepanels, roundinfo)

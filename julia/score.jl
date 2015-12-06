@@ -168,14 +168,14 @@ function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, 
         teamregions[i] = Region[t.region for t in debate]
     end
 
-    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels) # adjregions, panelsize
+    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
     for (i, panel) in enumerate(feasiblepanels)
         panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
     end
 
     βr = Matrix{Float64}(ndebates, npanels)
-    for (p, pinfo) in enumerate(panelinfos), (d, tr) in enumerate(teamregions)
-        βr[d,p] = panelregionalrepresentationscore(tr, pinfo[2], pinfo[1])
+    for (p, (nadjs, adjregions)) in enumerate(panelinfos), (d, tr) in enumerate(teamregions)
+        βr[d,p] = panelregionalrepresentationscore(tr, adjregions, nadjs)
     end
     return βr
 end
@@ -199,22 +199,44 @@ second is
 """
 function debateregionclass(teamregions::Vector{Region})
     assert(length(teamregions) == 4)
-    regioncounts = collect(Pair{Region,Int64}, counter(teamregions))
-    sort!(regioncounts, by=x->x.second, rev=true) # e.g. [NorthAsia=>3, Oceania=>1]
-    regions = [x.first for x in regioncounts]     # e.g. [NorthAsia, Oceania]
-    counts = [x.second for x in regioncounts]     # e.g. [3, 1]
-    if counts == [4]
+    regioncounts = Vector{Pair{Region,Int}}(4)
+    nregions = 0
+    for region in teamregions
+        index = 0
+        for i = 1:nregions
+            if region == regioncounts[i].first
+                index = i
+                break
+            end
+        end
+        if index == 0
+            nregions += 1
+            regioncounts[nregions] = region=>1
+        else
+            regioncounts[index] = region=>regioncounts[index].second+1
+        end
+    end
+    deleteat!(regioncounts, nregions+1:4)
+    regions = Vector{Region}(nregions)
+    counts = [rc.second for rc in regioncounts]
+    maxcount = maximum(counts)
+    j = 1
+    for i = 4:-1:1, regioncount in regioncounts
+        if regioncount.second == i
+            regions[j] = regioncount.first
+            j += 1
+        end
+    end
+    if maxcount == 4
         return RegionClassA, regions
-    elseif counts == [3, 1]
+    elseif maxcount == 3
         return RegionClassB, regions
-    elseif counts == [2, 2]
-        return RegionClassC, regions
-    elseif counts == [2, 1, 1]
-        return RegionClassD, regions
-    elseif counts == [1, 1, 1, 1]
+    elseif maxcount == 1
         return RegionClassE, regions
+    elseif length(counts) == 2
+        return RegionClassC, regions
     else
-        throw(ArgumentError("Region counts were invalid."))
+        return RegionClassD, regions
     end
 end
 
@@ -229,7 +251,6 @@ end
 regions, and whose adjudicators have the given regions."
 function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregions::Vector{Region}, nadjs::Int)
     regionclass, teamregionsordered = debateregionclass(teamregions)
-    panelregioncounts = counter(adjregions)
     cost = 0
 
     if nadjs == 3
@@ -237,7 +258,7 @@ function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregion
         if regionclass == RegionClassA
             # There must be at least two regions on the panel.
             costfactor = 10
-            if length(panelregioncounts) < 3
+            if length(unique(adjregions)) < 2
                 cost += 20
             end
 
