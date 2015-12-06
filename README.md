@@ -52,8 +52,9 @@ Then install in Julia:
 julia> Pkg.add("GLPKMathProgInterface")
 ```
 
-### Front-End
+### Back-End
 
+- ```cd adjumo-backend```
 - [Install Node.js](https://nodejs.org/en/)
 - ```npm install```
 - [Install Bower](http://bower.io)

@@ -1,2 +1,19 @@
-public/vendor/*
-node_modules/*
+adjumo-backend/public/vendor/*
+adjumo-backend/node_modules/*
+
+# compiled output
+adjumo-frontend/dist
+adjumo-frontend/tmp
+adjumo-frontend/public
+
+# dependencies
+adjumo-frontend/node_modules
+adjumo-frontend/bower_components
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage/*
+/libpeerconnection.log
+npm-debug.log
+testem.log

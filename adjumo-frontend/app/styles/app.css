@@ -1,0 +1,85 @@
+
+
+/* Table Widths */
+
+table {
+  table-layout: fixed;
+  width: 100%;
+  white-space: nowrap;
+}
+td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.head-venue {
+  width: 2%;
+}
+.head-points {
+  width: 2%;
+}
+.head-importance {
+  width: 2%;
+}
+.head-og {
+  width: 6%;
+}
+.head-oo {
+  width: 6%;
+}
+.head-cg {
+  width: 6%;
+}
+.head-co {
+  width: 6%;
+}
+.head-bans {
+  width: 10%;
+}
+.head-panel {
+  width: 50%;
+}
+
+
+#allocation th {
+  font-size: 10px;
+}
+
+.importance input {
+  max-width: 30px;
+}
+
+/* Panel Component */
+
+.debate-panel {
+  padding: 0px !important;
+}
+
+.panel-ui {
+  background: rgb(192, 192, 192);
+  overflow: auto;
+  margin-bottom: 0px;
+}
+.position-holder {
+  border-right: 1px solid #FEFEFE;
+  height: 46px;
+}
+
+/* Adjudicator Component */
+
+.adjudicator-ui {
+  width: 100%;
+  max-width: 200px;
+  text-align: left;
+  padding: 6px;
+  border-color: #FFF;
+  margin-top: 6px;
+}
+
+.debate-adjudicator:hover {
+    cursor: move;
+}
+.js-drag-handle {
+
+}

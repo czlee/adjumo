@@ -1,0 +1,35 @@
+{{#draggable-object content=this dragHandle='.js-drag-handle'}}
+
+<div class="panel-ui">
+    <div class="col-md-3 debate-chair-holder position-holder">
+
+      {{#draggable-object-target action="" }}
+        {{adjudicator-ui adj=panel.chair}}
+      {{/draggable-object-target}}
+
+    </div>
+    <div class="col-md-6 position-holder">
+
+      {{#draggable-object-target action=""}}
+        {{#each panel.panellists as |adjudictator-instance|}}
+          {{adjudicator-ui adj=adjudictator-instance}}
+        {{/each}}
+      {{/draggable-object-target}}
+
+    </div>
+    <div class="col-md-3 position-holder">
+
+      {{#draggable-object-target action="" }}
+        {{#each panel.trainees as |adjudictator-instance|}}
+          {{adjudicator-ui adj=adjudictator-instance}}
+        {{/each}}
+      {{/draggable-object-target}}
+
+    </div>
+    <div>
+      <span class="glyphicon glyphicon glyphicon-record"></span>
+      <span class="glyphicon glyphicon-move js-drag-handle"></span>
+    </div>
+</div>
+
+{{/draggable-object}}

@@ -11,13 +11,20 @@ router.get('/importround', function(req, res, next) {
   // Poll a particular URL to get the JSON response
   console.log('importing a round');
 
-  var url = 'http://0.0.0.0:3000/dummy.json';
+  var url = 'http://0.0.0.0:3000/tabbie-test.json';
   var request = require('request');
 
   request(url, function (error, response, body) {
     if (!error && response.statusCode == 200) {
+
+      //var parsedImport = JSON.parse(body);
       res.setHeader('Content-Type', 'application/json');
-      res.json(body);
+      res.send(JSON.parse(body));
+
+    } else {
+
+      console.log('failed to import a round');
+
     }
   });
 
@@ -38,3 +45,10 @@ router.get('/room_importance/:parameter', function(req, res, next) {
 });
 
 module.exports = router;
+
+
+// Modify a panel
+// router.get('/debate/:parameter/panel', function(req, res, next) {
+
+// });
+
