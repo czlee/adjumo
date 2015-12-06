@@ -1,50 +1,72 @@
-<div id="main" class="row">
 
-    <div id="alerts-holder"></div>
 
-    {{outlet}}
+<nav class="navbar navbar-light bg-faded container-fluid">
+  <a class="navbar-brand" href="#"></a>
+  <ul class="nav navbar-nav">
+    <li class="nav-item active">
+      <a class="nav-link" href="#">Toggle A</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Toggle B</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Toggle C</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">oggle D</a>
+    </li>
+  </ul>
+  <form class="form-inline navbar-form pull-right">
+    <input class="form-control" type="text" placeholder="Search">
+    <button class="btn btn-success-outline" type="submit">Search</button>
+  </form>
+</nav>
 
-    <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
-        <thead>
-          <tr>
-            <th>Venue</th>
-            <th>Points</th>
-            <th>Importance</th>
-            <th>OG</th>
-            <th>OO</th>
-            <th>CO</th>
-            <th>CG</th>
-            <th>
-              <div class="col-md-2">
-                Chair
-              </div>
-              <div class="col-md-8">
-                Panel
-              </div>
-              <div class="col-md-2">
-                Trainee
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-        {{#each model.debates as |debate-instance|}}
-            {{debate-ui debate=debate-instance}}
-        {{/each}}
-        </tbody>
-    </table>
+<div id="main" class="container-fluid">
+
+  <div id="alerts-holder"></div>
+
+  {{outlet}}
+
+  <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
+    <thead>
+      <tr>
+        <th class="head-venue">Venue</th>
+        <th class="head-points">Points</th>
+        <th class="head-importance">Importance</th>
+        <th class="head-og">OG</th>
+        <th class="head-oo">OO</th>
+        <th class="head-cg">CO</th>
+        <th class="head-co">CG</th>
+        <th class="head-bans">Bans</th>
+        <th class="head-panel">
+          <div class="col-md-2">
+            Chair
+          </div>
+          <div class="col-md-8">
+            Panel
+          </div>
+          <div class="col-md-2">
+            Trainee
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+    {{#each model.debates as |debate-instance|}}
+        {{debate-ui debate=debate-instance}}
+    {{/each}}
+    </tbody>
+  </table>
 
 </div>
 
-<div id="main" class="row">
+<div id="" class="container-fluid navbar-fixed-bottom">
 
-    <div>
-
-      {{#each model.adjudicators as |adjudictator-instance|}}
-        {{adjudicator-ui adj=adjudictator-instance}}
-      {{/each}}
-
-    </div>
-
+{{#draggable-object-target action=""}}
+  {{#each model.adjudicators as |adjudictator-instance|}}
+    {{adjudicator-ui adj=adjudictator-instance}}
+  {{/each}}
+{{/draggable-object-target}}
 
 </div>

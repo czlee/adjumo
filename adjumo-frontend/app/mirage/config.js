@@ -1,10 +1,66 @@
 export default function() {
 
   // Dummy data for mocking the json response
+  this.get('/panels/1', function() {
+    return {
+      data: {
+        type: "panels",
+        id: 1,
+        "relationships": {
+          "chair": { "data": { "type": "adjudicator", "id": "1" } },
+          "panellists": [],
+          "trainees": [],
+        }
+      }
+    }
+  });
+
+  // Dummy data for mocking the json response
+  this.get('/panels/2', function() {
+    return {
+      data: {
+        type: "panels",
+        id: 2,
+        "relationships": {
+          "chair": { "data": { "type": "adjudicator", "id": "2" } },
+          "panellists": [],
+          "trainees": [],
+        }
+      }
+    }
+  });
+
+  // Dummy data for mocking the json response
+  this.get('/institutions/1', function() {
+    return {
+      data: {
+        type: "institutions",
+        id: 1,
+        attributes: {
+          name: "VUW",
+        }
+      }
+    }
+  });
+  // Dummy data for mocking the json response
+  this.get('/institutions/2', function() {
+    return {
+      data: {
+        type: "institutions",
+        id: 2,
+        attributes: {
+          name: "Auck",
+        }
+      }
+    }
+  });
+
+
+
+  // Dummy data for mocking the json response
   this.get('/adjudicators', function() {
     return {
       data: [
-
         {
           type: "adjudicators",
           id: 1,
@@ -12,6 +68,9 @@ export default function() {
             name: "Philip",
             rating: 5.0,
           },
+          relationships: {
+            "institution": { "data": { "type": "institution", "id": "1" } }
+          }
         },
         {
           type: "adjudicators",
@@ -20,6 +79,9 @@ export default function() {
             name: "CZ",
             rating: 5.0,
           },
+          relationships: {
+            "institution": { "data": { "type": "institution", "id": "2" } }
+          }
         }
 
       ]
@@ -37,14 +99,30 @@ export default function() {
           attributes: {
             debate_id: "1",
             points: "5",
-            venue: "",
-            panel: "",
+            venue: "DM 01",
           },
           "relationships": {
             "og": { "data": { "type": "team", "id": "1" } },
             "oo": { "data": { "type": "team", "id": "2" } },
             "cg": { "data": { "type": "team", "id": "3" } },
-            "co": { "data": { "type": "team", "id": "4" } }
+            "co": { "data": { "type": "team", "id": "4" } },
+            "panel": { "data": { "type": "panel", "id": "1" } }
+          }
+        },
+        {
+          type: "debates",
+          id: 2,
+          attributes: {
+            debate_id: "2",
+            points: "1",
+            venue: "RM 04",
+          },
+          "relationships": {
+            "og": { "data": { "type": "team", "id": "5" } },
+            "oo": { "data": { "type": "team", "id": "6" } },
+            "cg": { "data": { "type": "team", "id": "7" } },
+            "co": { "data": { "type": "team", "id": "8" } },
+            "panel": { "data": { "type": "panel", "id": "2" } }
           }
         }
       ],
@@ -76,6 +154,33 @@ export default function() {
             "id": "4",
             "attributes": {
               "name": "Sefa4!"
+            }
+        },{
+            "type": "team",
+            "id": "5",
+            "attributes": {
+              "name": "FFSefa!"
+            }
+        },
+        {
+            "type": "team",
+            "id": "6",
+            "attributes": {
+              "name": "TRSefa2!"
+            }
+        },
+        {
+            "type": "team",
+            "id": "7",
+            "attributes": {
+              "name": "DFSefa3!"
+            }
+        },
+        {
+            "type": "team",
+            "id": "8",
+            "attributes": {
+              "name": "SSSefa4!"
             }
         }
         ]
