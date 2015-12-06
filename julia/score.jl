@@ -195,9 +195,11 @@ The 'region class' is:
     - RegionClassD if two teams are from one region, and the other two are from different regions
     - RegionClassE if all four teams are from different regions
 Returns a tuple with two elements. The first is the class (an integer), and the
-second is
+second is a list of regions in the debate in descending order of frequency.
 """
 function debateregionclass(teamregions::Vector{Region})
+    # A lot of work has been done to make this function faster. See
+    # sandbox/debateregionclass.jl for alternative implementations.
     assert(length(teamregions) == 4)
     regioncounts = Vector{Pair{Region,Int}}(4)
     nregions = 0

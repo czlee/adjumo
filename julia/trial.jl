@@ -17,6 +17,9 @@ s = ArgParseSettings()
     "--profile"
         help = "Print profiling information"
         action = :store_true
+    "--score-only"
+        help = "Stop after computing score matrix"
+        action = :store_true
 end
 args = parse_args(ARGS, s)
 
@@ -43,14 +46,13 @@ componentweights.adjconflict = 1e6
 @time roundinfo = randomroundinfo(ndebates, currentround)
 roundinfo.componentweights = componentweights
 
-debateindices, panels = allocateadjudicators(roundinfo)
+debateindices, panels = allocateadjudicators(roundinfo; profile=args["profile"], scoreonly=args["score-only"])
 
-showconstraints(roundinfo)
-
-zip(debateindices, panels)
-
-for (d, panel) in zip(debateindices, panels)
-    showdebatedetail(roundinfo, d, panel)
+if !args["score-only"]
+    showconstraints(roundinfo)
+    for (d, panel) in zip(debateindices, panels)
+        showdebatedetail(roundinfo, d, panel)
+    end
 end
 
 if args["profile"]

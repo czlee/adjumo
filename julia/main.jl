@@ -22,7 +22,7 @@ end
 Top-level adjudicator allocation function.
 `roundinfo` is a RoundInfo instance.
 """
-function allocateadjudicators(roundinfo::RoundInfo)
+function allocateadjudicators(roundinfo::RoundInfo; profile=false, scoreonly=false)
 
     feasible = checkfeasibility(roundinfo)
     if !feasible
@@ -33,9 +33,13 @@ function allocateadjudicators(roundinfo::RoundInfo)
     @time feasiblepanels = generatefeasiblepanels(roundinfo)
     println("Score matrix:")
     @time Σ = scorematrix(feasiblepanels, roundinfo)
-    return (Int[], AdjudicatorPanel[])
 
-    @profile scorematrix(feasiblepanels, roundinfo)
+    if profile
+        @profile scorematrix(feasiblepanels, roundinfo)
+    end
+    if scoreonly
+        return (Int[], AdjudicatorPanel[])
+    end
 
     Q = panelmembershipmatrix(feasiblepanels, roundinfo)
     adjson = convertconstraints(roundinfo.adjudicators, roundinfo.lockedadjs)
