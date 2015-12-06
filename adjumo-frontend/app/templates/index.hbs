@@ -1,0 +1,50 @@
+<div id="main" class="row">
+
+    <div id="alerts-holder"></div>
+
+    {{outlet}}
+
+    <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Venue</th>
+            <th>Points</th>
+            <th>Importance</th>
+            <th>OG</th>
+            <th>OO</th>
+            <th>CO</th>
+            <th>CG</th>
+            <th>
+              <div class="col-md-2">
+                Chair
+              </div>
+              <div class="col-md-8">
+                Panel
+              </div>
+              <div class="col-md-2">
+                Trainee
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+        {{#each model.debates as |debate-instance|}}
+            {{debate-ui debate=debate-instance}}
+        {{/each}}
+        </tbody>
+    </table>
+
+</div>
+
+<div id="main" class="row">
+
+    <div>
+
+      {{#each model.adjudicators as |adjudictator-instance|}}
+        {{adjudicator-ui adj=adjudictator-instance}}
+      {{/each}}
+
+    </div>
+
+
+</div>
