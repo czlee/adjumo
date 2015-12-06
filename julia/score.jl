@@ -13,6 +13,7 @@
 #     δ(p)   is the penalty for adjudicator-adjudicator conflicts and history
 
 using DataStructures
+using DistributedArrays
 import Base.string
 
 # ==============================================================================
@@ -34,6 +35,11 @@ function scorematrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundI
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     componentweights = roundinfo.componentweights
+    println("serial:")
+    @time A = regionalrepresentationmatrix(feasiblepanels, roundinfo)
+    println("parallel:")
+    @time B = regionalrepresentationmatrix_dist(feasiblepanels, roundinfo)
+    @show maxabs(A-B)
     Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
     Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
@@ -180,12 +186,45 @@ function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, 
     return βr
 end
 
-@enum DebateRegionClass RegionClassA RegionClassB RegionClassC RegionClassD RegionClassE
+function regionalrepresentationmatrix_dist(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
+    ndebates = numdebates(roundinfo)
+    npanels = length(feasiblepanels)
+
+    teamregions = Vector{Vector{Region}}(ndebates)
+    for (i, debate) in enumerate(roundinfo.debates)
+        teamregions[i] = Region[t.region for t in debate]
+    end
+
+    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
+    for (i, panel) in enumerate(feasiblepanels)
+        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
+    end
+
+    # Parallelize this part, it's heavy
+    βr = SharedArray(Float64, (ndebates, npanels))
+    @sync @parallel for p in 1:length(panelinfos)
+        nadjs, adjregions = panelinfos[p]
+        for (d, tr) in enumerate(teamregions)
+            βr[d,p] = panelregionalrepresentationscore(tr, adjregions, nadjs)
+        end
+    end
+    return βr
+end
+
+@everywhere @enum DebateRegionClass RegionClassA RegionClassB RegionClassC RegionClassD RegionClassE
 
 string(drc::DebateRegionClass) = "region class " * ["A", "B", "C", "D", "E"][Integer(drc)+1]
 
 debateregionclass(teams::Vector{Team}) = debateregionclass(Region[t.region for t in teams])
 
+function panelregionalrepresentationscore(debate::Vector{Team}, panel::AdjudicatorPanel)
+    teamregions = Region[t.region for t in debate]
+    adjregions = vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...)
+    nadjs = numadjs(panel)
+    return panelregionalrepresentationscore(teamregions, adjregions, nadjs)
+end
+
+@everywhere begin
 """
 Infers the 'region class' of a debate whose teams have the given regions.
 The 'region class' is:
@@ -240,13 +279,6 @@ function debateregionclass(teamregions::Vector{Region})
     else
         return RegionClassD, regions
     end
-end
-
-function panelregionalrepresentationscore(debate::Vector{Team}, panel::AdjudicatorPanel)
-    teamregions = Region[t.region for t in debate]
-    adjregions = vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...)
-    nadjs = numadjs(panel)
-    return panelregionalrepresentationscore(teamregions, adjregions, nadjs)
 end
 
 "Returns the regional representation score for a debate whose teams have the given
@@ -326,6 +358,7 @@ function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregion
 
     return -costfactor * cost
 
+end
 end
 
 # ==============================================================================

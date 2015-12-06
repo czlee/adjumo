@@ -7,7 +7,7 @@ import Base.in
 
 @enum TeamGender TeamNoGender TeamMale TeamFemale TeamMixed
 @enum PersonGender PersonNoGender PersonMale PersonFemale PersonOther
-@enum Region NoRegion NorthAsia SouthEastAsia MiddleEast SouthAsia Africa Oceania NorthAmerica LatinAmerica Europe IONA
+@everywhere @enum Region NoRegion NorthAsia SouthEastAsia MiddleEast SouthAsia Africa Oceania NorthAmerica LatinAmerica Europe IONA
 @enum LanguageStatus NoLanguage EnglishPrimary EnglishSecond EnglishForeign
 @enum Wudc2015AdjudicatorRank TraineeMinus Trainee TraineePlus PanellistMinus Panellist PanellistPlus ChairMinus Chair ChairPlus
 
