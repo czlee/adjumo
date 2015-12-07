@@ -35,6 +35,8 @@ function scorematrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundI
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     componentweights = roundinfo.componentweights
+    regionalrepresentationmatrix(feasiblepanels, roundinfo)
+    regionalrepresentationmatrix_dist(feasiblepanels, roundinfo)
     println("serial:")
     @time A = regionalrepresentationmatrix(feasiblepanels, roundinfo)
     println("parallel:")
@@ -202,6 +204,7 @@ function regionalrepresentationmatrix_dist(feasiblepanels::Vector{AdjudicatorPan
 
     # Parallelize this part, it's heavy
     βr = SharedArray(Float64, (ndebates, npanels))
+    @show βr.pids
     @sync @parallel for p in 1:length(panelinfos)
         nadjs, adjregions = panelinfos[p]
         for (d, tr) in enumerate(teamregions)
