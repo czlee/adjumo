@@ -27,6 +27,17 @@ function randomranking!(adj::Adjudicator)
     adj.ranking = rand([instances(Wudc2015AdjudicatorRank)[2:end]...])
 end
 
+function randpair(v::Vector)
+    for i = 1:100
+        p = rand(v, 2)
+        if p[1] != p[2]
+            return p
+        end
+    end
+    warn("Could not draw pair of two distinct items after 100 attempts")
+    return p
+end
+
 function randomroundinfo(ndebates::Int, currentround::Int)
     nadjs = 3ndebates
     nteams = 4ndebates
@@ -74,7 +85,7 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 
     for i in 1:nadjs÷4
-        addadjadjconflict!(roundinfo, rand(adjudicators, 2)...)
+        addadjadjconflict!(roundinfo, randpair(adjudicators)...)
         addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
     end
 
@@ -99,7 +110,13 @@ function randomroundinfo(ndebates::Int, currentround::Int)
         addlockedadj!(roundinfo, rand(adjudicators), rand(1:ndebates))
         addblockedadj!(roundinfo, rand(adjudicators), rand(1:ndebates))
     end
-    addgroupedadjs!(roundinfo, rand(adjudicators, 2))
+    for i = 1:100
+        groupedadjs = randpair(adjudicators)
+        if !conflicted(roundinfo, groupedadjs...)
+            addgroupedadjs!(roundinfo, groupedadjs)
+            break
+        end
+    end
 
     return roundinfo
 end

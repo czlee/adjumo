@@ -1,17 +1,18 @@
 import Base.show
 import Base.in
 
-export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel
-export AdjumoComponentWeights, RoundInfo
-export TeamGender, TeamNoGender, TeamMale, TeamFemale, TeamMixed
-export PersonGender, PersonNoGender, PersonMale, PersonFemale, PersonOther
-export Region, NoRegion, NorthAsia, SouthEastAsia, MiddleEast, SouthAsia, Africa, Oceania, NorthAmerica, LatinAmerica, Europe, IONA
-export LanguageStatus, NoLanguage, EnglishPrimary, EnglishSecond, EnglishForeign
-export Wudc2015AdjudicatorRank, TraineeMinus, Trainee, TraineePlus, PanellistMinus, Panellist, PanellistPlus, ChairMinus, Chair, ChairPlus
-export abbr, numteamsfrominstitution, numdebates, numadjs
-export addinstitution!, addteam!, addadjudicator!, setdebates!, setdebateweights!
-export addadjadjconflict!, addteamadjconflict!, addadjadjhistory!, addteamadjhistory!
-export addlockedadj!, addblockedadj!, addgroupedadjs!
+export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
+    AdjumoComponentWeights, RoundInfo,
+    TeamGender, TeamNoGender, TeamMale, TeamFemale, TeamMixed,
+    PersonGender, PersonNoGender, PersonMale, PersonFemale, PersonOther,
+    Region, NoRegion, NorthAsia, SouthEastAsia, MiddleEast, SouthAsia, Africa, Oceania, NorthAmerica, LatinAmerica, Europe, IONA,
+    LanguageStatus, NoLanguage, EnglishPrimary, EnglishSecond, EnglishForeign,
+    Wudc2015AdjudicatorRank, TraineeMinus, Trainee, TraineePlus, PanellistMinus, Panellist, PanellistPlus, ChairMinus, Chair, ChairPlus,
+    abbr, numteamsfrominstitution, numdebates, numadjs,
+    conflicted, hasconflict, roundsseen,
+    addinstitution!, addteam!, addadjudicator!, setdebates!, setdebateweights!,
+    addadjadjconflict!, addteamadjconflict!, addadjadjhistory!, addteamadjhistory!,
+    addlockedadj!, addblockedadj!, addgroupedadjs!
 
 # ==============================================================================
 # Models

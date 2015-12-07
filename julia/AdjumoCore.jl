@@ -8,17 +8,11 @@ module AdjumoCore
 using JuMP
 using Formatting
 
-supported_solvers = [
-    (:Gurobi, :GurobiSolver),
-    (:Cbc, :CbcSolver),
-    (:GLPKMathProgInterface, :GLPKSolverMIP),
+SUPPORTED_SOLVERS = [
+    ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap),
+    ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap),
+    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj),
 ]
-for (solvermod, solversym) in supported_solvers
-    try
-        @eval import $solvermod.$solversym
-    catch ArgumentError
-    end
-end
 
 include("types.jl")
 include("score.jl")
@@ -122,21 +116,27 @@ function panelmembershipmatrix(feasiblepanels::Vector{AdjudicatorPanel}, roundin
 end
 
 function choosesolver(solver::AbstractString)
-    solvers = [
-        ("gurobi", :GurobiSolver, :MIPGap),
-        ("cbc", :CbcSolver, :ratioGap),
-        ("glpk", :GLPKSolverMIP, :tol_obj)
-    ]
-    for (solvername, solversym, gapsym) in solvers
-        if isdefined(solversym)
+    for (solvername, solvermod, solversym, gapsym) in SUPPORTED_SOLVERS
+        if (solver == "default" || solver == solvername)
+            try
+                @eval using $solvermod
+            catch ArgumentError
+                if solver == solvername
+                    error("$solversym does not appear to be installed.")
+                    break
+                else
+                    continue
+                end
+
+            end
             println("Using solver: $solversym")
-            return eval(solversym)((gapsym, 1e-2))
+            return eval(solversym)(;gapsym=>1e-2)
         end
     end
     if solver == "default"
-        error("None of Gurobi, Cbc or GLPKMathProgInterface appear to be installed.")
+        error("None of Gurobi, Cbc and GLPKMathProgInterface appear to be installed.")
     else
-        error("Solver must be 'gurobi', 'cbc' or 'glpk'.")
+        error("Solver must be \"gurobi\", \"cbc\" or \"glpk\" (or \"default\").")
     end
 end
 
@@ -160,7 +160,7 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
     (ndebates, npanels) = size(Σ)
 
     modelsolver = choosesolver(solver)
-    m = Model(modelsolver)
+    m = Model(solver=modelsolver)
 
     @defVar(m, X[1:ndebates,1:npanels], Bin)
     @setObjective(m, Max, sum(Σ.*X))
