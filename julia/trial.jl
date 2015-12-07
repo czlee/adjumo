@@ -1,4 +1,4 @@
-push!(LOAD_PATH, ".")
+push!(LOAD_PATH, Base.source_dir())
 using ArgParse
 using Adjumo
 

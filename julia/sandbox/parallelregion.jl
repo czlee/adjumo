@@ -3,6 +3,7 @@
 push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
+import Adjumo: panelregionalrepresentationscore
 include("../random.jl")
 
 function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
