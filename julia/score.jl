@@ -1,3 +1,5 @@
+# This file is part of the Adjumo module.
+
 # Score matrix calculator.
 # Contains functions that generate the score matrix, using information about the
 # round.

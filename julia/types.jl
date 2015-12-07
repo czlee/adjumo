@@ -1,3 +1,5 @@
+# This file is part of the Adjumo module.
+
 import Base.show
 import Base.in
 

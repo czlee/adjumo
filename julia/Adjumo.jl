@@ -2,7 +2,9 @@
 # Top-level file.
 # allocateadjudicators() is the top-level function.
 
-module AdjumoCore
+__precompile__()
+
+module Adjumo
 
 # Solvers must be imported separately, by the user of the file.
 using JuMP

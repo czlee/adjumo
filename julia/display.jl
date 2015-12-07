@@ -1,3 +1,5 @@
+# This file is part of the Adjumo module.
+
 export showconstraints, showdebatedetail
 
 "Prints information about the given debate."
