@@ -1,7 +1,7 @@
 # Performance profiling for debateregionclass
 
 push!(LOAD_PATH, "..")
-using AdjumoCore
+using Adjumo
 
 function equivalent(a::Tuple{DebateRegionClass,Vector{Region}}, b::Tuple{DebateRegionClass,Vector{Region}})
     aclass, aregions = a
