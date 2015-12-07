@@ -37,10 +37,6 @@ td {
 .head-bans {
   width: 10%;
 }
-.head-panel {
-  width: 50%;
-}
-
 
 #allocation th {
   font-size: 10px;
@@ -52,34 +48,90 @@ td {
 
 /* Panel Component */
 
-.debate-panel {
+.panel-ui {
   padding: 0px !important;
+  line-height: 40px;
+}
+.panel-ui .glyphicon {
+  line-height: 40px;
+}
+.flex-icon {
+  flex: none;
+  width: 40px;
+  text-align: center;
+}
+.flex-icon .glyphicon {
+  font-size: 20px;
+  color: #666;
+}
+.flex-1 {
+  flex-grow: 1;
+}
+.flex-2 {
+  flex-grow: 2;
 }
 
+.debate-panel {
+  padding: 4px !important;
+}
+
+/* Panel Component */
+
 .panel-ui {
-  background: rgb(192, 192, 192);
+  border: 2px solid rgb(0, 0, 255);
+  border-radius: 6px;
+  background: #EFEFEF;
   overflow: auto;
   margin-bottom: 0px;
+  display: flex;
+}
+.head-panel {
+  display: flex;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
 }
 .position-holder {
   border-right: 1px solid #FEFEFE;
-  height: 46px;
+}
+.js-drag-handle:hover {
+  cursor: move;
 }
 
 /* Adjudicator Component */
 
 .adjudicator-ui {
-  width: 100%;
+  background: rgb(200, 200, 200);
   max-width: 200px;
   text-align: left;
-  padding: 6px;
-  border-color: #FFF;
-  margin-top: 6px;
+  padding: 0px 10px 0 0;
+  border: 2px solid rgb(0, 0, 255);
+  border-radius: 3px;
+  margin: 3px 3px;
+  display: flex;
+}
+.adjudicator-ui div span,
+.adjudicator-ui div span.glyphicon {
+  line-height: 32px;
 }
 
-.debate-adjudicator:hover {
-    cursor: move;
+.adjudicator-ui:hover {
+  cursor: move;
 }
-.js-drag-handle {
+.adj-lock {
+  flex: none;
+  width: 20px;
+}
+.adj-name {
+  flex-grow: 1;
+}
 
+/* Holders */
+
+#unusedAdjs {
+  background: #EFEFEF;
+  padding: 10px;
+}
+#unusedAdjs .adjudicator-ui {
+  float: left;
+  margin-right: 8px;
 }

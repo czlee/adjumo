@@ -1,7 +1,20 @@
-{{#draggable-object content=this dragHandle='.js-drag-handle'}}
-<button type="button" class="btn adjudicator-ui">
-    <span class="glyphicon glyphicon-ok-circle"></span>
-    {{ adj.name }} ({{ adj.institution }}) {{ adj.rating }}
-    <span class="glyphicon glyphicon-move js-drag-handle"></span>
-</button>
-{{/draggable-object}}
+{{#if adj }}
+    {{#draggable-object content=this dragStartAction='startAdjDrag' dragEndAction='endAdjDrag'}}
+        <button type="button" class="btn adjudicator-ui">
+            <div class="flex-icon flex-icon">
+                <span class="glyphicon glyphicon-ok-circle"></span>
+            </div>
+            <div class="flex-1">
+                <span>{{ adj.name }}</span>
+                <span>
+                {{#each adj.institutions as |institution|}}
+                    ({{ institution.name }})
+                {{/each}}
+                </span>
+            </div>
+            <div class="">
+                <span> {{ adj.rating }}</span>
+            </div>
+        </button>
+    {{/draggable-object}}
+{{/if }}

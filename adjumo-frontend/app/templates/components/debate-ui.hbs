@@ -1,9 +1,29 @@
-<td class="debate-venue">{{ debate.venue }}</td>
-<td class="debate-points">{{ debate.points }}</td>
-<td class="debate-importance">{{ input type="number" value=debate.importance }}</td>
-<td class="debate-og">{{ debate.og.name }}</td>
-<td class="debate-oo">{{ debate.oo.name }}</td>
-<td class="debate-cg">{{ debate.cg.name }}</td>
-<td class="debate-co">{{ debate.co.name }}</td>
-<td class="debate-bans"></td>
-<td class="debate-panel">{{panel-ui panel=debate.panel}}</td>
+<td class="debate-venue">
+    {{ debate.venue }}
+</td>
+<td class="debate-points">
+    {{ debate.points }}
+</td>
+<td class="debate-importance">
+    {{ input type="number" value=debate.importance }}
+</td>
+<td class="debate-og">
+    {{ debate.og.name }}
+</td>
+<td class="debate-oo">
+    {{ debate.oo.name }}
+</td>
+<td class="debate-cg">
+    {{ debate.cg.name }}
+</td>
+<td class="debate-co">
+    {{ debate.co.name }}
+</td>
+<td class="debate-bans">
+
+</td>
+<td class="debate-panel">
+    {{#draggable-object-target dragOverAction='panelReceived' }}
+        {{panel-ui panel=debate.panel}}
+    {{/draggable-object-target}}
+</td>

@@ -31,33 +31,6 @@ export default function() {
   });
 
   // Dummy data for mocking the json response
-  this.get('/institutions/1', function() {
-    return {
-      data: {
-        type: "institutions",
-        id: 1,
-        attributes: {
-          name: "VUW",
-        }
-      }
-    }
-  });
-  // Dummy data for mocking the json response
-  this.get('/institutions/2', function() {
-    return {
-      data: {
-        type: "institutions",
-        id: 2,
-        attributes: {
-          name: "Auck",
-        }
-      }
-    }
-  });
-
-
-
-  // Dummy data for mocking the json response
   this.get('/adjudicators', function() {
     return {
       data: [
@@ -66,10 +39,14 @@ export default function() {
           id: 1,
           attributes: {
             name: "Philip",
-            rating: 5.0,
+            rating: 1.0,
           },
           relationships: {
-            "institution": { "data": { "type": "institution", "id": "1" } }
+            "institutions": {
+              "data": [
+                { "type": "institution", "id": "2" }
+              ]
+            }
           }
         },
         {
@@ -80,10 +57,29 @@ export default function() {
             rating: 5.0,
           },
           relationships: {
-            "institution": { "data": { "type": "institution", "id": "2" } }
+            "institutions": {
+              "data": [
+                { "type": "institution", "id": "5" }
+              ]
+            }
           }
         }
-
+      ],
+      "included": [
+        {
+          "type": "institution",
+          "id": "2",
+          "attributes": {
+            "name": "VUW"
+          }
+        },
+        {
+          "type": "institution",
+          "id": "5",
+          "attributes": {
+            "name": "AUK!"
+          }
+        }
       ]
     }
   });
@@ -102,11 +98,11 @@ export default function() {
             venue: "DM 01",
           },
           "relationships": {
-            "og": { "data": { "type": "team", "id": "1" } },
-            "oo": { "data": { "type": "team", "id": "2" } },
-            "cg": { "data": { "type": "team", "id": "3" } },
-            "co": { "data": { "type": "team", "id": "4" } },
-            "panel": { "data": { "type": "panel", "id": "1" } }
+            "og":     { "data": { "type": "team", "id": "1" } },
+            "oo":     { "data": { "type": "team", "id": "2" } },
+            "cg":     { "data": { "type": "team", "id": "3" } },
+            "co":     { "data": { "type": "team", "id": "4" } },
+            "panel":  { "data": { "type": "panel", "id": "1" } }
           }
         },
         {
@@ -124,9 +120,23 @@ export default function() {
             "co": { "data": { "type": "team", "id": "8" } },
             "panel": { "data": { "type": "panel", "id": "2" } }
           }
+        },
+        {
+          type: "debates",
+          id: 3,
+          attributes: {
+            debate_id: "3",
+            points: "0",
+            venue: "RM 99",
+          },
+          "relationships": {
+            "og": { "data": { "type": "team", "id": "9" } },
+            "oo": { "data": { "type": "team", "id": "10" } },
+            "cg": { "data": { "type": "team", "id": "11" } },
+            "co": { "data": { "type": "team", "id": "11" } },
+          }
         }
       ],
-
       "included": [
         {
             "type": "team",
@@ -179,6 +189,33 @@ export default function() {
         {
             "type": "team",
             "id": "8",
+            "attributes": {
+              "name": "SSSefa4!"
+            }
+        },{
+            "type": "team",
+            "id": "9",
+            "attributes": {
+              "name": "FFSefa!"
+            }
+        },
+        {
+            "type": "team",
+            "id": "10",
+            "attributes": {
+              "name": "TRSefa2!"
+            }
+        },
+        {
+            "type": "team",
+            "id": "11",
+            "attributes": {
+              "name": "DFSefa3!"
+            }
+        },
+        {
+            "type": "team",
+            "id": "12",
             "attributes": {
               "name": "SSSefa4!"
             }

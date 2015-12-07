@@ -1,27 +1,4 @@
 
-
-<nav class="navbar navbar-light bg-faded container-fluid">
-  <a class="navbar-brand" href="#"></a>
-  <ul class="nav navbar-nav">
-    <li class="nav-item active">
-      <a class="nav-link" href="#">Toggle A</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">Toggle B</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">Toggle C</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">oggle D</a>
-    </li>
-  </ul>
-  <form class="form-inline navbar-form pull-right">
-    <input class="form-control" type="text" placeholder="Search">
-    <button class="btn btn-success-outline" type="submit">Search</button>
-  </form>
-</nav>
-
 <div id="main" class="container-fluid">
 
   <div id="alerts-holder"></div>
@@ -40,14 +17,20 @@
         <th class="head-co">CG</th>
         <th class="head-bans">Bans</th>
         <th class="head-panel">
-          <div class="col-md-2">
+          <div class="flex-icon flex-icon-large">
+            L
+          </div>
+          <div class="flex-1">
             Chair
           </div>
-          <div class="col-md-8">
+          <div class="flex-2">
             Panel
           </div>
-          <div class="col-md-2">
+          <div class="flex-1">
             Trainee
+          </div>
+          <div class="flex-icon-large">
+            M
           </div>
         </th>
       </tr>
@@ -61,7 +44,7 @@
 
 </div>
 
-<div id="" class="container-fluid navbar-fixed-bottom">
+<div id="unusedAdjs" class="container-fluid navbar-fixed-bottom">
 
 {{#draggable-object-target action=""}}
   {{#each model.adjudicators as |adjudictator-instance|}}
