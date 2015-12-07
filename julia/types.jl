@@ -1,13 +1,25 @@
 import Base.show
 import Base.in
 
+export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel
+export AdjumoComponentWeights, RoundInfo
+export TeamGender, TeamNoGender, TeamMale, TeamFemale, TeamMixed
+export PersonGender, PersonNoGender, PersonMale, PersonFemale, PersonOther
+export Region, NoRegion, NorthAsia, SouthEastAsia, MiddleEast, SouthAsia, Africa, Oceania, NorthAmerica, LatinAmerica, Europe, IONA
+export LanguageStatus, NoLanguage, EnglishPrimary, EnglishSecond, EnglishForeign
+export Wudc2015AdjudicatorRank, TraineeMinus, Trainee, TraineePlus, PanellistMinus, Panellist, PanellistPlus, ChairMinus, Chair, ChairPlus
+export abbr, numteamsfrominstitution, numdebates, numadjs
+export addinstitution!, addteam!, addadjudicator!, setdebates!, setdebateweights!
+export addadjadjconflict!, addteamadjconflict!, addadjadjhistory!, addteamadjhistory!
+export addlockedadj!, addblockedadj!, addgroupedadjs!
+
 # ==============================================================================
 # Models
 # ==============================================================================
 
 @enum TeamGender TeamNoGender TeamMale TeamFemale TeamMixed
 @enum PersonGender PersonNoGender PersonMale PersonFemale PersonOther
-@everywhere @enum Region NoRegion NorthAsia SouthEastAsia MiddleEast SouthAsia Africa Oceania NorthAmerica LatinAmerica Europe IONA
+@enum Region NoRegion NorthAsia SouthEastAsia MiddleEast SouthAsia Africa Oceania NorthAmerica LatinAmerica Europe IONA
 @enum LanguageStatus NoLanguage EnglishPrimary EnglishSecond EnglishForeign
 @enum Wudc2015AdjudicatorRank TraineeMinus Trainee TraineePlus PanellistMinus Panellist PanellistPlus ChairMinus Chair ChairPlus
 

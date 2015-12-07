@@ -1,8 +1,10 @@
+push!(LOAD_PATH, ".")
 using ArgParse
-include("main.jl")
+using AdjumoCore
+
 include("random.jl")
 
-s = ArgParseSettings()
+argsettings = ArgParseSettings()
 @add_arg_table argsettings begin
     "-n", "--ndebates"
         help = "Number of debates in round"
@@ -14,18 +16,10 @@ s = ArgParseSettings()
         default = 5
     "--solver"
         help = "Solver to use ('gurobi', 'cbc' or 'glpk')"
-        default = nothing
+        default = "default"
+        range_tester = x -> x ∈ ["default", "gurobi", "cbc", "glpk"]
 end
 args = parse_args(ARGS, argsettings)
-
-SOLVERS = Dict("gurobi" => "Gurobi", "cbc" => "Cbc", "glpk" => "GLPKMathProgInterface")
-for (argvalue, package) in SOLVERS
-    if args["solver"] == argvalue || (args["solver"] == nothing && Pkg.installed(package) != nothing)
-        println("Using solver: $package")
-        eval(parse("using " * package))
-        break
-    end
-end
 
 ndebates = args["ndebates"]
 currentround = args["currentround"]
@@ -41,7 +35,7 @@ componentweights.adjconflict = 1e6
 @time roundinfo = randomroundinfo(ndebates, currentround)
 roundinfo.componentweights = componentweights
 
-debateindices, panels = allocateadjudicators(roundinfo)
+debateindices, panels = allocateadjudicators(roundinfo; solver=args["solver"])
 
 showconstraints(roundinfo)
 for (d, panel) in zip(debateindices, panels)

@@ -1,7 +1,7 @@
 # Performance profiling for debateregionclass
 
-include("../types.jl")
-include("../score.jl")
+push!(LOAD_PATH, "..")
+using AdjumoCore
 
 function equivalent(a::Tuple{DebateRegionClass,Vector{Region}}, b::Tuple{DebateRegionClass,Vector{Region}})
     aclass, aregions = a

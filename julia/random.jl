@@ -1,4 +1,4 @@
-include("testdata.jl")
+include("randomdata.jl")
 
 function addrandomregions!(adj::Adjudicator)
     # TODO replace these with more realistic distributions
@@ -73,7 +73,7 @@ function randomroundinfo(ndebates::Int, currentround::Int)
 
     println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 
-    for i in 1:nadjs÷3
+    for i in 1:nadjs÷4
         addadjadjconflict!(roundinfo, rand(adjudicators, 2)...)
         addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
     end

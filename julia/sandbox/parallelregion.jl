@@ -1,6 +1,9 @@
+# Performance profiling for parallel computation of region scores
+
+push!(LOAD_PATH, "..")
 using ArgParse
-include("../main.jl")
-include("../random.jl")
+using AdjumoCore
+include("random.jl")
 
 function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)

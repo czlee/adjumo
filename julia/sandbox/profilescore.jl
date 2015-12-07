@@ -1,6 +1,9 @@
+# Performance profiling of score matrix function
+
+push!(LOAD_PATH, "..")
 using ArgParse
-include("../main.jl")
-include("../random.jl")
+using AdjumoCore
+include("random.jl")
 
 argsettings = ArgParseSettings()
 @add_arg_table argsettings begin
