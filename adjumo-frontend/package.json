@@ -39,5 +39,8 @@
     "ember-drag-drop": "^0.2.3",
     "ember-dragula": "1.6.0",
     "ember-export-application-global": "^1.0.4"
+  },
+  "dependencies": {
+    "dragula": "^3.5.4"
   }
 }

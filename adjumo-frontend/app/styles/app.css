@@ -97,8 +97,15 @@ td {
   border-right: 1px solid #FEFEFE;
   padding: 0 4px;
 }
-.draggable-object-target {
-  min-height: 30px;
+.position-holder .ember-view {
+  /* The dragula container */
+  min-height: 40px;
+  width: 100%;
+}
+.position-holder .ember-view .ember-view {
+  /* The dragula container */
+  width: auto;
+  min-height: 0;
 }
 .js-drag-handle:hover {
   cursor: move;
