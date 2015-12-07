@@ -1,6 +1,6 @@
 # Performance profiling for parallel computation of region scores
 
-push!(LOAD_PATH, "..")
+push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
 include("../random.jl")

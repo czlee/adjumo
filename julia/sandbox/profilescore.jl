@@ -1,6 +1,6 @@
 # Performance profiling of score matrix function
 
-push!(LOAD_PATH, "..")
+push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
 include("../random.jl")

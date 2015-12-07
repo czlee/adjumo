@@ -1,7 +1,9 @@
 # Performance profiling for debateregionclass
 
-push!(LOAD_PATH, "..")
+push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using Adjumo
+using DataStructures
+import Adjumo: DebateRegionClass, RegionClassA, RegionClassB, RegionClassC, RegionClassD, RegionClassE
 
 function equivalent(a::Tuple{DebateRegionClass,Vector{Region}}, b::Tuple{DebateRegionClass,Vector{Region}})
     aclass, aregions = a
