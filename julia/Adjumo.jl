@@ -6,7 +6,6 @@ __precompile__()
 
 module Adjumo
 
-# Solvers must be imported separately, by the user of the file.
 using JuMP
 using Formatting
 
