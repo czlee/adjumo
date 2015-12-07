@@ -2,18 +2,8 @@
 # Contains functions that generate the score matrix, using information about the
 # round.
 
-# The (d,p)-th element of the score matrix Σ is the score for allocating panel p
-# to debate d, and is calculated as
-#     Σ[d,p] = w(d)[α(p) + β(d,p) - γ(d,p) - δ(p)]
-# where
-#     w(d)   is the weighting of the debate (a.k.a. importance, "energy")
-#     α(p)   is the score given to panel p based on its quality
-#     β(d,p) is the score for allocating panel p to debate d based on representation
-#     γ(d,p) is the penalty for team-adjudicator conflicts and history
-#     δ(p)   is the penalty for adjudicator-adjudicator conflicts and history
 
 using DataStructures
-using DistributedArrays
 import Base.string
 
 # ==============================================================================
@@ -35,13 +25,6 @@ function scorematrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundI
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     componentweights = roundinfo.componentweights
-    regionalrepresentationmatrix(feasiblepanels, roundinfo)
-    regionalrepresentationmatrix_dist(feasiblepanels, roundinfo)
-    println("serial:")
-    @time A = regionalrepresentationmatrix(feasiblepanels, roundinfo)
-    println("parallel:")
-    @time B = regionalrepresentationmatrix_dist(feasiblepanels, roundinfo)
-    @show maxabs(A-B)
     Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
     Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
@@ -184,32 +167,6 @@ function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, 
     βr = Matrix{Float64}(ndebates, npanels)
     for (p, (nadjs, adjregions)) in enumerate(panelinfos), (d, tr) in enumerate(teamregions)
         βr[d,p] = panelregionalrepresentationscore(tr, adjregions, nadjs)
-    end
-    return βr
-end
-
-function regionalrepresentationmatrix_dist(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
-    ndebates = numdebates(roundinfo)
-    npanels = length(feasiblepanels)
-
-    teamregions = Vector{Vector{Region}}(ndebates)
-    for (i, debate) in enumerate(roundinfo.debates)
-        teamregions[i] = Region[t.region for t in debate]
-    end
-
-    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
-    for (i, panel) in enumerate(feasiblepanels)
-        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
-    end
-
-    # Parallelize this part, it's heavy
-    βr = SharedArray(Float64, (ndebates, npanels))
-    @show βr.pids
-    @sync @parallel for p in 1:length(panelinfos)
-        nadjs, adjregions = panelinfos[p]
-        for (d, tr) in enumerate(teamregions)
-            βr[d,p] = panelregionalrepresentationscore(tr, adjregions, nadjs)
-        end
     end
     return βr
 end
@@ -362,7 +319,7 @@ function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregion
     return -costfactor * cost
 
 end
-end
+end # @everywhere
 
 # ==============================================================================
 # Language representation

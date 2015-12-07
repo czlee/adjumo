@@ -4,7 +4,6 @@
 
 using JuMP
 using Formatting
-using ArgParse
 include("types.jl")
 include("score.jl")
 
@@ -22,7 +21,7 @@ end
 Top-level adjudicator allocation function.
 `roundinfo` is a RoundInfo instance.
 """
-function allocateadjudicators(roundinfo::RoundInfo; profile=false, scoreonly=false)
+function allocateadjudicators(roundinfo::RoundInfo)
 
     feasible = checkfeasibility(roundinfo)
     if !feasible
@@ -31,15 +30,7 @@ function allocateadjudicators(roundinfo::RoundInfo; profile=false, scoreonly=fal
     end
 
     @time feasiblepanels = generatefeasiblepanels(roundinfo)
-    println("Score matrix:")
     @time Σ = scorematrix(feasiblepanels, roundinfo)
-
-    if profile
-        @profile scorematrix(feasiblepanels, roundinfo)
-    end
-    if scoreonly
-        return (Int[], AdjudicatorPanel[])
-    end
 
     Q = panelmembershipmatrix(feasiblepanels, roundinfo)
     adjson = convertconstraints(roundinfo.adjudicators, roundinfo.lockedadjs)
@@ -69,7 +60,7 @@ end
 
 """
 Generates a list of feasible panels using the information about the round.
-`roundinfo` a RoundInfo instance.
+`roundinfo` is a RoundInfo instance.
 
 Returns a list of AdjudicatorPanel instances.
 """

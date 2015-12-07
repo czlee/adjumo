@@ -1,8 +1,9 @@
+using ArgParse
 include("main.jl")
 include("random.jl")
 
 s = ArgParseSettings()
-@add_arg_table s begin
+@add_arg_table argsettings begin
     "-n", "--ndebates"
         help = "Number of debates in round"
         arg_type = Int
@@ -14,14 +15,8 @@ s = ArgParseSettings()
     "--solver"
         help = "Solver to use ('gurobi', 'cbc' or 'glpk')"
         default = nothing
-    "--profile"
-        help = "Print profiling information"
-        action = :store_true
-    "--score-only"
-        help = "Stop after computing score matrix"
-        action = :store_true
 end
-args = parse_args(ARGS, s)
+args = parse_args(ARGS, argsettings)
 
 SOLVERS = Dict("gurobi" => "Gurobi", "cbc" => "Cbc", "glpk" => "GLPKMathProgInterface")
 for (argvalue, package) in SOLVERS
@@ -46,16 +41,9 @@ componentweights.adjconflict = 1e6
 @time roundinfo = randomroundinfo(ndebates, currentround)
 roundinfo.componentweights = componentweights
 
-debateindices, panels = allocateadjudicators(roundinfo; profile=args["profile"], scoreonly=args["score-only"])
+debateindices, panels = allocateadjudicators(roundinfo)
 
-if !args["score-only"]
-    showconstraints(roundinfo)
-    for (d, panel) in zip(debateindices, panels)
-        showdebatedetail(roundinfo, d, panel)
-    end
-end
-
-if args["profile"]
-    Profile.print()
-    Profile.print(format=:flat, sortedby=:count)
+showconstraints(roundinfo)
+for (d, panel) in zip(debateindices, panels)
+    showdebatedetail(roundinfo, d, panel)
 end
