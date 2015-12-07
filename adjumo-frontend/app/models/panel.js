@@ -6,6 +6,6 @@ export default DS.Model.extend({
   panellists: DS.hasMany('adjudicator'),
   trainees: DS.hasMany('adjudicator'),
 
-  panel: DS.belongsTo('debate'),
+  debate: DS.belongsTo('debate'),
 
 });

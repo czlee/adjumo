@@ -11,15 +11,14 @@ export default Ember.Component.extend({
       console.log('ending panel drag');
     },
 
-    chairReceived: function(obj,ops) {
-      console.log('chair received by panel');
-    },
-    panellistReceived: function(obj,ops) {
-      console.log('panellist received by panel');
-    },
-    traineeReceived: function(obj,ops) {
-      console.log('trainee received by panel');
-    },
+    receivedAdj: function(adjudicator, ops) {
+      var position = ops.target.position;
+      var debate = Ember.get(ops.target.panel, 'debate') // .;
+      console.log(adjudicator);
+      console.log(ops);
+      console.log("move " +  Ember.get(adjudicator, 'name') + " to " + position + " on " + debate);
+
+    }
 
   }
 

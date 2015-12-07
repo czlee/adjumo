@@ -1,5 +1,3 @@
-{{#draggable-object content=this dragHandle='.js-drag-handle'  dragStartAction='startPanelDrag' dragEndAction='endPanelDrag'}}
-
 <div class="panel-ui">
 
     <div class="flex-icon flex-icon">
@@ -8,7 +6,7 @@
 
     <div class="debate-chair-holder flex-1 position-holder">
 
-      {{#draggable-object-target dragOverAction='chairReceived' }}
+      {{#draggable-object-target action='receivedAdj' position='chair' panel=panel}}
         {{#if panel.chair }}
           {{adjudicator-ui adj=panel.chair}}
         {{/if }}
@@ -17,7 +15,7 @@
     </div>
     <div class="debate-panel-holder flex-2 position-holder">
 
-      {{#draggable-object-target dragOverAction='panellistReceived'}}
+      {{#draggable-object-target action='receivedAdj' position='panellist' panel=panel}}
         {{#each panel.panellists as |adjudictator-instance|}}
           {{adjudicator-ui adj=adjudictator-instance}}
         {{/each}}
@@ -25,8 +23,7 @@
 
     </div>
     <div class="debate-trainee-holder flex-1 position-holder">
-
-      {{#draggable-object-target dragOverAction='traineeReceived' }}
+      {{#draggable-object-target action='receivedAdj' position='trainee' panel=panel}}
         {{#each panel.trainees as |adjudictator-instance|}}
           {{adjudicator-ui adj=adjudictator-instance}}
         {{/each}}
@@ -41,4 +38,5 @@
     </div>
 </div>
 
+{{#draggable-object content=this dragHandle='.js-drag-handle'  dragStartAction='startPanelDrag' dragEndAction='endPanelDrag'}}
 {{/draggable-object}}

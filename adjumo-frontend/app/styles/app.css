@@ -90,8 +90,15 @@ td {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
+.panel-ui:first-child {
+  border-right: 1px solid #FEFEFE; /* TODO: not working */
+}
 .position-holder {
   border-right: 1px solid #FEFEFE;
+  padding: 0 4px;
+}
+.draggable-object-target {
+  min-height: 30px;
 }
 .js-drag-handle:hover {
   cursor: move;
