@@ -122,13 +122,11 @@ function choosesolver(solver::AbstractString)
             try
                 @eval using $solvermod
             catch ArgumentError
-                if solver == solvername
-                    error("$solversym does not appear to be installed.")
-                    break
-                else
+                if solver == "default"
                     continue
+                else
+                    error("Can't use $solvername, $solvermod does not appear to be installed.")
                 end
-
             end
             println("Using solver: $solversym")
             return eval(solversym)(;gapsym=>1e-2)
