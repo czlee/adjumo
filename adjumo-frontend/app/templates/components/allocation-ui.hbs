@@ -1,4 +1,4 @@
-{{#ember-dragula config=dragulaconfig as |drake|}}
+{{#ember-dragula drag='adjDrag' drop='adjDrop' config=adj_dragulaconfig as |adj-drake| }}
 
 <div id="main" class="container-fluid">
 
@@ -18,9 +18,6 @@
         <th class="head-co">CG</th>
         <th class="head-bans">Bans</th>
         <th class="head-panel">
-          <div class="flex-icon flex-icon-large">
-            L
-          </div>
           <div class="flex-1">
             Chair
           </div>
@@ -39,7 +36,7 @@
     <tbody>
 
     {{#each model.debates as |debate-instance|}}
-        {{debate-ui debate=debate-instance drake=drake}}
+        {{debate-ui debate=debate-instance drake=adj-drake}}
     {{/each}}
 
     </tbody>

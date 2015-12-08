@@ -142,82 +142,82 @@ export default function() {
             "type": "team",
             "id": "1",
             "attributes": {
-              "name": "Sefa!"
+              "name": "Cambridge A"
             }
         },
         {
             "type": "team",
             "id": "2",
             "attributes": {
-              "name": "Sefa2!"
+              "name": "Hart House A"
             }
         },
         {
             "type": "team",
             "id": "3",
             "attributes": {
-              "name": "Sefa3!"
+              "name": "Harvard A"
             }
         },
         {
             "type": "team",
             "id": "4",
             "attributes": {
-              "name": "Sefa4!"
+              "name": "BPP A"
             }
         },{
             "type": "team",
             "id": "5",
             "attributes": {
-              "name": "FFSefa!"
+              "name": "Cambridge B"
             }
         },
         {
             "type": "team",
             "id": "6",
             "attributes": {
-              "name": "TRSefa2!"
+              "name": "Sydney D"
             }
         },
         {
             "type": "team",
             "id": "7",
             "attributes": {
-              "name": "DFSefa3!"
+              "name": "Melbourne A"
             }
         },
         {
             "type": "team",
             "id": "8",
             "attributes": {
-              "name": "SSSefa4!"
+              "name": "Oxford B"
             }
         },{
             "type": "team",
             "id": "9",
             "attributes": {
-              "name": "FFSefa!"
+              "name": "Durham A"
             }
         },
         {
             "type": "team",
             "id": "10",
             "attributes": {
-              "name": "TRSefa2!"
+              "name": "IIUM A"
             }
         },
         {
             "type": "team",
             "id": "11",
             "attributes": {
-              "name": "DFSefa3!"
+              "name": "New South Wales B"
             }
         },
         {
             "type": "team",
             "id": "12",
             "attributes": {
-              "name": "SSSefa4!"
+              "name": "Vic Wellington A"
             }
         }
         ]

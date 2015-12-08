@@ -8,9 +8,8 @@ table {
   white-space: nowrap;
 }
 td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: normal !important;
+  padding: 4px !important;
 }
 
 .head-venue {
@@ -42,7 +41,12 @@ td {
   font-size: 10px;
 }
 
-.importance input {
+/* Table Cells */
+
+.debate-importance {
+  padding: 0px !important;
+}
+.debate-importance input {
   max-width: 30px;
 }
 
