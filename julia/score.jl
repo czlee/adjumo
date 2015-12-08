@@ -436,11 +436,12 @@ function sumadjadjscoresvector(adjadjscore::Function, feasiblepanels::Vector{Adj
     # We won't necessarily need all pairs of adjudicators, so calculate them
     # as we go, but store them in a dict to avoid having to calculate multiple
     # times.
+    # TODO profile this when calculated using matrix multiplication, like sumteamadjscoresmatrix
     ξ = Dict{Tuple{Adjudicator,Adjudicator},Float64}()
     npanels = length(feasiblepanels)
     γ = zeros(1, npanels)
     for (p, panel) in enumerate(feasiblepanels)
-        for (adj1, adj2) in combinations(adjlist(panel), 2) # a1, a2 are integer indices, not Adjudicators
+        for (adj1, adj2) in combinations(adjlist(panel), 2)
             γ[p] += get!(ξ, (adj1, adj2)) do
                 adjadjscore(roundinfo, adj1, adj2)
             end
