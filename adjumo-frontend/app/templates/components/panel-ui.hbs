@@ -13,11 +13,10 @@
     <div class="debate-panel-holder flex-2 position-holder">
 
       {{#ember-dragula-container}}
-        {{#each panel.panellists as |adjudictator-instance|}}
-          {{adjudicator-ui adj=adjudictator-instance}}
-        {{/each}}
-        {{#if panel.chair }}
-          {{adjudicator-ui adj=panel.chair}}
+        {{#if panel.panellists}}
+          {{#each panel.panellists as |panellist|}}
+            {{adjudicator-ui adj=panellist}}
+          {{/each}}
         {{/if }}
       {{/ember-dragula-container}}
 
@@ -25,9 +24,11 @@
     <div class="debate-trainee-holder flex-1 position-holder">
 
       {{#ember-dragula-container}}
-        {{#each panel.trainees as |adjudictator-instance|}}
-          {{adjudicator-ui adj=adjudictator-instance}}
-        {{/each}}
+        {{#if panel.trainees }}
+          {{#each panel.trainees as |trainee|}}
+            {{adjudicator-ui adj=trainee}}
+          {{/each}}
+        {{/if }}
       {{/ember-dragula-container}}
 
     </div>

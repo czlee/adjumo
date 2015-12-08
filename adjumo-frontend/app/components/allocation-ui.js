@@ -19,11 +19,19 @@ export default Ember.Component.extend({
   actions: {
 
     adjDrag: function(obj,ops) {
-      console.log('starting panel drag');
+      // console.log('starting adj drag');
+      // console.log(obj);
+      // console.log(ops);
     },
 
     adjDrop: function(obj,ops) {
-      console.log('ending panel drag');
+      console.log('did an adj drop');
+      var adj = obj[0];
+      console.log(adj);
+      var toPosition = obj[1];
+      console.log(toPosition);
+      var fromPosition = obj[2];
+      console.log(fromPosition);
     },
 
   }

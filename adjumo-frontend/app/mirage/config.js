@@ -6,14 +6,13 @@ export default function() {
       data: {
         type: "panels",
         id: 1,
-        "relationships": {
-          "chair": { "data": { "type": "adjudicator", "id": "1" } },
-          "panellists": [],
-          "trainees": [],
+        relationships: {
+          chair: { "data": { "type": "adjudicator", "id": "1" } },
         }
       }
     }
   });
+
 
   // Dummy data for mocking the json response
   this.get('/panels/2', function() {
@@ -21,10 +20,31 @@ export default function() {
       data: {
         type: "panels",
         id: 2,
-        "relationships": {
-          "chair": { "data": { "type": "adjudicator", "id": "2" } },
-          "panellists": [],
-          "trainees": [],
+        relationships: {
+          chair: { "data": { "type": "adjudicator", "id": "2" } },
+          panellists: {
+            "data": [
+              { "type": "adjudicators", "id": "3" },
+              { "type": "adjudicators", "id": "4" },
+            ]
+          },
+        }
+      }
+    }
+  });
+
+  // Dummy data for mocking the json response
+  this.get('/panels/3', function() {
+    return {
+      data: {
+        type: "panels",
+        id: 3,
+        relationships: {
+          trainees: {
+            "data": [
+              { "type": "adjudicators", "id": "5" }
+            ]
+          },
         }
       }
     }
@@ -38,8 +58,10 @@ export default function() {
           type: "adjudicators",
           id: 1,
           attributes: {
-            name: "Philip",
+            name: "Philip Belesky",
             rating: 2.0,
+            region: "oceania",
+            gender: 1,
           },
           relationships: {
             "institutions": {
@@ -53,13 +75,66 @@ export default function() {
           type: "adjudicators",
           id: 2,
           attributes: {
-            name: "CZ",
+            name: "Chuan-Zheng Lee",
             rating: 6.0,
+            region: "america",
+            gender: 0,
           },
           relationships: {
             "institutions": {
               "data": [
                 { "type": "institution", "id": "5" }
+              ]
+            }
+          }
+        },
+        {
+          type: "adjudicators",
+          id: 3,
+          attributes: {
+            name: "Chris Bisset",
+            rating: 7.0,
+            region: "oceania",
+            gender: 0,
+          },
+          relationships: {
+            "institutions": {
+              "data": [
+                { "type": "institution", "id": "8" }
+              ]
+            }
+          }
+        },
+        {
+          type: "adjudicators",
+          id: 4,
+          attributes: {
+            name: "Other Old Hack",
+            rating: 1.0,
+            region: "america",
+            gender: 0,
+          },
+          relationships: {
+            "institutions": {
+              "data": [
+                { "type": "institution", "id": "8" }
+              ]
+            }
+          }
+        },
+        {
+          type: "adjudicators",
+          id: 5,
+          attributes: {
+            name: "Other Old Hack 2",
+            rating: 10.0,
+            region: "oceania",
+            gender: 0,
+          },
+          relationships: {
+            "institutions": {
+              "data": [
+                { "type": "institution", "id": "8" }
               ]
             }
           }
@@ -77,7 +152,7 @@ export default function() {
           "type": "institution",
           "id": "5",
           "attributes": {
-            "name": "AUK!"
+            "name": "AUK"
           }
         }
       ]
@@ -97,7 +172,7 @@ export default function() {
             points: "5",
             venue: "DM 01",
           },
-          "relationships": {
+          relationships: {
             "og":     { "data": { "type": "team", "id": "1" } },
             "oo":     { "data": { "type": "team", "id": "2" } },
             "cg":     { "data": { "type": "team", "id": "3" } },
@@ -113,7 +188,7 @@ export default function() {
             points: "1",
             venue: "RM 04",
           },
-          "relationships": {
+          relationships: {
             "og": { "data": { "type": "team", "id": "5" } },
             "oo": { "data": { "type": "team", "id": "6" } },
             "cg": { "data": { "type": "team", "id": "7" } },
@@ -129,11 +204,12 @@ export default function() {
             points: "0",
             venue: "RM 99",
           },
-          "relationships": {
+          relationships: {
             "og": { "data": { "type": "team", "id": "9" } },
             "oo": { "data": { "type": "team", "id": "10" } },
             "cg": { "data": { "type": "team", "id": "11" } },
             "co": { "data": { "type": "team", "id": "11" } },
+            "panel": { "data": { "type": "panel", "id": "3" } }
           }
         }
       ],
@@ -142,82 +218,106 @@ export default function() {
             "type": "team",
             "id": "1",
             "attributes": {
-              "name": "Cambridge A"
+              "name": "Cambridge A",
+              "gender": 0,
+              "region": "United Kingdom"
             }
         },
         {
             "type": "team",
             "id": "2",
             "attributes": {
-              "name": "Hart House A"
+              "name": "Hart House A",
+              "gender": 1,
+              "region": "North America"
             }
         },
         {
             "type": "team",
             "id": "3",
             "attributes": {
-              "name": "Harvard A"
+              "name": "Harvard A",
+              "gender": 0.5,
+              "region": "North America"
             }
         },
         {
             "type": "team",
             "id": "4",
             "attributes": {
-              "name": "BPP A"
+              "name": "BPP A",
+              "gender": 0,
+              "region": "Europe"
             }
         },{
             "type": "team",
             "id": "5",
             "attributes": {
-              "name": "Cambridge B"
+              "name": "Cambridge B",
+              "gender": 1,
+              "region": "IONA"
             }
         },
         {
             "type": "team",
             "id": "6",
             "attributes": {
-              "name": "Sydney D"
+              "name": "Sydney D",
+              "gender": 0.5,
+              "region": "Oceania"
             }
         },
         {
             "type": "team",
             "id": "7",
             "attributes": {
-              "name": "Melbourne A"
+              "name": "Melbourne A",
+              "gender": 0,
+              "region": "South East Asia"
             }
         },
         {
             "type": "team",
             "id": "8",
             "attributes": {
-              "name": "Oxford B"
+              "name": "Oxford B",
+              "gender": 1,
+              "region": "Middle East"
             }
         },{
             "type": "team",
             "id": "9",
             "attributes": {
-              "name": "Durham A"
+              "name": "Durham A",
+              "gender": 1,
+              "region": "Sub-Continent"
             }
         },
         {
             "type": "team",
             "id": "10",
             "attributes": {
-              "name": "IIUM A"
+              "name": "IIUM A",
+              "gender": 0.5,
+              "region": "Africa"
             }
         },
         {
             "type": "team",
             "id": "11",
             "attributes": {
-              "name": "New South Wales B"
+              "name": "New South Wales B",
+              "gender": 0,
+              "region": "South East Asia"
             }
         },
         {
             "type": "team",
             "id": "12",
             "attributes": {
-              "name": "Vic Wellington A"
+              "name": "Vic Wellington A",
+              "gender": 1,
+              "region": "North Asia"
             }
         }
         ]

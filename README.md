@@ -56,11 +56,9 @@ julia> Pkg.add("GLPKMathProgInterface")
 
 - ```cd adjumo-backend```
 - [Install Node.js](https://nodejs.org/en/)
-- ```npm install```
 - [Install Bower](http://bower.io)
-- ```bower install```
-- To start the server: ```DEBUG=adjumo:* npm start```
-- Open ```http://0.0.0.0:3000/index.html```
+- To start the server: ```ember s```
+- Open ```http://localhost:4200```
 
 ## Running
 

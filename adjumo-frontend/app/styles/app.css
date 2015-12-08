@@ -1,14 +1,4 @@
 
-
-
-/* JS */
-
-.hoverable {
-  color: red;
-  cursor: pointer;
-}
-
-
 /* Table Widths */
 
 table {
@@ -57,7 +47,9 @@ td {
   padding: 0px !important;
 }
 .debate-importance input {
-  max-width: 30px;
+  max-width: 100%;
+  font-size: 26px;
+  text-align: center;
 }
 
 /* Panel Component */
@@ -71,7 +63,7 @@ td {
 }
 .flex-icon {
   flex: none;
-  width: 40px;
+  width: 30px;
   text-align: center;
 }
 .flex-icon .glyphicon {
@@ -79,21 +71,25 @@ td {
 }
 .flex-1 {
   flex-grow: 1;
+  flex-basis: 120px;
 }
 .flex-2 {
   flex-grow: 2;
+  flex-basis: 120px;
 }
+.adj-rating {
 
+}
 .debate-panel {
-  padding: 4px !important;
+  padding: 1px !important;
 }
 
 /* Panel Component */
 
 .panel-ui {
-  border: 2px solid rgb(0, 0, 255);
+  border: 2px solid rgb(200, 200, 200);
   border-radius: 6px;
-  background: #EFEFEF;
+  background: rgb(240, 240, 240);
   overflow: auto;
   margin-bottom: 0px;
   display: flex;
@@ -110,7 +106,6 @@ td.head-panel {
 }
 .position-holder {
   border-right: 1px solid #FEFEFE;
-  padding: 0 4px;
 }
 .position-holder .ember-view {
   /* The dragula container */
@@ -129,14 +124,14 @@ td.head-panel {
 /* Adjudicator Component */
 
 .adjudicator-ui {
-  background: rgb(200, 200, 200);
-  max-width: 200px;
+  background: rgb(220, 220, 220);
   text-align: left;
   padding: 0 0 0 0;
-  border: 2px solid rgb(0, 0, 255);
+  border: 2px solid rgb(200, 200, 200);
   border-radius: 3px;
   margin: 3px 3px;
   display: flex;
+  float: left;
 }
 .adjudicator-ui div span,
 .adjudicator-ui div span.glyphicon {
@@ -161,6 +156,21 @@ td.head-panel {
   padding: 10px;
 }
 #unusedAdjs .adjudicator-ui {
-  float: left;
-  margin-right: 8px;
+
 }
+
+/* JS */
+
+.hoverable {
+  color: #0067E2;
+  cursor: pointer;
+}
+.gender-display.gender-0 {
+  background: #96FFFF;
+}
+.gender-display.gender-1 {
+  background: #FF99FF;
+}
+.region-display.region-1 {
+
+  }

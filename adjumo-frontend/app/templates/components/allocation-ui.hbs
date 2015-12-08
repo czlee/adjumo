@@ -4,6 +4,8 @@
 
   <div id="alerts-holder"></div>
 
+  100 rooms; 300+ adjs
+
   {{outlet}}
 
   <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
@@ -16,7 +18,6 @@
         <th class="head-oo">OO</th>
         <th class="head-cg">CO</th>
         <th class="head-co">CG</th>
-        <th class="head-bans">Bans</th>
         <th class="head-panel">
           <div class="flex-1">
             Chair
@@ -46,9 +47,7 @@
 
 <div id="unusedAdjs" class="container-fluid navbar-fixed-bottom position-holder">
     {{#ember-dragula-container}}
-        {{#each model.adjudicators as |adjudictator-instance|}}
-            {{adjudicator-ui adj=adjudictator-instance }}
-        {{/each}}
+
     {{/ember-dragula-container}}
 </div>
 

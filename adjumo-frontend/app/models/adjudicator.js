@@ -7,6 +7,8 @@ export default DS.Model.extend({
   institutions: DS.hasMany('institution'),
   locked: DS.attr('bool', { defaultValue: false }),
   rating: DS.attr('number'),
+  region: DS.attr('string'),
+  gender: DS.attr('number'),
 
   get_rating: function() {
     var rating_word = "";
@@ -44,6 +46,6 @@ export default DS.Model.extend({
   // pastAdjudicatorIDs: DS.attr('adjudicator'),
   // pastTeamIDs: DS.attr('team'),
 
-  // panel: DS.belongsTo('panel')
+  panel: DS.belongsTo('panel')
 
 });
