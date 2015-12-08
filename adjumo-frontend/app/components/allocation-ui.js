@@ -2,13 +2,6 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
 
-  adjDrag: function(obj,ops) {
-    console.log('starting panel drag');
-  },
-  adjDrop: function(obj,ops) {
-    console.log('ending panel drag');
-  },
-
   adj_dragulaconfig: {
     accepts: function (el, target, source, sibling) {
       return true; // elements can be dropped in any of the `containers` by default
@@ -22,5 +15,17 @@ export default Ember.Component.extend({
     },
     enabledEvents: ['drag', 'drop']
   },
+
+  actions: {
+
+    adjDrag: function(obj,ops) {
+      console.log('starting panel drag');
+    },
+
+    adjDrop: function(obj,ops) {
+      console.log('ending panel drag');
+    },
+
+  }
 
 });

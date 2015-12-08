@@ -1,7 +1,11 @@
 {{#if adj }}
     <button type="button" class="btn adjudicator-ui">
-        <div class="flex-icon flex-icon">
-            <span class="glyphicon glyphicon-ok-circle"></span>
+        <div class="flex-icon flex-icon hoverable">
+            {{#if adj.locked}}
+                <span class="glyphicon glyphicon-ok-circle" {{action 'unlockAdj'}} data-toggle="tooltip" data-placement="top" title="Click to unlock to this adj to this debate"></span>
+            {{else}}
+                <span class="glyphicon glyphicon-record" {{action 'lockAdj'}} data-toggle="tooltip" data-placement="top" title="Click to lock to this adj to this debate"></span>
+            {{/if}}
         </div>
         <div class="flex-1">
             <span>{{ adj.name }}</span>
@@ -11,8 +15,8 @@
             {{/each}}
             </span>
         </div>
-        <div class="">
-            <span> {{ adj.rating }}</span>
+        <div class="flex-icon flex-icon adj-rating hoverable">
+            <span data-toggle="tooltip" data-placement="top" title="{{ adj.rating }}">{{ adj.get_rating }}</span>
         </div>
     </button>
 {{/if }}

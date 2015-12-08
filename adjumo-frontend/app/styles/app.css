@@ -1,5 +1,14 @@
 
 
+
+/* JS */
+
+.hoverable {
+  color: red;
+  cursor: pointer;
+}
+
+
 /* Table Widths */
 
 table {
@@ -10,6 +19,7 @@ table {
 td {
   text-overflow: normal !important;
   padding: 4px !important;
+  white-space: normal !important;
 }
 
 .head-venue {
@@ -19,7 +29,7 @@ td {
   width: 2%;
 }
 .head-importance {
-  width: 2%;
+  width: 4%;
 }
 .head-og {
   width: 6%;
@@ -66,7 +76,6 @@ td {
 }
 .flex-icon .glyphicon {
   font-size: 20px;
-  color: #666;
 }
 .flex-1 {
   flex-grow: 1;
@@ -91,6 +100,8 @@ td {
 }
 .head-panel {
   display: flex;
+}
+td.head-panel {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
@@ -121,7 +132,7 @@ td {
   background: rgb(200, 200, 200);
   max-width: 200px;
   text-align: left;
-  padding: 0px 10px 0 0;
+  padding: 0 0 0 0;
   border: 2px solid rgb(0, 0, 255);
   border-radius: 3px;
   margin: 3px 3px;

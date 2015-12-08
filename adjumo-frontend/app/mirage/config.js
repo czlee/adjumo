@@ -39,7 +39,7 @@ export default function() {
           id: 1,
           attributes: {
             name: "Philip",
-            rating: 1.0,
+            rating: 2.0,
           },
           relationships: {
             "institutions": {
@@ -54,7 +54,7 @@ export default function() {
           id: 2,
           attributes: {
             name: "CZ",
-            rating: 5.0,
+            rating: 6.0,
           },
           relationships: {
             "institutions": {

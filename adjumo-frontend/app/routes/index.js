@@ -7,6 +7,34 @@ export default Ember.Route.extend({
           adjudicators:   this.store.findAll('adjudicator'),
           debates:        this.store.findAll('debate') // Makes a GET to /debates (currently handled as mock serve by mirate)
       })
+  },
+
+  actions: {
+
+    // setAdjLocked: function(adjudicator) {
+
+    //   App.Adapter.ajax('/songs/' + song.get('id'), {
+    //     type: 'PUT',
+    //     data: { rating: song.get('rating') }
+    //   }).then(function() {
+    //     console.log("Rating updated");
+    //   }, function() {
+    //     alert('Failed to set new rating');
+    //   });
+    // },
+    // setAdjUnlocked: function(adjudicator) {
+
+    //   App.Adapter.ajax('/songs/' + song.get('id'), {
+    //     type: 'PUT',
+    //     data: { rating: song.get('rating') }
+    //   }).then(function() {
+    //     console.log("Rating updated");
+    //   }, function() {
+    //     alert('Failed to set new rating');
+    //   });
+
+    // }
+
   }
 
 });
