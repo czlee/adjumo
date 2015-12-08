@@ -1,5 +1,20 @@
+# This file is part of the Adjumo module.
+
 import Base.show
 import Base.in
+
+export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
+    AdjumoComponentWeights, RoundInfo,
+    TeamGender, TeamNoGender, TeamMale, TeamFemale, TeamMixed,
+    PersonGender, PersonNoGender, PersonMale, PersonFemale, PersonOther,
+    Region, NoRegion, NorthAsia, SouthEastAsia, MiddleEast, SouthAsia, Africa, Oceania, NorthAmerica, LatinAmerica, Europe, IONA,
+    LanguageStatus, NoLanguage, EnglishPrimary, EnglishSecond, EnglishForeign,
+    Wudc2015AdjudicatorRank, TraineeMinus, Trainee, TraineePlus, PanellistMinus, Panellist, PanellistPlus, ChairMinus, Chair, ChairPlus,
+    abbr, numteamsfrominstitution, numdebates, numadjs, adjlist,
+    conflicted, hasconflict, roundsseen,
+    addinstitution!, addteam!, addadjudicator!, setdebates!, setdebateweights!,
+    addadjadjconflict!, addteamadjconflict!, addadjadjhistory!, addteamadjhistory!,
+    addlockedadj!, addblockedadj!, addgroupedadjs!
 
 # ==============================================================================
 # Models

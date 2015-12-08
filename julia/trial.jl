@@ -1,8 +1,11 @@
-include("main.jl")
+push!(LOAD_PATH, Base.source_dir())
+using ArgParse
+using Adjumo
+
 include("random.jl")
 
-s = ArgParseSettings()
-@add_arg_table s begin
+argsettings = ArgParseSettings()
+@add_arg_table argsettings begin
     "-n", "--ndebates"
         help = "Number of debates in round"
         arg_type = Int
@@ -13,21 +16,10 @@ s = ArgParseSettings()
         default = 5
     "--solver"
         help = "Solver to use ('gurobi', 'cbc' or 'glpk')"
-        default = nothing
-    "--profile"
-        help = "Print profiling information"
-        action = :store_true
+        default = "default"
+        range_tester = x -> x ∈ ["default", "gurobi", "cbc", "glpk"]
 end
-args = parse_args(ARGS, s)
-
-SOLVERS = Dict("gurobi" => "Gurobi", "cbc" => "Cbc", "glpk" => "GLPKMathProgInterface")
-for (argvalue, package) in SOLVERS
-    if args["solver"] == argvalue || (args["solver"] == nothing && Pkg.installed(package) != nothing)
-        println("Using solver: $package")
-        eval(parse("using " * package))
-        break
-    end
-end
+args = parse_args(ARGS, argsettings)
 
 ndebates = args["ndebates"]
 currentround = args["currentround"]
@@ -43,17 +35,9 @@ componentweights.adjconflict = 1e6
 @time roundinfo = randomroundinfo(ndebates, currentround)
 roundinfo.componentweights = componentweights
 
-debateindices, panels = allocateadjudicators(roundinfo)
+debateindices, panels = allocateadjudicators(roundinfo; solver=args["solver"])
 
 showconstraints(roundinfo)
-
-zip(debateindices, panels)
-
 for (d, panel) in zip(debateindices, panels)
     showdebatedetail(roundinfo, d, panel)
-end
-
-if args["profile"]
-    Profile.print()
-    Profile.print(format=:flat, sortedby=:count)
 end
