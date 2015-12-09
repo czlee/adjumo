@@ -5,11 +5,9 @@ export default Ember.Component.extend({
   locked: Ember.computed.alias('adj.locked'),
 
   actions: {
-    startAdjDrag: function(obj,ops) {
-      console.log('startAdjDrag');
-    },
-    endAdjDrag: function(obj,ops) {
-      console.log('endAdjDrag');
+
+    drop: function(obj,ops) {
+      console.log('WTF');
     },
 
     lockAdj: function() {

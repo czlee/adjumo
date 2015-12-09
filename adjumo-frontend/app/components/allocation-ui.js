@@ -18,20 +18,26 @@ export default Ember.Component.extend({
 
   actions: {
 
-    adjDrag: function(obj,ops) {
+    adjDrag: function(obj) {
       // console.log('starting adj drag');
       // console.log(obj);
       // console.log(ops);
     },
 
-    adjDrop: function(obj,ops) {
+    adjDrop: function(obj) {
       console.log('did an adj drop');
-      var adj = obj[0];
+
+      var adj = this.$(obj[0]);
+
       console.log(adj);
+      console.log(adj.get('model'));
+      console.log(adj.get('sefa'));
+      console.log(adj.get('context')); // the actual div
+
       var toPosition = obj[1];
-      console.log(toPosition);
+      //console.log(toPosition);
       var fromPosition = obj[2];
-      console.log(fromPosition);
+      //console.log(fromPosition);
     },
 
   }
