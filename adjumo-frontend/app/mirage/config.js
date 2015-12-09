@@ -127,7 +127,7 @@ export default function() {
           id: 5,
           attributes: {
             name: "Other Old Hack 2",
-            rating: 10.0,
+            rating: 9.0,
             region: "oceania",
             gender: 0,
           },
@@ -153,6 +153,13 @@ export default function() {
           "id": "5",
           "attributes": {
             "name": "AUK"
+          }
+        },
+        {
+          "type": "institution",
+          "id": "8",
+          "attributes": {
+            "name": "USU"
           }
         }
       ]
