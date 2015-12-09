@@ -7,7 +7,10 @@
 using DataStructures
 import Base.string
 
-export scorematrix
+export scorematrix, score, 
+    panelquality, panelregionalrepresentationscore, panellanguagerepresentationscore,
+    panelgenderrepresentationscore, teamadjhistoryscore, adjadjhistoryscore,
+    teamadjconflictsscore, adjadjconflictsscore
 
 # ==============================================================================
 # Top-level functions
