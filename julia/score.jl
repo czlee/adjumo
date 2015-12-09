@@ -28,8 +28,6 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 """
 function scorematrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
     @assert length(roundinfo.debates) == length(roundinfo.debateweights)
-    ndebates = numdebates(roundinfo)
-    npanels = length(feasiblepanels)
     componentweights = roundinfo.componentweights
     Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
     Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
