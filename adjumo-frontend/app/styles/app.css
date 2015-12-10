@@ -122,16 +122,6 @@ td.head-panel {
 .position-holder {
   border-right: 1px solid #FEFEFE;
 }
-.position-holder .ember-view {
-  /* The dragula container */
-  min-height: 40px;
-  width: 100%;
-}
-.position-holder .ember-view .ember-view {
-  /* The dragula container */
-  width: auto;
-  min-height: 0;
-}
 .js-drag-handle:hover {
   cursor: move;
 }

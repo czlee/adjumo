@@ -3,33 +3,27 @@
 
     <div class="debate-chair-holder flex-1 position-holder">
 
-      {{#ember-dragula-container}}
         {{#if panel.chair }}
           {{adjudicator-ui adj=panel.chair}}
         {{/if }}
-      {{/ember-dragula-container}}
 
     </div>
     <div class="debate-panel-holder flex-2 position-holder">
 
-      {{#ember-dragula-container}}
         {{#if panel.panellists}}
           {{#each panel.panellists as |panellist|}}
             {{adjudicator-ui adj=panellist}}
           {{/each}}
         {{/if }}
-      {{/ember-dragula-container}}
 
     </div>
     <div class="debate-trainee-holder flex-1 position-holder">
 
-      {{#ember-dragula-container}}
         {{#if panel.trainees }}
           {{#each panel.trainees as |trainee|}}
             {{adjudicator-ui adj=trainee}}
           {{/each}}
         {{/if }}
-      {{/ember-dragula-container}}
 
     </div>
     <div class="js-drag-handle flex-icon flex-icon">
