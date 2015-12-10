@@ -42,8 +42,14 @@ td {
 .head-co {
   width: 6%;
 }
-.head-bans {
-  width: 10%;
+.head-regional {
+  width: 3%;
+}
+.head-gender {
+  width: 3%;
+}
+.head-adjudicators {
+  width: 3%;
 }
 
 #allocation th {

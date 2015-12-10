@@ -211,10 +211,11 @@ export default function() {
           },
           relationships: {
             "institutions": {
-              "data": [
-                { "type": "institution", "id": "2" },
-              ]
-            }
+              "data": [ { "type": "institution", "id": "2" }, { "type": "institution", "id": "1" } ]
+            },
+            "strikedTeams": {
+              "data": [ { "type": "team", "id": "1" } ]
+            },
           }
         },
         {
@@ -227,9 +228,7 @@ export default function() {
           },
           relationships: {
             "institutions": {
-              "data": [
-                { "type": "institution", "id": "5" },
-              ]
+              "data": [ { "type": "institution", "id": "5" } ]
             }
           }
         },

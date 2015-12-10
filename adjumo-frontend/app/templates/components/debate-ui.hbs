@@ -19,6 +19,15 @@
 <td class="debate-co debate-team text-center gender-{{ debate.co.gender }} region-{{ debate.co.institution.region.id }}">
     {{ debate.co.name }}
 </td>
+<td class="debate-regional-strength text-center ">
+
+</td>
+<td class="debate-gender-strength text-center ">
+
+</td>
+<td class="debate-panel-strength text-center ">
+    {{ debate.panel.rating }}
+</td>
 <td class="debate-panel">
     {{panel-ui panel=debate.panel drake=drake }}
 </td>

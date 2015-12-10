@@ -12,15 +12,28 @@
             <span data-toggle="tooltip" data-placement="top" title="{{ adj.name }}">{{ adj.short_name }},</span>
             <small class="text-uppercase">
             {{#each adj.institutions as |institution|}}
-                <span data-toggle="tooltip" data-placement="top" title="{{ institution.name }}">{{ institution.name }}.</span>
+                <span data-toggle="tooltip" data-placement="top" title="{{ institution.name }}">{{ institution.name }}</span>
             {{/each}}
             </small>
+        s:
+        {{#each adj.strikedAdjudicators as |strike| }}
+            a{{strike.name}}
+        {{/each}}
+        {{#each adj.strikedTeams as |team| }}
+            t{{team.name}}
+        {{/each}}
+        {{#each adj.pastAdjudicators as |strike3| }}
+            p{{strike3.name}}
+        {{/each}}
+        {{#each adj.pastTeams as |strike4| }}
+            p{{strike4.name}}
+        {{/each}}
+
         </div>
         <div class="flex-icon flex-icon adj-rating hoverable">
             <span data-toggle="tooltip" data-placement="top" title="{{ adj.rating }}">
                 <strong>{{ adj.get_rating }}</strong>
             </span>
         </div>
-
     </button>
 {{/if }}

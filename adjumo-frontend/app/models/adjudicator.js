@@ -9,17 +9,15 @@ export default DS.Model.extend({
   rating: DS.attr('number'),
   gender: DS.attr('number'),
 
-  // strikedAdjudicators: DS.hasMany('adjudicator'),
-  // strikedTeams: DS.hasMany('team'),
-
-  // pastAdjudicatorIDs: DS.attr('adjudicator'),
-  // pastTeamIDs: DS.attr('team'),
+  // strikedAdjudicators: DS.hasMany('adjudicator', { inverse: null }),
+  strikedTeams: DS.hasMany('team'),
+  // pastAdjudicators: DS.hasMany('adjudicator', { inverse: null }),
+  // pastTeams: DS.hasMany('team', { inverse: null }),
 
   panel: DS.belongsTo('panel'),
 
   short_name: Ember.computed('name', function() {
     var words = this.get('name').split(" ");
-    console.log(words);
     var short_name = words[0] + " " + words[1][0];
     return short_name;
   }),
