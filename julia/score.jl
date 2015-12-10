@@ -387,6 +387,7 @@ function sumteamadjscoresmatrix(teamadjscore::Function,
     Ξ = zeros(nteams, nadjs)          # matrix of team-adj scores
     Q = zeros(Bool, nadjs, npanels)   # panel membership matrix
     # TODO consider pre-doing D and Q outside this function and storing the result
+    # TODO allocate D and Q without initialization, and test performance
     for (a, adj) in enumerate(roundinfo.adjudicators), (t, team) in enumerate(roundinfo.teams)
         Ξ[t,a] = teamadjscore(roundinfo, team, adj)
     end
