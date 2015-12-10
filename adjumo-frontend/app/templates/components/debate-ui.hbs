@@ -7,16 +7,16 @@
 <td class="debate-importance">
     {{ input type="number" value=debate.importance }}
 </td>
-<td class="debate-og text-center  gender-{{ debate.og.gender }} region-{{ debate.og.region }}">
+<td class="debate-og debate-team text-center gender-{{ debate.og.gender }} region-{{ debate.og.institution.region.id }}">
     {{ debate.og.name }}
 </td>
-<td class="debate-oo text-center  gender-{{ debate.oo.gender }} region-{{ debate.oo.region }}">
+<td class="debate-oo debate-team text-center gender-{{ debate.oo.gender }} region-{{ debate.oo.institution.region.id }}">
     {{ debate.oo.name }}
 </td>
-<td class="debate-cg text-center  gender-{{ debate.cg.gender }} region-{{ debate.cg.region }}">
+<td class="debate-cg debate-team text-center gender-{{ debate.cg.gender }} region-{{ debate.cg.institution.region.id }}">
     {{ debate.cg.name }}
 </td>
-<td class="debate-co text-center  gender-{{ debate.co.gender }} region-{{ debate.co.region }}">
+<td class="debate-co debate-team text-center gender-{{ debate.co.gender }} region-{{ debate.co.institution.region.id }}">
     {{ debate.co.name }}
 </td>
 <td class="debate-panel">

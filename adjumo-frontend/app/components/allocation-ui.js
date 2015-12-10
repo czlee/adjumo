@@ -18,6 +18,10 @@ export default Ember.Component.extend({
 
   actions: {
 
+    toggleGender: function() {
+      console.log("Toggling adj");
+    },
+
     adjDrag: function(obj) {
       // console.log('starting adj drag');
       // console.log(obj);

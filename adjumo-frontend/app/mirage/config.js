@@ -1,6 +1,154 @@
 export default function() {
 
   // Dummy data for mocking the json response
+  this.get('/institutions/', function() {
+    return {
+      data: [
+        {
+          type: "institutions",
+          id: 1,
+          attributes: {
+            name: "Victoria Wellington",
+          },
+          relationships: { "region": { "data": { "type": "region", "id": "1" } } }
+        },{
+          type: "institutions",
+          id: 2,
+          attributes: {
+            name: "Auckland",
+          },
+          relationships: { "region": { "data": { "type": "region", "id": "2" } } }
+        },{
+          type: "institutions",
+          id: 3,
+          attributes: {
+            name: "Melbourne",
+          },
+          relationships: { "region": { "data": { "type": "region", "id": "3" } } }
+        },{
+          type: "institutions",
+          id: 4,
+          attributes: {
+            name: "USU",
+          },
+          relationships: { "region": { "data": { "type": "region", "id": "4" } } }
+        },{
+          type: "institutions",
+          id: 5,
+          attributes: {
+            name: "HArvard",
+          },
+          relationships: { "region": { "data": { "type": "region", "id": "5" } } }
+        },{
+          type: "institutions",
+          id: 6,
+          attributes: {
+            name: "Oxford",
+          },
+          relationships: { "region": { "data": { "type": "region", "id": "6" } } }
+        },{
+          type: "institutions",
+          id: 7,
+          attributes: {
+            name: "ULU",
+          },
+          relationships: { "region": { "data": { "type": "region", "id": "7" } } }
+        },{
+          type: "institutions",
+          id: 8,
+          attributes: {
+            name: "New South Wales",
+          },
+          relationships: { "region": { "data": { "type": "region", "id": "8" } } }
+        },{
+          type: "institutions",
+          id: 9,
+          attributes: {
+            name: "Cambridge",
+          },
+          relationships: { "region": { "data": { "type": "region", "id": "9" } } }
+        },{
+          type: "institutions",
+          id: 10,
+          attributes: {
+            name: "IIUM",
+          },
+          relationships: { "region": { "data": { "type": "region", "id": "10" } } }
+        }
+      ]
+    }
+  })
+
+  // Dummy data for mocking the json response
+  this.get('/regions/', function() {
+    return {
+      data: [
+        {
+          type: "regions",
+          id: 1,
+          attributes: {
+            name: "North Asia",
+          },
+        },{
+          type: "regions",
+          id: 2,
+          attributes: {
+            name: "South East Asia",
+          },
+        },{
+          type: "regions",
+          id: 3,
+          attributes: {
+            name: "Middle East",
+          },
+        },{
+          type: "regions",
+          id: 4,
+          attributes: {
+            name: "Sub Sub-Continent",
+          },
+        },{
+          type: "regions",
+          id: 5,
+          attributes: {
+            name: "Africa",
+          },
+        },{
+          type: "regions",
+          id: 6,
+          attributes: {
+            name: "ANZ",
+          },
+        },{
+          type: "regions",
+          id: 7,
+          attributes: {
+            name: "North America",
+          },
+        },{
+          type: "regions",
+          id: 8,
+          attributes: {
+            name: "Latin America",
+          },
+        },{
+          type: "regions",
+          id: 9,
+          attributes: {
+            name: "Europe",
+          },
+        },{
+          type: "regions",
+          id: 10,
+          attributes: {
+            name: "IONA",
+          },
+        }
+      ]
+    }
+  });
+
+  // Dummy data for mocking the json response
   this.get('/panels/1', function() {
     return {
       data: {
@@ -12,7 +160,6 @@ export default function() {
       }
     }
   });
-
 
   // Dummy data for mocking the json response
   this.get('/panels/2', function() {
@@ -60,13 +207,12 @@ export default function() {
           attributes: {
             name: "Philip Belesky",
             rating: 2.0,
-            region: "oceania",
-            gender: 1,
+            gender: 2,
           },
           relationships: {
             "institutions": {
               "data": [
-                { "type": "institution", "id": "2" }
+                { "type": "institution", "id": "2" },
               ]
             }
           }
@@ -77,13 +223,12 @@ export default function() {
           attributes: {
             name: "Chuan-Zheng Lee",
             rating: 6.0,
-            region: "america",
             gender: 0,
           },
           relationships: {
             "institutions": {
               "data": [
-                { "type": "institution", "id": "5" }
+                { "type": "institution", "id": "5" },
               ]
             }
           }
@@ -94,13 +239,12 @@ export default function() {
           attributes: {
             name: "Chris Bisset",
             rating: 7.0,
-            region: "oceania",
             gender: 0,
           },
           relationships: {
             "institutions": {
               "data": [
-                { "type": "institution", "id": "8" }
+                { "type": "institution", "id": "8" },
               ]
             }
           }
@@ -111,13 +255,12 @@ export default function() {
           attributes: {
             name: "Other Old Hack",
             rating: 1.0,
-            region: "america",
-            gender: 0,
+            gender: 2,
           },
           relationships: {
             "institutions": {
               "data": [
-                { "type": "institution", "id": "8" }
+                { "type": "institution", "id": "8" },
               ]
             }
           }
@@ -128,38 +271,14 @@ export default function() {
           attributes: {
             name: "Other Old Hack 2",
             rating: 9.0,
-            region: "oceania",
             gender: 0,
           },
           relationships: {
             "institutions": {
               "data": [
-                { "type": "institution", "id": "8" }
+                { "type": "institution", "id": "8" },
               ]
             }
-          }
-        }
-      ],
-      "included": [
-        {
-          "type": "institution",
-          "id": "2",
-          "attributes": {
-            "name": "VUW"
-          }
-        },
-        {
-          "type": "institution",
-          "id": "5",
-          "attributes": {
-            "name": "AUK"
-          }
-        },
-        {
-          "type": "institution",
-          "id": "8",
-          "attributes": {
-            "name": "USU"
           }
         }
       ]
@@ -228,7 +347,8 @@ export default function() {
               "name": "Cambridge A",
               "gender": 0,
               "region": "United Kingdom"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "1" }}}
         },
         {
             "type": "team",
@@ -237,16 +357,18 @@ export default function() {
               "name": "Hart House A",
               "gender": 1,
               "region": "North America"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "2" }}}
         },
         {
             "type": "team",
             "id": "3",
             "attributes": {
               "name": "Harvard A",
-              "gender": 0.5,
+              "gender": 2,
               "region": "North America"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "3" }}}
         },
         {
             "type": "team",
@@ -255,7 +377,8 @@ export default function() {
               "name": "BPP A",
               "gender": 0,
               "region": "Europe"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "4" }}}
         },{
             "type": "team",
             "id": "5",
@@ -263,16 +386,18 @@ export default function() {
               "name": "Cambridge B",
               "gender": 1,
               "region": "IONA"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "5" }}}
         },
         {
             "type": "team",
             "id": "6",
             "attributes": {
               "name": "Sydney D",
-              "gender": 0.5,
+              "gender": 2,
               "region": "Oceania"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "6" }}}
         },
         {
             "type": "team",
@@ -281,7 +406,8 @@ export default function() {
               "name": "Melbourne A",
               "gender": 0,
               "region": "South East Asia"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "7" }}}
         },
         {
             "type": "team",
@@ -290,7 +416,8 @@ export default function() {
               "name": "Oxford B",
               "gender": 1,
               "region": "Middle East"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "8" }}}
         },{
             "type": "team",
             "id": "9",
@@ -298,16 +425,18 @@ export default function() {
               "name": "Durham A",
               "gender": 1,
               "region": "Sub-Continent"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "9" }}}
         },
         {
             "type": "team",
             "id": "10",
             "attributes": {
               "name": "IIUM A",
-              "gender": 0.5,
+              "gender": 2,
               "region": "Africa"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "10" }}}
         },
         {
             "type": "team",
@@ -316,7 +445,8 @@ export default function() {
               "name": "New South Wales B",
               "gender": 0,
               "region": "South East Asia"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "1" }}}
         },
         {
             "type": "team",
@@ -325,7 +455,8 @@ export default function() {
               "name": "Vic Wellington A",
               "gender": 1,
               "region": "North Asia"
-            }
+            },
+            relationships: { "institution": { "data": { "type": "institution", "id": "2" }}}
         }
         ]
     }

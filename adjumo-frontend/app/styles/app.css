@@ -1,4 +1,13 @@
 
+/* Nav */
+
+.breadcrumb {
+  margin-bottom: 0px;
+  padding: 0 10px 10px;
+}
+.breadcrumb li a {
+  padding: 2px 4px;
+}
 /* Table Widths */
 
 table {
@@ -165,12 +174,42 @@ td.head-panel {
   color: #0067E2;
   cursor: pointer;
 }
-.gender-display.gender-0 {
-  background: #96FFFF;
-}
 .gender-display.gender-1 {
-  background: #FF99FF;
+  background: #F89CFF;
+}
+.gender-display.gender-2 {
+  background: #F103FF;
+}
+.region-display {
+  color: #fff;
 }
 .region-display.region-1 {
-
-  }
+  background: #FFFF00;
+}
+.region-display.region-2 {
+  background: #0094FF;
+}
+.region-display.region-3 {
+  background: #C605FF;
+}
+.region-display.region-4 {
+  background: #FFB300;
+}
+.region-display.region-5 {
+  background: #00FF9D;
+}
+.region-display.region-6 {
+  background: #8700FF;
+}
+.region-display.region-7 {
+  background: #B28030;
+}
+.region-display.region-8 {
+  background: #CEFF00;
+}
+.region-display.region-9 {
+  background: #00F5FF;
+}
+.region-display.region-10 {
+  background: #CCC;
+}

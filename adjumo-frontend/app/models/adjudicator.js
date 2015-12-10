@@ -3,12 +3,42 @@ import DS from 'ember-data';
 export default DS.Model.extend({
 
   name: DS.attr('string'),
-  adjudicator_id: DS.attr('number'),
   institutions: DS.hasMany('institution'),
+
   locked: DS.attr('bool', { defaultValue: false }),
   rating: DS.attr('number'),
-  region: DS.attr('string'),
   gender: DS.attr('number'),
+
+  // strikedAdjudicators: DS.hasMany('adjudicator'),
+  // strikedTeams: DS.hasMany('team'),
+
+  // pastAdjudicatorIDs: DS.attr('adjudicator'),
+  // pastTeamIDs: DS.attr('team'),
+
+  panel: DS.belongsTo('panel'),
+
+  short_name: Ember.computed('name', function() {
+    var words = this.get('name').split(" ");
+    console.log(words);
+    var short_name = words[0] + " " + words[1][0];
+    return short_name;
+  }),
+
+  regions: Ember.computed('institutions', function() {
+    var regions = new Array();
+    this.get('institutions').get('content').forEach(function(institution) {
+      regions.push(institution.get('region'));
+    });
+    return regions;
+  }),
+
+  region_classes: Ember.computed('institutions', function() {
+    var regionClasses = new Array();
+    this.get('regions').forEach(function(region) {
+      regionClasses.push('region-' + region.get('id') + ' ');
+    });
+    return regionClasses;
+  }),
 
   get_rating: function() {
     var rating_word = "";
@@ -39,13 +69,5 @@ export default DS.Model.extend({
     }
     return rating_word;
   }.property('rating'),
-
-  // strikedAdjudicators: DS.hasMany('adjudicator'),
-  // strikedTeams: DS.hasMany('team'),
-
-  // pastAdjudicatorIDs: DS.attr('adjudicator'),
-  // pastTeamIDs: DS.attr('team'),
-
-  panel: DS.belongsTo('panel')
 
 });
