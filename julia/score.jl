@@ -7,7 +7,10 @@
 using DataStructures
 import Base.string
 
-export scorematrix
+export scorematrix, score, 
+    panelquality, panelregionalrepresentationscore, panellanguagerepresentationscore,
+    panelgenderrepresentationscore, teamadjhistoryscore, adjadjhistoryscore,
+    teamadjconflictsscore, adjadjconflictsscore
 
 # ==============================================================================
 # Top-level functions
@@ -25,8 +28,6 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 """
 function scorematrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
     @assert length(roundinfo.debates) == length(roundinfo.debateweights)
-    ndebates = numdebates(roundinfo)
-    npanels = length(feasiblepanels)
     componentweights = roundinfo.componentweights
     Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
     Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
@@ -386,6 +387,7 @@ function sumteamadjscoresmatrix(teamadjscore::Function,
     Ξ = zeros(nteams, nadjs)          # matrix of team-adj scores
     Q = zeros(Bool, nadjs, npanels)   # panel membership matrix
     # TODO consider pre-doing D and Q outside this function and storing the result
+    # TODO allocate D and Q without initialization, and test performance
     for (a, adj) in enumerate(roundinfo.adjudicators), (t, team) in enumerate(roundinfo.teams)
         Ξ[t,a] = teamadjscore(roundinfo, team, adj)
     end
