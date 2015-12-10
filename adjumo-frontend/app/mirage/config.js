@@ -214,7 +214,7 @@ export default function() {
               "data": [ { "type": "institution", "id": "2" }, { "type": "institution", "id": "1" } ]
             },
             "strikedTeams": {
-              "data": [ { "type": "team", "id": "1" } ]
+              "data": [ { "type": "team", "id": "5" }, { "type": "team", "id": "4" } ]
             },
           }
         },
@@ -345,7 +345,6 @@ export default function() {
             "attributes": {
               "name": "Cambridge A",
               "gender": 0,
-              "region": "United Kingdom"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "1" }}}
         },
@@ -355,7 +354,6 @@ export default function() {
             "attributes": {
               "name": "Hart House A",
               "gender": 1,
-              "region": "North America"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "2" }}}
         },
@@ -365,7 +363,6 @@ export default function() {
             "attributes": {
               "name": "Harvard A",
               "gender": 2,
-              "region": "North America"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "3" }}}
         },
@@ -375,7 +372,6 @@ export default function() {
             "attributes": {
               "name": "BPP A",
               "gender": 0,
-              "region": "Europe"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "4" }}}
         },{
@@ -384,7 +380,6 @@ export default function() {
             "attributes": {
               "name": "Cambridge B",
               "gender": 1,
-              "region": "IONA"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "5" }}}
         },
@@ -394,7 +389,6 @@ export default function() {
             "attributes": {
               "name": "Sydney D",
               "gender": 2,
-              "region": "Oceania"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "6" }}}
         },
@@ -404,7 +398,6 @@ export default function() {
             "attributes": {
               "name": "Melbourne A",
               "gender": 0,
-              "region": "South East Asia"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "7" }}}
         },
@@ -414,7 +407,6 @@ export default function() {
             "attributes": {
               "name": "Oxford B",
               "gender": 1,
-              "region": "Middle East"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "8" }}}
         },{
@@ -423,7 +415,6 @@ export default function() {
             "attributes": {
               "name": "Durham A",
               "gender": 1,
-              "region": "Sub-Continent"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "9" }}}
         },
@@ -433,7 +424,6 @@ export default function() {
             "attributes": {
               "name": "IIUM A",
               "gender": 2,
-              "region": "Africa"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "10" }}}
         },
@@ -443,7 +433,6 @@ export default function() {
             "attributes": {
               "name": "New South Wales B",
               "gender": 0,
-              "region": "South East Asia"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "1" }}}
         },
@@ -453,7 +442,6 @@ export default function() {
             "attributes": {
               "name": "Vic Wellington A",
               "gender": 1,
-              "region": "North Asia"
             },
             relationships: { "institution": { "data": { "type": "institution", "id": "2" }}}
         }

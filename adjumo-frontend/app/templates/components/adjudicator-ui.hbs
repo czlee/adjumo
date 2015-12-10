@@ -16,19 +16,9 @@
             {{/each}}
             </small>
         s:
-        {{#each adj.strikedAdjudicators as |strike| }}
-            a{{strike.name}}
-        {{/each}}
         {{#each adj.strikedTeams as |team| }}
-            t{{team.name}}
+            t{{ team }}
         {{/each}}
-        {{#each adj.pastAdjudicators as |strike3| }}
-            p{{strike3.name}}
-        {{/each}}
-        {{#each adj.pastTeams as |strike4| }}
-            p{{strike4.name}}
-        {{/each}}
-
         </div>
         <div class="flex-icon flex-icon adj-rating hoverable">
             <span data-toggle="tooltip" data-placement="top" title="{{ adj.rating }}">
