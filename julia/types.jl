@@ -10,7 +10,7 @@ export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
     Region, NoRegion, NorthAsia, SouthEastAsia, MiddleEast, SouthAsia, Africa, Oceania, NorthAmerica, LatinAmerica, Europe, IONA,
     LanguageStatus, NoLanguage, EnglishPrimary, EnglishSecond, EnglishForeign,
     Wudc2015AdjudicatorRank, TraineeMinus, Trainee, TraineePlus, PanellistMinus, Panellist, PanellistPlus, ChairMinus, Chair, ChairPlus,
-    abbr, numteamsfrominstitution, numdebates, numadjs, adjlist,
+    abbr, numteamsfrominstitution, numteams, numdebates, numadjs, adjlist,
     conflicted, hasconflict, roundsseen,
     addinstitution!, addteam!, addadjudicator!, setdebates!, setdebateweights!,
     addadjadjconflict!, addteamadjconflict!, addadjadjhistory!, addteamadjhistory!,
@@ -196,6 +196,7 @@ hasconflict(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = any(pair -> conflicte
 roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = [get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])]
 roundsseen(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.teamadjhistory, (team, adj), Int[])
 
+numteams(rinfo::RoundInfo) = length(rinfo.teams)
 numdebates(rinfo::RoundInfo) = length(rinfo.debates)
 numadjs(rinfo::RoundInfo) = length(rinfo.adjudicators)
 
@@ -228,9 +229,4 @@ lockedadjs(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filte
 blockedadjs(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filter(y -> y[2] == debateindex, rinfo.blockedadjs)]
 groupedadjs(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = filter(x -> x ⊆ adjs, rinfo.groupedadjs)
 
-adjudicatorsfromindices(roundinfo::RoundInfo, indices::Vector{Int64}) = Adjudicator[roundinfo.adjudicators[a] for a in indices]
-indicesfromadjudicators(roundinfo::RoundInfo, adjs::Vector{Adjudicator}) = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjs]
-
-"Returns the indices of the adjudicators on the panel as a Vector{Int}"
-indices(roundinfo::RoundInfo, panel::AdjudicatorPanel) = indicesfromadjudicators(roundinfo, adjlist(panel))
 hasconflict(roundinfo::RoundInfo, panel::AdjudicatorPanel) = hasconflict(roundinfo, adjlist(panel))

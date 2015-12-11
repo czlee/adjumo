@@ -42,9 +42,9 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default")
     end
 
     @time feasiblepanels = generatefeasiblepanels(roundinfo)
-    @time Σ = scorematrix(feasiblepanels, roundinfo)
+    @time Σ = scorematrix(roundinfo, feasiblepanels)
 
-    Q = panelmembershipmatrix(feasiblepanels, roundinfo)
+    Q = panelmembershipmatrix(roundinfo, feasiblepanels)
     adjson = convertconstraints(roundinfo.adjudicators, roundinfo.lockedadjs)
     adjsoff = convertconstraints(roundinfo.adjudicators, roundinfo.blockedadjs)
     @time debateindices, panelindices = solveoptimizationproblem(Σ, Q, adjson, adjsoff; solver=solver)
@@ -106,12 +106,13 @@ in panel `p`, and 0 otherwise.
 `feasiblepanels` is a list of AdjudicatorPanel instances.
 `nadjs` is the number of adjudicators.
 """
-function panelmembershipmatrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
+function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
     nadjs = numadjs(roundinfo)
     Q = spzeros(Bool, npanels, nadjs)
-    for (i, panel) in enumerate(feasiblepanels)
-        Q[i, indices(roundinfo, panel)] = true
+    for (p, panel) in enumerate(feasiblepanels)
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        Q[p, indices] = true
     end
     return Q
 end
@@ -122,11 +123,13 @@ function choosesolver(solver::AbstractString)
             try
                 @eval using $solvermod
             catch ArgumentError
-                if solver == "default"
-                    continue
+                if solver == solvername
+                    error("$solversym does not appear to be installed.")
+                    break
                 else
-                    error("Can't use $solvername, $solvermod does not appear to be installed.")
+                    continue
                 end
+
             end
             println("Using solver: $solversym")
             return eval(solversym)(;gapsym=>1e-2)

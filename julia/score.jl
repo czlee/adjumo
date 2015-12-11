@@ -7,7 +7,7 @@
 using DataStructures
 import Base.string
 
-export scorematrix, score, 
+export scorematrix, score,
     panelquality, panelregionalrepresentationscore, panellanguagerepresentationscore,
     panelgenderrepresentationscore, teamadjhistoryscore, adjadjhistoryscore,
     teamadjconflictsscore, adjadjconflictsscore
@@ -26,7 +26,7 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 - `feasiblepanels` is a list of AdjudicatorPanel instances.
 `roundinfo` is a RoundInfo instance.
 """
-function scorematrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
+function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     @assert length(roundinfo.debates) == length(roundinfo.debateweights)
     componentweights = roundinfo.componentweights
     Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
@@ -379,15 +379,13 @@ for that team and adjudicator, denoted `f` above.
 function sumteamadjscoresmatrix(teamadjscore::Function,
         feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
 
-    nteams = length(roundinfo.teams)
-    nadjs = length(roundinfo.adjudicators)
-    ndebates = length(roundinfo.debates)
+    nteams = numteams(roundinfo)
+    nadjs = numadjs(roundinfo)
+    ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     D = zeros(Bool, ndebates, nteams) # debate membership matrix
-    Ξ = zeros(nteams, nadjs)          # matrix of team-adj scores
+    Ξ = Array{Float64}(nteams, nadjs) # matrix of team-adj scores
     Q = zeros(Bool, nadjs, npanels)   # panel membership matrix
-    # TODO consider pre-doing D and Q outside this function and storing the result
-    # TODO allocate D and Q without initialization, and test performance
     for (a, adj) in enumerate(roundinfo.adjudicators), (t, team) in enumerate(roundinfo.teams)
         Ξ[t,a] = teamadjscore(roundinfo, team, adj)
     end
@@ -437,8 +435,8 @@ function sumadjadjscoresvector(adjadjscore::Function, feasiblepanels::Vector{Adj
         roundinfo::RoundInfo)
     # We won't necessarily need all pairs of adjudicators, so calculate them
     # as we go, but store them in a dict to avoid having to calculate multiple
-    # times.
-    # TODO profile this when calculated using matrix multiplication, like sumteamadjscoresmatrix
+    # times. I tried lots of ways, this is the fastest I've found -- see
+    # the file sandbox/adjadjvector.jl.
     ξ = Dict{Tuple{Adjudicator,Adjudicator},Float64}()
     npanels = length(feasiblepanels)
     γ = zeros(1, npanels)
