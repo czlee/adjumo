@@ -2,8 +2,6 @@
 
   <div id="alerts-holder"></div>
 
-  100 rooms; 300+ adjs. sort ascending: {{sortAscending}} / sort by: {{sortProperties}}
-
   {{outlet}}
 
   <ul class="nav navbar-nav pull-left">
@@ -14,11 +12,13 @@
 
   <ul class="nav navbar-nav pull-right">
     {{#if showingRegion }}
+    <li class="nav-item">
       <ol class="breadcrumb">
           {{#each model.regions as |region-instance|}}
               <li><a href="#" class="region-display region-{{region-instance.id}}">{{region-instance.name}}</a></li>
           {{/each}}
       </ol>
+    </li>
     {{/if}}
     <li class="nav-item">
         {{#if showingRegion }}

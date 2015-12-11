@@ -16,6 +16,16 @@ export default DS.Model.extend({
 
   panel: DS.belongsTo('panel', { inverse: null }),
 
+  is_allocated: Ember.computed('panel', function() {
+    var panel = this.get('panel');
+    console.log(panel);
+    if (this.panel) {
+      return true;
+    } else {
+      return false;
+    };
+  }),
+
   short_name: Ember.computed('name', function() {
     var words = this.get('name').split(" ");
     var short_name = words[0] + " " + words[1][0];
