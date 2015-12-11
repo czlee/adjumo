@@ -29,10 +29,16 @@ function convertconstraints(adjudicators::Vector{Adjudicator}, original::Vector{
     return converted
 end
 
-"""
-Top-level adjudicator allocation function.
-`roundinfo` is a RoundInfo instance.
-"""
+function convertteamadjconflicts(roundinfo::RoundInfo)
+    converted = Vector{Tuple{Int,Int}}(length(roundinfo.teamadjconflicts))
+    for (i, (team, adj)) in enumerate(roundinfo.teamadjconflicts)
+        debateindex = findfirst(debate -> team ∈ debate, roundinfo.debates)
+        converted[i] = (findfirst(roundinfo.adjudicators, adj), debateindex)
+    end
+    return converted
+end
+
+"Top-level adjudicator allocation function."
 function allocateadjudicators(roundinfo::RoundInfo; solver="default")
 
     feasible = checkfeasibility(roundinfo)
@@ -41,13 +47,18 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default")
         return (Int[], AdjudicatorPanel[])
     end
 
+    println("panels and score:")
     @time feasiblepanels = generatefeasiblepanels(roundinfo)
     @time Σ = scorematrix(roundinfo, feasiblepanels)
+    @time Q = panelmembershipmatrix(roundinfo, feasiblepanels)
 
-    Q = panelmembershipmatrix(roundinfo, feasiblepanels)
-    adjson = convertconstraints(roundinfo.adjudicators, roundinfo.lockedadjs)
-    adjsoff = convertconstraints(roundinfo.adjudicators, roundinfo.blockedadjs)
-    @time debateindices, panelindices = solveoptimizationproblem(Σ, Q, adjson, adjsoff; solver=solver)
+    println("constraints:")
+    @time lockedadjs = convertconstraints(roundinfo.adjudicators, roundinfo.lockedadjs)
+    @time blockedadjs = convertconstraints(roundinfo.adjudicators, roundinfo.blockedadjs)
+    # @time teamadjconflicts = convertteamadjconflicts(roundinfo)
+    # @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
+
+    @time debateindices, panelindices = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs; solver=solver)
 
     panels = AdjudicatorPanel[feasiblepanels[p] for p in panelindices]
     return debateindices, panels
@@ -72,8 +83,6 @@ end
 
 """
 Generates a list of feasible panels using the information about the round.
-`roundinfo` is a RoundInfo instance.
-
 Returns a list of AdjudicatorPanel instances.
 """
 function generatefeasiblepanels(roundinfo::RoundInfo)
@@ -98,13 +107,8 @@ end
 """
 Returns the panel membership matrix for a list of feasible panels.
 
-The panel membership matrix (denoted `Q`) will be an `npanels` by `nadjs`
-matrix, where `npanels` is the total number of feasible panels, and `nadjs` is
-the number of adjudicators. The element `Q[p,a]` will be 1 if adjudicator `a` is
-in panel `p`, and 0 otherwise.
-
-`feasiblepanels` is a list of AdjudicatorPanel instances.
-`nadjs` is the number of adjudicators.
+The returned matrix `Q` will have one row for each panel and one column for each
+adjudicator. `Q[p,a]` is 1 if adjudicator `a` is in panel `p`, 0 otherwise.
 """
 function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
@@ -117,6 +121,7 @@ function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{Adju
     return Q
 end
 
+"Given a user option, returns a solver for use in solving the optimization problem."
 function choosesolver(solver::AbstractString)
     for (solvername, solvermod, solversym, gapsym) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
@@ -156,7 +161,7 @@ Returns a list of 2-tuples, `(debate, panel)`, where `debate` is the column
     number of the debate and `panel` is the row number of the panel.
 """
 function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool},
-        adjson::Vector{Tuple{Int,Int}}, adjsoff::Vector{Tuple{Int,Int}};
+        lockedadjs::Vector{Tuple{Int,Int}}, blockedadjs::Vector{Tuple{Int,Int}};
         solver="default")
 
     (ndebates, npanels) = size(Σ)
@@ -166,14 +171,15 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
 
     @defVar(m, X[1:ndebates,1:npanels], Bin)
     @setObjective(m, Max, sum(Σ.*X))
-    @addConstraint(m, X*ones(npanels) .== 1)
-    @addConstraint(m, ones(1,ndebates)*X*Q .== 1)
-    for (a, d) in adjson
-        @addConstraint(m, (X*Q)[d,a] == 1)
+    @addConstraint(m, X*ones(npanels) .== 1)      # each debate has exactly one panel
+    @addConstraint(m, ones(1,ndebates)*X*Q .== 1) # each adjudicator is allocated once
+    for (a, d) in lockedadjs                      # locked adjudicators
+        @addConstraint(m, X[d,:]*Q[:,a] .== 1)
     end
-    for (a, d) in adjsoff
-        @addConstraint(m, (X*Q)[d,a] == 0)
+    for (a, d) in blockedadjs                     # blocked adjudicators
+        @addConstraint(m, X[d,:]*Q[:,a] .== 0)
     end
+
 
     @printf("There are %d panels to choose from.\n", npanels)
 
