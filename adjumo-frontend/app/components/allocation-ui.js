@@ -7,6 +7,9 @@ export default Ember.Component.extend({
   sortAscending: false,
   theFilter: "",
 
+  showingGender: false,
+  showingRegion: false,
+
   checkFilterMatch: function(theObject, searchString) {
     var match = false;
     searchString = searchString.toLowerCase();
@@ -44,8 +47,21 @@ export default Ember.Component.extend({
 
   actions: {
 
-    toggleGender: function() {
-      console.log("Toggling adj");
+    showGender: function() {
+      this.set('showingGender', true);
+      $(".adjudicator-ui, .debate-team").toggleClass("gender-display");
+    },
+    hideGender: function() {
+      this.set('showingGender', false);
+      $(".adjudicator-ui, .debate-team").toggleClass("gender-display");
+    },
+    showRegion: function() {
+      this.set('showingRegion', true);
+      $(".adjudicator-ui, .debate-team").toggleClass("region-display");
+    },
+    hideRegion: function() {
+      this.set('showingRegion', false);
+      $(".adjudicator-ui, .debate-team").toggleClass("region-display");
     },
 
     sortBy: function(property) {

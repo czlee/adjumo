@@ -7,39 +7,9 @@
       <a class="nav-link" href="#">Change Paramters</a>
     </li>
   </ul>
-  <ul class="nav navbar-nav pull-right">
-
+  <ul class="nav navbar-nav">
     <li class="nav-item">
-        {{#if showingRegion }}
-          <a class="nav-link hoverable" onclick={{action "hideRegion"}}>Hide Region</a>
-        {{else}}
-          <a class="nav-link hoverable" onclick={{action "showRegion"}}>Show Region</a>
-        {{/if}}
-    </li>
-    <li class="nav-item">
-        {{#if showingGender }}
-          <a class="nav-link hoverable" onclick={{action "hideGender"}}>Hide Gender</a>
-        {{else}}
-          <a class="nav-link hoverable" onclick={{action "showGender"}}>Show Gender</a>
-        {{/if}}
+      <a class="nav-link" href="#">Finalise</a>
     </li>
   </ul>
-  <form class="navbar-form navbar-right" role="search">
-    <div class="form-group">
-      {{input value=theFilter type='text' placeholder='Search'}}
-    </div>
-  </form>
-
-  {{#if showingRegion }}
-  <div class="row">
-    <div class="col-md-12">
-    <ol class="breadcrumb">
-        {{#each model.regions as |region-instance|}}
-            <li><a href="#" class="region-display region-{{region-instance.id}}">{{region-instance.name}}</a></li>
-        {{/each}}
-    </ol>
-    </div>
-  </div>
-    {{/if}}
-
 </nav>
