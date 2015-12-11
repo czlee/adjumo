@@ -35,17 +35,26 @@ function convertteamadjconflicts(roundinfo::RoundInfo)
         debateindex = findfirst(debate -> team ∈ debate, roundinfo.debates)
         converted[i] = (findfirst(roundinfo.adjudicators, adj), debateindex)
     end
+    for inst in roundinfo.institutions
+        teamindices = find(team -> team.institution == inst, roundinfo.teams)
+        adjindices = find(adj -> adj.institution == inst, roundinfo.adjudicators)
+        toappend = Array{Tuple{Int,Int}}(length(adjindices), length(teamindices))
+        for (j, teamindex) in enumerate(teamindices)
+            team = roundinfo.teams[teamindex]
+            debateindex = findfirst(debate -> team ∈ debate, roundinfo.debates)
+            for (i, adjindex) in enumerate(adjindices)
+                toappend[i,j] = (adjindex, debateindex)
+            end
+        end
+        append!(converted, toappend[:])
+    end
+    @show size(converted)
+    @show converted
     return converted
 end
 
 "Top-level adjudicator allocation function."
-function allocateadjudicators(roundinfo::RoundInfo; solver="default")
-
-    feasible = checkfeasibility(roundinfo)
-    if !feasible
-        println("Error: Incompatible constraints found.")
-        return (Int[], AdjudicatorPanel[])
-    end
+function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false)
 
     println("panels and score:")
     @time feasiblepanels = generatefeasiblepanels(roundinfo)
@@ -56,10 +65,18 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default")
     println("constraints:")
     @time lockedadjs = convertconstraints(roundinfo.adjudicators, roundinfo.lockedadjs)
     @time blockedadjs = convertconstraints(roundinfo.adjudicators, roundinfo.blockedadjs)
-    # @time teamadjconflicts = convertteamadjconflicts(roundinfo)
-    # @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
 
-    @time debateindices, panelindices = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver)
+    if enforceteamconflicts
+        @time teamadjconflicts = convertteamadjconflicts(roundinfo)
+        @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
+    end
+
+    @time status, debateindices, panelindices = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver)
+
+    if status != :Optimal
+        println("Error: Problem was not solved to optimality. Status was: $status")
+        checkincompatibleconstraints(roundinfo)
+    end
 
     panels = AdjudicatorPanel[feasiblepanels[p] for p in panelindices]
     return debateindices, panels
@@ -68,13 +85,12 @@ end
 
 """Checks the given round information for conditions that would definitely
 make the problem infeasible."""
-function checkfeasibility(roundinfo::RoundInfo)
+function checkincompatibleconstraints(roundinfo::RoundInfo)
     feasible = true
     for adjs in roundinfo.groupedadjs
         for (adj1, adj2) in combinations(adjs, 2)
             if conflicted(roundinfo, adj1, adj2)
-                printfmtln("Error: {} and {} are both grouped and conflicted.",
-                        adj1.name, adj2.name)
+                println("Error: $(adj1.name) and $(adj2.name) are both grouped and conflicted.")
                 feasible = false
             end
         end
@@ -108,6 +124,8 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
     for adjs in roundinfo.groupedadjs
         filter!(panel -> count(a -> a ∈ adjlist(panel), adjs) ∈ [0, length(adjs)], panels)
     end
+
+    println("There are $(length(panels)) panels to choose from.")
 
     return panels
 end
@@ -182,7 +200,7 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
 
     @defVar(m, X[1:ndebates,1:npanels], Bin)
     @setObjective(m, Max, sum(Σ.*X))
-    @addConstraint(m, X*ones(npanels) .== 1)                    # each debate has exactly one panel
+    @addConstraint(m, X*ones(npanels) .== 1)          # each debate has exactly one panel
     @addConstraint(m, sum(X*Q[:,~istrainee],1) .== 1) # each accredited adjudicator is allocated once
     @addConstraint(m, sum(X*Q[:, istrainee],1) .<= 1) # each trainee adjudicator is allocated at most once
 
@@ -195,18 +213,17 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
     end
 
 
-    @printf("There are %d panels to choose from.\n", npanels)
-
     @time status = solve(m)
 
-    if status != :Optimal
-        println("Error: Problem was not solved to optimality. Status was: $status")
-        return (Int[], Int[])
+    if status == :Optimal
+        println("Objective value: ", getObjectiveValue(m))
+        debates, panels = findn(getValue(X))
+    else
+        debates = Int[]
+        panels = Int[]
     end
 
-    println("Objective value: ", getObjectiveValue(m))
-    allocation = findn(getValue(X))
-    return allocation
+    return (status, debates, panels)
 end
 
 end # module
