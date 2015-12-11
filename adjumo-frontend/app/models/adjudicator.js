@@ -14,7 +14,7 @@ export default DS.Model.extend({
   // pastAdjudicators: DS.hasMany('adjudicator', { inverse: null }),
   // pastTeams: DS.hasMany('team', { inverse: null }),
 
-  panel: DS.belongsTo('panel'),
+  panel: DS.belongsTo('panel', { inverse: null }),
 
   short_name: Ember.computed('name', function() {
     var words = this.get('name').split(" ");

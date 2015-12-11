@@ -279,6 +279,22 @@ export default function() {
               ]
             }
           }
+        },
+        {
+          type: "adjudicators",
+          id: 6,
+          attributes: {
+            name: "Really crap adj",
+            rating: 1.0,
+            gender: 0,
+          },
+          relationships: {
+            "institutions": {
+              "data": [
+                { "type": "institution", "id": "6" },
+              ]
+            }
+          }
         }
       ]
     }

@@ -2,23 +2,49 @@
 
   <div id="alerts-holder"></div>
 
-  100 rooms; 300+ adjs
+  100 rooms; 300+ adjs. sort ascending: {{sortAscending}} / sort by: {{sortProperties}}
 
   {{outlet}}
+
+
 
   <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
     <thead>
       <tr>
-        <th class="head-venue" data-toggle="tooltip" data-placement="top" title="Venue">V</th>
-        <th class="head-points text-center" data-toggle="tooltip" data-placement="top" title="Points">P</th>
-        <th class="head-importance" data-toggle="tooltip" data-placement="top" title="Importance">VIP</th>
+        <th {{action "sortBy" "venue"}} class="head-venue" data-toggle="tooltip" data-placement="top" title="Venue">
+          V {{#if sortedByVenue}}
+            {{#if sortAscending}}
+              <span class="glyphicon glyphicon-chevron-up"></span>
+            {{else}}
+              <span class="glyphicon glyphicon-chevron-down"></span>
+            {{/if}}
+          {{/if}}
+        </th>
+        <th {{action "sortBy" "points"}} class="head-points text-center" data-toggle="tooltip" data-placement="top" title="Points">
+          P {{#if sortedByPoints}}
+            {{#if sortAscending}}
+              <span class="glyphicon glyphicon-chevron-up"></span>
+            {{else}}
+              <span class="glyphicon glyphicon-chevron-down"></span>
+            {{/if}}
+          {{/if}}
+        </th>
+        <th {{action "sortBy" "importance"}} class="head-importance" data-toggle="tooltip" data-placement="top" title="Importance">
+          VIP {{#if sortedByImportance}}
+            {{#if sortAscending}}
+              <span class="glyphicon glyphicon-chevron-up"></span>
+            {{else}}
+              <span class="glyphicon glyphicon-chevron-down"></span>
+            {{/if}}
+          {{/if}}
+        </th>
         <th class="head-og">OG</th>
         <th class="head-oo">OO</th>
         <th class="head-cg">CO</th>
         <th class="head-co">CG</th>
         <th class="head-regional" data-toggle="tooltip" data-placement="top" title="Regional Representation">RR</th>
         <th class="head-gender" data-toggle="tooltip" data-placement="top" title="Gender Representation">GR</th>
-        <th class="head-adjudicators" data-toggle="tooltip" data-placement="top" title="Panel Strength">PS</th>
+        <th {{action "sortBy" "panel"}} class="head-adjudicators" data-toggle="tooltip" data-placement="top" title="Panel Strength">PS</th>
         <th class="head-panel">
           <div class="flex-1">
             Chair
@@ -37,8 +63,8 @@
     </thead>
     <tbody>
 
-    {{#each model.debates as |debate-instance|}}
-        {{debate-ui debate=debate-instance drake=adj-drake}}
+    {{#each sortedDebates as |debate-instance|}}
+        {{debate-ui debate=debate-instance}}
     {{/each}}
 
     </tbody>
@@ -46,6 +72,4 @@
 
 </div>
 
-<div id="unusedAdjs" class="container-fluid navbar-fixed-bottom position-holder">
-
-</div>
+{{unused-ui model=model}}
