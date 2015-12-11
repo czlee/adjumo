@@ -24,6 +24,7 @@ args = parse_args(ARGS, argsettings)
 ndebates = args["ndebates"]
 currentround = args["currentround"]
 componentweights = AdjumoComponentWeights()
+componentweights.panelsize = 10
 componentweights.quality = 1
 componentweights.regional = 0.01
 componentweights.language = 1

@@ -138,6 +138,7 @@ end
 # ==============================================================================
 
 type AdjumoComponentWeights
+    panelsize::Float64
     quality::Float64
     regional::Float64
     language::Float64
@@ -148,7 +149,7 @@ type AdjumoComponentWeights
     adjconflict::Float64
 end
 
-AdjumoComponentWeights() = AdjumoComponentWeights(1,1,1,1,1,1,1,1)
+AdjumoComponentWeights() = AdjumoComponentWeights(1,1,1,1,1,1,1,1,1)
 AdjumoComponentWeights(v::Vector) = AdjumoComponentWeights(v...)
 
 # ==============================================================================

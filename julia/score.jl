@@ -29,7 +29,8 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     @assert length(roundinfo.debates) == length(roundinfo.debateweights)
     componentweights = roundinfo.componentweights
-    Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
+    Σ  = componentweights.panelsize    * matrixfromvector(panelsizevector, feasiblepanels, roundinfo)
+    Σ += componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
     Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
@@ -42,7 +43,7 @@ function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPan
 end
 
 function matrixfromvector(f::Function, feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
-    v = f(feasiblepanels, roundinfo)
+    v = f(feasiblepanels, roundinfo).'
     ndebates = numdebates(roundinfo)
     return repmat(v, ndebates, 1)
 end
@@ -53,7 +54,8 @@ This score does *not* account for the weight of the debate.
 """
 function score(roundinfo::RoundInfo, debate::Vector{Team}, panel::AdjudicatorPanel)
     componentweights = roundinfo.componentweights
-    σ  = componentweights.quality      * panelquality(panel)
+    σ  = componentweights.panelsize    * panelsizescore(panel)
+    σ += componentweights.quality      * panelquality(panel)
     σ += componentweights.regional     * panelregionalrepresentationscore(debate, panel)
     σ += componentweights.language     * panellanguagerepresentationscore(debate, panel)
     σ += componentweights.gender       * panelgenderrepresentationscore(debate, panel)
@@ -64,6 +66,22 @@ function score(roundinfo::RoundInfo, debate::Vector{Team}, panel::AdjudicatorPan
     return σ
 end
 
+# ==============================================================================
+# Panel size
+# ==============================================================================
+panelsizevector(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo) = panelsizevector(feasiblepanels)
+panelsizevector(panels::Vector{AdjudicatorPanel}) = map(panelsizescore, panels)
+
+function panelsizescore(panel::AdjudicatorPanel)
+    nadjs = numadjs(panel)
+    if nadjs == 3
+        return 0.0
+    elseif nadjs < 3
+        return -10.0
+    else
+        return -3.0
+    end
+end
 
 # ==============================================================================
 # Quality
@@ -80,7 +98,7 @@ conflict considerations.
 adjudicator at index `a`.
 """
 qualityvector(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo) = qualityvector(feasiblepanels)
-qualityvector(feasiblepanels::Vector{AdjudicatorPanel}) = Float64[panelquality(panel) for panel in feasiblepanels]'
+qualityvector(feasiblepanels::Vector{AdjudicatorPanel}) = Float64[panelquality(panel) for panel in feasiblepanels]
 panelquality(panel::AdjudicatorPanel) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in adjlist(panel)])
 
 "Returns the quality of a panel whose adjudicators have the given rankings."
@@ -439,7 +457,7 @@ function sumadjadjscoresvector(adjadjscore::Function, feasiblepanels::Vector{Adj
     # the file sandbox/adjadjvector.jl.
     ξ = Dict{Tuple{Adjudicator,Adjudicator},Float64}()
     npanels = length(feasiblepanels)
-    γ = zeros(1, npanels)
+    γ = zeros(npanels)
     for (p, panel) in enumerate(feasiblepanels)
         for (adj1, adj2) in combinations(adjlist(panel), 2)
             γ[p] += get!(ξ, (adj1, adj2)) do

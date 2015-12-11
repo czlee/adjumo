@@ -64,6 +64,7 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Adjudic
 
     println("Scores:                          raw      weighted")
     components = [
+        ("Panel size", :panelsize, panelsizescore(panel)),
         ("Panel quality", :quality, panelquality(panel)),
         ("Regional representation", :regional, panelregionalrepresentationscore(debate, panel)),
         ("Language representation", :language, panellanguagerepresentationscore(debate, panel)),
