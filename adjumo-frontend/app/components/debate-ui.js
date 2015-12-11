@@ -1,7 +1,9 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
+
   tagName: 'tr',
+
   actions: {
     receivePanel: function(obj,ops) {
       console.log('receiving a panel');
@@ -9,11 +11,15 @@ export default Ember.Component.extend({
   },
 
   didInsertElement: function() {
-    var debate = this.get('debate');
-    if (debate.get('importance') == null) {
-      debate.set('importance', debate.get('points'));
-    }
+    Ember.run.scheduleOnce('afterRender', this, function() {
+      // Set default importance to the points
+      var debate = this.get('debate');
+      if (debate.get('importance') == null) {
+        debate.set('importance', debate.get('points'));
+      }
+      this.$('[data-toggle="tooltip"]').tooltip();
+    });
 
-  }
+  },
 
 });
