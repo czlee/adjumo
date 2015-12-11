@@ -74,7 +74,6 @@ function randomroundinfo(ndebates::Int, currentround::Int)
         addrandomregions!(adj)
     end
 
-    sort!(adjudicators, by=adj->adj.ranking, rev=true)
     teams_shuffled = reshape(shuffle(teams), (4, ndebates))
     debates = [teams_shuffled[:,i] for i in 1:ndebates]
     debateweights = rand(length(debates)) * 10

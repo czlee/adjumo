@@ -368,8 +368,8 @@ For scores that can be modelled as the sum of scores between a team and an
 adjudicator, `f(team,adj)`, returns a matrix of scores, one for each debate and
 each panel, that is the sum of team-adjudicator scores among teams in that
 debate and adjudicators in that panel:
-    `Γ[debate,panel] = Σ{team∈debate} Σ{adj∈panel} f(team,adj)`
-where Γ is the returned matrix and Σ denotes summation.
+    `Γ[debate,panel] = ∑{team∈debate} ∑{adj∈panel} f(team,adj)`
+where Γ is the returned matrix and ∑ denotes summation.
 
 The returned matrix will be of size `ndebates = numdebates(roundinfo)` by
 `npanels = length(feasiblepanels)`. The argument `teamadjscore` should be a
@@ -404,8 +404,8 @@ end
 For scores that can be modelled as the sum of scores between a team and an
 adjudicator, `f(team,adj)`, returns the sum of team-adjudicator scores among
 teams in the given debate and adjudicators in the given panel:
-    Σ{team∈debate} Σ{adj∈panel} f(team,adj)
-where Σ denotes summation.
+    ∑{team∈debate} ∑{adj∈panel} f(team,adj)
+where ∑ denotes summation.
 """
 function sumteamadjscores(teamadjscore::Function, roundinfo::RoundInfo,
         debate::Vector{Team}, panel::AdjudicatorPanel)
@@ -420,8 +420,8 @@ end
 For scores that can be modelled as the sum of scores between each pair of
 adjudicators on a panel, `f(adj1,adj2)`, returns a vector of scores, one for
 each panel, that is the sum of pairwise scores among adjudicators on that panel:
-    `γ[panel] = Σ{{adj1,adj2}⊆panel} f(adj1,adj2)`
-where γ is the returned matrix and Σ denotes summation.
+    `γ[panel] = ∑{{adj1,adj2}⊆panel} f(adj1,adj2)`
+where γ is the returned matrix and ∑ denotes summation.
 
 `f` is assumed to be commutative, so only one of `f(a,b)` and `f(b,a)` will be
 evaluated.
@@ -454,8 +454,8 @@ end
 For scores that can be modelled as the sum of scores betwene each pair of
 adjudicators on a panel, `f(adj1,adj2)`, returns the sum of pairwise scores
 among adjudicators on the given panel:
-    Σ{{adj1,adj2}⊆panel} f(adj1,adj2)`
-where Σ denotes summation.
+    ∑{{adj1,adj2}⊆panel} f(adj1,adj2)`
+where ∑ denotes summation.
 
 `f` is assumed to be commutative, so only one of `f(a,b)` and `f(b,a)` will be
 evaluated.

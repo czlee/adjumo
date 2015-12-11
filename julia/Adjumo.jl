@@ -51,6 +51,7 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default")
     @time feasiblepanels = generatefeasiblepanels(roundinfo)
     @time Σ = scorematrix(roundinfo, feasiblepanels)
     @time Q = panelmembershipmatrix(roundinfo, feasiblepanels)
+    @time istrainee = [adj.ranking <= TraineePlus for adj in roundinfo.adjudicators]
 
     println("constraints:")
     @time lockedadjs = convertconstraints(roundinfo.adjudicators, roundinfo.lockedadjs)
@@ -58,7 +59,7 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default")
     # @time teamadjconflicts = convertteamadjconflicts(roundinfo)
     # @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
 
-    @time debateindices, panelindices = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs; solver=solver)
+    @time debateindices, panelindices = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver)
 
     panels = AdjudicatorPanel[feasiblepanels[p] for p in panelindices]
     return debateindices, panels
@@ -88,10 +89,17 @@ Returns a list of AdjudicatorPanel instances.
 function generatefeasiblepanels(roundinfo::RoundInfo)
     nchairs = numdebates(roundinfo)
 
-    chairs = roundinfo.adjudicators[1:nchairs]
-    panellists = roundinfo.adjudicators[nchairs+1:end]
+    adjssorted = sort(roundinfo.adjudicators, by=adj->adj.ranking, rev=true)
+    chairs = adjssorted[1:nchairs]
+    panellists = adjssorted[nchairs+1:end]
     panellistcombs = combinations(panellists, 2)
-    panels = AdjudicatorPanel[AdjudicatorPanel(c, [p...]) for c in chairs, p in panellistcombs]
+    panels = AdjudicatorPanel[AdjudicatorPanel(c, [p...]) for c in chairs, p in panellistcombs][:]
+
+    accreditedadjs = filter(x -> x.ranking >= PanellistMinus, adjssorted)
+    chairs = accreditedadjs[1:nchairs]
+    panellists = accreditedadjs[nchairs+1:end]
+    accreditedpairs = AdjudicatorPanel[AdjudicatorPanel(c, [p]) for c in chairs, p in panellists][:]
+    append!(panels, accreditedpairs)
 
     # panels with judges that conflict with each other are not feasible
     panels = filter(panel -> !hasconflict(roundinfo, panel), panels) # remove panels with adj-adj conflicts
@@ -150,19 +158,22 @@ end
 """
 Solves the optimization problem for score matrix `Σ` and panel membership
     matrix `Q`.
-`Σ` is a matrix with `ndebates` rows and `npanels` columns, where `ndebates` is
-    the number of debates and `npanels` is the number of feasible panels.
-`Q` is a matrix with `npanels` rows and `nadjs` columns, where `npanels` is the
-    number of feasible panels and `nadjs` is the number of adju
-    ators, and
-    where `Q[p,a] == 1` if panel `p` contains adjudicator `a`, and 0 if not.
+`Σ` has one row for each debate and one column for each panel, and `Σ[d,p]` is
+    the score achieved when allocating panel `p` to debate `d`.
+`Q` has one row for each panel and one column for each adjudicator, and `Q[p,a]`
+    indicates whether adjudicator `a` is in panel `p` (true or false).
+`lockedadjs` and `blockedadjs` are lists of tuples `(a, d)`, each element
+    indicating that adjudicator `a` is locked to or blocked from (respectively)
+    debate `d`.
+`istrainee` has one element for each adjudicator, and `istrainee[a]` indicates
+    whether adjudicator `a` has a trainee ranking (true or false).
 
-Returns a list of 2-tuples, `(debate, panel)`, where `debate` is the column
-    number of the debate and `panel` is the row number of the panel.
+Returns a list of 2-tuples, `(d, p)`, where `d` is the column number of the
+    debate and `p` is the row number of the panel in `Σ`.
 """
 function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool},
-        lockedadjs::Vector{Tuple{Int,Int}}, blockedadjs::Vector{Tuple{Int,Int}};
-        solver="default")
+        lockedadjs::Vector{Tuple{Int,Int}}, blockedadjs::Vector{Tuple{Int,Int}},
+        istrainee::Vector{Bool}; solver="default")
 
     (ndebates, npanels) = size(Σ)
 
@@ -171,12 +182,15 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
 
     @defVar(m, X[1:ndebates,1:npanels], Bin)
     @setObjective(m, Max, sum(Σ.*X))
-    @addConstraint(m, X*ones(npanels) .== 1)      # each debate has exactly one panel
-    @addConstraint(m, ones(1,ndebates)*X*Q .== 1) # each adjudicator is allocated once
-    for (a, d) in lockedadjs                      # locked adjudicators
+    @addConstraint(m, X*ones(npanels) .== 1)                    # each debate has exactly one panel
+    @addConstraint(m, sum(X*Q[:,~istrainee],1) .== 1) # each accredited adjudicator is allocated once
+    @addConstraint(m, sum(X*Q[:, istrainee],1) .<= 1) # each trainee adjudicator is allocated at most once
+
+    # adjudicator constraints
+    for (a, d) in lockedadjs
         @addConstraint(m, X[d,:]*Q[:,a] .== 1)
     end
-    for (a, d) in blockedadjs                     # blocked adjudicators
+    for (a, d) in blockedadjs
         @addConstraint(m, X[d,:]*Q[:,a] .== 0)
     end
 

@@ -265,21 +265,17 @@ funcs = [
     sumadjadjscoresvector11;
 ]
 
-# for f in funcs
-#     f(historyscore, feasiblepanels, roundinfo)
-# end
-# sumadjadjscoresvector12(historyscoreasym, feasiblepanels, roundinfo)
-
-# for i = 1:5
-#     for f in shuffle(funcs)
-#         println(f)
-#         @time f(historyscore, feasiblepanels, roundinfo)
-#     end
-#     @time sumadjadjscoresvector12(historyscoreasym, feasiblepanels, roundinfo)
-# end
-
 A = [f(historyscore, feasiblepanels, roundinfo) for f in funcs]
 push!(A, sumadjadjscoresvector12(historyscoreasym, feasiblepanels, roundinfo))
+
+for i = 1:5
+    for f in shuffle(funcs)
+        println(f)
+        @time f(historyscore, feasiblepanels, roundinfo)
+    end
+    @time sumadjadjscoresvector12(historyscoreasym, feasiblepanels, roundinfo)
+end
+
 push!(funcs, sumadjadjscoresvector12)
 for (i, a) in enumerate(A)
     @show funcs[i] sumabs(A[i])
