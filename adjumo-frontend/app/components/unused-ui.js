@@ -18,7 +18,17 @@ export default Ember.Component.extend({
 
     var droppedAdjID = event.originalEvent.dataTransfer.getData('AdjID');
     var droppedAdj = this.get('adjudicators').findBy('id', droppedAdjID);
-    droppedAdj.set('panel', null);
+    var oldPanel = droppedAdj.get('panel');
+
+    if (oldPanel) {
+      if (droppedAdj === oldPanel.get('chair').get('content')) {
+        oldPanel.set('chair', null);
+      } else if (oldPanel.get('panellists').contains(droppedAdj)) {
+        oldPanel.set('panellists', oldPanel.get('panellists').removeObject(droppedAdj));
+      } else if (oldPanel.get('trainees').contains(droppedAdj)) {
+        oldPanel.set('trainees', oldPanel.get('trainees').removeObject(droppedAdj));
+      }
+    }
 
     return false;
 
