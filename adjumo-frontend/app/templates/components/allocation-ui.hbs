@@ -65,6 +65,7 @@
         <th class="head-oo">OO</th>
         <th class="head-cg">CO</th>
         <th class="head-co">CG</th>
+        <th class="head-language" data-toggle="tooltip" data-placement="top" title="Language Representation">RR</th>
         <th class="head-regional" data-toggle="tooltip" data-placement="top" title="Regional Representation">RR</th>
         <th class="head-gender" data-toggle="tooltip" data-placement="top" title="Gender Representation">GR</th>
         <th {{action "sortBy" "panel"}} class="head-adjudicators" data-toggle="tooltip" data-placement="top" title="Panel Strength">PS</th>
@@ -95,4 +96,4 @@
 
 </div>
 
-{{unused-ui model=model}}
+{{unused-ui adjudicators=model.adjudicators}}
