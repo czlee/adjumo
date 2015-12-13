@@ -9,18 +9,20 @@ export default Ember.Component.extend({
     console.log('adj UI started being dragged');
 
     // Let the controller know this view is dragging
-    this.set("content.isDragging", true); // PB: unclear why im doing this
+    //this.set("content.isDragging", true); // PB: unclear why im doing this
 
     // Setup the variables that will communicate with the droppable element
     var dataTransfer = event.originalEvent.dataTransfer;
-    dataTransfer.setData('Adjudicator', this.get('adj'));
-    dataTransfer.setData('Text', this.get('elementId'));
+    dataTransfer.setData('AdjID', this.get('adj').get('id'));
+
+    //dataTransfer.setData('Text', this.get('elementId'));
+
   },
   dragEnd: function(event) {
     console.log('adj UI stopped being dragged');
 
     // Let the controller know this view is done dragging
-    this.set("content.isDragging", false); // PB: unclear why am doing this
+    //this.set("content.isDragging", false); // PB: unclear why am doing this
 
   },
 
