@@ -171,7 +171,6 @@ export default function() {
           chair: { "data": { "type": "adjudicator", "id": "2" } },
           panellists: {
             "data": [
-              { "type": "adjudicators", "id": "3" },
               { "type": "adjudicators", "id": "4" },
             ]
           },
@@ -189,7 +188,7 @@ export default function() {
         relationships: {
           trainees: {
             "data": [
-              { "type": "adjudicators", "id": "5" }
+              { "type": "adjudicators", "id": "3" }
             ]
           },
         }
@@ -268,7 +267,7 @@ export default function() {
           type: "adjudicators",
           id: 5,
           attributes: {
-            name: "Other Old Hack 2",
+            name: "Other 2",
             rating: 9.0,
             gender: 0,
           },

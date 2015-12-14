@@ -2,9 +2,9 @@ import DS from 'ember-data';
 
 export default DS.Model.extend({
 
-  chair: DS.belongsTo('adjudicator', { inverse: null }),
-  panellists: DS.hasMany('adjudicator', { inverse: null }),
-  trainees: DS.hasMany('adjudicator', { inverse: null }),
+  chair: DS.belongsTo('adjudicator', { inverse: 'panel' }),
+  panellists: DS.hasMany('adjudicator', { inverse: 'panel' }),
+  trainees: DS.hasMany('adjudicator', { inverse: 'panel' }),
 
   debate: DS.belongsTo('debate'),
 

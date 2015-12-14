@@ -2,46 +2,70 @@
 
   <div id="alerts-holder"></div>
 
-  100 rooms; 300+ adjs. sort ascending: {{sortAscending}} / sort by: {{sortProperties}}
-
   {{outlet}}
 
+  <ul class="nav navbar-nav pull-left">
+    <div class="form-group">
+      {{input value=theFilter type='text' class="form-control" placeholder='Search the debates'}}
+    </div>
+  </ul>
+
+  <ul class="nav navbar-nav pull-right">
+    {{#if showingRegion }}
+    <li class="nav-item">
+      <ol class="breadcrumb">
+          {{#each model.regions as |region-instance|}}
+              <li><a href="#" class="region-display region-{{region-instance.id}}">{{region-instance.name}}</a></li>
+          {{/each}}
+      </ol>
+    </li>
+    {{/if}}
+    <li class="nav-item">
+        {{#if showingRegion }}
+          <a class="nav-link hoverable" onclick={{action "hideRegion"}}>Hide Region</a>
+        {{else}}
+          <a class="nav-link hoverable" onclick={{action "showRegion"}}>Show Region</a>
+        {{/if}}
+    </li>
+    <li class="nav-item">
+        {{#if showingGender }}
+          <a class="nav-link hoverable" onclick={{action "hideGender"}}>Hide Gender</a>
+        {{else}}
+          <a class="nav-link hoverable" onclick={{action "showGender"}}>Show Gender</a>
+        {{/if}}
+    </li>
+  </ul>
 
 
   <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
     <thead>
       <tr>
-        <th {{action "sortBy" "venue"}} class="head-venue" data-toggle="tooltip" data-placement="top" title="Venue">
-          V {{#if sortedByVenue}}
-            {{#if sortAscending}}
-              <span class="glyphicon glyphicon-chevron-up"></span>
-            {{else}}
-              <span class="glyphicon glyphicon-chevron-down"></span>
-            {{/if}}
+        <th {{action "sortBy" "venue"}} class="head-sortable head-venue" data-toggle="tooltip" data-placement="top" title="Venue">
+          V {{#if sortAscending}}
+            <span class="glyphicon glyphicon-chevron-up" active={{sortedByVenue}}></span>
+          {{else}}
+            <span class="glyphicon glyphicon-chevron-down" active={{sortedByVenue}}></span>
           {{/if}}
         </th>
-        <th {{action "sortBy" "points"}} class="head-points text-center" data-toggle="tooltip" data-placement="top" title="Points">
-          P {{#if sortedByPoints}}
-            {{#if sortAscending}}
-              <span class="glyphicon glyphicon-chevron-up"></span>
+        <th {{action "sortBy" "points"}} class="head-sortable head-points text-center" data-toggle="tooltip" data-placement="top" title="Points">
+          P {{#if sortAscending}}
+              <span class="glyphicon glyphicon-chevron-up" active={{sortedByPoints}}></span>
             {{else}}
-              <span class="glyphicon glyphicon-chevron-down"></span>
+              <span class="glyphicon glyphicon-chevron-down" active={{sortedByPoints}}></span>
             {{/if}}
-          {{/if}}
         </th>
-        <th {{action "sortBy" "importance"}} class="head-importance" data-toggle="tooltip" data-placement="top" title="Importance">
-          VIP {{#if sortedByImportance}}
-            {{#if sortAscending}}
-              <span class="glyphicon glyphicon-chevron-up"></span>
+        <th {{action "sortBy" "importance"}} class="head-sortable head-importance" data-toggle="tooltip" data-placement="top" title="Importance">
+          VIP {{#if sortAscending}}
+              <span class="glyphicon glyphicon-chevron-up" active={{sortedByImportance}}></span>
             {{else}}
-              <span class="glyphicon glyphicon-chevron-down"></span>
+              <span class="glyphicon glyphicon-chevron-down" active={{sortedByImportance}}></span>
             {{/if}}
-          {{/if}}
         </th>
         <th class="head-og">OG</th>
         <th class="head-oo">OO</th>
         <th class="head-cg">CO</th>
         <th class="head-co">CG</th>
+        <th class="head-language" data-toggle="tooltip" data-placement="top" title="Language Representation">RR</th>
         <th class="head-regional" data-toggle="tooltip" data-placement="top" title="Regional Representation">RR</th>
         <th class="head-gender" data-toggle="tooltip" data-placement="top" title="Gender Representation">GR</th>
         <th {{action "sortBy" "panel"}} class="head-adjudicators" data-toggle="tooltip" data-placement="top" title="Panel Strength">PS</th>
@@ -63,7 +87,7 @@
     </thead>
     <tbody>
 
-    {{#each sortedDebates as |debate-instance|}}
+    {{#each filteredDebates as |debate-instance|}}
         {{debate-ui debate=debate-instance}}
     {{/each}}
 
@@ -72,4 +96,4 @@
 
 </div>
 
-{{unused-ui model=model}}
+{{unused-ui adjudicators=model.adjudicators }}

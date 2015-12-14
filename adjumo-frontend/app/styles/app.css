@@ -42,6 +42,9 @@ td {
 .head-co {
   width: 6%;
 }
+.head-language {
+  width: 3%;
+}
 .head-regional {
   width: 3%;
 }
@@ -54,6 +57,19 @@ td {
 
 #allocation th {
   font-size: 10px;
+}
+
+
+/* Sorting Icons */
+
+.head-sortable {
+  cursor: pointer;
+}
+span[active].glyphicon {
+  float: right;
+}
+span[active="false"].glyphicon {
+  opacity: 0.25;
 }
 
 /* Table Cells */

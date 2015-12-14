@@ -8,16 +8,27 @@
     {{ input type="number" value=debate.importance }}
 </td>
 <td class="debate-og debate-team text-center gender-{{ debate.og.gender }} region-{{ debate.og.institution.region.id }}">
-    {{ debate.og.name }}
+    <span data-toggle="tooltip" data-placement="top" title="{{ debate.og.institution.name }}">
+        {{ debate.og.name }}
+    </span>
 </td>
 <td class="debate-oo debate-team text-center gender-{{ debate.oo.gender }} region-{{ debate.oo.institution.region.id }}">
-    {{ debate.oo.name }}
+    <span data-toggle="tooltip" data-placement="top" title="{{ debate.oo.institution.name }}">
+        {{ debate.oo.name }}
+    </span>
 </td>
 <td class="debate-cg debate-team text-center gender-{{ debate.cg.gender }} region-{{ debate.cg.institution.region.id }}">
-    {{ debate.cg.name }}
+    <span data-toggle="tooltip" data-placement="top" title="{{ debate.cg.institution.name }}">
+        {{ debate.cg.name }}
+    </span>
 </td>
 <td class="debate-co debate-team text-center gender-{{ debate.co.gender }} region-{{ debate.co.institution.region.id }}">
-    {{ debate.co.name }}
+    <span data-toggle="tooltip" data-placement="top" title="{{ debate.co.institution.name }}">
+        {{ debate.co.name }}
+    </span>
+</td>
+<td class="debate-language-strength text-center ">
+
 </td>
 <td class="debate-regional-strength text-center ">
 

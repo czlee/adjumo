@@ -1,12 +1,7 @@
 <div id="unusedAdjs" class="container-fluid navbar-fixed-bottom position-holder">
 
-    {{#each model.adjudicators as |adj|}}
-
-        {{#if adj.panel}}
-            {{ adj.panel }}
-        {{else}}
-            {{adjudicator-ui adj=adj}}
-        {{/if}}
+    {{#each unusedAdjudicators as |adj|}}
+        {{adjudicator-ui adj=adj}}
     {{/each}}
 
 </div>
