@@ -12,7 +12,7 @@ export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
     Wudc2015AdjudicatorRank, TraineeMinus, Trainee, TraineePlus, PanellistMinus, Panellist, PanellistPlus, ChairMinus, Chair, ChairPlus,
     abbr, numteamsfrominstitution, numteams, numdebates, numadjs, adjlist,
     conflicted, hasconflict, roundsseen,
-    addinstitution!, addteam!, addadjudicator!, setdebates!, setdebateweights!,
+    addinstitution!, addteam!, addadjudicator!, adddebate!,
     addadjadjconflict!, addteamadjconflict!, addadjadjhistory!, addteamadjhistory!,
     addlockedadj!, addblockedadj!, addgroupedadjs!
 
@@ -73,6 +73,16 @@ Adjudicator(id::Int, name::AbstractString, institution::Institution) = Adjudicat
 Adjudicator(id::Int, name::AbstractString, institution::Institution, gender::PersonGender) = Adjudicator(id, UTF8String(name), institution, Panellist, gender, Region[institution.region], NoLanguage)
 Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(id, UTF8String(name), institution, ranking, PersonNoGender, Region[institution.region], NoLanguage)
 show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator(\"$(adj.name)\", \"$(adj.institution.code)\")")
+
+# ==============================================================================
+# Debate
+# ==============================================================================
+
+immutable Debate
+    id::Int
+    weight::Float64
+    teams::Vector{Team}
+end
 
 # ==============================================================================
 # Adjudicator panel
@@ -168,7 +178,7 @@ type RoundInfo
 
     # For adjudicators and debates, indices are important to the solver.
     adjudicators::Vector{Adjudicator}
-    debates::Vector{Vector{Team}}
+    debates::Vector{Debate}
 
     # Conflicts are considered hard: test for presence or absence only
     # Note: (adj1, adj2) and (adj2, adj1) mean the same thing, need to check for both
@@ -186,13 +196,11 @@ type RoundInfo
 
     # Weights
     componentweights::AdjumoComponentWeights
-    debateweights::Vector{Float64}
     currentround::Int
 end
 
-RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[],AdjumoComponentWeights(),[],currentround)
-RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[].AdjumoComponentWeights(), ones(length(debates)), currentround)
-RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[],AdjumoComponentWeights(), debateweights, currentround)
+RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[],AdjumoComponentWeights(),currentround)
+RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[].AdjumoComponentWeights(), currentround)
 
 conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts || adj1.institution == adj2.institution
 conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts || team.institution == adj.institution
@@ -204,17 +212,31 @@ numteams(rinfo::RoundInfo) = length(rinfo.teams)
 numdebates(rinfo::RoundInfo) = length(rinfo.debates)
 numadjs(rinfo::RoundInfo) = length(rinfo.adjudicators)
 
-addinstitution!(rinfo::RoundInfo, args...) = push!(rinfo.institutions, Institution(args...))
-addteam!(rinfo::RoundInfo, args...) = push!(rinfo.teams, Team(args...))
-addadjudicator!(rinfo::RoundInfo, args...) = push!(rinfo.adjudicators, Adjudicator(args...))
-
-function setdebates!(rinfo::RoundInfo, debates)
-    rinfo.debates = debates
-end
-function setdebateweights!(rinfo::RoundInfo, debateweights)
-    rinfo.debateweights = debateweights
+function addinstitution!(rinfo::RoundInfo, args...)
+    institution = Institution(args...)
+    push!(rinfo.institutions, institution)
+    return institution
 end
 
+function addteam!(rinfo::RoundInfo, args...)
+    team = Team(args...)
+    push!(rinfo.teams, team)
+    return team
+end
+
+function addadjudicator!(rinfo::RoundInfo, args...)
+    adjudicator = Adjudicator(args...)
+    push!(rinfo.adjudicators, adjudicator)
+    return adjudicator
+end
+
+function adddebate!(rinfo::RoundInfo, args...)
+    debate = Debate(args...)
+    push!(rinfo.debates, debate)
+    return debate
+end
+
+getdebateweights(rinfo::RoundInfo) = Float64[d.weight for d in rinfo.debates]
 numteamsfrominstitution(rinfo::RoundInfo, inst::Institution) = count(x -> x.institution == inst, rinfo.teams)
 
 # These functions don't check for validity; that is, they don't check to see

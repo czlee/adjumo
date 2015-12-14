@@ -75,11 +75,9 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     end
 
     teams_shuffled = reshape(shuffle(teams), (4, ndebates))
-    debates = [teams_shuffled[:,i] for i in 1:ndebates]
-    debateweights = rand(length(debates)) * 10
-
-    setdebates!(roundinfo, debates)
-    setdebateweights!(roundinfo, debateweights)
+    for i in 1:ndebates
+        adddebate!(roundinfo, rand(1:100000), 10rand(), teams_shuffled[:,i])
+    end
 
     println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 

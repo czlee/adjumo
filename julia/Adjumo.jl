@@ -18,6 +18,8 @@ SUPPORTED_SOLVERS = [
 include("types.jl")
 include("score.jl")
 include("display.jl")
+include("importtabbie.jl")
+include("exportjson.jl")
 
 export allocateadjudicators, generatefeasiblepanels
 

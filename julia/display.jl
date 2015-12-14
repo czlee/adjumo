@@ -5,11 +5,10 @@ export showconstraints, showdebatedetail
 "Prints information about the given debate."
 function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::AdjudicatorPanel)
     debate = roundinfo.debates[debateindex]
-    debateweight = roundinfo.debateweights[debateindex]
     println("== Debate $debateindex ==")
 
     println("Teams:")
-    for team in debate
+    for team in debate.teams
         printfmtln("   {:<22}     {:<20}  {:1} {:<3} {:<5}",
                 team.name, team.institution.code, abbr(team.gender), abbr(team.language), abbr(team.region))
     end
@@ -24,7 +23,7 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Adjudic
     end
 
     println("Conflicts:")
-    for team in debate, adj in adjlist(panel)
+    for team in debate.teams, adj in adjlist(panel)
         if conflicted(roundinfo, team, adj)
             printfmtln("   {} conflicts with {}", adj.name, team.name)
         end
@@ -36,7 +35,7 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Adjudic
     end
 
     println("History:")
-    for team in debate, adj in adjlist(panel)
+    for team in debate.teams, adj in adjlist(panel)
         history = roundsseen(roundinfo, team, adj)
         if length(history) > 0
             printfmtln("   {} saw {} in round{} {}", adj.name, team.name,
@@ -80,7 +79,7 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Adjudic
         printfmtln("{:>25}: {:>9.3f}  {:>12.3f}", name, score, score * weight)
     end
     debatescore = score(roundinfo, debate, panel)
-    printfmtln("{:>25}:            {:>12.3f}  ({:>6.3f})  {:>12.3f}", "Overall", debatescore, debateweight, debatescore * debateweight)
+    printfmtln("{:>25}:            {:>12.3f}  ({:>6.3f})  {:>12.3f}", "Overall", debatescore, debate.weight, debatescore * debate.weight)
     println()
 end
 
@@ -91,16 +90,16 @@ function showconstraints(roundinfo::RoundInfo)
         printfmtln("   {} and {} conflict with each other", adj1.name, adj2.name)
     end
     for (team, adj) in roundinfo.teamadjconflicts
-        debateindex = findfirst(debate -> team ∈ debate, roundinfo.debates)
-        debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
+        debateindex = findfirst(debate -> team ∈ debate.teams, roundinfo.debates)
+        debatestr = join([team.name for team in roundinfo.debates[debateindex].teams], ", ")
         printfmtln("   {} conflicts with {}, so blocked from [{}]", adj.name, team.name, debatestr)
     end
     for (adj, debateindex) in roundinfo.lockedadjs
-        debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
+        debatestr = join([team.name for team in roundinfo.debates[debateindex].teams], ", ")
         printfmtln("   {} is locked to debate [{}]", adj.name, debatestr)
     end
     for (adj, debateindex) in roundinfo.blockedadjs
-        debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
+        debatestr = join([team.name for team in roundinfo.debates[debateindex].teams], ", ")
         printfmtln("   {} is blocked from debate [{}]", adj.name, debatestr)
     end
     for adjs in roundinfo.groupedadjs
