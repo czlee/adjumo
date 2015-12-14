@@ -42,3 +42,12 @@ function jsondebates(ri::RoundInfo)
     d = jsonapidict(ri.debates)
     JSON.json(d)
 end
+
+function exportall(ri::RoundInfo)
+    for field in fieldnames(ri)
+        d = jsonapidict(getfield(ri, field))
+        f = open(string(field)*".json", "w")
+        JSON.print(f, d)
+        close(f)
+    end
+end
