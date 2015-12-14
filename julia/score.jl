@@ -7,7 +7,7 @@
 using DataStructures
 import Base.string
 
-export scorematrix, score, 
+export scorematrix, score,
     panelquality, panelregionalrepresentationscore, panellanguagerepresentationscore,
     panelgenderrepresentationscore, teamadjhistoryscore, adjadjhistoryscore,
     teamadjconflictsscore, adjadjconflictsscore
@@ -26,10 +26,11 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 - `feasiblepanels` is a list of AdjudicatorPanel instances.
 `roundinfo` is a RoundInfo instance.
 """
-function scorematrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
+function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     @assert length(roundinfo.debates) == length(roundinfo.debateweights)
     componentweights = roundinfo.componentweights
-    Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
+    Σ  = componentweights.panelsize    * matrixfromvector(panelsizevector, feasiblepanels, roundinfo)
+    Σ += componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
     Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
@@ -42,7 +43,7 @@ function scorematrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundI
 end
 
 function matrixfromvector(f::Function, feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
-    v = f(feasiblepanels, roundinfo)
+    v = f(feasiblepanels, roundinfo).'
     ndebates = numdebates(roundinfo)
     return repmat(v, ndebates, 1)
 end
@@ -53,7 +54,8 @@ This score does *not* account for the weight of the debate.
 """
 function score(roundinfo::RoundInfo, debate::Vector{Team}, panel::AdjudicatorPanel)
     componentweights = roundinfo.componentweights
-    σ  = componentweights.quality      * panelquality(panel)
+    σ  = componentweights.panelsize    * panelsizescore(panel)
+    σ += componentweights.quality      * panelquality(panel)
     σ += componentweights.regional     * panelregionalrepresentationscore(debate, panel)
     σ += componentweights.language     * panellanguagerepresentationscore(debate, panel)
     σ += componentweights.gender       * panelgenderrepresentationscore(debate, panel)
@@ -64,6 +66,22 @@ function score(roundinfo::RoundInfo, debate::Vector{Team}, panel::AdjudicatorPan
     return σ
 end
 
+# ==============================================================================
+# Panel size
+# ==============================================================================
+panelsizevector(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo) = panelsizevector(feasiblepanels)
+panelsizevector(panels::Vector{AdjudicatorPanel}) = map(panelsizescore, panels)
+
+function panelsizescore(panel::AdjudicatorPanel)
+    nadjs = numadjs(panel)
+    if nadjs == 3
+        return 0.0
+    elseif nadjs < 3
+        return -10.0
+    else
+        return -3.0
+    end
+end
 
 # ==============================================================================
 # Quality
@@ -80,7 +98,7 @@ conflict considerations.
 adjudicator at index `a`.
 """
 qualityvector(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo) = qualityvector(feasiblepanels)
-qualityvector(feasiblepanels::Vector{AdjudicatorPanel}) = Float64[panelquality(panel) for panel in feasiblepanels]'
+qualityvector(feasiblepanels::Vector{AdjudicatorPanel}) = Float64[panelquality(panel) for panel in feasiblepanels]
 panelquality(panel::AdjudicatorPanel) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in adjlist(panel)])
 
 "Returns the quality of a panel whose adjudicators have the given rankings."
@@ -368,8 +386,8 @@ For scores that can be modelled as the sum of scores between a team and an
 adjudicator, `f(team,adj)`, returns a matrix of scores, one for each debate and
 each panel, that is the sum of team-adjudicator scores among teams in that
 debate and adjudicators in that panel:
-    `Γ[debate,panel] = Σ{team∈debate} Σ{adj∈panel} f(team,adj)`
-where Γ is the returned matrix and Σ denotes summation.
+    `Γ[debate,panel] = ∑{team∈debate} ∑{adj∈panel} f(team,adj)`
+where Γ is the returned matrix and ∑ denotes summation.
 
 The returned matrix will be of size `ndebates = numdebates(roundinfo)` by
 `npanels = length(feasiblepanels)`. The argument `teamadjscore` should be a
@@ -379,15 +397,13 @@ for that team and adjudicator, denoted `f` above.
 function sumteamadjscoresmatrix(teamadjscore::Function,
         feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
 
-    nteams = length(roundinfo.teams)
-    nadjs = length(roundinfo.adjudicators)
-    ndebates = length(roundinfo.debates)
+    nteams = numteams(roundinfo)
+    nadjs = numadjs(roundinfo)
+    ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
     D = zeros(Bool, ndebates, nteams) # debate membership matrix
-    Ξ = zeros(nteams, nadjs)          # matrix of team-adj scores
+    Ξ = Array{Float64}(nteams, nadjs) # matrix of team-adj scores
     Q = zeros(Bool, nadjs, npanels)   # panel membership matrix
-    # TODO consider pre-doing D and Q outside this function and storing the result
-    # TODO allocate D and Q without initialization, and test performance
     for (a, adj) in enumerate(roundinfo.adjudicators), (t, team) in enumerate(roundinfo.teams)
         Ξ[t,a] = teamadjscore(roundinfo, team, adj)
     end
@@ -406,8 +422,8 @@ end
 For scores that can be modelled as the sum of scores between a team and an
 adjudicator, `f(team,adj)`, returns the sum of team-adjudicator scores among
 teams in the given debate and adjudicators in the given panel:
-    Σ{team∈debate} Σ{adj∈panel} f(team,adj)
-where Σ denotes summation.
+    ∑{team∈debate} ∑{adj∈panel} f(team,adj)
+where ∑ denotes summation.
 """
 function sumteamadjscores(teamadjscore::Function, roundinfo::RoundInfo,
         debate::Vector{Team}, panel::AdjudicatorPanel)
@@ -422,8 +438,8 @@ end
 For scores that can be modelled as the sum of scores between each pair of
 adjudicators on a panel, `f(adj1,adj2)`, returns a vector of scores, one for
 each panel, that is the sum of pairwise scores among adjudicators on that panel:
-    `γ[panel] = Σ{{adj1,adj2}⊆panel} f(adj1,adj2)`
-where γ is the returned matrix and Σ denotes summation.
+    `γ[panel] = ∑{{adj1,adj2}⊆panel} f(adj1,adj2)`
+where γ is the returned matrix and ∑ denotes summation.
 
 `f` is assumed to be commutative, so only one of `f(a,b)` and `f(b,a)` will be
 evaluated.
@@ -437,11 +453,11 @@ function sumadjadjscoresvector(adjadjscore::Function, feasiblepanels::Vector{Adj
         roundinfo::RoundInfo)
     # We won't necessarily need all pairs of adjudicators, so calculate them
     # as we go, but store them in a dict to avoid having to calculate multiple
-    # times.
-    # TODO profile this when calculated using matrix multiplication, like sumteamadjscoresmatrix
+    # times. I tried lots of ways, this is the fastest I've found -- see
+    # the file sandbox/adjadjvector.jl.
     ξ = Dict{Tuple{Adjudicator,Adjudicator},Float64}()
     npanels = length(feasiblepanels)
-    γ = zeros(1, npanels)
+    γ = zeros(npanels)
     for (p, panel) in enumerate(feasiblepanels)
         for (adj1, adj2) in combinations(adjlist(panel), 2)
             γ[p] += get!(ξ, (adj1, adj2)) do
@@ -456,8 +472,8 @@ end
 For scores that can be modelled as the sum of scores betwene each pair of
 adjudicators on a panel, `f(adj1,adj2)`, returns the sum of pairwise scores
 among adjudicators on the given panel:
-    Σ{{adj1,adj2}⊆panel} f(adj1,adj2)`
-where Σ denotes summation.
+    ∑{{adj1,adj2}⊆panel} f(adj1,adj2)`
+where ∑ denotes summation.
 
 `f` is assumed to be commutative, so only one of `f(a,b)` and `f(b,a)` will be
 evaluated.

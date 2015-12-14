@@ -64,6 +64,7 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Adjudic
 
     println("Scores:                          raw      weighted")
     components = [
+        ("Panel size", :panelsize, panelsizescore(panel)),
         ("Panel quality", :quality, panelquality(panel)),
         ("Regional representation", :regional, panelregionalrepresentationscore(debate, panel)),
         ("Language representation", :language, panellanguagerepresentationscore(debate, panel)),
@@ -90,7 +91,9 @@ function showconstraints(roundinfo::RoundInfo)
         printfmtln("   {} and {} conflict with each other", adj1.name, adj2.name)
     end
     for (team, adj) in roundinfo.teamadjconflicts
-        printfmtln("   {} conflicts with {}", adj.name, team.name)
+        debateindex = findfirst(debate -> team ∈ debate, roundinfo.debates)
+        debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")
+        printfmtln("   {} conflicts with {}, so blocked from [{}]", adj.name, team.name, debatestr)
     end
     for (adj, debateindex) in roundinfo.lockedadjs
         debatestr = join([team.name for team in roundinfo.debates[debateindex]], ", ")

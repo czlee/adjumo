@@ -10,7 +10,7 @@ export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
     Region, NoRegion, NorthAsia, SouthEastAsia, MiddleEast, SouthAsia, Africa, Oceania, NorthAmerica, LatinAmerica, Europe, IONA,
     LanguageStatus, NoLanguage, EnglishPrimary, EnglishSecond, EnglishForeign,
     Wudc2015AdjudicatorRank, TraineeMinus, Trainee, TraineePlus, PanellistMinus, Panellist, PanellistPlus, ChairMinus, Chair, ChairPlus,
-    abbr, numteamsfrominstitution, numdebates, numadjs, adjlist,
+    abbr, numteamsfrominstitution, numteams, numdebates, numadjs, adjlist,
     conflicted, hasconflict, roundsseen,
     addinstitution!, addteam!, addadjudicator!, setdebates!, setdebateweights!,
     addadjadjconflict!, addteamadjconflict!, addadjadjhistory!, addteamadjhistory!,
@@ -33,16 +33,18 @@ abbr(l::LanguageStatus) = ["-", "EPL", "ESL", "EFL"][Integer(l)+1]
 abbr(r::Wudc2015AdjudicatorRank) = ["T-", "T", "T+", "P-", "P", "P+", "C-", "C", "C+"][Integer(r)+1]
 
 type Institution
+    id::Int
     name::UTF8String
     code::UTF8String
     region::Region
 end
 
-Institution(name::UTF8String) = Institution(name, name[1:5], NoRegion)
-Institution(name::UTF8String, code::UTF8String) = Institution(name, code, NoRegion)
-Institution(name::AbstractString, code::AbstractString) = Institution(UTF8String(name), UTF8String(code), NoRegion)
+Institution(id::Int, name::UTF8String) = Institution(id, name, name[1:5], NoRegion)
+Institution(id::Int, name::UTF8String, code::UTF8String) = Institution(id, name, code, NoRegion)
+Institution(id::Int, name::AbstractString, code::AbstractString) = Institution(id, UTF8String(name), UTF8String(code), NoRegion)
 
 type Team
+    id::Int
     name::UTF8String
     institution::Institution
     gender::TeamGender
@@ -50,13 +52,14 @@ type Team
     language::LanguageStatus
 end
 
-Team(name::UTF8String, institution::Institution) = Team(name, institution, TeamNoGender, institution.region, NoLanguage)
-Team(name::AbstractString, institution::Institution) = Team(UTF8String(name), institution, TeamNoGender, institution.region, NoLanguage)
-Team(name::UTF8String, institution::Institution, region::Region) = Team(name, institution, TeamNoGender, region, NoLanguage)
-Team(name::AbstractString, institution::Institution, region::Region) = Team(UTF8String(name), institution, TeamNoGender, region, NoLanguage)
+Team(id::Int, name::UTF8String, institution::Institution) = Team(id, name, institution, TeamNoGender, institution.region, NoLanguage)
+Team(id::Int, name::AbstractString, institution::Institution) = Team(id, UTF8String(name), institution, TeamNoGender, institution.region, NoLanguage)
+Team(id::Int, name::UTF8String, institution::Institution, region::Region) = Team(id, name, institution, TeamNoGender, region, NoLanguage)
+Team(id::Int, name::AbstractString, institution::Institution, region::Region) = Team(id, UTF8String(name), institution, TeamNoGender, region, NoLanguage)
 show(io::Base.IO, team::Team) = print(io, "Team(\"$(team.name)\")")
 
 type Adjudicator
+    id::Int
     name::UTF8String
     institution::Institution
     ranking::Wudc2015AdjudicatorRank
@@ -65,10 +68,10 @@ type Adjudicator
     language::LanguageStatus
 end
 
-Adjudicator(name::UTF8String, institution::Institution) = Adjudicator(name, institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
-Adjudicator(name::AbstractString, institution::Institution) = Adjudicator(UTF8String(name), institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
-Adjudicator(name::AbstractString, institution::Institution, gender::PersonGender) = Adjudicator(UTF8String(name), institution, Panellist, gender, Region[institution.region], NoLanguage)
-Adjudicator(name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(UTF8String(name), institution, ranking, PersonNoGender, Region[institution.region], NoLanguage)
+Adjudicator(id::Int, name::UTF8String, institution::Institution) = Adjudicator(id, name, institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
+Adjudicator(id::Int, name::AbstractString, institution::Institution) = Adjudicator(id, UTF8String(name), institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
+Adjudicator(id::Int, name::AbstractString, institution::Institution, gender::PersonGender) = Adjudicator(id, UTF8String(name), institution, Panellist, gender, Region[institution.region], NoLanguage)
+Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(id, UTF8String(name), institution, ranking, PersonNoGender, Region[institution.region], NoLanguage)
 show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator(\"$(adj.name)\", \"$(adj.institution.code)\")")
 
 # ==============================================================================
@@ -138,6 +141,7 @@ end
 # ==============================================================================
 
 type AdjumoComponentWeights
+    panelsize::Float64
     quality::Float64
     regional::Float64
     language::Float64
@@ -148,7 +152,7 @@ type AdjumoComponentWeights
     adjconflict::Float64
 end
 
-AdjumoComponentWeights() = AdjumoComponentWeights(1,1,1,1,1,1,1,1)
+AdjumoComponentWeights() = AdjumoComponentWeights(1,1,1,1,1,1,1,1,1)
 AdjumoComponentWeights(v::Vector) = AdjumoComponentWeights(v...)
 
 # ==============================================================================
@@ -186,16 +190,17 @@ type RoundInfo
     currentround::Int
 end
 
-RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict(),Dict(),[],[],[],AdjumoComponentWeights(),[],currentround)
-RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],[].AdjumoComponentWeights(), ones(length(debates)), currentround)
-RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],[],AdjumoComponentWeights(), debateweights, currentround)
+RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[],AdjumoComponentWeights(),[],currentround)
+RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[].AdjumoComponentWeights(), ones(length(debates)), currentround)
+RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[],AdjumoComponentWeights(), debateweights, currentround)
 
 conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts || adj1.institution == adj2.institution
 conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts || team.institution == adj.institution
 hasconflict(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = any(pair -> conflicted(rinfo, pair...), combinations(adjs, 2))
-roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = [get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])]
+roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = unique([get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])])
 roundsseen(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.teamadjhistory, (team, adj), Int[])
 
+numteams(rinfo::RoundInfo) = length(rinfo.teams)
 numdebates(rinfo::RoundInfo) = length(rinfo.debates)
 numadjs(rinfo::RoundInfo) = length(rinfo.adjudicators)
 
@@ -228,9 +233,4 @@ lockedadjs(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filte
 blockedadjs(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filter(y -> y[2] == debateindex, rinfo.blockedadjs)]
 groupedadjs(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = filter(x -> x ⊆ adjs, rinfo.groupedadjs)
 
-adjudicatorsfromindices(roundinfo::RoundInfo, indices::Vector{Int64}) = Adjudicator[roundinfo.adjudicators[a] for a in indices]
-indicesfromadjudicators(roundinfo::RoundInfo, adjs::Vector{Adjudicator}) = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjs]
-
-"Returns the indices of the adjudicators on the panel as a Vector{Int}"
-indices(roundinfo::RoundInfo, panel::AdjudicatorPanel) = indicesfromadjudicators(roundinfo, adjlist(panel))
 hasconflict(roundinfo::RoundInfo, panel::AdjudicatorPanel) = hasconflict(roundinfo, adjlist(panel))

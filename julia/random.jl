@@ -50,18 +50,18 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     adjudicators = roundinfo.adjudicators
 
     for args in rand(INSTITUTIONS, ninstitutions)
-        addinstitution!(roundinfo, args...)
+        addinstitution!(roundinfo, rand(1:10000), args...)
     end
 
     for i in 1:nteams
         inst = rand(institutions)
         existing = numteamsfrominstitution(roundinfo, inst)
-        addteam!(roundinfo, "$(inst.code) $(existing+1)", inst)
+        addteam!(roundinfo, rand(1:100000), "$(inst.code) $(existing+1)", inst)
     end
 
     adjnames = rand(PERSON_NAMES, nadjs)
     for (name, gender) in adjnames
-        addadjudicator!(roundinfo, name, rand(institutions), gender)
+        addadjudicator!(roundinfo, rand(1:100000), name, rand(institutions), gender)
     end
 
     for team in teams
@@ -74,7 +74,6 @@ function randomroundinfo(ndebates::Int, currentround::Int)
         addrandomregions!(adj)
     end
 
-    sort!(adjudicators, by=adj->adj.ranking, rev=true)
     teams_shuffled = reshape(shuffle(teams), (4, ndebates))
     debates = [teams_shuffled[:,i] for i in 1:ndebates]
     debateweights = rand(length(debates)) * 10
