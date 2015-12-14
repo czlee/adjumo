@@ -33,16 +33,18 @@ abbr(l::LanguageStatus) = ["-", "EPL", "ESL", "EFL"][Integer(l)+1]
 abbr(r::Wudc2015AdjudicatorRank) = ["T-", "T", "T+", "P-", "P", "P+", "C-", "C", "C+"][Integer(r)+1]
 
 type Institution
+    id::Int
     name::UTF8String
     code::UTF8String
     region::Region
 end
 
-Institution(name::UTF8String) = Institution(name, name[1:5], NoRegion)
-Institution(name::UTF8String, code::UTF8String) = Institution(name, code, NoRegion)
-Institution(name::AbstractString, code::AbstractString) = Institution(UTF8String(name), UTF8String(code), NoRegion)
+Institution(id::Int, name::UTF8String) = Institution(id, name, name[1:5], NoRegion)
+Institution(id::Int, name::UTF8String, code::UTF8String) = Institution(id, name, code, NoRegion)
+Institution(id::Int, name::AbstractString, code::AbstractString) = Institution(id, UTF8String(name), UTF8String(code), NoRegion)
 
 type Team
+    id::Int
     name::UTF8String
     institution::Institution
     gender::TeamGender
@@ -50,13 +52,14 @@ type Team
     language::LanguageStatus
 end
 
-Team(name::UTF8String, institution::Institution) = Team(name, institution, TeamNoGender, institution.region, NoLanguage)
-Team(name::AbstractString, institution::Institution) = Team(UTF8String(name), institution, TeamNoGender, institution.region, NoLanguage)
-Team(name::UTF8String, institution::Institution, region::Region) = Team(name, institution, TeamNoGender, region, NoLanguage)
-Team(name::AbstractString, institution::Institution, region::Region) = Team(UTF8String(name), institution, TeamNoGender, region, NoLanguage)
+Team(id::Int, name::UTF8String, institution::Institution) = Team(id, name, institution, TeamNoGender, institution.region, NoLanguage)
+Team(id::Int, name::AbstractString, institution::Institution) = Team(id, UTF8String(name), institution, TeamNoGender, institution.region, NoLanguage)
+Team(id::Int, name::UTF8String, institution::Institution, region::Region) = Team(id, name, institution, TeamNoGender, region, NoLanguage)
+Team(id::Int, name::AbstractString, institution::Institution, region::Region) = Team(id, UTF8String(name), institution, TeamNoGender, region, NoLanguage)
 show(io::Base.IO, team::Team) = print(io, "Team(\"$(team.name)\")")
 
 type Adjudicator
+    id::Int
     name::UTF8String
     institution::Institution
     ranking::Wudc2015AdjudicatorRank
@@ -65,10 +68,10 @@ type Adjudicator
     language::LanguageStatus
 end
 
-Adjudicator(name::UTF8String, institution::Institution) = Adjudicator(name, institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
-Adjudicator(name::AbstractString, institution::Institution) = Adjudicator(UTF8String(name), institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
-Adjudicator(name::AbstractString, institution::Institution, gender::PersonGender) = Adjudicator(UTF8String(name), institution, Panellist, gender, Region[institution.region], NoLanguage)
-Adjudicator(name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(UTF8String(name), institution, ranking, PersonNoGender, Region[institution.region], NoLanguage)
+Adjudicator(id::Int, name::UTF8String, institution::Institution) = Adjudicator(id, name, institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
+Adjudicator(id::Int, name::AbstractString, institution::Institution) = Adjudicator(id, UTF8String(name), institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
+Adjudicator(id::Int, name::AbstractString, institution::Institution, gender::PersonGender) = Adjudicator(id, UTF8String(name), institution, Panellist, gender, Region[institution.region], NoLanguage)
+Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(id, UTF8String(name), institution, ranking, PersonNoGender, Region[institution.region], NoLanguage)
 show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator(\"$(adj.name)\", \"$(adj.institution.code)\")")
 
 # ==============================================================================
@@ -194,7 +197,7 @@ RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentroun
 conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts || adj1.institution == adj2.institution
 conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts || team.institution == adj.institution
 hasconflict(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = any(pair -> conflicted(rinfo, pair...), combinations(adjs, 2))
-roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = [get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])]
+roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = unique([get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])])
 roundsseen(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.teamadjhistory, (team, adj), Int[])
 
 numteams(rinfo::RoundInfo) = length(rinfo.teams)
