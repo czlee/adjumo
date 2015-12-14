@@ -5,6 +5,7 @@ adjumo-backend/node_modules/*
 adjumo-frontend/dist
 adjumo-frontend/tmp
 adjumo-frontend/public
+julia/*.json
 
 # dependencies
 adjumo-frontend/node_modules

@@ -1,6 +1,7 @@
 import Ember from 'ember';
+import DroppableMixin from '../mixins/droppable';
 
-export default Ember.Component.extend(Mixin.droppable, {
+export default Ember.Component.extend(DroppableMixin, {
 
   unusedAdjudicators: Ember.computed('adjudicators.@each.panel', function() {
     var unusedAdjudicators = new Array();

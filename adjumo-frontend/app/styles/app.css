@@ -1,3 +1,14 @@
+/* Overwrite Font Locations */
+
+@font-face{
+  font-family:'Glyphicons Halflings';
+  src:url(/assets/fonts/glyphicons-halflings-regular.eot);
+  src:url(/assets/fonts/glyphicons-halflings-regular.eot?#iefix) format('embedded-opentype'),
+    url(/assets/fonts/glyphicons-halflings-regular.woff2) format('woff2'),
+    url(/assets/fonts/glyphicons-halflings-regular.woff) format('woff'),
+    url(/assets/fonts/glyphicons-halflings-regular.ttf) format('truetype'),
+    url(/assets/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular) format('svg')
+}
 
 /* Nav */
 
@@ -138,6 +149,9 @@ td.head-panel {
 .position-holder {
   border-right: 1px solid #FEFEFE;
 }
+.position-holder .ember-view {
+  height: 45px;
+}
 .js-drag-handle:hover {
   cursor: move;
 }
@@ -195,33 +209,37 @@ td.head-panel {
 .region-display {
   color: #fff;
 }
-.region-display.region-1 {
-  background: #FFFF00;
-}
-.region-display.region-2 {
-  background: #0094FF;
-}
-.region-display.region-3 {
-  background: #C605FF;
-}
-.region-display.region-4 {
-  background: #FFB300;
-}
-.region-display.region-5 {
-  background: #00FF9D;
-}
-.region-display.region-6 {
-  background: #8700FF;
-}
-.region-display.region-7 {
-  background: #B28030;
-}
-.region-display.region-8 {
-  background: #CEFF00;
-}
+
+
 .region-display.region-9 {
-  background: #00F5FF;
+  background: #E900FF; /* Europe */
 }
 .region-display.region-10 {
-  background: #CCC;
+  background: #FF3600; /* IONA */
 }
+.region-display.region-6 {
+  background: #FF870D; /* ANZ */
+}
+.region-display.region-7 {
+  background: #E8E400; /* North America */
+}
+.region-display.region-8 {
+  background: #B4FF0D; /* Latin America */
+}
+.region-display.region-1 {
+  background: #00FF01; /* North Asia */
+}
+.region-display.region-2 {
+  background: #0DFF97; /* SE Asia */
+}
+.region-display.region-4 {
+  background: #0DD3FF; /* Sub Continent */
+}
+.region-display.region-3 {
+  background: #0C12E8; /* Middle East */
+}
+.region-display.region-5 {
+  background: #7E00FF; /* Africa */
+}
+
+

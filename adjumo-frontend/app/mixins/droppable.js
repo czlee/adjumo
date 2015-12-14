@@ -7,13 +7,11 @@ export default Ember.Mixin.create({
   },
 
   dragEnter: function(event){
-    console.log('unused UI had a drag enter');
     event.preventDefault();
     return false;
   },
 
   dragLeave: function(event){
-    console.log('unused UI had a drag leave');
     event.preventDefault();
     return false;
   },
