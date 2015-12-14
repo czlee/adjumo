@@ -3,7 +3,6 @@ using ArgParse
 using Adjumo
 
 include("random.jl")
-include("exportjson.jl")
 
 argsettings = ArgParseSettings()
 @add_arg_table argsettings begin

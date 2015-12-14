@@ -1,12 +1,15 @@
 using JsonAPI
 
+export exportjsoninstitutions, exportjsonteams, exportjsonadjudicators, exportjsondebates,
+    jsoninstitutions, jsonteams, jsonadjudicators, jsondebates
+
 function exportjsoninstitutions(ri::RoundInfo, io::IO)
     d = jsonapidict(ri.institutions)
     JSON.print(io, d)
 end
 
 function exportjsonteams(ri::RoundInfo, io::IO)
-    d = jsonapidict(ri.institutions)
+    d = jsonapidict(ri.teams)
     JSON.print(io, d)
 end
 
@@ -26,7 +29,7 @@ function jsoninstitutions(ri::RoundInfo)
 end
 
 function jsonteams(ri::RoundInfo)
-    d = jsonapidict(ri.institutions)
+    d = jsonapidict(ri.teams)
     JSON.json(d)
 end
 
