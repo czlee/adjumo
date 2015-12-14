@@ -1,10 +1,74 @@
 # Performance profiling for computation of team-adj matrices
 
+# In order for the data structure comparison tests to work, these must be
+# members of type Adjudicator in types.jl:
+#    teamhistory::Dict{Team,Vector{Int}}
+#    teamconflicts::Vector{Team}
+# and these must be members of type RoundInfo in types.jl:
+#    teamadjconflicts::Vector{Tuple{Team,Adjudicator}}
+#    teamadjhistory::Dict{Tuple{Team,Adjudicator},Vector{Int}}
+# The members of Adjudicator relate to conflicted2, roundsseen2, etc., and the
+# members of RoundInfo relate to conflicted1, roundsseen1, etc.
+
 push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
 import Adjumo: historyscore, conflictsscore
 include("../random.jl")
+
+# ==============================================================================
+# Functions that go in types.jl
+# ==============================================================================
+
+conflicted1(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts || team.institution == adj.institution
+roundsseen1(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.teamadjhistory, (team, adj), Int[])
+addteamadjconflict1!(rinfo::RoundInfo, team::Team, adj::Adjudicator) = push!(rinfo.teamadjconflicts, (team, adj))
+addteamadjhistory1!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int) = push!(get!(rinfo.teamadjhistory, (team, adj), Int[]), round)
+
+conflicted2(team::Team, adj::Adjudicator) = team ∈ adj.teamconflicts || team.institution == adj.institution
+roundsseen2(team::Team, adj::Adjudicator) = get(adj.teamhistory, team, Int[])
+addteamadjconflict2!(team::Team, adj::Adjudicator) = push!(adj.teamconflicts, team)
+addteamadjhistory2!(team::Team, adj::Adjudicator, round::Int) = push!(get!(adj.teamhistory, team, Int[]), round)
+
+# ==============================================================================
+# Helper functions that go in score.jl
+# ==============================================================================
+
+function historyscoreasym(roundinfo::RoundInfo, args...)
+    score = 0
+    for round in roundsseenasym(roundinfo, args...)
+        @assert round < roundinfo.currentround
+        score -= 1 / (roundinfo.currentround - round)
+    end
+    return score
+end
+
+conflictsscore1(rinfo, args...) = -conflicted1(rinfo, args...)
+
+function historyscore1(roundinfo::RoundInfo, args...)
+    score = 0
+    for round in roundsseen1(roundinfo, args...)
+        @assert round < roundinfo.currentround
+        score -= 1 / (roundinfo.currentround - round)
+    end
+    return score
+end
+
+conflictsscore2(rinfo, args...) = -conflicted2(args...)
+
+function historyscore2(roundinfo::RoundInfo, args...)
+    score = 0
+    for round in roundsseen2(args...)
+        @assert round < roundinfo.currentround
+        score -= 1 / (roundinfo.currentround - round)
+    end
+    return score
+end
+
+
+# ==============================================================================
+# Functions which might go in types.jl, if they're useful
+# ==============================================================================
 
 """
 Returns the panel membership matrix for a list of feasible panels.
@@ -44,6 +108,10 @@ function debatemembershipmatrix(roundinfo::RoundInfo)
     return D
 end
 
+
+# ==============================================================================
+# Candidate functions, which go in score.jl
+# ==============================================================================
 
 function sumteamadjscoresmatrix1(teamadjscore::Function,
         feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
@@ -121,6 +189,7 @@ end
 
 function sumteamadjscoresmatrix4(teamadjscore::Function,
         feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
+    # This one was picked in the end.
 
     nteams = numteams(roundinfo)
     nadjs = numadjs(roundinfo)
@@ -175,26 +244,36 @@ currentround = args["currentround"]
 roundinfo = randomroundinfo(ndebates, currentround)
 feasiblepanels = generatefeasiblepanels(roundinfo)
 
-funcs = [
-    # sumteamadjscoresmatrix1;
-    # sumteamadjscoresmatrix2;
-    sumteamadjscoresmatrix3;
-    sumteamadjscoresmatrix4;
-    sumteamadjscoresmatrix5;
-]
-
-for f in funcs
-    f(historyscore, feasiblepanels, roundinfo)
+# Populate the "other" type of data structure
+for (team, adj) in roundinfo.teamadjconflicts
+    addteamadjconflict2!(team, adj)
 end
-
-for i = 1:5
-    for f in shuffle(funcs)
-        println(f)
-        @time [f(historyscore, feasiblepanels, roundinfo) for j in 1:1]
+for ((team, adj), history) in roundinfo.teamadjhistory
+    for round in history
+        addteamadjhistory2!(team, adj, round)
     end
 end
 
-A = [f(historyscore, feasiblepanels, roundinfo) for f in funcs]
+funcs = [
+    # (sumteamadjscoresmatrix1, historyscore1);
+    # (sumteamadjscoresmatrix2, historyscore1);
+    # (sumteamadjscoresmatrix3, historyscore1);
+    (sumteamadjscoresmatrix4, historyscore1); # chosen
+    (sumteamadjscoresmatrix4, conflictsscore1); # chosen
+    (sumteamadjscoresmatrix4, historyscore2); # chosen
+    (sumteamadjscoresmatrix4, conflictsscore2); # chosen
+    # (sumteamadjscoresmatrix5, historyscore1);
+]
+
+A = [f(g, feasiblepanels, roundinfo) for (f, g) in funcs]
+
+for i = 1:5
+    for (f, g) in shuffle(funcs)
+        println("$f $g")
+        @time [f(g, feasiblepanels, roundinfo) for j in 1:1]
+    end
+end
+
 for (i, a) in enumerate(A)
     @show funcs[i] sumabs(A[i])
 end

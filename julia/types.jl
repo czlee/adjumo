@@ -66,12 +66,23 @@ type Adjudicator
     gender::PersonGender
     regions::Vector{Region}
     language::LanguageStatus
+    teamhistory::Dict{Team,Vector{Int}}
+    teamconflicts::Vector{Team}
+
+    # There is no symmetry requirement: conflicted() and roundsseen() will check
+    # both adjudicators. However, if symmetry can't be assumed, it is not a fast
+    # operation to retrieve all adjudicator conflicts for an adjudicator, since
+    # it is necessary to check all adjudicators.
+    adjhistory::Dict{Adjudicator,Vector{Int}}
+    adjconflicts::Vector{Adjudicator}
 end
 
 Adjudicator(id::Int, name::UTF8String, institution::Institution) = Adjudicator(id, name, institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
 Adjudicator(id::Int, name::AbstractString, institution::Institution) = Adjudicator(id, UTF8String(name), institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
 Adjudicator(id::Int, name::AbstractString, institution::Institution, gender::PersonGender) = Adjudicator(id, UTF8String(name), institution, Panellist, gender, Region[institution.region], NoLanguage)
 Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(id, UTF8String(name), institution, ranking, PersonNoGender, Region[institution.region], NoLanguage)
+Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank, gender::PersonGender, regions::Vector{Region}, language::LanguageStatus) = Adjudicator(id, UTF8String(name), institution, ranking, gender, regions, language)
+Adjudicator(id::Int, name::UTF8String, institution::Institution, ranking::Wudc2015AdjudicatorRank, gender::PersonGender, regions::Vector{Region}, language::LanguageStatus) = Adjudicator(id, name, institution, ranking, gender, regions, language, Dict{Team,Vector{Int}}(), Team[], Dict{Adjudicator,Vector{Int}}(), Adjudicator[])
 show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator(\"$(adj.name)\", \"$(adj.institution.code)\")")
 
 # ==============================================================================
@@ -190,9 +201,9 @@ type RoundInfo
     currentround::Int
 end
 
-RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict(),Dict(),[],[],[],AdjumoComponentWeights(),[],currentround)
-RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],[].AdjumoComponentWeights(), ones(length(debates)), currentround)
-RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict(),Dict(),[],[],[],AdjumoComponentWeights(), debateweights, currentround)
+RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[],AdjumoComponentWeights(),[],currentround)
+RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[].AdjumoComponentWeights(), ones(length(debates)), currentround)
+RoundInfo(institutions, teams, adjudicators, debates, debateweights, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[],AdjumoComponentWeights(), debateweights, currentround)
 
 conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts || adj1.institution == adj2.institution
 conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts || team.institution == adj.institution
