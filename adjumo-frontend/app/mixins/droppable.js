@@ -16,4 +16,9 @@ export default Ember.Mixin.create({
     return false;
   },
 
+  drop: function(event) {
+    event.preventDefault();
+    return false;
+  }
+
 });

@@ -15,7 +15,6 @@ export default Ember.Component.extend(DroppableMixin, {
 
   drop: function(event){
     console.log('unused UI had a drop');
-    event.preventDefault();
 
     var droppedAdjID = event.originalEvent.dataTransfer.getData('AdjID');
     var droppedAdj = this.get('adjudicators').findBy('id', droppedAdjID);
@@ -31,7 +30,7 @@ export default Ember.Component.extend(DroppableMixin, {
       }
     }
 
-    return false;
+    return this._super(event);
 
   },
 
