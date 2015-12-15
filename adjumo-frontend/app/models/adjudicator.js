@@ -6,8 +6,9 @@ export default DS.Model.extend({
   institutions: DS.hasMany('institution'),
 
   locked: DS.attr('bool', { defaultValue: false }),
-  rating: DS.attr('number'),
+  ranking: DS.attr('number'),
   gender: DS.attr('number'),
+  language: DS.attr('number'),
 
   // strikedAdjudicators: DS.hasMany('adjudicator', { inverse: null }),
   strikedTeams: DS.hasMany('team', { inverse: null }),
@@ -38,34 +39,34 @@ export default DS.Model.extend({
     return regionClasses;
   }),
 
-  get_rating: function() {
-    var rating_word = "";
-    if (this.get('rating') <= 3) {
-      rating_word = "T";
-      if (this.get('rating') == 1) {
-        rating_word += "-";
+  get_ranking: function() {
+    var ranking_word = "";
+    if (this.get('ranking') <= 3) {
+      ranking_word = "T";
+      if (this.get('ranking') == 1) {
+        ranking_word += "-";
       }
-      else if (this.get('rating') == 3) {
-        rating_word += "+";
+      else if (this.get('ranking') == 3) {
+        ranking_word += "+";
       }
-    } else if (this.get('rating') <= 6) {
-      rating_word = "P";
-      if (this.get('rating') == 4) {
-        rating_word += "-";
+    } else if (this.get('ranking') <= 6) {
+      ranking_word = "P";
+      if (this.get('ranking') == 4) {
+        ranking_word += "-";
       }
-      else if (this.get('rating') == 6) {
-        rating_word += "+";
+      else if (this.get('ranking') == 6) {
+        ranking_word += "+";
       }
-    } else if (this.get('rating') <= 9) {
-      rating_word = "C";
-      if (this.get('rating') == 7) {
-        rating_word += "-";
+    } else if (this.get('ranking') <= 9) {
+      ranking_word = "C";
+      if (this.get('ranking') == 7) {
+        ranking_word += "-";
       }
-      else if (this.get('rating') == 9) {
-        rating_word += "+";
+      else if (this.get('ranking') == 9) {
+        ranking_word += "+";
       }
     }
-    return rating_word;
-  }.property('rating'),
+    return ranking_word;
+  }.property('ranking'),
 
 });

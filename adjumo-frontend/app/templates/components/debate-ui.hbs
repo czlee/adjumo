@@ -4,6 +4,9 @@
 <td class="debate-points text-center">
     {{ debate.points }}
 </td>
+<td class="debate-weight text-center">
+    {{ debate.weightRounded }}
+</td>
 <td class="debate-importance">
     {{ input type="number" value=debate.importance }}
 </td>
@@ -37,7 +40,7 @@
 
 </td>
 <td class="debate-panel-strength text-center ">
-    {{ debate.panel.rating }}
+    {{ debate.panel.ranking }}
 </td>
 <td class="debate-panel">
     {{panel-ui panel=debate.panel adjudicators=adjudicators}}

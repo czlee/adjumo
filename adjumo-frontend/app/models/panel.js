@@ -8,24 +8,24 @@ export default DS.Model.extend({
 
   debate: DS.belongsTo('debate'),
 
-  rating: function() {
-    var ratings = new Array();
+  ranking: function() {
+    var rankings = new Array();
 
-    ratings.push(this.get('chair').get('rating'));
+    rankings.push(this.get('chair').get('ranking'));
 
     this.get('panellists').get('content').forEach(function(adj) {
-      ratings.push(adj.get('rating'));
+      rankings.push(adj.get('ranking'));
     });
 
     this.get('trainees').get('content').forEach(function(adj) {
-      ratings.push(adj.get('rating'));
+      rankings.push(adj.get('ranking'));
     });
 
     var sum = 0;
-    for( var i = 0; i < ratings.length; i++ ){
-      sum += parseInt( ratings[i], 10 ); //don't forget to add the base
+    for( var i = 0; i < rankings.length; i++ ){
+      sum += parseInt( rankings[i], 10 ); //don't forget to add the base
     }
-    var avg = sum/ratings.length;
+    var avg = sum/rankings.length;
 
     if (avg) {
       return Math.round(avg * 10) / 10;

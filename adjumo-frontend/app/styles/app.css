@@ -38,6 +38,9 @@ td {
 .head-points {
   width: 2%;
 }
+.head-weight {
+  width: 2%;
+}
 .head-importance {
   width: 4%;
 }
@@ -119,9 +122,7 @@ span[active="false"].glyphicon {
   flex-grow: 2;
   flex-basis: 120px;
 }
-.adj-rating {
 
-}
 .debate-panel {
   padding: 1px !important;
 }

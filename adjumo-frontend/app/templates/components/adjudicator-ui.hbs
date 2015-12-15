@@ -12,13 +12,13 @@
             <span data-toggle="tooltip" data-placement="top" title="{{ adj.name }}">{{ adj.short_name }},</span>
             <small class="text-uppercase">
             {{#each adj.institutions as |institution|}}
-                <span data-toggle="tooltip" data-placement="top" title="{{ institution.name }}">{{ institution.name }}</span>
+                <span data-toggle="tooltip" data-placement="top" title="{{ institution.name }}">{{ institution.code }}</span>
             {{/each}}
             </small>
         </div>
-        <div class="flex-icon flex-icon adj-rating hoverable">
-            <span data-toggle="tooltip" data-placement="top" title="{{ adj.rating }}">
-                <strong>{{ adj.get_rating }}</strong>
+        <div class="flex-icon flex-icon adj-ranking hoverable">
+            <span data-toggle="tooltip" data-placement="top" title="{{ adj.ranking }}">
+                <strong>{{ adj.get_ranking }}</strong>
             </span>
         </div>
     </button>

@@ -54,6 +54,13 @@
               <span class="glyphicon glyphicon-chevron-down" active={{sortedByPoints}}></span>
             {{/if}}
         </th>
+        <th {{action "sortBy" "weight"}} class="head-sortable head-weight" data-toggle="tooltip" data-placement="top" title="Weight">
+          W {{#if sortAscending}}
+              <span class="glyphicon glyphicon-chevron-up" active={{sortedByWeight}}></span>
+            {{else}}
+              <span class="glyphicon glyphicon-chevron-down" active={{sortedByWeight}}></span>
+            {{/if}}
+        </th>
         <th {{action "sortBy" "importance"}} class="head-sortable head-importance" data-toggle="tooltip" data-placement="top" title="Importance">
           VIP {{#if sortAscending}}
               <span class="glyphicon glyphicon-chevron-up" active={{sortedByImportance}}></span>
