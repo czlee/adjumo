@@ -20,6 +20,15 @@
       </ol>
     </li>
     {{/if}}
+    {{#if showingLanguage }}
+    <li class="nav-item">
+      <ol class="breadcrumb">
+        <li><a class="language-display language-1">EPL</a></li>
+        <li><a class="language-display language-2">ESL</a></li>
+        <li><a class="language-display language-3">EFL</a></li>
+      </ol>
+    </li>
+    {{/if}}
     <li class="nav-item">
         {{#if showingRegion }}
           <a class="nav-link hoverable" onclick={{action "hideRegion"}}>Hide Region</a>
@@ -32,6 +41,13 @@
           <a class="nav-link hoverable" onclick={{action "hideGender"}}>Hide Gender</a>
         {{else}}
           <a class="nav-link hoverable" onclick={{action "showGender"}}>Show Gender</a>
+        {{/if}}
+    </li>
+    <li class="nav-item">
+        {{#if showingLanguage }}
+          <a class="nav-link hoverable" onclick={{action "hideLanguage"}}>Hide Language</a>
+        {{else}}
+          <a class="nav-link hoverable" onclick={{action "showLanguage"}}>Show Language</a>
         {{/if}}
     </li>
   </ul>

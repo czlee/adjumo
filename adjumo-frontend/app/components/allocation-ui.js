@@ -9,6 +9,7 @@ export default Ember.Component.extend({
 
   showingGender: false,
   showingRegion: false,
+  showingLanguage: false,
 
   checkFilterMatch: function(theObject, searchString) {
     var match = false;
@@ -55,6 +56,7 @@ export default Ember.Component.extend({
       this.set('showingGender', false);
       $(".adjudicator-ui, .debate-team").toggleClass("gender-display");
     },
+
     showRegion: function() {
       this.set('showingRegion', true);
       $(".adjudicator-ui, .debate-team").toggleClass("region-display");
@@ -62,6 +64,15 @@ export default Ember.Component.extend({
     hideRegion: function() {
       this.set('showingRegion', false);
       $(".adjudicator-ui, .debate-team").toggleClass("region-display");
+    },
+
+    showLanguage: function() {
+      this.set('showingLanguage', true);
+      $(".adjudicator-ui, .debate-team").toggleClass("language-display");
+    },
+    hideLanguage: function() {
+      this.set('showingLanguage', false);
+      $(".adjudicator-ui, .debate-team").toggleClass("language-display");
     },
 
     sortBy: function(property) {
@@ -76,7 +87,7 @@ export default Ember.Component.extend({
   },
 
   sortedByPoints: function() {
-    if (this.get('sortProperties') == "points:asc" || this.get('sortProperties') == "points:desc") {
+    if (this.get('sortProperties') === "points:asc" || this.get('sortProperties') == "points:desc") {
       return true;
     } else {
       return false;
@@ -84,7 +95,7 @@ export default Ember.Component.extend({
   }.property("sortProperties"),
 
   sortedByVenue: function() {
-    if (this.get('sortProperties') == "venue:asc" || this.get('sortProperties') == "venue:desc") {
+    if (this.get('sortProperties') === "venue:asc" || this.get('sortProperties') == "venue:desc") {
       return true;
     } else {
       return false;
@@ -92,7 +103,7 @@ export default Ember.Component.extend({
   }.property("sortProperties"),
 
   sortedByImportance: function() {
-    if (this.get('sortProperties') == "importance:asc" || this.get('sortProperties') == "importance:desc") {
+    if (this.get('sortProperties') === "importance:asc" || this.get('sortProperties') == "importance:desc") {
       return true;
     } else {
       return false;

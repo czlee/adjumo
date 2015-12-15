@@ -11,7 +11,7 @@ export default DS.Model.extend({
   language: DS.attr('number'),
 
   // strikedAdjudicators: DS.hasMany('adjudicator', { inverse: null }),
-  strikedTeams: DS.hasMany('team', { inverse: null }),
+  //strikedTeams: DS.hasMany('team', { inverse: null }),
   // pastAdjudicators: DS.hasMany('adjudicator', { inverse: null }),
   // pastTeams: DS.hasMany('team', { inverse: null }),
 

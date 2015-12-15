@@ -190,6 +190,8 @@ td.head-panel {
 #unusedAdjs {
   background: #EFEFEF;
   padding: 10px;
+  max-height: 150px;
+  overflow: auto;
 }
 #unusedAdjs .adjudicator-ui {
 
@@ -201,14 +203,20 @@ td.head-panel {
   color: #0067E2;
   cursor: pointer;
 }
-.gender-display.gender-1 {
-  background: #F89CFF;
+.gender-display.debate-team.gender-1 {
+  background: #F89CFF; /* Only show this for teams as for them it represnts M+F*/
 }
 .gender-display.gender-2 {
   background: #F103FF;
 }
 .region-display {
   color: #fff;
+}
+.language-display.language-2 {
+  background: blue;
+}
+.language-display.language-3 {
+  background: red;
 }
 
 
