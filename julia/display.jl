@@ -3,9 +3,9 @@
 export showconstraints, showdebatedetail
 
 "Prints information about the given debate."
-function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::AdjudicatorPanel)
-    debate = roundinfo.debates[debateindex]
-    println("== Debate $debateindex ==")
+function showdebatedetail(roundinfo::RoundInfo, allocation::PanelAllocation)
+    debate = allocation.debate
+    println("== Debate with id $(debate.id) ==")
 
     println("Teams:")
     for team in debate.teams
@@ -16,33 +16,32 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Adjudic
     printfmtln("   {}: {}", drc, join([abbr(r) for r in teamregionsordered], ", "))
 
     println("Adjudicators:")
-    for (role, adj) in rolelist(panel)
-        adjname = adj.name * role
+    for (adjname, adj) in zip(nameandrolelist(allocation), adjlist(allocation))
         printfmtln("   {:<22}  {:<2} {:<20}  {:1} {:<3} {}",
                 adjname, abbr(adj.ranking), adj.institution.code, abbr(adj.gender), abbr(adj.language), join([abbr(r) for r in adj.regions], ","))
     end
 
     println("Conflicts:")
-    for team in debate.teams, adj in adjlist(panel)
+    for team in debate.teams, adj in adjlist(allocation)
         if conflicted(roundinfo, team, adj)
             printfmtln("   {} conflicts with {}", adj.name, team.name)
         end
     end
-    for (adj1, adj2) in combinations(adjlist(panel), 2)
+    for (adj1, adj2) in combinations(adjlist(allocation), 2)
         if conflicted(roundinfo, adj1, adj2)
             printfmtln("   {} conflicts with {}", adj1.name, adj2.name)
         end
     end
 
     println("History:")
-    for team in debate.teams, adj in adjlist(panel)
+    for team in debate.teams, adj in adjlist(allocation)
         history = roundsseen(roundinfo, team, adj)
         if length(history) > 0
             printfmtln("   {} saw {} in round{} {}", adj.name, team.name,
                     (length(history) > 1) ? "s" : "", join([string(r) for r in history], ", "))
         end
     end
-    for (adj1, adj2) in combinations(adjlist(panel), 2)
+    for (adj1, adj2) in combinations(adjlist(allocation), 2)
         history = roundsseen(roundinfo, adj1, adj2)
         if length(history) > 0
             printfmtln("   {} was with {} in round{} {}", adj1.name, adj2.name,
@@ -57,10 +56,11 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Adjudic
     for adj in blockedadjs(roundinfo, debate)
         printfmtln("   $(adj.name) is blocked from this debate")
     end
-    for adjs in groupedadjs(roundinfo, adjlist(panel))
+    for adjs in groupedadjs(roundinfo, adjlist(allocation))
         printfmtln("   {} are grouped together", join([adj.name for adj in adjs], ", "))
     end
 
+    panel = AdjudicatorPanel(allocation)
     println("Scores:                          raw      weighted")
     components = [
         ("Panel size", :panelsize, panelsizescore(panel)),

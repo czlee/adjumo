@@ -39,9 +39,9 @@ componentweights.adjconflict = 1e6
 @time roundinfo = randomroundinfo(ndebates, currentround)
 roundinfo.componentweights = componentweights
 
-debateindices, panels = allocateadjudicators(roundinfo; solver=args["solver"], enforceteamconflicts=args["enforce-team-conflicts"])
+allocations = allocateadjudicators(roundinfo; solver=args["solver"], enforceteamconflicts=args["enforce-team-conflicts"])
 
 showconstraints(roundinfo)
-for (d, panel) in zip(debateindices, panels)
-    showdebatedetail(roundinfo, d, panel)
+for allocation in allocations
+    showdebatedetail(roundinfo, allocation)
 end

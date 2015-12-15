@@ -2,6 +2,7 @@
 
 import Base.show
 import Base.in
+import Base.convert
 
 export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
     Debate, AdjumoComponentWeights, RoundInfo,
@@ -11,6 +12,7 @@ export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
     LanguageStatus, NoLanguage, EnglishPrimary, EnglishSecond, EnglishForeign,
     Wudc2015AdjudicatorRank, TraineeMinus, Trainee, TraineePlus, PanellistMinus, Panellist, PanellistPlus, ChairMinus, Chair, ChairPlus,
     abbr, numteamsfrominstitution, numteams, numdebates, numadjs, adjlist,
+    chair, panellists, trainees,
     conflicted, hasconflict, roundsseen,
     addinstitution!, addteam!, addadjudicator!, adddebate!,
     addadjadjconflict!, addteamadjconflict!, addadjadjhistory!, addteamadjhistory!,
@@ -26,6 +28,7 @@ export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
 @enum LanguageStatus NoLanguage EnglishPrimary EnglishSecond EnglishForeign
 @enum Wudc2015AdjudicatorRank TraineeMinus Trainee TraineePlus PanellistMinus Panellist PanellistPlus ChairMinus Chair ChairPlus
 
+# These functions are not efficiently written, and not performance-critical.
 abbr(g::TeamGender) = ["-", "M", "F", "X"][Integer(g)+1]
 abbr(g::PersonGender) = ["-", "m", "f", "o"][Integer(g)+1]
 abbr(r::Region) = ["-", "NAsia", "SEAsi", "MEast", "SAsia", "Afric", "Ocean", "NAmer", "LAmer", "Europ", "IONA"][Integer(r)+1]
@@ -83,15 +86,8 @@ end
 show(io::Base.IO, debate::Debate) = print(io, "Debate($(debate.id), $(debate.weight), $(debate.teams))")
 
 # ==============================================================================
-# Immutable composite types
+# Immutable relationship types
 # ==============================================================================
-
-immutable PanelAllocation
-    debate::Debate
-    chair::Adjudicator
-    panellists::Vector{Adjudicator}
-    trainees::Vector{Adjudicator}
-end
 
 immutable AdjudicatorDebate
     adjudicator::Adjudicator
@@ -109,14 +105,23 @@ immutable AdjudicatorPair
 end
 
 # ==============================================================================
-# Adjudicator panel
+# Adjudicator panels
 # ==============================================================================
 
+abstract AbstractPanel
+
 # In algorithm code, these are created once (lots of them!) and never change.
-immutable AdjudicatorPanel
+immutable AdjudicatorPanel <: AbstractPanel
     adjs::Vector{Adjudicator} # ordered: chair; [panellists...]; [trainees...]
     np::Integer # number of panellists
     # TODO: benchmark whether storing indices helps performance a lot
+end
+
+immutable PanelAllocation <: AbstractPanel
+    debate::Debate
+    chair::Adjudicator
+    panellists::Vector{Adjudicator}
+    trainees::Vector{Adjudicator}
 end
 
 function AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}, trainees::Vector{Adjudicator})
@@ -124,50 +129,49 @@ function AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}, t
     nt = length(trainees)
     adjs = Vector{Adjudicator}(1+np+nt)
     adjs[1] = chair
-    if np > 0
-        adjs[2:np+1] = panellists
-    end
-    if nt > 0
-        adjs[np+2:end] = trainees
-    end
+    adjs[2:np+1] = panellists
+    adjs[np+2:end] = trainees
     return AdjudicatorPanel(adjs, np)
 end
 
-# AdjudicatorPanel(chair::Adjudicator, panellists::Tuple{Vararg{Adjudicator}}) = AdjudicatorPanel(chair, panellists, ())
 AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}) = AdjudicatorPanel(chair, panellists, Adjudicator[])
-# AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}, trainees::Vector{Adjudicator}) = AdjudicatorPanel(chair, (panellists...), (trainees...))
+convert(::Type{AdjudicatorPanel}, a::PanelAllocation) = AdjudicatorPanel(a.chair, a.panellists, a.trainees)
 numadjs(panel::AdjudicatorPanel) = length(panel.adjs)
+chair(panel::AdjudicatorPanel) = panel.adjs[1]
+panellists(panel::AdjudicatorPanel) = panel.adjs[2:panel.np+1]
+trainees(panel::AdjudicatorPanel) = panel.adjs[panel.np+2:end]
 
 in(adj::Adjudicator, panel::AdjudicatorPanel) = in(adj, panel.adjs)
 adjlist(panel::AdjudicatorPanel) = panel.adjs
+show(io::Base.IO, panel::AdjudicatorPanel) = print(io, "Panel[" * join(nameandrolelist(panel), ", ") * "]")
 
-# "Returns the adjudicators on the panel as a Vector{Adjudicator}"
-# function adjlist(panel::AdjudicatorPanel)
-#     np = length(panel.panellists)
-#     nt = length(panel.trainees)
-#     adjs = Vector{Adjudicator}(1+np+nt)
-#     adjs[1] = panel.chair
-#     adjs[2:np+1] = [panel.panellists...]
-#     adjs[np+2:end] = [panel.trainees...]
-#     return adjs
-# end
-
-function rolelist(panel::AdjudicatorPanel)
-    n = length(panel.adjs)
-    roles = Vector{UTF8String}(n)
-    roles[1] = " (c)"
-    if panel.np > 0
-        roles[2:panel.np+1] = ""
-    end
-    if n > panel.np+1
-        roles[panel.np+2:n] = " (t)"
-    end
-    return zip(roles, panel.adjs)
+function adjlist(alloc::PanelAllocation)
+    np = length(alloc.panellists)
+    nt = length(alloc.trainees)
+    adjs = Vector{Adjudicator}(1+np+nt)
+    adjs[1] = alloc.chair
+    adjs[2:np+1] = [alloc.panellists...]
+    adjs[np+2:end] = [alloc.trainees...]
+    return adjs
 end
 
-function show(io::Base.IO, panel::AdjudicatorPanel)
-    names = [adj.name * role for (role, adj) in rolelist(panel)]
-    print(io, "Panel[" * join(names, ", ") * "]")
+numadjs(alloc::PanelAllocation) = 1 + length(alloc.panellists) + length(alloc.trainees)
+chair(alloc::PanelAllocation) = alloc.chair
+panellists(alloc::PanelAllocation) = alloc.panellists
+trainees(alloc::PanelAllocation) = alloc.trainees
+
+"""
+Returns a list of strings, each being an Adjudicator's name annotated by \"(c)\"
+if they are a chair and \"(t)\" if they are a trainee (and nothing if they are
+a panellist).
+"""
+function nameandrolelist(panel::AbstractPanel)
+    # This function is not efficiently written and is not performance-critical.
+    names = Vector{UTF8String}(1)
+    names[1] = chair(panel).name * " (c)"
+    append!(names, [adj.name for adj in panellists(panel)])
+    append!(names, [adj.name * " (t)" for adj in trainees(panel)])
+    return names
 end
 
 # ==============================================================================

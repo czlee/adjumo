@@ -48,10 +48,10 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
         checkincompatibleconstraints(roundinfo)
     end
 
-    panels = AdjudicatorPanel[feasiblepanels[p] for p in panelindices]
-    return debateindices, panels
+    println("conversion:")
+    @time allocations = convertallocations(roundinfo.debates, feasiblepanels, debateindices, panelindices)
+    return allocations
 end
-
 
 """Checks the given round information for conditions that would definitely
 make the problem infeasible."""
@@ -160,6 +160,17 @@ function convertteamadjconflicts(roundinfo::RoundInfo)
     @show size(converted)
     @show converted
     return converted
+end
+
+"Converts panel allocations from indices to PanelAllocation objects"
+function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorPanel}, debateindices::Vector{Int}, panelindices::Vector{Int})
+    allocations = Array{PanelAllocation}(length(debateindices))
+    for (i, (d, p)) in enumerate(zip(debateindices, panelindices))
+        debate = debates[d]
+        panel = panels[p]
+        allocations[i] = PanelAllocation(debate, chair(panel), panellists(panel), trainees(panel))
+    end
+    return allocations
 end
 
 "Given a user option, returns a solver for use in solving the optimization problem."
