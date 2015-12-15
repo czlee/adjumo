@@ -51,10 +51,10 @@ function showdebatedetail(roundinfo::RoundInfo, debateindex::Int, panel::Adjudic
     end
 
     println("Constraints:")
-    for adj in lockedadjs(roundinfo, debateindex)
+    for adj in lockedadjs(roundinfo, debate)
         println("   $(adj.name) is locked to this debate")
     end
-    for adj in blockedadjs(roundinfo, debateindex)
+    for adj in blockedadjs(roundinfo, debate)
         printfmtln("   $(adj.name) is blocked from this debate")
     end
     for adjs in groupedadjs(roundinfo, adjlist(panel))
@@ -94,12 +94,12 @@ function showconstraints(roundinfo::RoundInfo)
         debatestr = join([team.name for team in roundinfo.debates[debateindex].teams], ", ")
         printfmtln("   {} conflicts with {}, so blocked from [{}]", adj.name, team.name, debatestr)
     end
-    for (adj, debateindex) in roundinfo.lockedadjs
-        debatestr = join([team.name for team in roundinfo.debates[debateindex].teams], ", ")
+    for (adj, debate) in roundinfo.lockedadjs
+        debatestr = join([team.name for team in debate.teams], ", ")
         printfmtln("   {} is locked to debate [{}]", adj.name, debatestr)
     end
-    for (adj, debateindex) in roundinfo.blockedadjs
-        debatestr = join([team.name for team in roundinfo.debates[debateindex].teams], ", ")
+    for (adj, debate) in roundinfo.blockedadjs
+        debatestr = join([team.name for team in debate.teams], ", ")
         printfmtln("   {} is blocked from debate [{}]", adj.name, debatestr)
     end
     for adjs in roundinfo.groupedadjs

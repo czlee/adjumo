@@ -104,8 +104,8 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     end
 
     for i in 1:2
-        addlockedadj!(roundinfo, rand(adjudicators), rand(1:ndebates))
-        addblockedadj!(roundinfo, rand(adjudicators), rand(1:ndebates))
+        addlockedadj!(roundinfo, rand(adjudicators), rand(roundinfo.debates))
+        addblockedadj!(roundinfo, rand(adjudicators), rand(roundinfo.debates))
     end
     for i = 1:100
         groupedadjs = randpair(adjudicators)

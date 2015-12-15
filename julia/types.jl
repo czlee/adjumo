@@ -190,8 +190,8 @@ type RoundInfo
     teamadjhistory::Dict{Tuple{Team,Adjudicator},Vector{Int}}
 
     # Special constraints
-    lockedadjs::Vector{Tuple{Adjudicator,Int}}
-    blockedadjs::Vector{Tuple{Adjudicator,Int}}
+    lockedadjs::Vector{Tuple{Adjudicator,Debate}}
+    blockedadjs::Vector{Tuple{Adjudicator,Debate}}
     groupedadjs::Vector{Vector{Adjudicator}}
 
     # Weights
@@ -247,12 +247,12 @@ addadjadjconflict!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = pus
 addteamadjconflict!(rinfo::RoundInfo, team::Team, adj::Adjudicator) = push!(rinfo.teamadjconflicts, (team, adj))
 addadjadjhistory!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator, round::Int) = push!(get!(rinfo.adjadjhistory, (adj1, adj2), Int[]), round)
 addteamadjhistory!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int) = push!(get!(rinfo.teamadjhistory, (team, adj), Int[]), round)
-addlockedadj!(rinfo::RoundInfo, adj::Adjudicator, debateindex::Int) = push!(rinfo.lockedadjs, (adj, debateindex))
-addblockedadj!(rinfo::RoundInfo, adj::Adjudicator, debateindex::Int) = push!(rinfo.blockedadjs, (adj, debateindex))
+addlockedadj!(rinfo::RoundInfo, adj::Adjudicator, debate::Debate) = push!(rinfo.lockedadjs, (adj, debate))
+addblockedadj!(rinfo::RoundInfo, adj::Adjudicator, debate::Debate) = push!(rinfo.blockedadjs, (adj, debate))
 addgroupedadjs!(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = push!(rinfo.groupedadjs, adjs)
 
-lockedadjs(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filter(y -> y[2] == debateindex, rinfo.lockedadjs)]
-blockedadjs(rinfo::RoundInfo, debateindex::Int) = Adjudicator[x[1] for x in filter(y -> y[2] == debateindex, rinfo.blockedadjs)]
+lockedadjs(rinfo::RoundInfo, debate::Debate) = Adjudicator[x[1] for x in filter(y -> y[2] == debate, rinfo.lockedadjs)]
+blockedadjs(rinfo::RoundInfo, debate::Debate) = Adjudicator[x[1] for x in filter(y -> y[2] == debate, rinfo.blockedadjs)]
 groupedadjs(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = filter(x -> x ⊆ adjs, rinfo.groupedadjs)
 
 hasconflict(roundinfo::RoundInfo, panel::AdjudicatorPanel) = hasconflict(roundinfo, adjlist(panel))
