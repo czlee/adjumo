@@ -1,24 +1,24 @@
-{{#if adj }}
+{{#if adj}}
     <button type="button" class="btn adjudicator-ui gender-{{ adj.gender }} {{ adj.region_classes }} language-{{ adj.language }}">
-        <div class="flex-icon flex-icon hoverable">
+        <div class="flex-icon flex-icon hoverable adj-lock">
             {{#if adj.locked}}
                 <span class="glyphicon glyphicon-ok-circle" {{action 'unlockAdj'}} data-toggle="tooltip" data-placement="top" title="Click to unlock to this adj to this debate"></span>
             {{else}}
                 <span class="glyphicon glyphicon-record" {{action 'lockAdj'}} data-toggle="tooltip" data-placement="top" title="Click to lock to this adj to this debate"></span>
             {{/if}}
         </div>
-        <div class="flex-1">
-            <span data-toggle="tooltip" data-placement="top" title="{{ adj.name }}">{{ adj.short_name }}</span><br>
-            <small class="text-uppercase">
-            {{#each adj.institutions as |inst|}}
-                <span data-toggle="tooltip" data-placement="top" title="{{ inst.name }}">{{ inst.code }}</span>
-            {{/each}}
-            </small>
+        <div class="flex-1" data-toggle="tooltip" data-placement="top" title="{{ adj.name }} of {{ adj.institution.name }}">
+            <span class="adj-name">
+                {{ adj.short_name }}
+            </span>
+            <span class="text-uppercase adj-institution">
+                {{ adj.institution.code }}
+            </span>
         </div>
-        <div class="flex-icon flex-icon adj-ranking hoverable">
+        <div class="flex-icon flex-icon adj-ranking hoverable ranking-display ranking-{{ adj.ranking }}">
             <span data-toggle="tooltip" data-placement="top" title="{{ adj.ranking }}">
                 <strong>{{ adj.get_ranking }}</strong>
             </span>
         </div>
     </button>
-{{/if }}
+{{/if}}

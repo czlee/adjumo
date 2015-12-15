@@ -68,7 +68,6 @@ td {
 .head-adjudicators {
   width: 3%;
 }
-
 #allocation th {
   font-size: 10px;
 }
@@ -88,6 +87,9 @@ span[active="false"].glyphicon {
 
 /* Table Cells */
 
+.debate-team span {
+  line-height: 1;
+}
 .debate-importance {
   padding: 0px !important;
 }
@@ -169,9 +171,27 @@ td.head-panel {
   display: flex;
   float: left;
 }
-.adjudicator-ui div span,
-.adjudicator-ui div span.glyphicon {
+.adjudicator-ui .glyphicon.glyphicon-ok-circle {
+  color: #00aeff;
+}
+.adjudicator-ui .glyphicon.glyphicon-record {
+  color: #CCC;
+}
+
+.adjudicator-ui .flex-icon span,
+.adjudicator-ui .flex-icon span.glyphicon {
   line-height: 32px;
+}
+.adj-name {
+  line-height: 1;
+  display: block;
+  margin-top: 3px;
+  margin-bottom: -7px;
+  font-weight: bold;
+}
+.adj-institution {
+  line-height: 1;
+  font-size: 75%;
 }
 
 .adjudicator-ui:hover {
@@ -194,13 +214,15 @@ td.head-panel {
   overflow: auto;
 }
 #unusedAdjs .adjudicator-ui {
-
+  padding-left: 5px;
+}
+#unusedAdjs .adj-lock {
+  display: none;
 }
 
 /* JS */
 
 .hoverable {
-  color: #0067E2;
   cursor: pointer;
 }
 .gender-display.debate-team.gender-1 {
@@ -251,4 +273,31 @@ td.head-panel {
   background: #7E00FF; /* Africa */
 }
 
+.ranking-display.ranking-1 {
+  color: #660200;
+}
+.ranking-display.ranking-2 {
+  color: #FF0100;
+}
+.ranking-display.ranking-3 {
+  color: #FF5D00;
+}
+.ranking-display.ranking-4 {
+  color: #E8920C;
+}
+.ranking-display.ranking-5 {
+  color: #FFC800;
+}
+.ranking-display.ranking-6 {
+  color: #E8DF00;
+}
+.ranking-display.ranking-7 {
+  color: #87FF00;
+}
+.ranking-display.ranking-8 {
+  color: #00FF45;
+}
+.ranking-display.ranking-9 {
+  color: #005E16;
+}
 

@@ -3,7 +3,7 @@ import DS from 'ember-data';
 export default DS.Model.extend({
 
   name: DS.attr('string'),
-  institutions: DS.hasMany('institution'),
+  institution: DS.belongsTo('institution'),
 
   locked: DS.attr('bool', { defaultValue: false }),
   ranking: DS.attr('number'),
@@ -23,20 +23,12 @@ export default DS.Model.extend({
     return short_name;
   }),
 
-  regions: Ember.computed('institutions', function() {
-    var regions = new Array();
-    this.get('institutions').get('content').forEach(function(institution) {
-      regions.push(institution.get('region'));
-    });
-    return regions;
+  regions: Ember.computed('institution', function() {
+    return this.get('institution').get('region');
   }),
 
-  region_classes: Ember.computed('institutions', function() {
-    var regionClasses = new Array();
-    this.get('regions').forEach(function(region) {
-      regionClasses.push('region-' + region.get('id') + ' ');
-    });
-    return regionClasses;
+  region_classes: Ember.computed('institution', function() {
+    return 'region-' + this.get('institution').get('region').get('id');
   }),
 
   get_ranking: function() {

@@ -10,6 +10,7 @@ export default Ember.Component.extend({
   showingGender: false,
   showingRegion: false,
   showingLanguage: false,
+  showingRanking: true,
 
   checkFilterMatch: function(theObject, searchString) {
     var match = false;
@@ -73,6 +74,15 @@ export default Ember.Component.extend({
     hideLanguage: function() {
       this.set('showingLanguage', false);
       $(".adjudicator-ui, .debate-team").toggleClass("language-display");
+    },
+
+    showRanking: function() {
+      this.set('showingRanking', true);
+      $(".adjudicator-ui, .debate-team").toggleClass("ranking-display");
+    },
+    hideRanking: function() {
+      this.set('showingRanking', false);
+      $(".adjudicator-ui, .debate-team").toggleClass("ranking-display");
     },
 
     sortBy: function(property) {
