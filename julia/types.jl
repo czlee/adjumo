@@ -4,7 +4,7 @@ import Base.show
 import Base.in
 
 export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
-    AdjumoComponentWeights, RoundInfo,
+    Debate, AdjumoComponentWeights, RoundInfo,
     TeamGender, TeamNoGender, TeamMale, TeamFemale, TeamMixed,
     PersonGender, PersonNoGender, PersonMale, PersonFemale, PersonOther,
     Region, NoRegion, NorthAsia, SouthEastAsia, MiddleEast, SouthAsia, Africa, Oceania, NorthAmerica, LatinAmerica, Europe, IONA,
@@ -56,7 +56,7 @@ Team(id::Int, name::UTF8String, institution::Institution) = Team(id, name, insti
 Team(id::Int, name::AbstractString, institution::Institution) = Team(id, UTF8String(name), institution, TeamNoGender, institution.region, NoLanguage)
 Team(id::Int, name::UTF8String, institution::Institution, region::Region) = Team(id, name, institution, TeamNoGender, region, NoLanguage)
 Team(id::Int, name::AbstractString, institution::Institution, region::Region) = Team(id, UTF8String(name), institution, TeamNoGender, region, NoLanguage)
-show(io::Base.IO, team::Team) = print(io, "Team(\"$(team.name)\")")
+show(io::Base.IO, team::Team) = print(io, "Team($(team.id), \"$(team.name)\")")
 
 type Adjudicator
     id::Int
@@ -72,16 +72,40 @@ Adjudicator(id::Int, name::UTF8String, institution::Institution) = Adjudicator(i
 Adjudicator(id::Int, name::AbstractString, institution::Institution) = Adjudicator(id, UTF8String(name), institution, Panellist, PersonNoGender, Region[institution.region], NoLanguage)
 Adjudicator(id::Int, name::AbstractString, institution::Institution, gender::PersonGender) = Adjudicator(id, UTF8String(name), institution, Panellist, gender, Region[institution.region], NoLanguage)
 Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(id, UTF8String(name), institution, ranking, PersonNoGender, Region[institution.region], NoLanguage)
-show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator(\"$(adj.name)\", \"$(adj.institution.code)\")")
+show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator($(adj.id), \"$(adj.name)\", \"$(adj.institution.code)\")")
 
-# ==============================================================================
-# Debate
-# ==============================================================================
-
-immutable Debate
+type Debate
     id::Int
     weight::Float64
     teams::Vector{Team}
+end
+
+show(io::Base.IO, debate::Debate) = print(io, "Debate($(debate.id), $(debate.weight), $(debate.teams))")
+
+# ==============================================================================
+# Immutable composite types
+# ==============================================================================
+
+immutable PanelAllocation
+    debate::Debate
+    chair::Adjudicator
+    panellists::Vector{Adjudicator}
+    trainees::Vector{Adjudicator}
+end
+
+immutable AdjudicatorDebate
+    adjudicator::Adjudicator
+    debate::Debate
+end
+
+immutable TeamAdjudicator
+    team::Team
+    adjudicator::Adjudicator
+end
+
+immutable AdjudicatorPair
+    adj1::Adjudicator
+    adj2::Adjudicator
 end
 
 # ==============================================================================
@@ -182,16 +206,16 @@ type RoundInfo
 
     # Conflicts are considered hard: test for presence or absence only
     # Note: (adj1, adj2) and (adj2, adj1) mean the same thing, need to check for both
-    adjadjconflicts::Vector{Tuple{Adjudicator,Adjudicator}}
-    teamadjconflicts::Vector{Tuple{Team,Adjudicator}}
+    adjadjconflicts::Vector{AdjudicatorPair}
+    teamadjconflicts::Vector{TeamAdjudicator}
 
     # For history, the integer refers to the round of the conflict
-    adjadjhistory::Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}
-    teamadjhistory::Dict{Tuple{Team,Adjudicator},Vector{Int}}
+    adjadjhistory::Dict{AdjudicatorPair,Vector{Int}}
+    teamadjhistory::Dict{TeamAdjudicator,Vector{Int}}
 
     # Special constraints
-    lockedadjs::Vector{Tuple{Adjudicator,Debate}}
-    blockedadjs::Vector{Tuple{Adjudicator,Debate}}
+    lockedadjs::Vector{AdjudicatorDebate}
+    blockedadjs::Vector{AdjudicatorDebate}
     groupedadjs::Vector{Vector{Adjudicator}}
 
     # Weights
@@ -202,11 +226,11 @@ end
 RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[],AdjumoComponentWeights(),currentround)
 RoundInfo(institutions, teams, adjudicators, debates, currentround) = RoundInfo(institutions, teams, adjudicators, debates, [],[],Dict{Tuple{Adjudicator,Adjudicator},Vector{Int}}(),Dict{Tuple{Team,Adjudicator},Vector{Int}}(),[],[],[].AdjumoComponentWeights(), currentround)
 
-conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = (adj1, adj2) ∈ rinfo.adjadjconflicts || (adj2, adj1) ∈ rinfo.adjadjconflicts || adj1.institution == adj2.institution
-conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = (team, adj) ∈ rinfo.teamadjconflicts || team.institution == adj.institution
+conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = AdjudicatorPair(adj1, adj2) ∈ rinfo.adjadjconflicts || AdjudicatorPair(adj2, adj1) ∈ rinfo.adjadjconflicts || adj1.institution == adj2.institution
+conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator) = TeamAdjudicator(team, adj) ∈ rinfo.teamadjconflicts || team.institution == adj.institution
 hasconflict(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = any(pair -> conflicted(rinfo, pair...), combinations(adjs, 2))
-roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = unique([get(rinfo.adjadjhistory, (adj1, adj2), Int[]); get(rinfo.adjadjhistory, (adj2, adj1), Int[])])
-roundsseen(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.teamadjhistory, (team, adj), Int[])
+roundsseen(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = unique([get(rinfo.adjadjhistory, AdjudicatorPair(adj1, adj2), Int[]); get(rinfo.adjadjhistory, AdjudicatorPair(adj2, adj1), Int[])])
+roundsseen(rinfo::RoundInfo, team::Team, adj::Adjudicator) = get(rinfo.teamadjhistory, TeamAdjudicator(team, adj), Int[])
 
 numteams(rinfo::RoundInfo) = length(rinfo.teams)
 numdebates(rinfo::RoundInfo) = length(rinfo.debates)
@@ -243,16 +267,16 @@ numteamsfrominstitution(rinfo::RoundInfo, inst::Institution) = count(x -> x.inst
 # that the teams and adjudicators in question are actually in rinfo.teams
 # and rinfo.adjudicators. It is the responsibility of the caller to make sure
 # this is the case.
-addadjadjconflict!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = push!(rinfo.adjadjconflicts, (adj1, adj2))
-addteamadjconflict!(rinfo::RoundInfo, team::Team, adj::Adjudicator) = push!(rinfo.teamadjconflicts, (team, adj))
-addadjadjhistory!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator, round::Int) = push!(get!(rinfo.adjadjhistory, (adj1, adj2), Int[]), round)
-addteamadjhistory!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int) = push!(get!(rinfo.teamadjhistory, (team, adj), Int[]), round)
-addlockedadj!(rinfo::RoundInfo, adj::Adjudicator, debate::Debate) = push!(rinfo.lockedadjs, (adj, debate))
-addblockedadj!(rinfo::RoundInfo, adj::Adjudicator, debate::Debate) = push!(rinfo.blockedadjs, (adj, debate))
+addadjadjconflict!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = push!(rinfo.adjadjconflicts, AdjudicatorPair(adj1, adj2))
+addteamadjconflict!(rinfo::RoundInfo, team::Team, adj::Adjudicator) = push!(rinfo.teamadjconflicts, TeamAdjudicator(team, adj))
+addadjadjhistory!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator, round::Int) = push!(get!(rinfo.adjadjhistory, AdjudicatorPair(adj1, adj2), Int[]), round)
+addteamadjhistory!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int) = push!(get!(rinfo.teamadjhistory, TeamAdjudicator(team, adj), Int[]), round)
+addlockedadj!(rinfo::RoundInfo, adj::Adjudicator, debate::Debate) = push!(rinfo.lockedadjs, AdjudicatorDebate(adj, debate))
+addblockedadj!(rinfo::RoundInfo, adj::Adjudicator, debate::Debate) = push!(rinfo.blockedadjs, AdjudicatorDebate(adj, debate))
 addgroupedadjs!(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = push!(rinfo.groupedadjs, adjs)
 
-lockedadjs(rinfo::RoundInfo, debate::Debate) = Adjudicator[x[1] for x in filter(y -> y[2] == debate, rinfo.lockedadjs)]
-blockedadjs(rinfo::RoundInfo, debate::Debate) = Adjudicator[x[1] for x in filter(y -> y[2] == debate, rinfo.blockedadjs)]
+lockedadjs(rinfo::RoundInfo, debate::Debate) = Adjudicator[x.adjudicator for x in filter(y -> y.debate == debate, rinfo.lockedadjs)]
+blockedadjs(rinfo::RoundInfo, debate::Debate) = Adjudicator[x.adjudicator for x in filter(y -> y.debate == debate, rinfo.blockedadjs)]
 groupedadjs(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = filter(x -> x ⊆ adjs, rinfo.groupedadjs)
 
 hasconflict(roundinfo::RoundInfo, panel::AdjudicatorPanel) = hasconflict(roundinfo, adjlist(panel))

@@ -86,21 +86,21 @@ end
 "Prints all adjudicator constraints for the given RoundInfo."
 function showconstraints(roundinfo::RoundInfo)
     println("Adjudicator constraints:")
-    for (adj1, adj2) in roundinfo.adjadjconflicts
-        printfmtln("   {} and {} conflict with each other", adj1.name, adj2.name)
+    for adjpair in roundinfo.adjadjconflicts
+        printfmtln("   {} and {} conflict with each other", adjpair.adj1.name, adjpair.adj2.name)
     end
-    for (team, adj) in roundinfo.teamadjconflicts
-        debateindex = findfirst(debate -> team ∈ debate.teams, roundinfo.debates)
-        debatestr = join([team.name for team in roundinfo.debates[debateindex].teams], ", ")
-        printfmtln("   {} conflicts with {}, so blocked from [{}]", adj.name, team.name, debatestr)
+    for ta in roundinfo.teamadjconflicts
+        debateindex = findfirst(debate -> ta.team ∈ debate.teams, roundinfo.debates)
+        debatestr = join([t.name for t in roundinfo.debates[debateindex].teams], ", ")
+        printfmtln("   {} conflicts with {}, so blocked from [{}]", ta.adjudicator.name, ta.team.name, debatestr)
     end
-    for (adj, debate) in roundinfo.lockedadjs
-        debatestr = join([team.name for team in debate.teams], ", ")
-        printfmtln("   {} is locked to debate [{}]", adj.name, debatestr)
+    for ad in roundinfo.lockedadjs
+        debatestr = join([team.name for team in ad.debate.teams], ", ")
+        printfmtln("   {} is locked to debate [{}]", ad.adjudicator.name, debatestr)
     end
-    for (adj, debate) in roundinfo.blockedadjs
-        debatestr = join([team.name for team in debate.teams], ", ")
-        printfmtln("   {} is blocked from debate [{}]", adj.name, debatestr)
+    for ad in roundinfo.blockedadjs
+        debatestr = join([team.name for team in ad.debate.teams], ", ")
+        printfmtln("   {} is blocked from debate [{}]", ad.adjudicator.name, debatestr)
     end
     for adjs in roundinfo.groupedadjs
         printfmtln("   {} are grouped together", join([adj.name for adj in adjs], ", "))

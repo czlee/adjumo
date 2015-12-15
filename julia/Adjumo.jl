@@ -118,27 +118,31 @@ function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{Adju
 end
 
 """
-Converts locked/blocked adj constraints from Tuple{Adjudicator,Debate}, the
-first Int being an adjudicator index and the second Int being a debate index.
+Converts locked/blocked adj constraints from AdjudicatorDebate to Tuple{Int,Int},
+the first Int being an adjudicator index and the second Int being a debate
+index.
 """
-function convertconstraints(roundinfo::RoundInfo, original::Vector{Tuple{Adjudicator,Debate}})
-    converted = Vector{Tuple{Int,Int}}(length(original))
-    for (i, (adj, debate)) in enumerate(original)
-        converted[i] = (findfirst(roundinfo.adjudicators, adj), findfirst(roundinfo.debates, debate))
+function convertconstraints(roundinfo::RoundInfo, original::Vector{AdjudicatorDebate})
+    converted = Array{Tuple{Int,Int}}(length(original))
+    for (i, ad) in enumerate(original)
+        adjindex = findfirst(roundinfo.adjudicators, ad.adjudicator)
+        debateindex = findfirst(roundinfo.debates, ad.debate)
+        converted[i] = (adjindex, debateindex)
     end
     return converted
 end
 
 """
-Converts team-adj conflicts from Tuple{Team,Adjudicator} to Tuple{Int,Int},
+Converts team-adj conflicts from TeamAdjudicator to Tuple{Int,Int},
 the first Int being an adjudicator index, and the second Int being the debate
 index of the debate that the given team is in.
 """
 function convertteamadjconflicts(roundinfo::RoundInfo)
-    converted = Vector{Tuple{Int,Int}}(length(roundinfo.teamadjconflicts))
-    for (i, (team, adj)) in enumerate(roundinfo.teamadjconflicts)
-        debateindex = findfirst(debate -> team ∈ debate, roundinfo.debates)
-        converted[i] = (findfirst(roundinfo.adjudicators, adj), debateindex)
+    converted = Array{Tuple{Int,Int}}(length(roundinfo.teamadjconflicts))
+    for (i, ta) in enumerate(roundinfo.teamadjconflicts)
+        adjindex = findfirst(roundinfo.adjudicators, ta.adjudicator)
+        debateindex = findfirst(debate -> ta.team ∈ debate, roundinfo.debates)
+        converted[i] = (adjindex, debateindex)
     end
     for inst in roundinfo.institutions
         teamindices = find(team -> team.institution == inst, roundinfo.teams)
