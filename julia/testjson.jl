@@ -33,19 +33,21 @@ componentweights.adjconflict = 1e6
 @time roundinfo = randomroundinfo(ndebates, currentround)
 roundinfo.componentweights = componentweights
 
-adjudicatorsfile = open("adjudicators.json", "w")
+mkpath("../adjumo-frontend/public/data")
+
+adjudicatorsfile = open("../adjumo-frontend/public/data/adjudicators.json", "w")
 exportjsonadjudicators(roundinfo, adjudicatorsfile)
 close(adjudicatorsfile)
 
-teamsfile = open("teams.json", "w")
+teamsfile = open("../adjumo-frontend/public/data/teams.json", "w")
 exportjsonteams(roundinfo, teamsfile)
 close(teamsfile)
 
-institutionsfile = open("institutions.json", "w")
+institutionsfile = open("../adjumo-frontend/public/data/institutions.json", "w")
 exportjsoninstitutions(roundinfo, institutionsfile)
 close(institutionsfile)
 
-debatesfile = open("debates.json", "w")
+debatesfile = open("../adjumo-frontend/public/data/debates.json", "w")
 exportjsondebates(roundinfo, debatesfile)
 close(debatesfile)
 

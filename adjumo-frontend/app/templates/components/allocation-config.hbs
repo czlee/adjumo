@@ -1,0 +1,88 @@
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Set Allocation Parameters</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <fieldset class="form-group row">
+            <label for="adjconflict_fader" class="col-sm-2">Quality</label>
+            <div class="col-sm-8">
+              {{input type="range" min="0" max="10" step="1" value=config.quality  class="form-control" }}
+            </div>
+            <div class="col-sm-1">
+                {{input class="form-control" value=config.quality}}
+            </div>
+          </fieldset>
+          <fieldset class="form-group row">
+            <label for="adjconflict_fader" class="col-sm-2">Regional</label>
+            <div class="col-sm-8">
+              {{input type="range" min="0" max="10" step="1" value=config.regional  class="form-control" }}
+            </div>
+            <div class="col-sm-1">
+                {{input class="form-control" value=config.regional}}
+            </div>
+          </fieldset>
+          <fieldset class="form-group row">
+            <label for="adjconflict_fader" class="col-sm-2">Language</label>
+            <div class="col-sm-8">
+              {{input type="range" min="0" max="10" step="1" value=config.language  class="form-control" }}
+            </div>
+            <div class="col-sm-1">
+                {{input class="form-control" value=config.language}}
+            </div>
+          </fieldset>
+          <fieldset class="form-group row">
+            <label for="adjconflict_fader" class="col-sm-2">Gender</label>
+            <div class="col-sm-8">
+              {{input type="range" min="0" max="10" step="1" value=config.gender  class="form-control" }}
+            </div>
+            <div class="col-sm-1">
+                {{input class="form-control" value=config.gender}}
+            </div>
+          </fieldset>
+          <fieldset class="form-group row">
+            <label for="adjconflict_fader" class="col-sm-2">Team History</label>
+            <div class="col-sm-8">
+              {{input type="range" min="0" max="10" step="1" value=config.teamHistory  class="form-control" }}
+            </div>
+            <div class="col-sm-1">
+                {{input class="form-control" value=config.teamHistory}}
+            </div>
+          </fieldset>
+          <fieldset class="form-group row">
+            <label for="adjconflict_fader" class="col-sm-2">Adj History</label>
+            <div class="col-sm-8">
+              {{input type="range" min="0" max="10" step="1" value=config.adjHistory  class="form-control" }}
+            </div>
+            <div class="col-sm-1">
+                {{input class="form-control" value=config.adjHistory}}
+            </div>
+          </fieldset>
+          <fieldset class="form-group row">
+            <label for="adjconflict_fader" class="col-sm-2">Team Conflict</label>
+            <div class="col-sm-8">
+              {{input type="range" min="0" max="10" step="1" value=config.teamConflict  class="form-control" }}
+            </div>
+            <div class="col-sm-1">
+                {{input class="form-control" value=config.teamConflict}}
+            </div>
+          </fieldset>
+          <fieldset class="form-group row">
+            <label for="adjconflict_fader" class="col-sm-2">Adj Conflict</label>
+            <div class="col-sm-8">
+              {{input type="range" min="0" max="10" step="1" value=config.adjConflict  class="form-control" }}
+            </div>
+            <div class="col-sm-1">
+                {{input class="form-control" value=config.adjConflict}}
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
