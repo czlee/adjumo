@@ -33,6 +33,8 @@ componentweights.adjconflict = 1e6
 @time roundinfo = randomroundinfo(ndebates, currentround)
 roundinfo.componentweights = componentweights
 
+mkpath("../adjumo-frontend/public/data")
+
 adjudicatorsfile = open("../adjumo-frontend/public/data/adjudicators.json", "w")
 exportjsonadjudicators(roundinfo, adjudicatorsfile)
 close(adjudicatorsfile)
