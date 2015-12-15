@@ -1,16 +1,15 @@
-# Partial JSON API implementation. Will eventually be spun out to its own package.
+# Partial JSON API implementation. Will eventually be spun out to its own
+# package, once it's stable.
 
 module JsonAPI
 
 using JSON
 
-export jsonapidict
+export jsonapidict, printjsonapi, jsonapi
 
 typealias JsonDict Dict{AbstractString,Any}
 
-function makename(s::Symbol)
-    return lowercase(string(s))
-end
+makename(s::Symbol) = lowercase(string(s))
 
 makevalue(x::Integer) = x
 makevalue(x::AbstractFloat) = x
@@ -34,14 +33,14 @@ addfield!{T<:Enum}(res::JsonDict, k::AbstractString, v::Array{T}) = addattribute
 
 function addfield!(res::JsonDict, k::AbstractString, v)
     if :id ∉ fieldnames(v)
-        error("Not sure what to do with field $k")
+        error("Not sure what to do with field $k, type $(typeof(v)) has no field id")
     end
     addrelationship!(res, k, v)
 end
 
 function addfield!(res::JsonDict, k::AbstractString, v::Array)
     if :id ∉ fieldnames(eltype(v))
-        error("Not sure what to do with field $k")
+        error("Not sure what to do with field $k, type $(eltype(v)) has no field id")
     end
     addrelationshiparray!(res, k, v)
 end
@@ -59,16 +58,14 @@ end
 function addrelationship!(res::JsonDict, k::AbstractString, v)
     relationships = get!(JsonDict, res, "relationships")
     resource = resourceid(v)
-    linkage = JsonDict()
-    linkage["data"] = resource
+    linkage = JsonDict("data"=>resource)
     relationships[k] = linkage
 end
 
 function addrelationshiparray!(res::JsonDict, k::AbstractString, v)
     relationships = get!(JsonDict, res, "relationships")
     resources = map(resourceid, v)
-    linkage = JsonDict()
-    linkage["data"] = resources
+    linkage = JsonDict("data"=>resources)
     relationships[k] = linkage
 end
 
@@ -102,6 +99,16 @@ function jsonapidict(a::Array)
     d = JsonDict()
     d["data"] = primarydata(a)
     return d
+end
+
+function printjsonapi(io::IO, a::Array)
+    d = jsonapidict(a)
+    JSON.print(io, d)
+end
+
+function jsonapi(a::Array)
+    d = jsonapidict(a)
+    JSON.json(d)
 end
 
 end # module
