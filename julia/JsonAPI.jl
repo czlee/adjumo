@@ -101,6 +101,7 @@ end
 function jsonapidict(a::Array)
     d = JsonDict()
     d["data"] = primarydata(a)
+    return d
 end
 
 end # module
