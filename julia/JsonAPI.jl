@@ -76,11 +76,24 @@ function resourceid{T}(obj::T)
     return res
 end
 
+function resource{T}(obj::T, id::Int)
+    res = resource(obj)
+    if !haskey(res, "id")
+        res["id"] = id
+    end
+    return res
+end
+
 function resource{T}(obj::T)
     res = JsonDict()
     res["type"] = makename(T.name.name)
-    res["id"] = obj.id
+    if :id ∈ fieldnames(T)
+        res["id"] = obj.id
+    end
     for field in fieldnames(T)
+        if field == :id
+            continue
+        end
         fvalue = getfield(obj, field)
         addfield!(res, field, fvalue)
     end
@@ -90,24 +103,28 @@ end
 function primarydata(a::Array)
     primarydata = Array{JsonDict}(length(a))
     for (i, item) in enumerate(a)
-        primarydata[i] = resource(item)
+        primarydata[i] = resource(item, i)
     end
     return primarydata
 end
 
-function jsonapidict(a::Array)
+function primarydata(obj)
+    resource(obj, 1)
+end
+
+function jsonapidict(a)
     d = JsonDict()
     d["data"] = primarydata(a)
     return d
 end
 
-function printjsonapi(io::IO, a::Array)
-    d = jsonapidict(a)
+function printjsonapi(io::IO, obj)
+    d = jsonapidict(obj)
     JSON.print(io, d)
 end
 
-function jsonapi(a::Array)
-    d = jsonapidict(a)
+function jsonapi(obj)
+    d = jsonapidict(obj)
     JSON.json(d)
 end
 

@@ -36,20 +36,37 @@ roundinfo.componentweights = componentweights
 directory = "../adjumo-frontend/public/data"
 mkpath(directory)
 
-adjudicatorsfile = open(joinpath(directory, "adjudicators.json"), "w")
-exportjsonadjudicators(adjudicatorsfile, roundinfo)
-close(adjudicatorsfile)
+fields = [
+    :adjudicators,
+    :teams,
+    :institutions,
+    :debates,
+    :adjadjconflicts,
+    :teamadjconflicts,
+    :lockedadjs,
+    :blockedadjs,
+    :componentweights,
+]
 
-teamsfile = open(joinpath(directory, "teams.json"), "w")
-exportjsonteams(teamsfile, roundinfo)
-close(teamsfile)
+for field in fields
+    filename = joinpath(directory, string(field)*".json")
+    println("Creating $filename")
+    f = open(filename, "w")
+    exportjson(f, roundinfo, field)
+    close(f)
+end
 
-institutionsfile = open(joinpath(directory, "institutions.json"), "w")
-exportjsoninstitutions(institutionsfile, roundinfo)
-close(institutionsfile)
+special_fields = [
+    "adjadjhistory",
+    "teamadjhistory",
+    "groupedadjs"
+]
 
-debatesfile = open(joinpath(directory, "debates.json"), "w")
-exportjsondebates(debatesfile, roundinfo)
-close(debatesfile)
-
-
+for field in special_fields
+    filename = joinpath(directory, field*".json")
+    println("Creating $filename")
+    f = open(filename, "w")
+    func = eval(symbol("exportjson"*field))
+    func(f, roundinfo)
+    close(f)
+end
