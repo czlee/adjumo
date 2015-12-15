@@ -82,7 +82,7 @@ export default Ember.Component.extend({
     },
     hideRanking: function() {
       this.set('showingRanking', false);
-      $(".adjudicator-ui, .debate-team").toggleClass("ranking-display");
+      $(".adjudicator-ui .adj-ranking, .debate-team").toggleClass("ranking-display");
     },
 
     sortBy: function(property) {

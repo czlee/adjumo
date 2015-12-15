@@ -7,4 +7,8 @@ export default DS.Model.extend({
   language: DS.attr('string'),
   gender: DS.attr('number'),
 
+  regionID: Ember.computed('institution', function() {
+    return this.get('institution').get('region').get('id');
+  }),
+
 });

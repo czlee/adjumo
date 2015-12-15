@@ -23,12 +23,8 @@ export default DS.Model.extend({
     return short_name;
   }),
 
-  regions: Ember.computed('institution', function() {
-    return this.get('institution').get('region');
-  }),
-
-  region_classes: Ember.computed('institution', function() {
-    return 'region-' + this.get('institution').get('region').get('id');
+  regionID: Ember.computed('institution', function() {
+    return this.get('institution').get('region').get('id');
   }),
 
   get_ranking: function() {
