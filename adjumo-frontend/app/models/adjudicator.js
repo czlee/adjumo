@@ -4,6 +4,7 @@ export default DS.Model.extend({
 
   name: DS.attr('string'),
   institution: DS.belongsTo('institution'),
+  regions: DS.attr('number'),
 
   locked: DS.attr('bool', { defaultValue: false }),
   ranking: DS.attr('number'),
@@ -21,10 +22,6 @@ export default DS.Model.extend({
     var words = this.get('name').split(" ");
     var short_name = words[0] + " " + words[1][0];
     return short_name;
-  }),
-
-  regionID: Ember.computed('institution', function() {
-    return this.get('institution').get('region').get('id');
   }),
 
   get_ranking: function() {

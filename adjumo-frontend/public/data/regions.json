@@ -1,0 +1,64 @@
+{
+  "data": [
+  {
+    "type": "region",
+    "id": 1,
+    "attributes": {
+      "name": "North Asia"
+    }
+  },{
+    "type": "region",
+    "id": 2,
+    "attributes": {
+      "name": "South East Asia"
+    }
+  },{
+    "type": "region",
+    "id": 3,
+    "attributes": {
+      "name": "Middle East"
+    }
+  },{
+    "type": "region",
+    "id": 4,
+    "attributes": {
+      "name": "Sub Sub-Continent"
+    }
+  },{
+    "type": "region",
+    "id": 5,
+    "attributes": {
+      "name": "Africa"
+    }
+  },{
+    "type": "region",
+    "id": 6,
+    "attributes": {
+      "name": "ANZ"
+    }
+  },{
+    "type": "region",
+    "id": 7,
+    "attributes": {
+      "name": "North America"
+    }
+  },{
+    "type": "region",
+    "id": 8,
+    "attributes": {
+      "name": "Latin America"
+    }
+  },{
+    "type": "region",
+    "id": 9,
+    "attributes": {
+      "name": "Europe"
+    }
+  },{
+    "type": "region",
+    "id": 10,
+    "attributes": {
+      "name": "IONA"
+    }
+  }]
+}
