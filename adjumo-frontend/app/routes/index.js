@@ -11,18 +11,18 @@ export default Ember.Route.extend({
           adjudicators:           this.store.findAll('adjudicator'),
           teams:                  this.store.findAll('team'),
           debates:                this.store.findAll('debate'),
-          allocations:            this.store.findAll('allocation', 'id', { reload: true }),
+          allocations:             this.store.findAll('allocation-iteration', 'id', { reload: true }),
 
       })
   },
 
-  current_allocation: 0,
+  allocationIteration: 0,
 
   actions: {
 
     createAllocation: function() {
-      this.current_allocation += 1;
-      this.store.createRecord('allocation', { id: this.current_allocation });
+      this.allocationIteration += 1;
+      this.store.createRecord('allocation-iteration', { id: this.allocationIteration });
     }
 
   }
