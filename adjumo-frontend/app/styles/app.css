@@ -33,16 +33,16 @@ td {
 }
 
 .head-venue {
-  width: 3%;
+  width: 4%;
 }
 .head-points {
-  width: 3%;
+  width: 4%;
 }
 .head-weight {
-  width: 3%;
+  width: 4%;
 }
 .head-importance {
-  width: 3%;
+  width: 4%;
 }
 .head-importance-edit {
   width: 20%;
@@ -195,7 +195,7 @@ td.head-panel {
   line-height: 1;
   display: block;
   margin-top: 3px;
-  margin-bottom: -7px;
+  margin-bottom: -6px;
   font-weight: bold;
 }
 .adj-institution {

@@ -104,14 +104,14 @@
                   <span class="glyphicon glyphicon-chevron-down" active={{sortedByWeight}}></span>
                 {{/if}}
             </th>
-            <th {{action "sortBy" "importance"}} class="head-sortable head-importance preallocation" data-toggle="tooltip" data-placement="top" title="Importance">
+            <th {{action "sortBy" "importance"}} class="head-sortable head-importance" data-toggle="tooltip" data-placement="top" title="Importance">
               VIP {{#if sortAscending}}
                   <span class="glyphicon glyphicon-chevron-up" active={{sortedByImportance}}></span>
                 {{else}}
                   <span class="glyphicon glyphicon-chevron-down" active={{sortedByImportance}}></span>
                 {{/if}}
             </th>
-            <th class="head-importance-edit">
+            <th class="head-importance-edit preallocation">
               Edit VIP
             </th>
             <th class="head-og">OG</th>
