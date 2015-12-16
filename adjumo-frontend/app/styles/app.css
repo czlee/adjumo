@@ -99,13 +99,13 @@ span[active="false"].glyphicon {
 .debate-team span {
   line-height: 1;
 }
-.debate-importance {
-  padding: 0px !important;
-}
 .debate-importance input {
   max-width: 100%;
   font-size: 26px;
   text-align: center;
+}
+input[type=range] {
+  height: 19px;
 }
 
 /* Panel Component */

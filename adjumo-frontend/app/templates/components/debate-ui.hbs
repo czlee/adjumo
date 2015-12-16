@@ -11,7 +11,7 @@
     {{ debate.importance }}
 </td>
 <td class="debate-importance-edit preallocation">
-    {{input type="range" min="1" max="10" step="0.5" value=debate.importance class="form-control" }}
+    {{input type="range" min="1" max="10" step="1" value=debate.importance class="form-control" }}
 </td>
 <td class="debate-og debate-team gender-{{ debate.og.gender }} region-{{ debate.og.region }} language-{{ debate.og.language }}">
     <span data-toggle="tooltip" data-placement="top" title="{{ debate.og.institution.name }}">
