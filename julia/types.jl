@@ -53,12 +53,13 @@ type Team
     gender::TeamGender
     region::Region
     language::LanguageStatus
+    points::Int
 end
 
-Team(id::Int, name::UTF8String, institution::Institution) = Team(id, name, institution, TeamNoGender, institution.region, NoLanguage)
-Team(id::Int, name::AbstractString, institution::Institution) = Team(id, UTF8String(name), institution, TeamNoGender, institution.region, NoLanguage)
-Team(id::Int, name::UTF8String, institution::Institution, region::Region) = Team(id, name, institution, TeamNoGender, region, NoLanguage)
-Team(id::Int, name::AbstractString, institution::Institution, region::Region) = Team(id, UTF8String(name), institution, TeamNoGender, region, NoLanguage)
+Team(id::Int, name::UTF8String, institution::Institution) = Team(id, name, institution, TeamNoGender, institution.region, NoLanguage, 0)
+Team(id::Int, name::AbstractString, institution::Institution) = Team(id, UTF8String(name), institution, TeamNoGender, institution.region, NoLanguage, 0)
+Team(id::Int, name::UTF8String, institution::Institution, region::Region) = Team(id, name, institution, TeamNoGender, region, NoLanguage, 0)
+Team(id::Int, name::AbstractString, institution::Institution, region::Region) = Team(id, UTF8String(name), institution, TeamNoGender, region, NoLanguage, 0)
 show(io::Base.IO, team::Team) = print(io, "Team($(team.id), \"$(team.name)\")")
 
 type Adjudicator
@@ -83,6 +84,7 @@ type Debate
     teams::Vector{Team}
 end
 
+Debate(id::Int, teams::Vector{Team}) = Debate(id, 1, teams)
 show(io::Base.IO, debate::Debate) = print(io, "Debate($(debate.id), $(debate.weight), $(debate.teams))")
 
 # ==============================================================================
@@ -271,6 +273,8 @@ numteamsfrominstitution(rinfo::RoundInfo, inst::Institution) = count(x -> x.inst
 # that the teams and adjudicators in question are actually in rinfo.teams
 # and rinfo.adjudicators. It is the responsibility of the caller to make sure
 # this is the case.
+#
+# TODO only add if entry not already present
 addadjadjconflict!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = push!(rinfo.adjadjconflicts, AdjudicatorPair(adj1, adj2))
 addteamadjconflict!(rinfo::RoundInfo, team::Team, adj::Adjudicator) = push!(rinfo.teamadjconflicts, TeamAdjudicator(team, adj))
 addadjadjhistory!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator, round::Int) = push!(get!(rinfo.adjadjhistory, AdjudicatorPair(adj1, adj2), Int[]), round)
