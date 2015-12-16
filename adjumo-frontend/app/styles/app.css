@@ -33,28 +33,37 @@ td {
 }
 
 .head-venue {
-  width: 2%;
+  width: 3%;
 }
 .head-points {
-  width: 2%;
+  width: 3%;
 }
 .head-weight {
-  width: 2%;
+  width: 3%;
 }
 .head-importance {
-  width: 4%;
+  width: 3%;
+}
+.head-importance-edit {
+  width: 20%;
 }
 .head-og {
-  width: 6%;
+  width: 10%;
 }
 .head-oo {
-  width: 6%;
+  width: 10%;
 }
 .head-cg {
-  width: 6%;
+  width: 10%;
 }
 .head-co {
-  width: 6%;
+  width: 10%;
+}
+.head-bans {
+  width: 20%;
+}
+.head-locks {
+  width: 20%;
 }
 .head-language {
   width: 3%;

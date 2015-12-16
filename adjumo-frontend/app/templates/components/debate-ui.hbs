@@ -7,8 +7,11 @@
 <td class="debate-weight text-center">
     {{ debate.weightRounded }}
 </td>
-<td class="debate-importance">
-    {{ input type="number" value=debate.importance }}
+<td class="debate-importance text-center preallocation ranking-display ranking-{{ debate.rankingClass }}">
+    {{ debate.importance }}
+</td>
+<td class="debate-importance-edit preallocation">
+    {{input type="range" min="1" max="10" step="0.5" value=debate.importance class="form-control" }}
 </td>
 <td class="debate-og debate-team gender-{{ debate.og.gender }} region-{{ debate.og.region }} language-{{ debate.og.language }}">
     <span data-toggle="tooltip" data-placement="top" title="{{ debate.og.institution.name }}">
@@ -30,20 +33,26 @@
         {{ debate.co.name }}
     </span>
 </td>
-<td class="debate-language-strength text-center ">
+<td class="debate-language-strength allocation hidden text-center ">
 
 </td>
-<td class="debate-regional-strength text-center ">
+<td class="debate-regional-strength allocation hidden text-center ">
 
 </td>
-<td class="debate-gender-strength text-center ">
+<td class="debate-gender-strength allocation hidden text-center ">
 
 </td>
-<td class="debate-panel-strength text-center ">
+<td class="debate-panel-strength allocation hidden text-center ">
     {{ debate.panel.ranking }}
 </td>
-<td></td>
-<td></td>
-<td class="debate-panel">
-    {{panel-ui panel=debate.panel adjudicators=adjudicators}}
+<td class="debate-bans preallocation">
+
+</td>
+<td class="debate-locks preallocation">
+
+</td>
+<td class="debate-panel allocation hidden">
+    {{#if debate.panel }}
+        {{panel-ui panel=debate.panel adjudicators=adjudicators}}
+    {{/if}}
 </td>

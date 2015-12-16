@@ -15,7 +15,7 @@ export default Ember.Component.extend({
       // Set default importance to the points
       var debate = this.get('debate');
       if (debate.get('importance') == null) {
-        debate.set('importance', debate.get('points'));
+        debate.set('importance', debate.get('weightRounded'));
       }
       this.$('[data-toggle="tooltip"]').tooltip();
     });

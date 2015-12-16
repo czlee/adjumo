@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
 
-  sortProperties: ['points:desc'],
+  sortProperties: ['weight:desc'],
   sortedDebates: Ember.computed.sort('model.debates', 'sortProperties'),
   sortAscending: false,
   theFilter: "",
@@ -133,7 +133,7 @@ export default Ember.Component.extend({
   },
 
   sortedByPoints: function() {
-    if (this.get('sortProperties') === "points:asc" || this.get('sortProperties') == "points:desc") {
+    if (this.get('sortProperties') == "points:asc" || this.get('sortProperties') == "points:desc") {
       return true;
     } else {
       return false;
@@ -141,7 +141,15 @@ export default Ember.Component.extend({
   }.property("sortProperties"),
 
   sortedByVenue: function() {
-    if (this.get('sortProperties') === "venue:asc" || this.get('sortProperties') == "venue:desc") {
+    if (this.get('sortProperties') == "venue:asc" || this.get('sortProperties') == "venue:desc") {
+      return true;
+    } else {
+      return false;
+    }
+  }.property("sortProperties"),
+
+  sortedByWeight: function() {
+    if (this.get('sortProperties') == "weight:asc" || this.get('sortProperties') === "weight:desc") {
       return true;
     } else {
       return false;
@@ -149,7 +157,7 @@ export default Ember.Component.extend({
   }.property("sortProperties"),
 
   sortedByImportance: function() {
-    if (this.get('sortProperties') === "importance:asc" || this.get('sortProperties') == "importance:desc") {
+    if (this.get('sortProperties') == "importance:asc" || this.get('sortProperties') == "importance:desc") {
       return true;
     } else {
       return false;
