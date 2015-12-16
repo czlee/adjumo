@@ -33,16 +33,15 @@
         {{ debate.co.name }}
     </span>
 </td>
+<td class="debate-bans preallocation">
 
-    {{#if debate.panel }}
-        {{panel-ui panel=debate.panel adjudicators=adjudicators}}
-    {{else}}
-        <td class="debate-bans preallocation"></td>
-        <td class="debate-locks preallocation"></td>
-        <td class="debate-language-strength allocation hidden text-center "></td>
-        <td class="debate-regional-strength allocation hidden text-center "></td>
-        <td class="debate-gender-strength allocation hidden text-center "></td>
-        <td class="debate-panel-strength allocation hidden text-center "></td>
-        <td class="debate-panel allocation hidden"></td>
-    {{/if}}
+</td>
+<td class="debate-locks preallocation">
+
+</td>
+{{#if debate.panel }}
+    <td class="debate-panel allocation">{{panel-ui panel=debate.panel adjudicators=adjudicators}}</td>
+{{else}}
+    <td class="debate-panel allocation hidden"></td>
+{{/if}}
 

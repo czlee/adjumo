@@ -1,35 +1,28 @@
-<td class="debate-bans preallocation">
+<div class="panel-ui">
 
-</td>
-<td class="debate-locks preallocation">
+    <div class="debate-language-strength text-center flex-icon">
+      X
+    </div>
+    <div class="debate-regional-strength text-center flex-icon">
+      X
+    </div>
+    <div class="debate-gender-strength text-center flex-icon">
+      X
+    </div>
+    <div class="debate-panel-strength text-center flex-icon">
+      X
+    </div>
+    <div class="debate-chair-holder flex-1 position-holder">
+      {{chair-ui panel=panel adjudicators=adjudicators}}
+    </div>
+    <div class="debate-panel-holder flex-2 position-holder">
+      {{panellists-ui panel=panel adjudicators=adjudicators}}
+    </div>
+    <div class="debate-trainee-holder flex-1 position-holder">
+      {{trainees-ui panel=panel adjudicators=adjudicators}}
+    </div>
+    <div class="js-drag-handle flex-icon flex-icon">
+      <span class="glyphicon glyphicon-move"></span>
+    </div>
 
-</td>
-<td class="debate-language-strength allocation hidden text-center ">
-
-</td>
-<td class="debate-regional-strength allocation hidden text-center ">
-
-</td>
-<td class="debate-gender-strength allocation hidden text-center ">
-
-</td>
-<td class="debate-panel-strength allocation hidden text-center ">
-    {{ panel.ranking }}
-</td>
-<td class="debate-panel allocation hidden">
-  <div class="panel-ui">
-
-      <div class="debate-chair-holder flex-1 position-holder">
-        {{chair-ui panel=panel adjudicators=adjudicators}}
-      </div>
-      <div class="debate-panel-holder flex-2 position-holder">
-        {{panellists-ui panel=panel adjudicators=adjudicators}}
-      </div>
-      <div class="debate-trainee-holder flex-1 position-holder">
-        {{trainees-ui panel=panel adjudicators=adjudicators}}
-      </div>
-      <div class="js-drag-handle flex-icon flex-icon">
-        <span class="glyphicon glyphicon-move"></span>
-      </div>
-  </div>
-</td>
+</div>

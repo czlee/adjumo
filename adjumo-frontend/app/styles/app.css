@@ -33,50 +33,45 @@ td {
 }
 
 .head-venue {
-  width: 4%;
+  width: 2.5%;
 }
 .head-points {
-  width: 4%;
+  width: 2.5%;
 }
 .head-weight {
-  width: 4%;
+  width: 2.5%;
 }
 .head-importance {
-  width: 4%;
+  width: 2.5%;
 }
 .head-importance-edit {
   width: 20%;
 }
+
 .head-og {
-  width: 10%;
+  width: 7.5%;
 }
 .head-oo {
-  width: 10%;
+  width: 7.5%;
 }
 .head-cg {
-  width: 10%;
+  width: 7.5%;
 }
 .head-co {
-  width: 10%;
+  width: 7.5%;
 }
+
+
 .head-bans {
   width: 20%;
 }
 .head-locks {
   width: 20%;
 }
-.head-language {
-  width: 3%;
+.debate-panel {
+  width: 40%;
 }
-.head-regional {
-  width: 3%;
-}
-.head-gender {
-  width: 3%;
-}
-.head-adjudicators {
-  width: 3%;
-}
+
 #allocation th {
   font-size: 10px;
 }
@@ -148,8 +143,10 @@ input[type=range] {
   margin-bottom: 0px;
   display: flex;
 }
-.head-panel {
+.table>thead>tr>th.head-panel {
   display: flex;
+  padding-right: 0px;
+  padding-left: 0px;
 }
 td.head-panel {
   padding-left: 0px !important;
@@ -163,6 +160,7 @@ td.head-panel {
 }
 .position-holder .ember-view {
   height: 45px;
+  float: left;
 }
 .js-drag-handle:hover {
   cursor: move;

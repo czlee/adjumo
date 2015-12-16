@@ -118,23 +118,24 @@
             <th class="head-oo">OO</th>
             <th class="head-cg">CO</th>
             <th class="head-co">CG</th>
-            <th class="head-language allocation hidden" data-toggle="tooltip" data-placement="top" title="Language Representation">RR</th>
-            <th class="head-regional allocation hidden" data-toggle="tooltip" data-placement="top" title="Regional Representation">RR</th>
-            <th class="head-gender allocation hidden" data-toggle="tooltip" data-placement="top" title="Gender Representation">GR</th>
-            <th class="head-adjudicators allocation hidden" {{action "sortBy" "panel"}}  data-toggle="tooltip" data-placement="top" title="Panel Strength">PS</th>
             <th class="head-bans preallocation">Bans</th>
             <th class="head-locks preallocation">Locks</th>
             <th class="head-panel allocation hidden">
-              <div class="flex-1">
+
+              <div class="flex-icon head-language" data-toggle="tooltip" data-placement="top" title="Language Representation">RR</div>
+              <div class="flex-icon head-regional" data-toggle="tooltip" data-placement="top" title="Regional Representation">RR</div>
+              <div class="flex-icon head-gender" data-toggle="tooltip" data-placement="top" title="Gender Representation">GR</div>
+              <div class="flex-icon head-adjudicators" {{action "sortBy" "panel"}}  data-toggle="tooltip" data-placement="top" title="Panel Strength">PS</div>
+              <div class="flex-1 text-center">
                 Chair
               </div>
-              <div class="flex-2">
+              <div class="flex-2 text-center">
                 Panel
               </div>
-              <div class="flex-1">
+              <div class="flex-1 text-center">
                 Trainee
               </div>
-              <div class="flex-icon-large">
+              <div class="flex-icon">
 
               </div>
             </th>
@@ -143,7 +144,7 @@
         <tbody>
 
         {{#each filteredDebates as |debate-instance|}}
-            {{debate-ui debate=debate-instance adjudicators=model.adjudicators}}
+            {{debate-ui debate=debate-instance adjudicators=model.adjudicators allocations=model.allocations}}
         {{/each}}
 
         </tbody>

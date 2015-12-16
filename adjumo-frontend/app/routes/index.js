@@ -11,18 +11,31 @@ export default Ember.Route.extend({
           adjudicators:           this.store.findAll('adjudicator'),
           teams:                  this.store.findAll('team'),
           debates:                this.store.findAll('debate'),
-          allocations:             this.store.findAll('allocation-iteration', 'id', { reload: true }),
+          allocations:            this.store.findAll('allocation-iteration', 'id', { reload: true }),
 
       })
   },
 
-  allocationIteration: 0,
+  currentAllocationIteration: 0,
 
   actions: {
 
     createAllocation: function() {
-      this.allocationIteration += 1;
-      this.store.createRecord('allocation-iteration', { id: this.allocationIteration });
+      console.log(this.store.findAll('panel'));
+
+      this.currentAllocationIteration += 1;
+      // Create a new allocation and set it's panels to match the last output JSON
+
+      console.log("test");
+
+      var newAllocation = this.store.createRecord('allocation-iteration', {
+        id: this.currentAllocationIteration,
+      });
+
+      //this.store.findAll('panel').filterBy('allocation-iteration', null).set('allocation-iteration', newAllocation);
+
+      console.log(this.store.findAll('panel').get('length'));
+
     }
 
   }
