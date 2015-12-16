@@ -78,71 +78,71 @@
 
     <div class="row">
 
-        <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
-          <thead>
-            <tr>
-              <th {{action "sortBy" "venue"}} class="head-sortable head-venue" data-toggle="tooltip" data-placement="top" title="Venue">
-                V {{#if sortAscending}}
-                  <span class="glyphicon glyphicon-chevron-up" active={{sortedByVenue}}></span>
+      <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
+        <thead>
+          <tr>
+            <th {{action "sortBy" "venue"}} class="head-sortable head-venue" data-toggle="tooltip" data-placement="top" title="Venue">
+              V {{#if sortAscending}}
+                <span class="glyphicon glyphicon-chevron-up" active={{sortedByVenue}}></span>
+              {{else}}
+                <span class="glyphicon glyphicon-chevron-down" active={{sortedByVenue}}></span>
+              {{/if}}
+            </th>
+            <th {{action "sortBy" "points"}} class="head-sortable head-points text-center" data-toggle="tooltip" data-placement="top" title="Points">
+              P {{#if sortAscending}}
+                  <span class="glyphicon glyphicon-chevron-up" active={{sortedByPoints}}></span>
                 {{else}}
-                  <span class="glyphicon glyphicon-chevron-down" active={{sortedByVenue}}></span>
+                  <span class="glyphicon glyphicon-chevron-down" active={{sortedByPoints}}></span>
                 {{/if}}
-              </th>
-              <th {{action "sortBy" "points"}} class="head-sortable head-points text-center" data-toggle="tooltip" data-placement="top" title="Points">
-                P {{#if sortAscending}}
-                    <span class="glyphicon glyphicon-chevron-up" active={{sortedByPoints}}></span>
-                  {{else}}
-                    <span class="glyphicon glyphicon-chevron-down" active={{sortedByPoints}}></span>
-                  {{/if}}
-              </th>
-              <th {{action "sortBy" "weight"}} class="head-sortable head-weight" data-toggle="tooltip" data-placement="top" title="Weight">
-                W {{#if sortAscending}}
-                    <span class="glyphicon glyphicon-chevron-up" active={{sortedByWeight}}></span>
-                  {{else}}
-                    <span class="glyphicon glyphicon-chevron-down" active={{sortedByWeight}}></span>
-                  {{/if}}
-              </th>
-              <th {{action "sortBy" "importance"}} class="head-sortable head-importance" data-toggle="tooltip" data-placement="top" title="Importance">
-                VIP {{#if sortAscending}}
-                    <span class="glyphicon glyphicon-chevron-up" active={{sortedByImportance}}></span>
-                  {{else}}
-                    <span class="glyphicon glyphicon-chevron-down" active={{sortedByImportance}}></span>
-                  {{/if}}
-              </th>
-              <th class="head-og">OG</th>
-              <th class="head-oo">OO</th>
-              <th class="head-cg">CO</th>
-              <th class="head-co">CG</th>
-              <th class="head-language" data-toggle="tooltip" data-placement="top" title="Language Representation">RR</th>
-              <th class="head-regional" data-toggle="tooltip" data-placement="top" title="Regional Representation">RR</th>
-              <th class="head-gender" data-toggle="tooltip" data-placement="top" title="Gender Representation">GR</th>
-              <th {{action "sortBy" "panel"}} class="head-adjudicators" data-toggle="tooltip" data-placement="top" title="Panel Strength">PS</th>
-              <th>Bans</th>
-              <th>Locks</th>
-              <th class="head-panel">
-                <div class="flex-1">
-                  Chair
-                </div>
-                <div class="flex-2">
-                  Panel
-                </div>
-                <div class="flex-1">
-                  Trainee
-                </div>
-                <div class="flex-icon-large">
-                  M
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+            </th>
+            <th {{action "sortBy" "weight"}} class="head-sortable head-weight" data-toggle="tooltip" data-placement="top" title="Weight">
+              W {{#if sortAscending}}
+                  <span class="glyphicon glyphicon-chevron-up" active={{sortedByWeight}}></span>
+                {{else}}
+                  <span class="glyphicon glyphicon-chevron-down" active={{sortedByWeight}}></span>
+                {{/if}}
+            </th>
+            <th {{action "sortBy" "importance"}} class="head-sortable head-importance" data-toggle="tooltip" data-placement="top" title="Importance">
+              VIP {{#if sortAscending}}
+                  <span class="glyphicon glyphicon-chevron-up" active={{sortedByImportance}}></span>
+                {{else}}
+                  <span class="glyphicon glyphicon-chevron-down" active={{sortedByImportance}}></span>
+                {{/if}}
+            </th>
+            <th class="head-og">OG</th>
+            <th class="head-oo">OO</th>
+            <th class="head-cg">CO</th>
+            <th class="head-co">CG</th>
+            <th class="head-language" data-toggle="tooltip" data-placement="top" title="Language Representation">RR</th>
+            <th class="head-regional" data-toggle="tooltip" data-placement="top" title="Regional Representation">RR</th>
+            <th class="head-gender" data-toggle="tooltip" data-placement="top" title="Gender Representation">GR</th>
+            <th {{action "sortBy" "panel"}} class="head-adjudicators" data-toggle="tooltip" data-placement="top" title="Panel Strength">PS</th>
+            <th>Bans</th>
+            <th>Locks</th>
+            <th class="head-panel">
+              <div class="flex-1">
+                Chair
+              </div>
+              <div class="flex-2">
+                Panel
+              </div>
+              <div class="flex-1">
+                Trainee
+              </div>
+              <div class="flex-icon-large">
+                M
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
 
-          {{#each filteredDebates as |debate-instance|}}
-              {{debate-ui debate=debate-instance adjudicators=model.adjudicators}}
-          {{/each}}
+        {{#each filteredDebates as |debate-instance|}}
+            {{debate-ui debate=debate-instance adjudicators=model.adjudicators}}
+        {{/each}}
 
-          </tbody>
-        </table>
+        </tbody>
+      </table>
 
     </div>
 
