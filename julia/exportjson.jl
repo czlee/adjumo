@@ -4,6 +4,7 @@ export exportjson, json
 export exportjsoninstitutions, exportjsonteams, exportjsonadjudicators, exportjsondebates,
     jsoninstitutions, jsonteams, jsonadjudicators, jsondebates
 export exportjsonadjadjhistory, exportjsonteamadjhistory, exportjsongroupedadjs
+export exportroundinfo, exportallocations
 
 exportjson(io::IO, ri::RoundInfo, field::Symbol) = printjsonapi(io, getfield(ri, field))
 json(ri::RoundInfo, field::Symbol) = jsonapi(getfield(ri, field))
@@ -46,4 +47,51 @@ end
 function exportjsongroupedadjs(io::IO, ri::RoundInfo)
     groups = [GroupedAdjudicators(adjs) for adjs in ri.groupedadjs]
     printjsonapi(io, groups)
+end
+
+function exportroundinfo(ri::RoundInfo, directory::AbstractString)
+    mkpath(directory)
+    fields = [
+        :adjudicators,
+        :teams,
+        :institutions,
+        :debates,
+        :adjadjconflicts,
+        :teamadjconflicts,
+        :lockedadjs,
+        :blockedadjs,
+        :componentweights,
+    ]
+
+    for field in fields
+        filename = joinpath(directory, string(field)*".json")
+        println("Writing $filename")
+        f = open(filename, "w")
+        exportjson(f, ri, field)
+        close(f)
+    end
+
+    special_fields = [
+        "adjadjhistory",
+        "teamadjhistory",
+        "groupedadjs"
+    ]
+
+    for field in special_fields
+        filename = joinpath(directory, field*".json")
+        println("Writing $filename")
+        f = open(filename, "w")
+        func = eval(symbol("exportjson"*field))
+        func(f, ri)
+        close(f)
+    end
+end
+
+function exportallocations(allocations::Vector{PanelAllocation}, directory::AbstractString)
+    mkpath(directory)
+    filename = joinpath(directory, "allocations.json")
+    println("Writing $filename")
+    f = open(filename, "w")
+    printjsonapi(f, allocations)
+    close(f)
 end

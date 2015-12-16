@@ -47,46 +47,8 @@ allocations = allocateadjudicators(roundinfo; solver=args["solver"], enforceteam
 
 println("Writing JSON files...")
 directory = args["json-dir"]
-standard_fields = [
-    :adjudicators,
-    :teams,
-    :institutions,
-    :debates,
-    :adjadjconflicts,
-    :teamadjconflicts,
-    :lockedadjs,
-    :blockedadjs,
-    :componentweights,
-]
-
-for field in standard_fields
-    filename = joinpath(directory, string(field)*".json")
-    println("Creating $filename")
-    f = open(filename, "w")
-    exportjson(f, roundinfo, field)
-    close(f)
-end
-
-special_fields = [
-    "adjadjhistory",
-    "teamadjhistory",
-    "groupedadjs"
-]
-
-for field in special_fields
-    filename = joinpath(directory, field*".json")
-    println("Creating $filename")
-    f = open(filename, "w")
-    func = eval(symbol("exportjson"*field))
-    func(f, roundinfo)
-    close(f)
-end
-
-filename = joinpath(directory, "allocations.json")
-println("Creating $filename")
-f = open(filename, "w")
-printjsonapi(f, allocations)
-close(f)
+exportroundinfo(roundinfo, directory)
+exportallocations(allocations, directory)
 
 showconstraints(roundinfo)
 for allocation in allocations
