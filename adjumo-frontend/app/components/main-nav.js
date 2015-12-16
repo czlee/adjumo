@@ -2,12 +2,16 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
 
+  showingLockBans: true,
+
   actions: {
 
     showLockAndBans: function() {
       // Navbar UI Elements
-      $(".lock-ban-nav").addClass("active")
+      this.set('showingLockBans', true);
       $(".allocation-nav.active").removeClass("active");
+      $(".allocation-nav .glyphicon-eye-close").addClass("hidden")
+      $(".allocation-nav .glyphicon-eye-open").removeClass("hidden")
       // Table UI elements
       $(".preallocation").removeClass("hidden");
       $(".allocation").addClass("hidden");
@@ -15,19 +19,26 @@ export default Ember.Component.extend({
 
     showAllocation: function(allocationID) {
       // Navbar UI Elements
-      $(".lock-ban-nav.active").removeClass("active")
+      this.set('showingLockBans', false);
       $(".allocation-nav.active").removeClass("active");
+      $(".allocation-nav .glyphicon-eye-close").addClass("hidden")
+      $(".allocation-nav .glyphicon-eye-open").removeClass("hidden")
+
       var clickedAllocationClass = ".allocation-nav-" + allocationID;
       $(clickedAllocationClass).addClass("active");
+      $(clickedAllocationClass).children(".glyphicon-eye-open").addClass("hidden")
+      $(clickedAllocationClass).children(".glyphicon-eye-close").removeClass("hidden")
       // Table UI elements
       $(".preallocation").addClass("hidden");
-      $(".allocation").removeClass("hidden");
     },
 
     startNewAllocation: function() {
       // Navbar UI Elements
-      $(".lock-ban-nav.active").removeClass("active")
+      this.set('showingLockBans', false);
       $(".allocation-nav.active").removeClass("active");
+      $(".allocation-nav .glyphicon-eye-close").addClass("hidden")
+      $(".allocation-nav .glyphicon-eye-open").removeClass("hidden")
+
       // Table UI elements
       $(".preallocation").addClass("hidden");
       $(".allocation").removeClass("hidden");

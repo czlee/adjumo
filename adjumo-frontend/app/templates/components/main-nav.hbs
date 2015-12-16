@@ -10,16 +10,25 @@
     </button>
   </div>
 
-  <ul class="nav navbar-nav">
-    <li class="nav-item active lock-ban-nav allocation-nav-{{allocation.id}}" {{action "showLockAndBans" allocation.id }}>
-      <a href="#">Lock/Ban Allocations</a>
-    </li>
+  <div class="form-inline pull-left navbar-form">
+    {{#if showingLockBans }}
+      <button class="active btn btn-default lock-ban-nav" {{action "showLockAndBans" }}>
+        <span class="glyphicon glyphicon-eye-close"></span>
+         Lock/Ban Allocations
+      </button>
+    {{else}}
+      <button class="btn btn-default lock-ban-nav" {{action "showLockAndBans" }}>
+        <span class="glyphicon glyphicon-eye-open"></span>
+         Lock/Ban Allocations
+      </button>
+    {{/if}}
     {{#each allocations as |allocation| }}
-      <li class="nav-item active allocation-nav allocation-nav-{{allocation.id}}" {{action "showAllocation" allocation.id }}>
-        <a href="#">Allocation {{ allocation.id }}</a>
-      </li>
+      <button class="btn btn-default active allocation-nav allocation-nav-{{allocation.id}}" {{action "showAllocation" allocation.id }}>
+        <span class="glyphicon glyphicon-eye-close"></span><span class="glyphicon glyphicon-eye-open hidden"></span>
+          Allocation {{ allocation.id }}
+      </button>
     {{/each}}
-  </ul>
+  </div>
 
   <div class="form-inline pull-right navbar-form">
     <button type="submit" class="btn btn-default">
