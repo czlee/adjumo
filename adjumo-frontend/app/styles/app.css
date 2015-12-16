@@ -227,21 +227,48 @@ td.head-panel {
 }
 .gender-display.debate-team.gender-1 {
   background: #F89CFF; /* Only show this for teams as for them it represnts M+F*/
+  text-shadow:
+   -1px -1px 0 rgba(255,255,255,0.5),
+    1px -1px 0 rgba(255,255,255,0.5),
+    -1px 1px 0 rgba(255,255,255,0.5),
+     1px 1px 0 rgba(255,255,255,0.5);
 }
 .gender-display.gender-2 {
   background: #F103FF;
-}
-.region-display {
   color: #fff;
+  text-shadow:
+   -1px -1px 0 rgba(0,0,0,0.5),
+    1px -1px 0 rgba(0,0,0,0.5),
+    -1px 1px 0 rgba(0,0,0,0.5),
+     1px 1px 0 rgba(0,0,0,0.5);
+}
+.ranking-display, .region-display,
+.btn.ranking-display:hover, .btn.region-display:hover {
+  color: #fff;
+  text-shadow:
+   -1px -1px 0 rgba(0,0,0,0.5),
+    1px -1px 0 rgba(0,0,0,0.5),
+    -1px 1px 0 rgba(0,0,0,0.5),
+     1px 1px 0 rgba(0,0,0,0.5);
 }
 .language-display.language-2 {
   background: blue;
+    color: #fff;
+  text-shadow:
+   -1px -1px 0 rgba(0,0,0,0.5),
+    1px -1px 0 rgba(0,0,0,0.5),
+    -1px 1px 0 rgba(0,0,0,0.5),
+     1px 1px 0 rgba(0,0,0,0.5);
 }
 .language-display.language-3 {
   background: red;
+    color: #fff;
+  text-shadow:
+   -1px -1px 0 rgba(0,0,0,0.5),
+    1px -1px 0 rgba(0,0,0,0.5),
+    -1px 1px 0 rgba(0,0,0,0.5),
+     1px 1px 0 rgba(0,0,0,0.5);
 }
-
-
 .region-display.region-9 {
   background: #E900FF; /* Europe */
 }
@@ -273,31 +300,32 @@ td.head-panel {
   background: #7E00FF; /* Africa */
 }
 
+
 .ranking-display.ranking-1 {
-  color: #660200;
+  background: #660200;
 }
 .ranking-display.ranking-2 {
-  color: #FF0100;
+  background: #FF0100;
 }
 .ranking-display.ranking-3 {
-  color: #FF5D00;
+  background: #FF5D00;
 }
 .ranking-display.ranking-4 {
-  color: #E8920C;
+  background: #E8920C;
 }
 .ranking-display.ranking-5 {
-  color: #FFC800;
+  background: #FFC800;
 }
 .ranking-display.ranking-6 {
-  color: #E8DF00;
+  background: #E8DF00;
 }
 .ranking-display.ranking-7 {
-  color: #87FF00;
+  background: #87FF00;
 }
 .ranking-display.ranking-8 {
-  color: #00FF45;
+  background: #00FF45;
 }
 .ranking-display.ranking-9 {
-  color: #005E16;
+  background: #005E16;
 }
 

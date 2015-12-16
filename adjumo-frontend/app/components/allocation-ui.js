@@ -47,42 +47,78 @@ export default Ember.Component.extend({
     })(this));
   }).property("theFilter", "sortProperties"),
 
+  genderOn: function() {
+    this.set('showingGender', true);
+    $(".adjudicator-ui, .debate-team").addClass("gender-display");
+  },
+  genderOff: function() {
+    this.set('showingGender', false);
+    $(".adjudicator-ui, .debate-team").removeClass("gender-display");
+  },
+  regionOn: function() {
+    this.set('showingRegion', true);
+    $(".adjudicator-ui, .debate-team").addClass("region-display");
+  },
+  regionOff: function() {
+    this.set('showingRegion', false);
+    $(".adjudicator-ui, .debate-team").removeClass("region-display");
+  },
+  languageOn: function() {
+    this.set('showingLanguage', true);
+    $(".adjudicator-ui, .debate-team").addClass("language-display");
+  },
+  languageOff: function() {
+    this.set('showingLanguage', false);
+    $(".adjudicator-ui, .debate-team").removeClass("language-display");
+  },
+  rankingOn: function() {
+    this.set('showingRanking', true);
+    $(".adjudicator-ui, .debate-team").addClass("ranking-display");
+  },
+  rankingOff: function() {
+    this.set('showingRanking', false);
+    $(".adjudicator-ui, .debate-team").removeClass("ranking-display");
+  },
+
+
   actions: {
 
     showGender: function() {
-      this.set('showingGender', true);
-      $(".adjudicator-ui, .debate-team").toggleClass("gender-display");
+      this.genderOn();
+      this.regionOff();
+      this.languageOff();
+      this.rankingOff();
     },
     hideGender: function() {
-      this.set('showingGender', false);
-      $(".adjudicator-ui, .debate-team").toggleClass("gender-display");
+      this.genderOff();
     },
-
     showRegion: function() {
-      this.set('showingRegion', true);
-      $(".adjudicator-ui, .debate-team").toggleClass("region-display");
+      this.regionOn();
+      this.languageOff();
+      this.rankingOff();
+      this.genderOff();
     },
     hideRegion: function() {
-      this.set('showingRegion', false);
-      $(".adjudicator-ui, .debate-team").toggleClass("region-display");
+      this.regionOff();
     },
-
     showLanguage: function() {
-      this.set('showingLanguage', true);
-      $(".adjudicator-ui, .debate-team").toggleClass("language-display");
+      this.languageOn();
+      this.genderOff();
+      this.regionOff();
+      this.rankingOff();
     },
     hideLanguage: function() {
-      this.set('showingLanguage', false);
-      $(".adjudicator-ui, .debate-team").toggleClass("language-display");
+      this.languageOff();
     },
 
     showRanking: function() {
-      this.set('showingRanking', true);
-      $(".adjudicator-ui, .debate-team").toggleClass("ranking-display");
+      this.rankingOn();
+      this.genderOff();
+      this.regionOff();
+      this.languageOff();
     },
     hideRanking: function() {
-      this.set('showingRanking', false);
-      $(".adjudicator-ui .adj-ranking, .debate-team").toggleClass("ranking-display");
+      this.rankingOff();
     },
 
     sortBy: function(property) {
