@@ -18,7 +18,7 @@ export default Ember.Component.extend(DroppableMixin, {
 
     var droppedAdjID = event.originalEvent.dataTransfer.getData('AdjID');
     var droppedAdj = this.get('adjudicators').findBy('id', droppedAdjID);
-    var oldPanel = droppedAdj.get('panel');
+    var oldPanel = droppedAdj.get('panelallocation');
 
     if (oldPanel.get('content')) {
       if (droppedAdj === oldPanel.get('chair').get('content')) {

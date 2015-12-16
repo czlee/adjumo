@@ -8,7 +8,7 @@ export default DS.Model.extend({
   weight: DS.attr('number'),
   importance: DS.attr('number'),
 
-  panel: DS.belongsTo('panel'),
+  panels: DS.hasMany('panelallocations'),
   teams: DS.hasMany('team'),
 
   weightRounded: Ember.computed('weight', function() {

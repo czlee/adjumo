@@ -39,8 +39,12 @@
 <td class="debate-locks preallocation">
 
 </td>
-{{#if debate.panel }}
-    <td class="debate-panel allocation">{{panel-ui panel=debate.panel adjudicators=adjudicators}}</td>
+{{#if debate.panels }}
+    <td class="debate-panel allocation">
+        {{#each debate.panels as |panel|}}
+            {{panel-ui panel=panel adjudicators=adjudicators}}
+        {{/each}}
+    </td>
 {{else}}
     <td class="debate-panel allocation hidden"></td>
 {{/if}}

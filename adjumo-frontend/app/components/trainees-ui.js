@@ -8,7 +8,7 @@ export default Ember.Component.extend(DroppableMixin, {
 
     var droppedAdjID = event.originalEvent.dataTransfer.getData('AdjID');
     var droppedAdj = this.get('adjudicators').findBy('id', droppedAdjID);
-    var oldPanel = droppedAdj.get('panel');
+    var oldPanel = droppedAdj.get('panelallocation');
 
     // If coming from somewhere
     if (oldPanel.get('content')) {
@@ -21,7 +21,7 @@ export default Ember.Component.extend(DroppableMixin, {
       }
     }
 
-    this.get('panel').get('trainees').addObject(droppedAdj);
+    this.get('panelallocation').get('trainees').addObject(droppedAdj);
 
     return this._super(event);
   }

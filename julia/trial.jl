@@ -82,7 +82,7 @@ for field in special_fields
     close(f)
 end
 
-filename = joinpath(directory, "allocations.json")
+filename = joinpath(directory, "panelallocations.json")
 println("Creating $filename")
 f = open(filename, "w")
 printjsonapi(f, allocations)

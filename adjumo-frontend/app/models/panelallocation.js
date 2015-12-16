@@ -8,7 +8,7 @@ export default DS.Model.extend({
 
   debate: DS.belongsTo('debate'),
 
-  allocation: DS.belongsTo('allocation-iteration', { inverse: 'allocation-iteration' }))
+  allocation: DS.belongsTo('allocation-iteration'),
 
   ranking: function() {
     var rankings = new Array();

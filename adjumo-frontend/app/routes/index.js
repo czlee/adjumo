@@ -21,20 +21,21 @@ export default Ember.Route.extend({
   actions: {
 
     createAllocation: function() {
-      console.log(this.store.findAll('panel'));
-
       this.currentAllocationIteration += 1;
-      // Create a new allocation and set it's panels to match the last output JSON
 
-      console.log("test");
-
+      // Create a new allocation
       var newAllocation = this.store.createRecord('allocation-iteration', {
         id: this.currentAllocationIteration,
       });
 
-      //this.store.findAll('panel').filterBy('allocation-iteration', null).set('allocation-iteration', newAllocation);
-
-      console.log(this.store.findAll('panel').get('length'));
+      // this.store.findAll('panel').then().filterBy('allocation', null).set('allocation', newAllocation)
+      this.store.findAll('panelallocation').then((panels) => {
+        panels.forEach(function(item, index) {
+          if (item.get('allocation')) {
+            item.set('allocation', newAllocation);
+          }
+        });
+      });
 
     }
 
