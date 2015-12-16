@@ -23,38 +23,6 @@ include("exportjson.jl")
 
 export allocateadjudicators, generatefeasiblepanels
 
-function convertconstraints(adjudicators::Vector{Adjudicator}, original::Vector{Tuple{Adjudicator,Int}})
-    converted = Vector{Tuple{Int,Int}}(length(original))
-    for (i, (adj, debateindex)) in enumerate(original)
-        converted[i] = (findfirst(adjudicators, adj), debateindex)
-    end
-    return converted
-end
-
-function convertteamadjconflicts(roundinfo::RoundInfo)
-    converted = Vector{Tuple{Int,Int}}(length(roundinfo.teamadjconflicts))
-    for (i, (team, adj)) in enumerate(roundinfo.teamadjconflicts)
-        debateindex = findfirst(debate -> team ∈ debate, roundinfo.debates)
-        converted[i] = (findfirst(roundinfo.adjudicators, adj), debateindex)
-    end
-    for inst in roundinfo.institutions
-        teamindices = find(team -> team.institution == inst, roundinfo.teams)
-        adjindices = find(adj -> adj.institution == inst, roundinfo.adjudicators)
-        toappend = Array{Tuple{Int,Int}}(length(adjindices), length(teamindices))
-        for (j, teamindex) in enumerate(teamindices)
-            team = roundinfo.teams[teamindex]
-            debateindex = findfirst(debate -> team ∈ debate, roundinfo.debates)
-            for (i, adjindex) in enumerate(adjindices)
-                toappend[i,j] = (adjindex, debateindex)
-            end
-        end
-        append!(converted, toappend[:])
-    end
-    @show size(converted)
-    @show converted
-    return converted
-end
-
 "Top-level adjudicator allocation function."
 function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false)
 
@@ -65,8 +33,8 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
     @time istrainee = [adj.ranking <= TraineePlus for adj in roundinfo.adjudicators]
 
     println("constraints:")
-    @time lockedadjs = convertconstraints(roundinfo.adjudicators, roundinfo.lockedadjs)
-    @time blockedadjs = convertconstraints(roundinfo.adjudicators, roundinfo.blockedadjs)
+    @time lockedadjs = convertconstraints(roundinfo, roundinfo.lockedadjs)
+    @time blockedadjs = convertconstraints(roundinfo, roundinfo.blockedadjs)
 
     if enforceteamconflicts
         @time teamadjconflicts = convertteamadjconflicts(roundinfo)
@@ -80,10 +48,10 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
         checkincompatibleconstraints(roundinfo)
     end
 
-    panels = AdjudicatorPanel[feasiblepanels[p] for p in panelindices]
-    return debateindices, panels
+    println("conversion:")
+    @time allocations = convertallocations(roundinfo.debates, feasiblepanels, debateindices, panelindices)
+    return allocations
 end
-
 
 """Checks the given round information for conditions that would definitely
 make the problem infeasible."""
@@ -147,6 +115,62 @@ function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{Adju
         Q[p, indices] = true
     end
     return Q
+end
+
+"""
+Converts locked/blocked adj constraints from AdjudicatorDebate to Tuple{Int,Int},
+the first Int being an adjudicator index and the second Int being a debate
+index.
+"""
+function convertconstraints(roundinfo::RoundInfo, original::Vector{AdjudicatorDebate})
+    converted = Array{Tuple{Int,Int}}(length(original))
+    for (i, ad) in enumerate(original)
+        adjindex = findfirst(roundinfo.adjudicators, ad.adjudicator)
+        debateindex = findfirst(roundinfo.debates, ad.debate)
+        converted[i] = (adjindex, debateindex)
+    end
+    return converted
+end
+
+"""
+Converts team-adj conflicts from TeamAdjudicator to Tuple{Int,Int},
+the first Int being an adjudicator index, and the second Int being the debate
+index of the debate that the given team is in.
+"""
+function convertteamadjconflicts(roundinfo::RoundInfo)
+    converted = Array{Tuple{Int,Int}}(length(roundinfo.teamadjconflicts))
+    for (i, ta) in enumerate(roundinfo.teamadjconflicts)
+        adjindex = findfirst(roundinfo.adjudicators, ta.adjudicator)
+        debateindex = findfirst(debate -> ta.team ∈ debate, roundinfo.debates)
+        converted[i] = (adjindex, debateindex)
+    end
+    for inst in roundinfo.institutions
+        teamindices = find(team -> team.institution == inst, roundinfo.teams)
+        adjindices = find(adj -> adj.institution == inst, roundinfo.adjudicators)
+        toappend = Array{Tuple{Int,Int}}(length(adjindices), length(teamindices))
+        for (j, teamindex) in enumerate(teamindices)
+            team = roundinfo.teams[teamindex]
+            debateindex = findfirst(debate -> team ∈ debate, roundinfo.debates)
+            for (i, adjindex) in enumerate(adjindices)
+                toappend[i,j] = (adjindex, debateindex)
+            end
+        end
+        append!(converted, toappend[:])
+    end
+    @show size(converted)
+    @show converted
+    return converted
+end
+
+"Converts panel allocations from indices to PanelAllocation objects"
+function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorPanel}, debateindices::Vector{Int}, panelindices::Vector{Int})
+    allocations = Array{PanelAllocation}(length(debateindices))
+    for (i, (d, p)) in enumerate(zip(debateindices, panelindices))
+        debate = debates[d]
+        panel = panels[p]
+        allocations[i] = PanelAllocation(debate, chair(panel), panellists(panel), trainees(panel))
+    end
+    return allocations
 end
 
 "Given a user option, returns a solver for use in solving the optimization problem."

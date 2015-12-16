@@ -1,53 +1,49 @@
 using JsonAPI
 
+export exportjson, json
 export exportjsoninstitutions, exportjsonteams, exportjsonadjudicators, exportjsondebates,
     jsoninstitutions, jsonteams, jsonadjudicators, jsondebates
+export exportjsonadjadjhistory, exportjsonteamadjhistory, exportjsongroupedadjs
 
-function exportjsoninstitutions(ri::RoundInfo, io::IO)
-    d = jsonapidict(ri.institutions)
-    JSON.print(io, d)
+exportjson(io::IO, ri::RoundInfo, field::Symbol) = printjsonapi(io, getfield(ri, field))
+json(ri::RoundInfo, field::Symbol) = jsonapi(getfield(ri, field))
+
+exportjsoninstitutions(io::IO, ri::RoundInfo) = printjsonapi(io, ri.institutions)
+exportjsonteams(io::IO, ri::RoundInfo) = printjsonapi(io, ri.teams)
+exportjsonadjudicators(io::IO, ri::RoundInfo) = printjsonapi(io, ri.adjudicators)
+exportjsondebates(io::IO, ri::RoundInfo) = printjsonapi(io, ri.debates)
+jsoninstitutions(ri::RoundInfo) = jsonapi(ri.institutions)
+jsonteams(ri::RoundInfo) = jsonapi(ri.teams)
+jsonadjudicators(ri::RoundInfo) = jsonapi(ri.adjudicators)
+jsondebates(ri::RoundInfo) = jsonapi(ri.debates)
+
+immutable AdjAdjHistory
+    adj1::Adjudicator
+    adj2::Adjudicator
+    rounds::Vector{Int}
 end
 
-function exportjsonteams(ri::RoundInfo, io::IO)
-    d = jsonapidict(ri.teams)
-    JSON.print(io, d)
+immutable TeamAdjHistory
+    team::Team
+    adjudicator::Adjudicator
+    rounds::Vector{Int}
 end
 
-function exportjsonadjudicators(ri::RoundInfo, io::IO)
-    d = jsonapidict(ri.adjudicators)
-    JSON.print(io, d)
+immutable GroupedAdjudicators
+    adjudicators::Vector{Adjudicator}
 end
 
-function exportjsondebates(ri::RoundInfo, io::IO)
-    d = jsonapidict(ri.debates)
-    JSON.print(io, d)
+function exportjsonadjadjhistory(io::IO, ri::RoundInfo)
+    histories = [AdjAdjHistory(adjs.adj1, adjs.adj2, rounds) for (adjs, rounds) in ri.adjadjhistory]
+    printjsonapi(io, histories)
 end
 
-function jsoninstitutions(ri::RoundInfo)
-    d = jsonapidict(ri.institutions)
-    JSON.json(d)
+function exportjsonteamadjhistory(io::IO, ri::RoundInfo)
+    histories = [TeamAdjHistory(ta.team, ta.adjudicator, rounds) for (ta, rounds) in ri.teamadjhistory]
+    printjsonapi(io, histories)
 end
 
-function jsonteams(ri::RoundInfo)
-    d = jsonapidict(ri.teams)
-    JSON.json(d)
-end
-
-function jsonadjudicators(ri::RoundInfo)
-    d = jsonapidict(ri.adjudicators)
-    JSON.json(d)
-end
-
-function jsondebates(ri::RoundInfo)
-    d = jsonapidict(ri.debates)
-    JSON.json(d)
-end
-
-function exportall(ri::RoundInfo)
-    for field in fieldnames(ri)
-        d = jsonapidict(getfield(ri, field))
-        f = open(string(field)*".json", "w")
-        JSON.print(f, d)
-        close(f)
-    end
+function exportjsongroupedadjs(io::IO, ri::RoundInfo)
+    groups = [GroupedAdjudicators(adjs) for adjs in ri.groupedadjs]
+    printjsonapi(io, groups)
 end

@@ -33,22 +33,40 @@ componentweights.adjconflict = 1e6
 @time roundinfo = randomroundinfo(ndebates, currentround)
 roundinfo.componentweights = componentweights
 
-mkpath("../adjumo-frontend/public/data")
+directory = "../adjumo-frontend/public/data"
+mkpath(directory)
 
-adjudicatorsfile = open("../adjumo-frontend/public/data/adjudicators.json", "w")
-exportjsonadjudicators(roundinfo, adjudicatorsfile)
-close(adjudicatorsfile)
+fields = [
+    :adjudicators,
+    :teams,
+    :institutions,
+    :debates,
+    :adjadjconflicts,
+    :teamadjconflicts,
+    :lockedadjs,
+    :blockedadjs,
+    :componentweights,
+]
 
-teamsfile = open("../adjumo-frontend/public/data/teams.json", "w")
-exportjsonteams(roundinfo, teamsfile)
-close(teamsfile)
+for field in fields
+    filename = joinpath(directory, string(field)*".json")
+    println("Creating $filename")
+    f = open(filename, "w")
+    exportjson(f, roundinfo, field)
+    close(f)
+end
 
-institutionsfile = open("../adjumo-frontend/public/data/institutions.json", "w")
-exportjsoninstitutions(roundinfo, institutionsfile)
-close(institutionsfile)
+special_fields = [
+    "adjadjhistory",
+    "teamadjhistory",
+    "groupedadjs"
+]
 
-debatesfile = open("../adjumo-frontend/public/data/debates.json", "w")
-exportjsondebates(roundinfo, debatesfile)
-close(debatesfile)
-
-
+for field in special_fields
+    filename = joinpath(directory, field*".json")
+    println("Creating $filename")
+    f = open(filename, "w")
+    func = eval(symbol("exportjson"*field))
+    func(f, roundinfo)
+    close(f)
+end
