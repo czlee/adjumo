@@ -5,15 +5,20 @@
     <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#myModal">
       Set Parameters
     </button>
-    <button type="submit" class="btn btn-default" {{action "createAllocation"}}>
+    <button type="submit" class="btn btn-default" {{action "startNewAllocation"}}>
       Create Allocation
     </button>
   </div>
 
   <ul class="nav navbar-nav">
-    <li class="nav-item active">
-      <a>Lock/Ban Allocations</a>
+    <li class="nav-item active lock-ban-nav allocation-nav-{{allocation.id}}" {{action "showLockAndBans" allocation.id }}>
+      <a href="#">Lock/Ban Allocations</a>
     </li>
+    {{#each allocations as |allocation| }}
+      <li class="nav-item active allocation-nav allocation-nav-{{allocation.id}}" {{action "showAllocation" allocation.id }}>
+        <a href="#">Allocation {{ allocation.id }}</a>
+      </li>
+    {{/each}}
   </ul>
 
   <div class="form-inline pull-right navbar-form">
