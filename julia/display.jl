@@ -2,7 +2,7 @@
 # it if you prefer.
 
 using Formatting
-import Adjumo: debateregionclass, nameandrolelist
+import Adjumo: debateregionclass, namewithrolelist
 
 # These functions are not efficiently written, and not performance-critical.
 abbr(g::TeamGender) = ["-", "M", "F", "X"][Integer(g)+1]
@@ -39,7 +39,7 @@ function showdebatedetail(roundinfo::RoundInfo, allocation::PanelAllocation)
     printfmtln("   {}: {}", drc, join([abbr(r) for r in teamregionsordered], ", "))
 
     println("Adjudicators:")
-    for (adjname, adj) in zip(nameandrolelist(allocation), adjlist(allocation))
+    for (adjname, adj) in zip(namewithrolelist(allocation), adjlist(allocation))
         printfmtln("   {:<22}  {:<2} {:<20}  {:1} {:<3} {}",
                 adjname, abbr(adj.ranking), adj.institution.code, abbr(adj.gender), abbr(adj.language), join([abbr(r) for r in adj.regions], ","))
     end

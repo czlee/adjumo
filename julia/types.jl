@@ -17,7 +17,7 @@ export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
     addinstitution!, addteam!, addadjudicator!, adddebate!,
     addadjadjconflict!, addteamadjconflict!, addadjadjhistory!, addteamadjhistory!,
     addlockedadj!, addblockedadj!, addgroupedadjs!,
-    aggregategender
+    lockedadjs, blockedadjs, groupedadjs, aggregategender
 
 # ==============================================================================
 # Models
@@ -139,7 +139,7 @@ trainees(panel::AdjudicatorPanel) = panel.adjs[panel.np+2:end]
 
 in(adj::Adjudicator, panel::AdjudicatorPanel) = in(adj, panel.adjs)
 adjlist(panel::AdjudicatorPanel) = panel.adjs
-show(io::Base.IO, panel::AdjudicatorPanel) = print(io, "Panel[" * join(nameandrolelist(panel), ", ") * "]")
+show(io::Base.IO, panel::AdjudicatorPanel) = print(io, "Panel[" * join(namewithrolelist(panel), ", ") * "]")
 
 function adjlist(alloc::PanelAllocation)
     np = length(alloc.panellists)
@@ -161,7 +161,7 @@ Returns a list of strings, each being an Adjudicator's name annotated by \"(c)\"
 if they are a chair and \"(t)\" if they are a trainee (and nothing if they are
 a panellist).
 """
-function nameandrolelist(panel::AbstractPanel)
+function namewithrolelist(panel::AbstractPanel)
     # This function is not efficiently written and is not performance-critical.
     names = Vector{UTF8String}(1)
     names[1] = chair(panel).name * " (c)"
