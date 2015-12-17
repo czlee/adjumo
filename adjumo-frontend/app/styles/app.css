@@ -153,7 +153,7 @@ td.head-panel {
   border-left: 2px solid rgb(200, 200, 200);
 }
 .position-holder .droppable-area {
-  height: 40px;
+  min-height: 40px;
   float: left;
   width: 100%;
 }

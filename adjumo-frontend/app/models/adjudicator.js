@@ -4,7 +4,7 @@ export default DS.Model.extend({
 
   name: DS.attr('string'),
   institution: DS.belongsTo('institution'),
-  regions: DS.attr('number'),
+  region: DS.attr('number'),
 
   locked: DS.attr('bool', { defaultValue: false }),
   ranking: DS.attr('number'),

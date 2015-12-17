@@ -4,7 +4,28 @@ import DraggableMixin from '../mixins/draggable';
 export default Ember.Component.extend(DraggableMixin, {
 
   attributeBindings: 'draggable',
+  tagName: 'button',
   draggable: 'true',
+
+  classNames: ['btn', 'adjudicator-ui', 'ranking-display'],
+  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked'],
+
+  // CSS Getters
+  gender: function(){
+    return 'gender-' + String(this.get('adj').get('gender'));
+  }.property('adj'),
+  region: function() {
+    return 'region-' + String(this.get('adj').get('region'));
+  }.property('adj'),
+  language: function() {
+    return 'language-' + String(this.get('adj').language);
+  }.property('adj'),
+  ranking: function() {
+    return 'ranking-' + String(this.get('adj').get('ranking'));
+  }.property('adj'),
+  locked: function() {
+    return 'locked-' + String(this.get('adj').locked);
+  }.property('adj'),
 
   dragStart: function(event) {
     this.$('.tooltip').hide(); // Is annoying while dragging
