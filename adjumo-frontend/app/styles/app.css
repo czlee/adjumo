@@ -170,6 +170,9 @@ td.head-panel {
   display: flex;
   float: left;
 }
+.adjudicator-ui.btn.focus, , .adjudicator-ui:hover {
+
+}
 .adjudicator-ui.locked-true {
   border: 2px solid rgb(0, 0, 255);
 }
@@ -206,10 +209,10 @@ td.head-panel {
   background: rgb(240, 240, 240);
 }
 .droppable-area.dragging-active {
-  background: rgb(200, 200, 255);
+  background: rgb(240, 255, 240);
 }
 .droppable-area.dragging-over {
-  background: rgb(100, 100, 255);
+  background: #00FF50;
 }
 .adj-bottom-panel {
   border-top: 2px solid rgb(200, 200, 200);
@@ -229,6 +232,9 @@ td.head-panel {
 
 .hoverable {
   cursor: pointer;
+}
+.gender-display.gender-2:focus, .ranking-display:focus, .language-display:focus, .region-display:focus {
+  color: #fff;
 }
 .gender-display.debate-team.gender-1 {
   background: #F89CFF; /* Only show this for teams as for them it represnts M+F*/

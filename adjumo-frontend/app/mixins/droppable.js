@@ -21,6 +21,7 @@ export default Ember.Mixin.create({
   drop: function(event) {
     event.preventDefault();
     this.$('.droppable-area').removeClass('dragging-over');
+    $('.droppable-area').removeClass('dragging-active');
     return false;
   }
 

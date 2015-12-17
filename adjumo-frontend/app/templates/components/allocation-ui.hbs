@@ -83,7 +83,7 @@
       <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
         <thead>
           <tr>
-            <th {{action "sortBy" "venue"}} class="head-sortable head-venue preallocation">
+            <th {{action "sortBy" "venue"}} class="head-sortable text-center head-venue preallocation">
               <span class="glyphicon glyphicon-map-marker" data-toggle="tooltip" data-placement="top" title="Venue">
               {{#if sortAscending}}
                 <span class="glyphicon glyphicon-chevron-up" active={{sortedByVenue}}></span>
@@ -110,7 +110,7 @@
               {{/if}}
               </span>
             </th>
-            <th {{action "sortBy" "importance"}} class="head-sortable head-importance" >
+            <th {{action "sortBy" "importance"}} class="head-sortable text-center head-importance" >
               <span class="glyphicon glyphicon-dashboard" data-toggle="tooltip" data-placement="top" title="Importance">
               {{#if sortAscending}}
                 <span class="glyphicon glyphicon-chevron-up" active={{sortedByImportance}}></span>
@@ -154,7 +154,7 @@
                 Panel
               </div>
               <div class="flex-1 text-center">
-                Trainee
+                Trainees
               </div>
               <div class="flex-icon">
 
@@ -175,6 +175,32 @@
 
 </div><!--- ending main -->
 
+{{unused-ui adjudicators=model.adjudicators }}
+
 {{allocation-config config=model.config }}
 
-{{unused-ui adjudicators=model.adjudicators }}
+<!-- Modal -->
+<div class="modal fade" id="exportAllocation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Select Which Allocation To Export</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+        {{#if model.allocations}}
+          {{#each model.allocations as |allocation| }}
+            <button type="button" class="btn btn-default">
+              Export Allocation {{allocation.id}}
+            </button>
+          {{/each}}
+        {{else}}
+          No allocations to export!
+        {{/if}}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+

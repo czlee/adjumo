@@ -10,16 +10,19 @@ export default Ember.Component.extend(DroppableMixin, {
 
     var droppedAdjID = event.originalEvent.dataTransfer.getData('AdjID');
     var droppedAdj = this.get('adjudicators').findBy('id', droppedAdjID);
-    var oldPanel = droppedAdj.get('panel');
+    var droppedAdjOldPanel = droppedAdj.get('panel');
 
-    // If coming from somewhere
-    if (oldPanel.get('content')) {
-      if (droppedAdj === oldPanel.get('chair').get('content')) {
-        oldPanel.set('chair', null);
-      } else if (oldPanel.get('panellists').contains(droppedAdj)) {
-        oldPanel.set('panellists', oldPanel.get('panellists').removeObject(droppedAdj));
-      } else if (oldPanel.get('trainees').contains(droppedAdj)) {
-        oldPanel.set('trainees', oldPanel.get('trainees').removeObject(droppedAdj));
+
+    // If the dropped adj is coming from a Panel
+    if (droppedAdjOldPanel.get('content')) {
+      if (droppedAdj === droppedAdjOldPanel.get('chair').get('content')) {
+        // If coming from a chair, do a swap
+        var currentAdj = this.get('panel').get('chair');
+        droppedAdjOldPanel.set('chair', currentAdj);
+      } else if (droppedAdjOldPanel.get('panellists').contains(droppedAdj)) {
+        droppedAdjOldPanel.set('panellists', droppedAdjOldPanel.get('panellists').removeObject(droppedAdj));
+      } else if (droppedAdjOldPanel.get('trainees').contains(droppedAdj)) {
+        droppedAdjOldPanel.set('trainees', droppedAdjOldPanel.get('trainees').removeObject(droppedAdj));
       }
     }
 
