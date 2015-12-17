@@ -11,29 +11,6 @@
 
       <div class="btn-toolbar col-sm-10">
 
-        {{#if showingRegion }}
-        <div class="btn-group-sm btn-group pull-right">
-          <button class="btn btn-default region-display region-9">Europe</button>
-          <button class="btn btn-default region-display region-10">IONA</button>
-          <button class="btn btn-default region-display region-6">ANZ</button>
-          <button class="btn btn-default region-display region-7">North America</button>
-          <button class="btn btn-default region-display region-8">Latin America</button>
-          <button class="btn btn-default region-display region-2">South East Asia</button>
-          <button class="btn btn-default region-display region-1">North Asia</button>
-          <button class="btn btn-default region-display region-4">Sub-Continent</button>
-          <button class="btn btn-default region-display region-3">Middle East</button>
-          <button class="btn btn-default region-display region-5">Africa</button>
-        </div>
-        {{/if}}
-
-        {{#if showingLanguage }}
-        <div class="btn-group-sm btn-group pull-right">
-          <button class="btn btn-default language-display language-1">EPL</button>
-          <button class="btn btn-default language-display language-2">ESL</button>
-          <button class="btn btn-default language-display language-3">EFL</button>
-        </div>
-        {{/if}}
-
         <div class="pull-right btn-group btn-group-sm">
         {{#if showingRegion }}
           <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRegion"}}>
@@ -72,6 +49,29 @@
           </button>
         {{/if}}
         </div>
+
+        {{#if showingRegion }}
+        <div class="btn-group-sm btn-group pull-right">
+          <button class="btn btn-default region-display region-9">Europe</button>
+          <button class="btn btn-default region-display region-10">IONA</button>
+          <button class="btn btn-default region-display region-6">ANZ</button>
+          <button class="btn btn-default region-display region-7">North America</button>
+          <button class="btn btn-default region-display region-8">Latin America</button>
+          <button class="btn btn-default region-display region-2">South East Asia</button>
+          <button class="btn btn-default region-display region-1">North Asia</button>
+          <button class="btn btn-default region-display region-4">Sub-Continent</button>
+          <button class="btn btn-default region-display region-3">Middle East</button>
+          <button class="btn btn-default region-display region-5">Africa</button>
+        </div>
+        {{/if}}
+
+        {{#if showingLanguage }}
+        <div class="btn-group-sm btn-group pull-right">
+          <button class="btn btn-default language-display language-1">EPL</button>
+          <button class="btn btn-default language-display language-2">ESL</button>
+          <button class="btn btn-default language-display language-3">EFL</button>
+        </div>
+        {{/if}}
 
       </div>
 
@@ -121,7 +121,7 @@
             </th>
             <th class="head-importance-edit preallocation">
               <span data-toggle="tooltip" data-placement="top" title="Edit Importance">
-                Edit <span class="glyphicon glyphicon-dashboard"></span>
+                Edit Importance
               </span>
             </th>
             <th class="head-og">OG</th>

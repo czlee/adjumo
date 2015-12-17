@@ -51,16 +51,16 @@ td {
 }
 
 .head-og {
-  width: 8.5%;
+  width: 7.5%;
 }
 .head-oo {
-  width: 8.5%;
+  width: 7.5%;
 }
 .head-cg {
-  width: 8.5%;
+  width: 7.5%;
 }
 .head-co {
-  width: 8.5%;
+  width: 7.5%;
 }
 
 
@@ -71,7 +71,7 @@ td {
   width: 26%;
 }
 .debate-panel {
-  width: 52%;
+  width: auto;
 }
 
 /* Sorting Icons */
@@ -96,7 +96,7 @@ span[active="false"].glyphicon {
   line-height: 30px;
 }
 .table>tbody>tr>td.debate-team span, .table>tbody>tr>td.debate-team {
-  line-height: 0.9;
+  line-height: 1.1;
 }
 .debate-importance input {
   max-width: 100%;
