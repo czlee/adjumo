@@ -26,15 +26,11 @@ table {
   width: 100%;
   white-space: nowrap;
 }
-.table>thead>tr>th {
-  padding: 4px !important;
-}
 .table>thead>tr>th .glyphicon-chevron-down, .table>thead>tr>th .glyphicon-chevron-up {
-  padding-left: 3px;
+  display: block;
 }
 td {
   text-overflow: normal !important;
-  padding: 4px !important;
   white-space: normal !important;
 }
 
@@ -55,16 +51,16 @@ td {
 }
 
 .head-og {
-  width: 7.5%;
+  width: 8.5%;
 }
 .head-oo {
-  width: 7.5%;
+  width: 8.5%;
 }
 .head-cg {
-  width: 7.5%;
+  width: 8.5%;
 }
 .head-co {
-  width: 7.5%;
+  width: 8.5%;
 }
 
 
@@ -80,11 +76,15 @@ td {
 
 /* Sorting Icons */
 
-.head-sortable {
-  cursor: pointer;
+.table>thead>tr>th {
+  line-height: 28px;
 }
-span[active].glyphicon {
-  float: right;
+.table>thead>tr>th.head-sortable {
+  cursor: pointer;
+  line-height: 14px;
+}
+.head-sortable .glyphicon-chevron-down, .head-sortable .glyphicon-chevron-down {
+  margin-left: 2px;
 }
 span[active="false"].glyphicon {
   opacity: 0.25;
@@ -92,8 +92,11 @@ span[active="false"].glyphicon {
 
 /* Table Cells */
 
-.debate-team span {
-  line-height: 1;
+.table>tbody>tr>td {
+  line-height: 30px;
+}
+.table>tbody>tr>td.debate-team span, .table>tbody>tr>td.debate-team {
+  line-height: 0.9;
 }
 .debate-importance input {
   max-width: 100%;
@@ -101,7 +104,7 @@ span[active="false"].glyphicon {
   text-align: center;
 }
 input[type=range] {
-  height: 19px;
+  height: 30px;
 }
 
 /* Panel Component */
