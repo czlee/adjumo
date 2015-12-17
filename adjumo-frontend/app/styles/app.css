@@ -158,9 +158,10 @@ td.head-panel {
 .position-holder {
   border-right: 1px solid #FEFEFE;
 }
-.position-holder .ember-view {
+.position-holder section.ember-view {
   height: 45px;
   float: left;
+  width: 100%;
 }
 .js-drag-handle:hover {
   cursor: move;

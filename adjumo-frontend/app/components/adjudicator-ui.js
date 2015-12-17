@@ -14,7 +14,7 @@ export default Ember.Component.extend({
     // Setup the variables that will communicate with the droppable element
     var dataTransfer = event.originalEvent.dataTransfer;
     dataTransfer.setData('AdjID', this.get('adj').get('id'));
-    dataTransfer.setData('PanelID', this.get('adj').get('panelallocation').get('id'));
+    dataTransfer.setData('PanelID', this.get('adj').get('panel').get('id'));
 
     //dataTransfer.setData('Text', this.get('elementId'));
 
