@@ -83,7 +83,7 @@
       <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
         <thead>
           <tr>
-            <th {{action "sortBy" "venue"}} class="head-sortable head-venue">
+            <th {{action "sortBy" "venue"}} class="head-sortable head-venue preallocation">
               <span class="glyphicon glyphicon-map-marker" data-toggle="tooltip" data-placement="top" title="Venue">
               {{#if sortAscending}}
                 <span class="glyphicon glyphicon-chevron-up" active={{sortedByVenue}}></span>
@@ -92,7 +92,7 @@
               {{/if}}
               </span>
             </th>
-            <th {{action "sortBy" "points"}} class="head-sortable head-points text-center">
+            <th {{action "sortBy" "points"}} class="head-sortable head-points text-center preallocation">
               <span class="glyphicon glyphicon-home" data-toggle="tooltip" data-placement="top" title="Points">
               {{#if sortAscending}}
                 <span class="glyphicon glyphicon-chevron-up" active={{sortedByPoints}}></span>
@@ -101,7 +101,7 @@
               {{/if}}
               </span>
             </th>
-            <th {{action "sortBy" "weight"}} class="head-sortable head-weight text-center" >
+            <th {{action "sortBy" "weight"}} class="head-sortable head-weight text-center preallocation" >
               <span class="glyphicon glyphicon glyphicon-fire" data-toggle="tooltip" data-placement="top" title="Weight">
               {{#if sortAscending}}
                 <span class="glyphicon glyphicon-chevron-up" active={{sortedByWeight}}></span>
@@ -132,11 +132,21 @@
             <th class="head-locks preallocation">Locks</th>
             <th class="head-panel allocation hidden">
 
-              <div class="flex-icon head-language" data-toggle="tooltip" data-placement="top" title="Allocation">A</div>
-              <div class="flex-icon head-language" data-toggle="tooltip" data-placement="top" title="Language Representation">RR</div>
-              <div class="flex-icon head-regional" data-toggle="tooltip" data-placement="top" title="Regional Representation">RR</div>
-              <div class="flex-icon head-gender" data-toggle="tooltip" data-placement="top" title="Gender Representation">GR</div>
-              <div class="flex-icon head-adjudicators" {{action "sortBy" "panel"}}  data-toggle="tooltip" data-placement="top" title="Panel Strength">PS</div>
+              <div class="flex-icon" data-toggle="tooltip" data-placement="top" title="Allocation Iteration">
+                <span class="glyphicon glyphicon-tasks"></span>
+              </div>
+              <div class="flex-icon head-language" data-toggle="tooltip" data-placement="top" title="Language Representation">
+                <span class="glyphicon glyphicon-comment"></span>
+              </div>
+              <div class="flex-icon head-regional" data-toggle="tooltip" data-placement="top" title="Regional Representation">
+                <span class="glyphicon glyphicon-globe"></span>
+              </div>
+              <div class="flex-icon head-gender" data-toggle="tooltip" data-placement="top" title="Gender Representation">
+                <span class="glyphicon glyphicon-queen"></span>
+              </div>
+              <div class="flex-icon head-strength" {{action "sortBy" "panel"}}  data-toggle="tooltip" data-placement="top" title="Panel Strength">
+                <span class="glyphicon glyphicon-stats"></span>
+              </div>
               <div class="flex-1 text-center">
                 Chair
               </div>

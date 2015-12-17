@@ -55,27 +55,27 @@ td {
 }
 
 .head-og {
-  width: 8.5%;
+  width: 7.5%;
 }
 .head-oo {
-  width: 8.5%;
+  width: 7.5%;
 }
 .head-cg {
-  width: 8.5%;
+  width: 7.5%;
 }
 .head-co {
-  width: 8.5%;
+  width: 7.5%;
 }
 
 
 .head-bans {
-  width: 20%;
+  width: 26%;
 }
 .head-locks {
-  width: 20%;
+  width: 26%;
 }
 .debate-panel {
-  width: 40%;
+  width: 52%;
 }
 
 /* Sorting Icons */
@@ -115,16 +115,13 @@ input[type=range] {
   width: 30px;
   text-align: center;
 }
-.flex-icon .glyphicon {
-  font-size: 20px;
-}
 .flex-1 {
-  flex-grow: 1;
-  flex-basis: 120px;
+  flex-grow: 2;
+  flex-basis: 60px;
 }
 .flex-2 {
-  flex-grow: 2;
-  flex-basis: 120px;
+  flex-grow: 5;
+  flex-basis: 60px;
 }
 
 .debate-panel {
@@ -135,7 +132,6 @@ input[type=range] {
 .panel-ui {
   border: 2px solid rgb(200, 200, 200);
   border-radius: 6px;
-  background: rgb(240, 240, 240);
   overflow: auto;
   margin-bottom: 0px;
   display: flex;
@@ -150,13 +146,10 @@ td.head-panel {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
-.panel-ui:first-child {
-  border-right: 1px solid #FEFEFE; /* TODO: not working */
-}
 .position-holder {
   border-left: 2px solid rgb(200, 200, 200);
 }
-.position-holder section.ember-view {
+.position-holder .droppable-area {
   height: 40px;
   float: left;
   width: 100%;
@@ -209,6 +202,15 @@ td.head-panel {
 
 /* Holders */
 
+.droppable-area {
+  background: rgb(240, 240, 240);
+}
+.droppable-area.dragging-active {
+  background: rgb(200, 200, 255);
+}
+.droppable-area.dragging-over {
+  background: rgb(100, 100, 255);
+}
 .adj-bottom-panel {
   border-top: 2px solid rgb(200, 200, 200);
   background: #EFEFEF;

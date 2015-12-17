@@ -1,10 +1,10 @@
-<td class="debate-venue">
+<td class="debate-venue preallocation">
     <small>{{ debate.venue }}</small>
 </td>
-<td class="debate-points text-center">
+<td class="debate-points text-center preallocation">
     {{ debate.points }}
 </td>
-<td class="debate-weight text-center">
+<td class="debate-weight text-center preallocation">
     {{ debate.weightRounded }}
 </td>
 <td class="debate-importance text-center ranking-display ranking-{{ debate.rankingClass }}">
@@ -34,10 +34,10 @@
     </span>
 </td>
 <td class="debate-panel debate-bans preallocation">
-    <div class="panel-ui"></div>
+    <div class="panel-ui i droppable-area"></div>
 </td>
 <td class="debate-panel debate-locks preallocation">
-    <div class="panel-ui"></div>
+    <div class="panel-ui i droppable-area"></div>
 </td>
 {{#if debate.panels }}
     <td class="debate-panel allocation">

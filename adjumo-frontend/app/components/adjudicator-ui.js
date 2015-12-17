@@ -42,10 +42,4 @@ export default Ember.Component.extend({
 
   },
 
-  didInsertElement: function() {
-    Ember.run.scheduleOnce('afterRender', this, function() {
-      this.$('[data-toggle="tooltip"]').tooltip();
-    });
-  }
-
 });
