@@ -215,16 +215,16 @@ td.head-panel {
 
 /* Holders */
 
-#unusedAdjs {
+.adj-bottom-panel {
   background: #EFEFEF;
   padding: 10px;
   max-height: 150px;
   overflow: auto;
 }
-#unusedAdjs .adjudicator-ui {
+.adj-bottom-panel .adjudicator-ui {
   padding-left: 5px;
 }
-#unusedAdjs .adj-lock {
+.adj-bottom-panel .adj-lock {
   display: none;
 }
 

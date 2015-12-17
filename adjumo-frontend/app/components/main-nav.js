@@ -15,6 +15,9 @@ export default Ember.Component.extend({
       // Table UI elements
       $(".preallocation").removeClass("hidden");
       $(".allocation").addClass("hidden");
+      // Adj Area
+      $("#allAdjs").removeClass("hidden");
+      $("#unusedAdjs").addClass("hidden");
     },
 
     showAllocation: function(allocationID) {
@@ -30,6 +33,10 @@ export default Ember.Component.extend({
       $(clickedAllocationClass).children(".glyphicon-eye-close").removeClass("hidden")
       // Table UI elements
       $(".preallocation").addClass("hidden");
+      $(".allocation").removeClass("hidden");
+      // Adj Area
+      $("#allAdjs").addClass("hidden");
+      $("#unusedAdjs").removeClass("hidden");
     },
 
     startNewAllocation: function() {
@@ -44,6 +51,9 @@ export default Ember.Component.extend({
       $(".allocation").removeClass("hidden");
       // Do this after the UI stuff as the new UI allocation has active on
       this.sendAction('startNewAllocation');
+      // Adj Area
+      $("#allAdjs").addClass("hidden");
+      $("#unusedAdjs").removeClass("hidden");
     }
 
   }

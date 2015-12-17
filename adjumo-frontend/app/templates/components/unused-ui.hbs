@@ -1,6 +1,13 @@
-<div id="unusedAdjs" class="container-fluid navbar-fixed-bottom">
+<div id="unusedAdjs" class="adj-bottom-panel container-fluid navbar-fixed-bottom hidden">
 
     {{#each unusedAdjudicators as |adj|}}
+        {{adjudicator-ui adj=adj}}
+    {{/each}}
+
+</div>
+<div id="allAdjs" class="adj-bottom-panel container-fluid navbar-fixed-bottom">
+
+    {{#each adjudicators as |adj|}}
         {{adjudicator-ui adj=adj}}
     {{/each}}
 
