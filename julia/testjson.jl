@@ -34,39 +34,4 @@ componentweights.adjconflict = 1e6
 roundinfo.componentweights = componentweights
 
 directory = "../adjumo-frontend/public/data"
-mkpath(directory)
-
-fields = [
-    :adjudicators,
-    :teams,
-    :institutions,
-    :debates,
-    :adjadjconflicts,
-    :teamadjconflicts,
-    :lockedadjs,
-    :blockedadjs,
-    :componentweights,
-]
-
-for field in fields
-    filename = joinpath(directory, string(field)*".json")
-    println("Creating $filename")
-    f = open(filename, "w")
-    exportjson(f, roundinfo, field)
-    close(f)
-end
-
-special_fields = [
-    "adjadjhistory",
-    "teamadjhistory",
-    "groupedadjs"
-]
-
-for field in special_fields
-    filename = joinpath(directory, field*".json")
-    println("Creating $filename")
-    f = open(filename, "w")
-    func = eval(symbol("exportjson"*field))
-    func(f, roundinfo)
-    close(f)
-end
+exportroundinfo(roundinfo, directory)

@@ -1,60 +1,215 @@
+# Function that imports a JSON file output by the Tabbie2 system.
+#
+# This code is specialized to extract just the info it requires from Tabbie2's
+# output. The interface between Tabbie2 and Adjumo is designed more to make
+# export easy for Tabbie2 than it is to represent the actual information that
+# needs to traverse the interface.
+#
+# This code also isn't very robust: if there are any errors in the file, it
+# will crash.
+
 using JSON
+
+typealias JsonDict Dict{AbstractString,Any}
+
+# These are set by the adjudicator core. Tabbie2's regions are ignored.
+REGIONS = [
+    NorthAsia     => ["CN","JP","KR"],
+    SouthEastAsia => ["MY","ID","PH","SG"],
+    MiddleEast    => ["IL","LB"],
+    SouthAsia     => ["IN","PK","BD"],
+    Africa        => ["ZA","BW","NA"],
+    Oceania       => ["AU","NZ"],
+    NorthAmerica  => ["CA","US"],
+    LatinAmerica  => ["MX","BR"],
+    Europe        => ["FR","DE","IT","AT","HR","GR"],
+    IONA          => ["UK","IE"],
+]
+
+# These are taken from tabbie2.git/common/models/User.php
+const TABBIE_GENDER_NOTREVEALING = 0
+const TABBIE_GENDER_MALE = 1
+const TABBIE_GENDER_FEMALE = 2
+const TABBIE_GENDER_OTHER = 3
+const TABBIE_LANGUAGE_ENL = 1
+const TABBIE_LANGUAGE_ESL = 2
+const TABBIE_LANGUAGE_EFL = 3
 
 function importtabbiejson(io::IO)
     d = JSON.parse(io)
     return converttabbiejson(d)
 end
 
-function hasobjectwithid{T}(v::Vector{T}, id::Int)
+function hasobjectwithid(v::Vector, id::Int)
     return findfirst(x -> x.id == id, v) > 0
 end
 
-function findobjectwithid{T}(v::Vector{T}, id::Int)
-    return findfirst(x -> x.id == id, v)
+function getobjectwithid{T}(v::Vector{T}, id::Int)
+    index = findfirst(x -> x.id == id, v)
+    if index == 0
+        error("$T with ID $id does not exist")
+    end
+    return v[index]
 end
 
-function converttabbiejson(dict::Array{Any,1})
+function converttabbiejson(dict::JsonDict)
     ri = RoundInfo(99)
+
+    for institution in dict["societies"]
+        addinstitution!(ri, institution)
+    end
+
+    for debate in dict["debates"]
+        addteamsanddebate!(ri, debate)
+    end
+
+    # We need to create all the adjudicators before we can add information about
+    # conflicts and history, as they reference each other.
     for debate in dict
-        adddebate!(ri, debate)
+        addadjudicators!(ri, debate["panel"]["adjudicators"])
+    end
+    for debate in dict
+        addadjudicatorrelationships!(ri, debate["panel"]["adjudicators"])
     end
 end
 
-function adddebate!(ri::RoundInfo, d::Dict{AbstractString,Any})
+function addteamsanddebate!(ri::RoundInfo, d::JsonDict)
     id = d["id"]
     if hasobjectwithid(ri.debates, id)
         error("Duplicate debate ID: $id")
     end
+
+    # Add debate and teams (judges aren't part of "debates" in Adjumo)
     teams = Team[]
-    for teamdict in values(d["teams"]) # don't care about positions
+    for position in ["OG", "OO", "CG", "CO"] # we imply position by order
+        teamdict = d["teams"][position]
         t = addteam!(ri, teamdict)
         push!(teams, t)
     end
     adddebate!(ri, id, teams)
 end
 
-function addteam!(ri::RoundInfo, d::Dict{AbstractString,Any})
+function addteam!(ri::RoundInfo, d::JsonDict)
     id = d["id"]
     if hasobjectwithid(ri.teams, id)
         error("Duplicate team ID: $id")
     end
     name = d["name"]
-    institution = getoraddinstitution!(ri, d["society"])
-    gender = interpretgender(d["speaker"])
-    region = interpretregion(d["region_id"], d["region_name"])
-
+    institution = getobjectwithid(ri.institutions, d["society_id"])
+    gender = interpretteamgender(d["speaker"])
+    language = interpretlanguage(d["language_status"])
+    points = d["points"]
+    addteam!(ri, id, name, institution, institution.region, gender, language, points)
 end
 
-function getoraddinstitution!(ri::RoundInfo, d::Dict{AbstractString,Any})
+function addinstitution!(ri::RoundInfo, d::JsonDict)
     id = d["id"]
-    existingindex = findobjectwithid(ri.institutions, id)
-    if existingindex > 0
-        return ri.institutions[existingindex]
+    if hasobjectwithid(ri.institutions, id)
+        error("Duplicate institution ID: $id")
     end
-    name = "Institution $id"
-    code = "Inst$id"
-    region = NoRegion
-    # region = interpretregion(d["region_id"], d["region_name"])
-    return addinstitution!(ri, id, name, code, region)
+    name = d["fullname"]
+    code = d["abr"]
+    region = interpretregion(d["country"])
+    addinstitution!(ri, id, name, code, region)
 end
 
+function interpretteamgender(speakersdict::JsonDict)
+    genderA = interpretpersongender(speakersdict["A"]["gender"])
+    genderB = interpretpersongender(speakersdict["B"]["gender"])
+    if genderA == PersonMale && genderB == PersonMale
+        return TeamMale
+    elseif genderA == PersonFemale && genderB == PersonFemale
+        return TeamFemale
+    else
+        return TeamMixed
+    end
+end
+
+function interpretpersongender(value::Integer)
+    if value == TABBIE_GENDER_MALE || value == TABBIE_GENDER_NOTREVEALING
+        return PersonMale
+    elseif value == TABBIE_GENDER_FEMALE || value == TABBIE_GENDER_OTHER
+        return PersonFemale
+    else
+        error("Unrecognised speaker gender value: $value")
+    end
+end
+
+function interpretregion(countryalpha2::AbstractString)
+    for (region, countries) in REGIONS
+        if countryalpha2 ∈ countries
+            return region
+        end
+    end
+    warn("Country code $countryalpha2 has no region defined.")
+    return RegionNone
+end
+
+function interpretlanguage(val::Int)
+    if val == TABBIE_LANGUAGE_ENL
+        return EnglishPrimary
+    elseif val == TABBIE_LANGUAGE_ESL
+        return EnglishSecond
+    elseif val == TABBIE_LANGUAGE_EFL
+        return EnglishForeign
+    else
+        return NoLanguage
+    end
+end
+
+function addadjudicators!(ri::RoundInfo, adjdicts::Array{JsonDict})
+    for adjdict in adjdicts
+        addadjudicator!(ri, adjdict)
+    end
+end
+
+function addadjudicator!(ri::RoundInfo, d::JsonDict)
+    id = d["id"]
+    if hasobjectwithid(ri.adjudicators, id)
+        error("Duplicate adjudicator ID: $id")
+    end
+    name = d["name"]
+    institution = getobjectwithid(ri.institutions, d["society_id"])
+    ranking = interpretranking(d["strength"])
+    other_institutions = [getobjectwithid(ri.institutions, id) for id in d["societies"]]
+    regions = unique([inst.region for inst in [institution; other_institutions]])
+    gender = interpretpersongender(d["gender"])
+    language = interpretlanguage(d["language_status"])
+    adj = addadjudicator!(id, name, institution, ranking, regions, gender, language)
+
+    # Also add team conflicts for every society
+    conflictteams = filter(x -> x.institution ∈ other_institutions, ri.teams)
+    for conflictteam in conflictteams
+        addteamadjconflict!(ri, conflictteam, adj)
+    end
+end
+
+function addadjudicatorrelationships!(ri::RoundInfo, d::JsonDict)
+    id = d["id"]
+    adj = getobjectwithid(ri.adjudicators, id)
+    for conflictadjidstr in d["strikedAdjudicators"]
+        conflictadjid = parse(Int, conflictadjidstr)
+        conflictadj = getobjectwithid(ri.adjudicators, conflictadjid)
+        addadjadjconflict!(ri, adj, conflictadj)
+    end
+    for conflictteamidstr in d["strikedTeams"]
+        conflictteamid = parse(Int, conflictadjidstr)
+        conflictteam = getobjectwithid(ri.teams, conflictteamid)
+        addteamadjconflict!(ri, conflictteam, adj)
+    end
+    for seenadjiddict in d["pastAdjudicatorIDs"]
+        round = parse(Int, seenadjiddict["rno"])
+        seenadjid = parse(Int, seenadjiddict["bid"])
+        seenadj = getobjectwithid(ri.adjudicators, seenadjid)
+        addadjadjhistory!(ri, adj, seenadj, round)
+    end
+    for seenteamiddict in d["pastTeamIDs"]
+        round = parse(Int, seenteamiddict["rno"])
+        for pos in ["og", "oo", "cg", "co"]
+            seenteamidkey = pos * "_team_id"
+            seenteamid = parse(Int, seenteamiddict[seenteamidkey])
+            seenteam = getobjectwithid(ri.teams, seenteamid)
+            addteamadjhistory!(ri, seenteam, adj, round)
+        end
+    end
+end
