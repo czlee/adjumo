@@ -6,12 +6,17 @@ export default DS.Model.extend({
   //points: DS.attr('number'),
   //venue: DS.attr('string'),
   weight: DS.attr('number'),
+  importance: DS.attr('number'),
 
-  panel: DS.belongsTo('panel'),
+  panels: DS.hasMany('panelallocations'),
   teams: DS.hasMany('team'),
 
   weightRounded: Ember.computed('weight', function() {
-    return Math.round(this.get('weight') * 10) / 10;
+    return Math.round(this.get('weight') * 10) / 10; // normalise to 1-9 like adjs
+  }),
+
+  rankingClass: Ember.computed('importance', function() {
+    return Math.round(this.get('importance') * 0.9) / 1;
   }),
 
   og: Ember.computed('teams', function() {
@@ -28,6 +33,8 @@ export default DS.Model.extend({
 
   co: Ember.computed('teams', function() {
     return this.get('teams').objectAt(3);
-  })
+  }),
+
+
 
 });

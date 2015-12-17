@@ -7,41 +7,45 @@
 <td class="debate-weight text-center">
     {{ debate.weightRounded }}
 </td>
-<td class="debate-importance">
-    {{ input type="number" value=debate.importance }}
+<td class="debate-importance text-center ranking-display ranking-{{ debate.rankingClass }}">
+    {{ debate.importance }}
 </td>
-<td class="debate-og debate-team gender-{{ debate.og.gender }} region-{{ debate.og.institution.region.id }} language-{{ debate.og.language }}">
+<td class="debate-importance-edit preallocation">
+    {{input type="range" min="1" max="10" step="1" value=debate.importance class="form-control" }}
+</td>
+<td class="debate-og debate-team gender-{{ debate.og.gender }} region-{{ debate.og.region }} language-{{ debate.og.language }}">
     <span data-toggle="tooltip" data-placement="top" title="{{ debate.og.institution.name }}">
         {{ debate.og.name }}
     </span>
 </td>
-<td class="debate-oo debate-team gender-{{ debate.oo.gender }} region-{{ debate.oo.institution.region.id }} language-{{ debate.oo.language }}">
+<td class="debate-oo debate-team gender-{{ debate.oo.gender }} region-{{ debate.oo.region }} language-{{ debate.oo.language }}">
     <span data-toggle="tooltip" data-placement="top" title="{{ debate.oo.institution.name }}">
         {{ debate.oo.name }}
     </span>
 </td>
-<td class="debate-cg debate-team gender-{{ debate.cg.gender }} region-{{ debate.cg.institution.region.id }} language-{{ debate.cg.language }}">
+<td class="debate-cg debate-team gender-{{ debate.cg.gender }} region-{{ debate.cg.region }} language-{{ debate.cg.language }}">
     <span data-toggle="tooltip" data-placement="top" title="{{ debate.cg.institution.name }}">
         {{ debate.cg.name }}
     </span>
 </td>
-<td class="debate-co debate-team gender-{{ debate.co.gender }} region-{{ debate.co.institution.region.id }} language-{{ debate.co.language }}">
+<td class="debate-co debate-team gender-{{ debate.co.gender }} region-{{ debate.co.region }} language-{{ debate.co.language }}">
     <span data-toggle="tooltip" data-placement="top" title="{{ debate.co.institution.name }}">
         {{ debate.co.name }}
     </span>
 </td>
-<td class="debate-language-strength text-center ">
+<td class="debate-bans preallocation">
 
 </td>
-<td class="debate-regional-strength text-center ">
+<td class="debate-locks preallocation">
 
 </td>
-<td class="debate-gender-strength text-center ">
+{{#if debate.panels }}
+    <td class="debate-panel allocation">
+        {{#each debate.panels as |panel|}}
+            {{panel-ui panel=panel adjudicators=adjudicators}}
+        {{/each}}
+    </td>
+{{else}}
+    <td class="debate-panel allocation hidden"></td>
+{{/if}}
 
-</td>
-<td class="debate-panel-strength text-center ">
-    {{ debate.panel.ranking }}
-</td>
-<td class="debate-panel">
-    {{panel-ui panel=debate.panel adjudicators=adjudicators}}
-</td>

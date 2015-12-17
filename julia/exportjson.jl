@@ -89,7 +89,7 @@ end
 
 function exportallocations(allocations::Vector{PanelAllocation}, directory::AbstractString)
     mkpath(directory)
-    filename = joinpath(directory, "allocations.json")
+    filename = joinpath(directory, "panelallocations.json")
     println("Writing $filename")
     f = open(filename, "w")
     printjsonapi(f, allocations)

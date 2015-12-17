@@ -47,6 +47,7 @@ allocations = allocateadjudicators(roundinfo; solver=args["solver"], enforceteam
 
 println("Writing JSON files...")
 directory = args["json-dir"]
+
 exportroundinfo(roundinfo, directory)
 exportallocations(allocations, directory)
 

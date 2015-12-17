@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
 
-  sortProperties: ['points:desc'],
+  sortProperties: ['weight:desc'],
   sortedDebates: Ember.computed.sort('model.debates', 'sortProperties'),
   sortAscending: false,
   theFilter: "",
@@ -47,42 +47,78 @@ export default Ember.Component.extend({
     })(this));
   }).property("theFilter", "sortProperties"),
 
+  genderOn: function() {
+    this.set('showingGender', true);
+    $(".adjudicator-ui, .debate-team").addClass("gender-display");
+  },
+  genderOff: function() {
+    this.set('showingGender', false);
+    $(".adjudicator-ui, .debate-team").removeClass("gender-display");
+  },
+  regionOn: function() {
+    this.set('showingRegion', true);
+    $(".adjudicator-ui, .debate-team").addClass("region-display");
+  },
+  regionOff: function() {
+    this.set('showingRegion', false);
+    $(".adjudicator-ui, .debate-team").removeClass("region-display");
+  },
+  languageOn: function() {
+    this.set('showingLanguage', true);
+    $(".adjudicator-ui, .debate-team").addClass("language-display");
+  },
+  languageOff: function() {
+    this.set('showingLanguage', false);
+    $(".adjudicator-ui, .debate-team").removeClass("language-display");
+  },
+  rankingOn: function() {
+    this.set('showingRanking', true);
+    $(".adjudicator-ui, .debate-importance").addClass("ranking-display");
+  },
+  rankingOff: function() {
+    this.set('showingRanking', false);
+    $(".adjudicator-ui, .debate-importance").removeClass("ranking-display");
+  },
+
+
   actions: {
 
     showGender: function() {
-      this.set('showingGender', true);
-      $(".adjudicator-ui, .debate-team").toggleClass("gender-display");
+      this.genderOn();
+      this.regionOff();
+      this.languageOff();
+      this.rankingOff();
     },
     hideGender: function() {
-      this.set('showingGender', false);
-      $(".adjudicator-ui, .debate-team").toggleClass("gender-display");
+      this.genderOff();
     },
-
     showRegion: function() {
-      this.set('showingRegion', true);
-      $(".adjudicator-ui, .debate-team").toggleClass("region-display");
+      this.regionOn();
+      this.languageOff();
+      this.rankingOff();
+      this.genderOff();
     },
     hideRegion: function() {
-      this.set('showingRegion', false);
-      $(".adjudicator-ui, .debate-team").toggleClass("region-display");
+      this.regionOff();
     },
-
     showLanguage: function() {
-      this.set('showingLanguage', true);
-      $(".adjudicator-ui, .debate-team").toggleClass("language-display");
+      this.languageOn();
+      this.genderOff();
+      this.regionOff();
+      this.rankingOff();
     },
     hideLanguage: function() {
-      this.set('showingLanguage', false);
-      $(".adjudicator-ui, .debate-team").toggleClass("language-display");
+      this.languageOff();
     },
 
     showRanking: function() {
-      this.set('showingRanking', true);
-      $(".adjudicator-ui, .debate-team").toggleClass("ranking-display");
+      this.rankingOn();
+      this.genderOff();
+      this.regionOff();
+      this.languageOff();
     },
     hideRanking: function() {
-      this.set('showingRanking', false);
-      $(".adjudicator-ui, .debate-team").toggleClass("ranking-display");
+      this.rankingOff();
     },
 
     sortBy: function(property) {
@@ -97,7 +133,7 @@ export default Ember.Component.extend({
   },
 
   sortedByPoints: function() {
-    if (this.get('sortProperties') === "points:asc" || this.get('sortProperties') == "points:desc") {
+    if (this.get('sortProperties') == "points:asc" || this.get('sortProperties') == "points:desc") {
       return true;
     } else {
       return false;
@@ -105,7 +141,15 @@ export default Ember.Component.extend({
   }.property("sortProperties"),
 
   sortedByVenue: function() {
-    if (this.get('sortProperties') === "venue:asc" || this.get('sortProperties') == "venue:desc") {
+    if (this.get('sortProperties') == "venue:asc" || this.get('sortProperties') == "venue:desc") {
+      return true;
+    } else {
+      return false;
+    }
+  }.property("sortProperties"),
+
+  sortedByWeight: function() {
+    if (this.get('sortProperties') == "weight:asc" || this.get('sortProperties') === "weight:desc") {
       return true;
     } else {
       return false;
@@ -113,7 +157,7 @@ export default Ember.Component.extend({
   }.property("sortProperties"),
 
   sortedByImportance: function() {
-    if (this.get('sortProperties') === "importance:asc" || this.get('sortProperties') == "importance:desc") {
+    if (this.get('sortProperties') == "importance:asc" || this.get('sortProperties') == "importance:desc") {
       return true;
     } else {
       return false;

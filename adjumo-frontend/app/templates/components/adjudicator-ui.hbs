@@ -1,5 +1,5 @@
 {{#if adj}}
-    <button type="button" class="btn adjudicator-ui gender-{{ adj.gender }} {{ adj.region_classes }} language-{{ adj.language }}">
+    <button type="button" class="btn adjudicator-ui gender-{{ adj.gender }} region-{{ adj.regions }} language-{{ adj.language }} ranking-display ranking-{{ adj.ranking }}">
         <div class="flex-icon flex-icon hoverable adj-lock">
             {{#if adj.locked}}
                 <span class="glyphicon glyphicon-ok-circle" {{action 'unlockAdj'}} data-toggle="tooltip" data-placement="top" title="Click to unlock to this adj to this debate"></span>
@@ -15,7 +15,7 @@
                 {{ adj.institution.code }}
             </span>
         </div>
-        <div class="flex-icon flex-icon adj-ranking hoverable ranking-display ranking-{{ adj.ranking }}">
+        <div class="flex-icon flex-icon adj-ranking hoverable">
             <span data-toggle="tooltip" data-placement="top" title="{{ adj.ranking }}">
                 <strong>{{ adj.get_ranking }}</strong>
             </span>

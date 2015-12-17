@@ -3,6 +3,8 @@ import DroppableMixin from '../mixins/droppable';
 
 export default Ember.Component.extend(DroppableMixin, {
 
+  tagName: 'section',
+
   drop: function(event) {
     console.log('drop to chair UI');
 
