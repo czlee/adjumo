@@ -3,9 +3,12 @@ import DroppableMixin from '../mixins/droppable';
 
 export default Ember.Component.extend(DroppableMixin, {
 
+  sortProperties: ['ranking:desc','name:asc'],
+  sortedAdjudicators: Ember.computed.sort('adjudicators', 'sortProperties'),
+
   unusedAdjudicators: Ember.computed('adjudicators.@each.panel', function() {
     var unusedAdjudicators = new Array();
-    this.get('adjudicators').forEach(function(adjudicator) {
+    this.get('sortedAdjudicators').forEach(function(adjudicator) {
       if (!adjudicator.get('panel').get('content')) {
         unusedAdjudicators.push(adjudicator);
       }

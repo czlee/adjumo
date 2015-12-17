@@ -162,6 +162,12 @@ export default Ember.Component.extend({
     } else {
       return false;
     }
-  }.property("sortProperties")
+  }.property("sortProperties"),
+
+  didInsertElement: function() {
+    Ember.run.scheduleOnce('afterRender', this, function() {
+      this.$('[data-toggle="tooltip"]').tooltip();
+    });
+  }
 
 });
