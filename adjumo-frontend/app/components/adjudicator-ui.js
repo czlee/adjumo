@@ -20,7 +20,7 @@ export default Ember.Component.extend({
 
   },
   dragEnd: function(event) {
-    //console.log('adj UI stopped being dragged');
+    console.log('adj UI stopped being dragged');
 
     // Let the controller know this view is done dragging
     //this.set("content.isDragging", false); // PB: unclear why am doing this

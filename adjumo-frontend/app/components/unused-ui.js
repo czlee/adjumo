@@ -7,7 +7,7 @@ export default Ember.Component.extend(DroppableMixin, {
   sortedAdjudicators: Ember.computed.sort('adjudicators', 'sortProperties'),
 
   unusedAdjudicators: Ember.computed('adjudicators.@each.panel', function() {
-    var unusedAdjudicators = new Array();
+    var unusedAdjudicators = [];
     this.get('sortedAdjudicators').forEach(function(adjudicator) {
       if (!adjudicator.get('panel').get('content')) {
         unusedAdjudicators.push(adjudicator);

@@ -22,9 +22,7 @@ router.get('/importround', function(req, res, next) {
       res.send(JSON.parse(body));
 
     } else {
-
       console.log('failed to import a round');
-
     }
   });
 

@@ -11,7 +11,7 @@ export default DS.Model.extend({
   allocation: DS.belongsTo('allocation-iteration'),
 
   ranking: function() {
-    var rankings = new Array();
+    var rankings = [];
 
     rankings.push(this.get('chair').get('ranking'));
 
