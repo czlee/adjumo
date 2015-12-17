@@ -1,6 +1,29 @@
-# This file is part of the Adjumo module.
+# This file is part of the AdjumoDataTools module, or you can include("display.jl")
+# it if you prefer.
 
-export showconstraints, showdebatedetail
+using Formatting
+import Adjumo: debateregionclass, nameandrolelist
+
+# These functions are not efficiently written, and not performance-critical.
+abbr(g::TeamGender) = ["-", "M", "F", "X"][Integer(g)+1]
+abbr(g::PersonGender) = ["-", "m", "f", "o"][Integer(g)+1]
+abbr(r::Region) = ["-", "NAsia", "SEAsi", "MEast", "SAsia", "Afric", "Ocean", "NAmer", "LAmer", "Europ", "IONA"][Integer(r)+1]
+abbr(l::LanguageStatus) = ["-", "EPL", "ESL", "EFL"][Integer(l)+1]
+abbr(r::Wudc2015AdjudicatorRank) = ["T-", "T", "T+", "P-", "P", "P+", "C-", "C", "C+"][Integer(r)+1]
+
+function showteams(rinfo::RoundInfo)
+    for team in sort(rinfo.teams, by=t->t.points, rev=true)
+        printfmtln("{:<25} {:>2} {:1} {:<3} {:<5}",
+            team.name, team.points, abbr(team.gender), abbr(team.language), abbr(team.region))
+    end
+end
+
+function showadjudicators(rinfo::RoundInfo)
+    for adj in sort(rinfo.adjudicators, by=t->t.ranking, rev=true)
+        printfmtln("{:<25} {:<2} {:1} {:<3} {}",
+            adj.name, abbr(adj.ranking), abbr(adj.gender), abbr(adj.language), join([abbr(r) for r in adj.regions], ","))
+    end
+end
 
 "Prints information about the given debate."
 function showdebatedetail(roundinfo::RoundInfo, allocation::PanelAllocation)

@@ -1,3 +1,15 @@
+# Generate random datasets for use with Adjumo.
+#
+# Usage:
+#   using Adjumo
+#   using AdjumoDataTools
+#   ndebates = 50
+#   currentround = 5
+#   ri = randomroundinfo(ndebates, currentround)
+#
+# You can also include("random.jl") this file rather than use the
+# AdjumoDataTools module, if you prefer.
+
 include("randomdata.jl")
 
 function addrandomregions!(adj::Adjudicator)

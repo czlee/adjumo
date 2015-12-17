@@ -1,14 +1,13 @@
 push!(LOAD_PATH, Base.source_dir())
 using ArgParse
 using Adjumo
+using AdjumoDataTools
 using JsonAPI
-
-include("random.jl")
 
 argsettings = ArgParseSettings()
 @add_arg_table argsettings begin
     "-n", "--ndebates"
-        help = "Number of debates in round"
+        help = "Number of debates in round (for random datasets only)"
         arg_type = Int
         default = 5
     "-r", "--currentround"
@@ -25,6 +24,8 @@ argsettings = ArgParseSettings()
     "--json-dir"
         help = "Where to write JSON files upon completion."
         default = "../adjumo-frontend/public/data"
+    "--tabbie1"
+        help = "Import a Tabbie1 database: <username>/<password>/<database>"
 end
 args = parse_args(ARGS, argsettings)
 
@@ -40,7 +41,12 @@ componentweights.teamhistory = 100
 componentweights.adjhistory = 100
 componentweights.teamconflict = 1e6
 componentweights.adjconflict = 1e6
-@time roundinfo = randomroundinfo(ndebates, currentround)
+if args["tabbie1"] == nothing
+    roundinfo = randomroundinfo(ndebates, currentround)
+else
+    username, password, database = split(args["tabbie1"], '/')
+    roundinfo = gettabbie1roundinfo(username, password, database, currentround)
+end
 roundinfo.componentweights = componentweights
 
 allocations = allocateadjudicators(roundinfo; solver=args["solver"], enforceteamconflicts=args["enforce-team-conflicts"])
