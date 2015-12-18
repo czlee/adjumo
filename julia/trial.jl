@@ -43,7 +43,7 @@ componentweights.teamhistory = 100
 componentweights.adjhistory = 100
 componentweights.teamconflict = 1e6
 componentweights.adjconflict = 1e6
-if args["tabbie1"] == nothing
+if length(args["tabbie1"]) == 0
     roundinfo = randomroundinfo(ndebates, currentround)
 else
     username, password, database = args["tabbie1"]
