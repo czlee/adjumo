@@ -52,11 +52,28 @@ Then install in Julia:
 julia> Pkg.add("GLPKMathProgInterface")
 ```
 
-### Back-End
+### User Interface
 
-- ```cd adjumo-backend```
-- [Install Node.js](https://nodejs.org/en/)
-- [Install Bower](http://bower.io)
+##### Dependencies
+
+- [Node.js](https://nodejs.org/en/)
+- [Bower](http://bower.io)
+
+##### Frontend
+
+- ```cd frontend```
+- ```npm install```
+- ```bower install```
+- ```ember serve --proxy http://0.0.0.0:3000```
+
+##### Backend
+
+- ```cd backend```
+- ```npm install```
+- ```npm start``` (open ```http://0.0.0.0:3000/``` to confirm it's working)
+
+###### Usage
+
 - To start the server: ```ember s```
 - Open ```http://localhost:4200```
 

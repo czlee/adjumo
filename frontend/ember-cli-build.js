@@ -8,8 +8,23 @@ module.exports = function(defaults) {
   });
 
   app.import('bower_components/bootstrap/dist/css/bootstrap.min.css');
-
   app.import('bower_components/bootstrap/dist/js/bootstrap.min.js');
+
+  app.import('bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.svg', {
+    destDir: 'assets/fonts'
+  });
+  app.import('bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf', {
+    destDir: 'assets/fonts'
+  });
+  app.import('bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff', {
+    destDir: 'assets/fonts'
+  });
+  app.import('bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.eot', {
+    destDir: 'assets/fonts'
+  });
+  app.import('bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2', {
+    destDir: 'assets/fonts'
+  });
 
   // Use `app.import` to add additional libraries to the generated
   // output files.
