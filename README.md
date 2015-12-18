@@ -59,14 +59,16 @@ julia> Pkg.add("GLPKMathProgInterface")
 - [Node.js](https://nodejs.org/en/)
 - [Bower](http://bower.io)
 
-##### Frontend
+##### Frontend Setup
 
 - ```cd frontend```
 - ```npm install```
 - ```bower install```
-- ```ember serve --proxy http://0.0.0.0:3000```
+- ```ember serve --proxy http://0.0.0.0:3000``` (open ```http://localhost:4200/``` to confirm it's working)
 
-##### Backend
+Note: the front end requires that there are json files present in ```public/data``` to be imported
+
+##### Backend Setup
 
 - ```cd backend```
 - ```npm install```

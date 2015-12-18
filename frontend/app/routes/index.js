@@ -51,7 +51,6 @@ export default Ember.Route.extend({
       this.store.findAll('debate').then((debate) => {
         // ASYNC: waiting for find
         debate.forEach(function(debate) {
-          console.log(debate.get('id') + "-" + debate.get('importance'));
           data[debate.get('id')] = debate.get('importance');
         });
 

@@ -318,6 +318,9 @@ td.head-panel {
 }
 
 
+.ranking-display.ranking-0 {
+  background: #000;
+}
 .ranking-display.ranking-1 {
   background: #660200;
 }
