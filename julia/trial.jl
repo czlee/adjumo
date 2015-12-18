@@ -25,7 +25,8 @@ argsettings = ArgParseSettings()
         help = "Where to write JSON files upon completion."
         default = "../adjumo-frontend/public/data"
     "--tabbie1"
-        help = "Import a Tabbie1 database: <username>/<password>/<database>"
+        help = "Import a Tabbie1 database: <username> <password> <database>"
+        nargs = 3
 end
 args = parse_args(ARGS, argsettings)
 
@@ -44,7 +45,7 @@ componentweights.adjconflict = 1e6
 if args["tabbie1"] == nothing
     roundinfo = randomroundinfo(ndebates, currentround)
 else
-    username, password, database = split(args["tabbie1"], '/')
+    username, password, database = args["tabbie1"]
     roundinfo = gettabbie1roundinfo(username, password, database, currentround)
 end
 roundinfo.componentweights = componentweights
