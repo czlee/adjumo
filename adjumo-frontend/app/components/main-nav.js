@@ -50,15 +50,10 @@ export default Ember.Component.extend({
       $(".preallocation").addClass("hidden");
       $(".allocation").removeClass("hidden");
       // Do this after the UI stuff as the new UI allocation has active on
-      this.sendAction('startNewAllocation');
+      this.sendAction('startNewAllocation'); // Calls up to index.js' createAllocation
       // Adj Area
       $("#allAdjs").addClass("hidden");
       $("#unusedAdjs").removeClass("hidden");
-
-      console.log(this.get('config'));
-      console.log('test');
-      this.get('config').save();
-
 
       // Test POST
     }

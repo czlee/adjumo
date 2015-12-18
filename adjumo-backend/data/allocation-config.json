@@ -1,0 +1,10 @@
+{
+    "data": {
+        "type": "allocation-config",
+        "id": 1,
+        "attributes": {
+            "teamhistory": 1,
+            "adjhistory": 1
+        }
+    }
+}

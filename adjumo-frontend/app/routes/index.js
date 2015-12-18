@@ -3,9 +3,19 @@ import Ember from 'ember';
 export default Ember.Route.extend({
 
   model: function() {
+
+      // console.log('___');
+      // var config = this.store.peekRecord('allocation-config', 1);
+
+      // .save().then(function(config) {
+      //   console.log(config);
+      //   console.log(config.get('quality'));
+      // });
+      // console.log('___');
+
       return Ember.RSVP.hash({ // Need this to return multiple model types
 
-          config:                 this.store.createRecord('allocation-config'),
+          config:                 this.store.findRecord('allocation-config', 1),
           regions:                this.store.findAll('region'),
           institutions:           this.store.findAll('institution'),
           adjudicators:           this.store.findAll('adjudicator'),

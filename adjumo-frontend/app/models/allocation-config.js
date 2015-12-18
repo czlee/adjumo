@@ -6,9 +6,9 @@ export default DS.Model.extend({
   regional: DS.attr('number', { defaultValue: 5 } ),
   language: DS.attr('number', { defaultValue: 5 } ),
   gender: DS.attr('number', { defaultValue: 5 } ),
-  teamHistory: DS.attr('number', { defaultValue: 5 } ),
-  adjHistory: DS.attr('number', { defaultValue: 5 } ),
-  teamConflict: DS.attr('number', { defaultValue: 5 } ),
-  adjConflict: DS.attr('number', { defaultValue: 5 } ),
+  teamhistory: DS.attr('number', { defaultValue: 5 } ),
+  adjhistory: DS.attr('number', { defaultValue: 5 } ),
+  teamconflict: DS.attr('number', { defaultValue: 5 } ),
+  adjconflict: DS.attr('number', { defaultValue: 5 } ),
 
 });

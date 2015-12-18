@@ -1,10 +1,45 @@
 var express = require('express');
 var router = express.Router();
+var fs = require('fs');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Adjumo' });
 });
+
+router.get('/allocation-configs/1', function(req, res, next) {
+  console.log('getting config 1');
+  res.json(
+  {
+    data: {
+      type: "allocation-config",
+      id: 1,
+      attributes: {
+        teamhistory: 1,
+        adjhistory: 1,
+        teamconflict: 1,
+        adjconflict: 1,
+        quality: 1,
+        regional: 1,
+        language: 1,
+        gender: 9,
+      }
+    }
+  });
+});
+
+router.patch('/allocation-configs/1', function(req, res, next) {
+  console.log('patching config 1');
+  console.log(req.body);
+  console.log('___');
+})
+
+router.post('/allocation-configs/', function(req, res, next) {
+  fs.writeFile('data/allocation-config.json', JSON.stringify(req.body, null, 4), function(err){
+    if (err) throw err;
+    console.log('It\'s saved!');
+  })
+})
 
 router.get('/importround', function(req, res, next) {
 
@@ -18,7 +53,6 @@ router.get('/importround', function(req, res, next) {
     if (!error && response.statusCode == 200) {
 
       //var parsedImport = JSON.parse(body);
-      res.setHeader('Content-Type', 'application/json');
       res.send(JSON.parse(body));
 
     } else {
