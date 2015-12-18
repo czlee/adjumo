@@ -7,18 +7,16 @@ __precompile__()
 module Adjumo
 
 using JuMP
-using Formatting
 
 SUPPORTED_SOLVERS = [
+    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj),
     ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap),
     ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap),
-    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj),
 ]
 
 include("types.jl")
 include("score.jl")
-include("display.jl")
-include("importtabbie.jl")
+include("importtabbie2.jl")
 include("exportjson.jl")
 
 export allocateadjudicators, generatefeasiblepanels
@@ -157,8 +155,6 @@ function convertteamadjconflicts(roundinfo::RoundInfo)
         end
         append!(converted, toappend[:])
     end
-    @show size(converted)
-    @show converted
     return converted
 end
 

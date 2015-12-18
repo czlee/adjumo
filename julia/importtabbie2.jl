@@ -116,13 +116,7 @@ end
 function interpretteamgender(speakersdict::JsonDict)
     genderA = interpretpersongender(speakersdict["A"]["gender"])
     genderB = interpretpersongender(speakersdict["B"]["gender"])
-    if genderA == PersonMale && genderB == PersonMale
-        return TeamMale
-    elseif genderA == PersonFemale && genderB == PersonFemale
-        return TeamFemale
-    else
-        return TeamMixed
-    end
+    return aggregategender(genderA, genderB)
 end
 
 function interpretpersongender(value::Integer)

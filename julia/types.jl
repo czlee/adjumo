@@ -5,18 +5,19 @@ import Base.in
 import Base.convert
 
 export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
-    Debate, AdjumoComponentWeights, RoundInfo,
+    Debate, AdjumoComponentWeights, RoundInfo, PanelAllocation,
     TeamGender, TeamNoGender, TeamMale, TeamFemale, TeamMixed,
     PersonGender, PersonNoGender, PersonMale, PersonFemale, PersonOther,
     Region, NoRegion, NorthAsia, SouthEastAsia, MiddleEast, SouthAsia, Africa, Oceania, NorthAmerica, LatinAmerica, Europe, IONA,
     LanguageStatus, NoLanguage, EnglishPrimary, EnglishSecond, EnglishForeign,
     Wudc2015AdjudicatorRank, TraineeMinus, Trainee, TraineePlus, PanellistMinus, Panellist, PanellistPlus, ChairMinus, Chair, ChairPlus,
-    abbr, numteamsfrominstitution, numteams, numdebates, numadjs, adjlist,
+    numteamsfrominstitution, numteams, numdebates, numadjs, adjlist,
     chair, panellists, trainees,
     conflicted, hasconflict, roundsseen,
     addinstitution!, addteam!, addadjudicator!, adddebate!,
     addadjadjconflict!, addteamadjconflict!, addadjadjhistory!, addteamadjhistory!,
-    addlockedadj!, addblockedadj!, addgroupedadjs!
+    addlockedadj!, addblockedadj!, addgroupedadjs!,
+    lockedadjs, blockedadjs, groupedadjs, aggregategender
 
 # ==============================================================================
 # Models
@@ -27,13 +28,6 @@ export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
 @enum Region NoRegion NorthAsia SouthEastAsia MiddleEast SouthAsia Africa Oceania NorthAmerica LatinAmerica Europe IONA
 @enum LanguageStatus NoLanguage EnglishPrimary EnglishSecond EnglishForeign
 @enum Wudc2015AdjudicatorRank TraineeMinus Trainee TraineePlus PanellistMinus Panellist PanellistPlus ChairMinus Chair ChairPlus
-
-# These functions are not efficiently written, and not performance-critical.
-abbr(g::TeamGender) = ["-", "M", "F", "X"][Integer(g)+1]
-abbr(g::PersonGender) = ["-", "m", "f", "o"][Integer(g)+1]
-abbr(r::Region) = ["-", "NAsia", "SEAsi", "MEast", "SAsia", "Afric", "Ocean", "NAmer", "LAmer", "Europ", "IONA"][Integer(r)+1]
-abbr(l::LanguageStatus) = ["-", "EPL", "ESL", "EFL"][Integer(l)+1]
-abbr(r::Wudc2015AdjudicatorRank) = ["T-", "T", "T+", "P-", "P", "P+", "C-", "C", "C+"][Integer(r)+1]
 
 type Institution
     id::Int
@@ -145,7 +139,7 @@ trainees(panel::AdjudicatorPanel) = panel.adjs[panel.np+2:end]
 
 in(adj::Adjudicator, panel::AdjudicatorPanel) = in(adj, panel.adjs)
 adjlist(panel::AdjudicatorPanel) = panel.adjs
-show(io::Base.IO, panel::AdjudicatorPanel) = print(io, "Panel[" * join(nameandrolelist(panel), ", ") * "]")
+show(io::Base.IO, panel::AdjudicatorPanel) = print(io, "Panel[" * join(namewithrolelist(panel), ", ") * "]")
 
 function adjlist(alloc::PanelAllocation)
     np = length(alloc.panellists)
@@ -167,7 +161,7 @@ Returns a list of strings, each being an Adjudicator's name annotated by \"(c)\"
 if they are a chair and \"(t)\" if they are a trainee (and nothing if they are
 a panellist).
 """
-function nameandrolelist(panel::AbstractPanel)
+function namewithrolelist(panel::AbstractPanel)
     # This function is not efficiently written and is not performance-critical.
     names = Vector{UTF8String}(1)
     names[1] = chair(panel).name * " (c)"
@@ -288,3 +282,14 @@ blockedadjs(rinfo::RoundInfo, debate::Debate) = Adjudicator[x.adjudicator for x 
 groupedadjs(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = filter(x -> x ⊆ adjs, rinfo.groupedadjs)
 
 hasconflict(roundinfo::RoundInfo, panel::AdjudicatorPanel) = hasconflict(roundinfo, adjlist(panel))
+
+function aggregategender(genderA::PersonGender, genderB::PersonGender)
+    if genderA == PersonMale && genderB == PersonMale
+        return TeamMale
+    elseif genderA == PersonFemale && genderB == PersonFemale
+        return TeamFemale
+    else
+        return TeamMixed
+    end
+end
+
