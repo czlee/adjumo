@@ -7,24 +7,27 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Adjumo' });
 });
 
-// router.get('/allocation-configs/1', function(req, res, next) {
+// router.get('/allocationC-onfigs/1', function(req, res, next) {
 //   console.log('getting config 1');
 //   res.json(
 //   {
-//     data: {
-//       type: "allocation-config",
-//       id: 1,
-//       attributes: {
-//         teamhistory: 1,
-//         adjhistory: 1,
-//         teamconflict: 1,
-//         adjconflict: 1,
-//         quality: 1,
-//         regional: 1,
-//         language: 1,
-//         gender: 9,
+//     "data":
+//     [
+//       {
+//         "type": "allocation-config",
+//         "id": 1,
+//         "attributes": {
+//           "teamhistory": 1,
+//           "adjhistory": 1,
+//           "teamconflict": 1,
+//           "adjconflict": 1,
+//           "quality": 1,
+//           "regional": 1,
+//           "language": 1,
+//           "gender": 9,
+//         }
 //       }
-//     }
+//     ]
 //   });
 // });
 
@@ -34,7 +37,7 @@ router.get('/', function(req, res, next) {
 //   console.log('___');
 // })
 
-router.post('/allocationConfigs/', function(req, res) {
+router.post('/allocation-configs/', function(req, res) {
   console.log('posting an allocation config'); // populated!
   console.log(req.body); // populated!
   fs.writeFile('data/allocation-config.json', JSON.stringify(req.body, null, 4), function(err){

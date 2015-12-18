@@ -15,8 +15,7 @@ export default Ember.Route.extend({
 
       return Ember.RSVP.hash({ // Need this to return multiple model types
 
-          //config:                 this.store.findRecord('allocation-config', 1),
-          config:                 this.store.createRecord('allocation-config', { id:1 }),
+          config:                 this.defaultConfig,
           regions:                this.store.findAll('region'),
           institutions:           this.store.findAll('institution'),
           adjudicators:           this.store.findAll('adjudicator'),
@@ -28,6 +27,18 @@ export default Ember.Route.extend({
   },
 
   currentAllocationIteration: 0,
+
+  defaultConfig: {
+    id: 1,
+    teamhistory: 1,
+    adjhistory: 1,
+    teamconflict: 1,
+    adjconflict: 1,
+    quality: 1,
+    regional: 1,
+    language: 1,
+    gender: 9,
+  },
 
   actions: {
 
@@ -52,31 +63,40 @@ export default Ember.Route.extend({
 
     finishSaveConfig: function() {
 
-      var onSuccess =  function(post){
-        console.log("success with save");
-        console.log(post);
-      };
-      var onFail =  function(post){
-        console.log("failed to save");
-        console.log(post);
-      };
-
       console.log('creating config');
 
-      this.store.findRecord('allocation-config', 1).then((config) =>{
-        // make a new object each time so it POSTs the whole thing
-        var test = this.store.createRecord('allocation-config', {
-            quality: config.get('quality'),
-            regional: config.get('regional'),
-            language: config.get('language'),
-            gender: config.get('gender'),
-            teamhistory: config.get('teamhistory'),
-            adjhistory: config.get('adjhistory'),
-            teamconflict: config.get('teamconflict'),
-            adjconflict: config.get('adjconflict'),
-        });
-        test.save().then(onSuccess, onFail);
+      var data = {
+        quality: this.defaultConfig.quality,
+        regional: this.defaultConfig.regional,
+        language: this.defaultConfig.language,
+        gender: this.defaultConfig.gender,
+        teamhistory: this.defaultConfig.teamhistory,
+        adjhistory: this.defaultConfig.adjhistory,
+        teamconflict: this.defaultConfig.teamconflict,
+        adjconflict: this.defaultConfig.adjconflict,
+      };
+      var posting = $.post( '/allocation-configs', data);
+      posting.done(function( data ) {
+        console.log('saved allocation to file');
       });
+
+
+
+
+      // this.store.findRecord('allocation-config', 1).then((config) =>{
+      //   // make a new object each time so it POSTs the whole thing
+      //   var test = this.store.createRecord('allocation-config', {
+      //       quality: config.get('quality'),
+      //       regional: config.get('regional'),
+      //       language: config.get('language'),
+      //       gender: config.get('gender'),
+      //       teamhistory: config.get('teamhistory'),
+      //       adjhistory: config.get('adjhistory'),
+      //       teamconflict: config.get('teamconflict'),
+      //       adjconflict: config.get('adjconflict'),
+      //   });
+      //   test.save().then(onSuccess, onFail);
+      // });
 
 
     }
