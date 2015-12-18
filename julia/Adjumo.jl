@@ -9,9 +9,9 @@ module Adjumo
 using JuMP
 
 SUPPORTED_SOLVERS = [
+    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj),
     ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap),
     ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap),
-    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj),
 ]
 
 include("types.jl")
