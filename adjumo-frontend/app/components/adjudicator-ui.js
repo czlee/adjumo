@@ -1,15 +1,34 @@
 import Ember from 'ember';
+import DraggableMixin from '../mixins/draggable';
 
-export default Ember.Component.extend({
+export default Ember.Component.extend(DraggableMixin, {
 
   attributeBindings: 'draggable',
+  tagName: 'button',
   draggable: 'true',
 
-  dragStart: function(event) {
-    console.log('adj UI started being dragged');
+  classNames: ['btn', 'adjudicator-ui', 'ranking-display'],
+  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked'],
 
-    // Let the controller know this view is dragging
-    //this.set("content.isDragging", true); // PB: unclear why im doing this
+  // CSS Getters
+  gender: function(){
+    return 'gender-' + String(this.get('adj').get('gender'));
+  }.property('adj'),
+  region: function() {
+    return 'region-' + String(this.get('adj').get('region'));
+  }.property('adj'),
+  language: function() {
+    return 'language-' + String(this.get('adj').language);
+  }.property('adj'),
+  ranking: function() {
+    return 'ranking-' + String(this.get('adj').get('ranking'));
+  }.property('adj'),
+  locked: function() {
+    return 'locked-' + String(this.get('adj').locked);
+  }.property('adj'),
+
+  dragStart: function(event) {
+    this.$('.tooltip').hide(); // Is annoying while dragging
 
     // Setup the variables that will communicate with the droppable element
     var dataTransfer = event.originalEvent.dataTransfer;
@@ -18,13 +37,13 @@ export default Ember.Component.extend({
 
     //dataTransfer.setData('Text', this.get('elementId'));
 
+    return this._super(event);
   },
   dragEnd: function(event) {
-    //console.log('adj UI stopped being dragged');
-
     // Let the controller know this view is done dragging
     //this.set("content.isDragging", false); // PB: unclear why am doing this
 
+    return this._super(event);
   },
 
   //locked: Ember.computed.alias('adj.locked'),

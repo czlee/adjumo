@@ -26,26 +26,28 @@ table {
   width: 100%;
   white-space: nowrap;
 }
+.table>thead>tr>th .glyphicon-chevron-down, .table>thead>tr>th .glyphicon-chevron-up {
+  display: block;
+}
 td {
   text-overflow: normal !important;
-  padding: 4px !important;
   white-space: normal !important;
 }
 
 .head-venue {
-  width: 2.5%;
+  width: 3.5%;
 }
 .head-points {
-  width: 2.5%;
+  width: 3.5%;
 }
 .head-weight {
-  width: 2.5%;
+  width: 3.5%;
 }
 .head-importance {
-  width: 2.5%;
+  width: 3.5%;
 }
 .head-importance-edit {
-  width: 20%;
+  width: 16%;
 }
 
 .head-og {
@@ -63,27 +65,26 @@ td {
 
 
 .head-bans {
-  width: 20%;
+  width: 26%;
 }
 .head-locks {
-  width: 20%;
+  width: 26%;
 }
 .debate-panel {
-  width: 40%;
+  width: auto;
 }
-
-#allocation th {
-  font-size: 10px;
-}
-
 
 /* Sorting Icons */
 
-.head-sortable {
-  cursor: pointer;
+.table>thead>tr>th {
+  line-height: 28px;
 }
-span[active].glyphicon {
-  float: right;
+.table>thead>tr>th.head-sortable {
+  cursor: pointer;
+  line-height: 14px;
+}
+.head-sortable .glyphicon-chevron-down, .head-sortable .glyphicon-chevron-down {
+  margin-left: 2px;
 }
 span[active="false"].glyphicon {
   opacity: 0.25;
@@ -91,8 +92,11 @@ span[active="false"].glyphicon {
 
 /* Table Cells */
 
-.debate-team span {
-  line-height: 1;
+.table>tbody>tr>td {
+  line-height: 30px;
+}
+.table>tbody>tr>td.debate-team span, .table>tbody>tr>td.debate-team {
+  line-height: 1.1;
 }
 .debate-importance input {
   max-width: 100%;
@@ -100,7 +104,7 @@ span[active="false"].glyphicon {
   text-align: center;
 }
 input[type=range] {
-  height: 19px;
+  height: 30px;
 }
 
 /* Panel Component */
@@ -109,24 +113,18 @@ input[type=range] {
   padding: 0px !important;
   line-height: 40px;
 }
-.panel-ui .glyphicon {
-  line-height: 40px;
-}
 .flex-icon {
   flex: none;
   width: 30px;
   text-align: center;
 }
-.flex-icon .glyphicon {
-  font-size: 20px;
-}
 .flex-1 {
-  flex-grow: 1;
-  flex-basis: 120px;
+  flex-grow: 2;
+  flex-basis: 60px;
 }
 .flex-2 {
-  flex-grow: 2;
-  flex-basis: 120px;
+  flex-grow: 5;
+  flex-basis: 60px;
 }
 
 .debate-panel {
@@ -134,14 +132,13 @@ input[type=range] {
 }
 
 /* Panel Component */
-
 .panel-ui {
   border: 2px solid rgb(200, 200, 200);
   border-radius: 6px;
-  background: rgb(240, 240, 240);
   overflow: auto;
   margin-bottom: 0px;
   display: flex;
+  min-height: 40px;
 }
 .table>thead>tr>th.head-panel {
   display: flex;
@@ -152,14 +149,11 @@ td.head-panel {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
-.panel-ui:first-child {
-  border-right: 1px solid #FEFEFE; /* TODO: not working */
-}
 .position-holder {
-  border-right: 1px solid #FEFEFE;
+  border-left: 2px solid rgb(200, 200, 200);
 }
-.position-holder section.ember-view {
-  height: 45px;
+.position-holder .droppable-area {
+  min-height: 40px;
   float: left;
   width: 100%;
 }
@@ -172,20 +166,19 @@ td.head-panel {
 .adjudicator-ui {
   background: rgb(220, 220, 220);
   text-align: left;
-  padding: 0 0 0 0;
+  padding: 0 0 0 4px;
   border: 2px solid rgb(200, 200, 200);
   border-radius: 3px;
-  margin: 3px 3px;
+  margin: 2px 2px;
   display: flex;
   float: left;
 }
-.adjudicator-ui .glyphicon.glyphicon-ok-circle {
-  color: #00aeff;
-}
-.adjudicator-ui .glyphicon.glyphicon-record {
-  color: #CCC;
-}
+.adjudicator-ui.btn.focus, , .adjudicator-ui:hover {
 
+}
+.adjudicator-ui.locked-true {
+  border: 2px solid rgb(0, 0, 255);
+}
 .adjudicator-ui .flex-icon span,
 .adjudicator-ui .flex-icon span.glyphicon {
   line-height: 32px;
@@ -207,7 +200,7 @@ td.head-panel {
 }
 .adj-lock {
   flex: none;
-  width: 20px;
+  width: 26px;
 }
 .adj-name {
   flex-grow: 1;
@@ -215,16 +208,26 @@ td.head-panel {
 
 /* Holders */
 
-#unusedAdjs {
+.droppable-area {
+  background: rgb(240, 240, 240);
+}
+.droppable-area.dragging-active {
+  background: rgb(240, 255, 240);
+}
+.droppable-area.dragging-over {
+  background: #00FF50;
+}
+.adj-bottom-panel {
+  border-top: 2px solid rgb(200, 200, 200);
   background: #EFEFEF;
-  padding: 10px;
+  padding: 5px;
   max-height: 150px;
   overflow: auto;
 }
-#unusedAdjs .adjudicator-ui {
+.adj-bottom-panel .adjudicator-ui {
   padding-left: 5px;
 }
-#unusedAdjs .adj-lock {
+.adj-bottom-panel .adj-lock {
   display: none;
 }
 
@@ -232,6 +235,9 @@ td.head-panel {
 
 .hoverable {
   cursor: pointer;
+}
+.gender-display.gender-2:focus, .ranking-display:focus, .language-display:focus, .region-display:focus {
+  color: #fff;
 }
 .gender-display.debate-team.gender-1 {
   background: #F89CFF; /* Only show this for teams as for them it represnts M+F*/

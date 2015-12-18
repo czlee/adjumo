@@ -11,29 +11,6 @@
 
       <div class="btn-toolbar col-sm-10">
 
-        {{#if showingRegion }}
-        <div class="btn-group-sm btn-group">
-          <button class="btn btn-default region-display region-9">Europe</button>
-          <button class="btn btn-default region-display region-10">IONA</button>
-          <button class="btn btn-default region-display region-6">ANZ</button>
-          <button class="btn btn-default region-display region-7">North America</button>
-          <button class="btn btn-default region-display region-8">Latin America</button>
-          <button class="btn btn-default region-display region-2">South East Asia</button>
-          <button class="btn btn-default region-display region-1">North Asia</button>
-          <button class="btn btn-default region-display region-4">Sub-Continent</button>
-          <button class="btn btn-default region-display region-3">Middle East</button>
-          <button class="btn btn-default region-display region-5">Africa</button>
-        </div>
-        {{/if}}
-
-        {{#if showingLanguage }}
-        <div class="btn-group-sm btn-group btn-group-sm">
-          <button class="btn btn-default language-display language-1">EPL</button>
-          <button class="btn btn-default language-display language-2">ESL</button>
-          <button class="btn btn-default language-display language-3">EFL</button>
-        </div>
-        {{/if}}
-
         <div class="pull-right btn-group btn-group-sm">
         {{#if showingRegion }}
           <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRegion"}}>
@@ -73,6 +50,29 @@
         {{/if}}
         </div>
 
+        {{#if showingRegion }}
+        <div class="btn-group-sm btn-group pull-right">
+          <button class="btn btn-default region-display region-9">Europe</button>
+          <button class="btn btn-default region-display region-10">IONA</button>
+          <button class="btn btn-default region-display region-6">ANZ</button>
+          <button class="btn btn-default region-display region-7">North America</button>
+          <button class="btn btn-default region-display region-8">Latin America</button>
+          <button class="btn btn-default region-display region-2">South East Asia</button>
+          <button class="btn btn-default region-display region-1">North Asia</button>
+          <button class="btn btn-default region-display region-4">Sub-Continent</button>
+          <button class="btn btn-default region-display region-3">Middle East</button>
+          <button class="btn btn-default region-display region-5">Africa</button>
+        </div>
+        {{/if}}
+
+        {{#if showingLanguage }}
+        <div class="btn-group-sm btn-group pull-right">
+          <button class="btn btn-default language-display language-1">EPL</button>
+          <button class="btn btn-default language-display language-2">ESL</button>
+          <button class="btn btn-default language-display language-3">EFL</button>
+        </div>
+        {{/if}}
+
       </div>
 
     </div><!--- ending col-sm-12 -->
@@ -83,36 +83,46 @@
       <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
         <thead>
           <tr>
-            <th {{action "sortBy" "venue"}} class="head-sortable head-venue" data-toggle="tooltip" data-placement="top" title="Venue">
-              Venue {{#if sortAscending}}
+            <th {{action "sortBy" "venue"}} class="head-sortable text-center head-venue preallocation">
+              <span class="glyphicon glyphicon-map-marker" data-toggle="tooltip" data-placement="top" title="Venue">
+              {{#if sortAscending}}
                 <span class="glyphicon glyphicon-chevron-up" active={{sortedByVenue}}></span>
               {{else}}
                 <span class="glyphicon glyphicon-chevron-down" active={{sortedByVenue}}></span>
               {{/if}}
+              </span>
             </th>
-            <th {{action "sortBy" "points"}} class="head-sortable head-points text-center" data-toggle="tooltip" data-placement="top" title="Points">
-              Points {{#if sortAscending}}
-                  <span class="glyphicon glyphicon-chevron-up" active={{sortedByPoints}}></span>
-                {{else}}
-                  <span class="glyphicon glyphicon-chevron-down" active={{sortedByPoints}}></span>
-                {{/if}}
+            <th {{action "sortBy" "points"}} class="head-sortable head-points text-center preallocation">
+              <span class="glyphicon glyphicon-home" data-toggle="tooltip" data-placement="top" title="Points">
+              {{#if sortAscending}}
+                <span class="glyphicon glyphicon-chevron-up" active={{sortedByPoints}}></span>
+              {{else}}
+                <span class="glyphicon glyphicon-chevron-down" active={{sortedByPoints}}></span>
+              {{/if}}
+              </span>
             </th>
-            <th {{action "sortBy" "weight"}} class="head-sortable head-weight text-center" data-toggle="tooltip" data-placement="top" title="Weight">
-              Weight {{#if sortAscending}}
-                  <span class="glyphicon glyphicon-chevron-up" active={{sortedByWeight}}></span>
-                {{else}}
-                  <span class="glyphicon glyphicon-chevron-down" active={{sortedByWeight}}></span>
-                {{/if}}
+            <th {{action "sortBy" "weight"}} class="head-sortable head-weight text-center preallocation" >
+              <span class="glyphicon glyphicon glyphicon-fire" data-toggle="tooltip" data-placement="top" title="Weight">
+              {{#if sortAscending}}
+                <span class="glyphicon glyphicon-chevron-up" active={{sortedByWeight}}></span>
+              {{else}}
+                <span class="glyphicon glyphicon-chevron-down" active={{sortedByWeight}}></span>
+              {{/if}}
+              </span>
             </th>
-            <th {{action "sortBy" "importance"}} class="head-sortable head-importance" data-toggle="tooltip" data-placement="top" title="Importance">
-              VIP {{#if sortAscending}}
-                  <span class="glyphicon glyphicon-chevron-up" active={{sortedByImportance}}></span>
-                {{else}}
-                  <span class="glyphicon glyphicon-chevron-down" active={{sortedByImportance}}></span>
-                {{/if}}
+            <th {{action "sortBy" "importance"}} class="head-sortable text-center head-importance" >
+              <span class="glyphicon glyphicon-dashboard" data-toggle="tooltip" data-placement="top" title="Importance">
+              {{#if sortAscending}}
+                <span class="glyphicon glyphicon-chevron-up" active={{sortedByImportance}}></span>
+              {{else}}
+                <span class="glyphicon glyphicon-chevron-down" active={{sortedByImportance}}></span>
+              {{/if}}
+              </span>
             </th>
             <th class="head-importance-edit preallocation">
-              Edit VIP
+              <span data-toggle="tooltip" data-placement="top" title="Edit Importance">
+                Edit Importance
+              </span>
             </th>
             <th class="head-og">OG</th>
             <th class="head-oo">OO</th>
@@ -122,19 +132,29 @@
             <th class="head-locks preallocation">Locks</th>
             <th class="head-panel allocation hidden">
 
-              <div class="flex-icon head-language" data-toggle="tooltip" data-placement="top" title="Allocation">A</div>
-              <div class="flex-icon head-language" data-toggle="tooltip" data-placement="top" title="Language Representation">RR</div>
-              <div class="flex-icon head-regional" data-toggle="tooltip" data-placement="top" title="Regional Representation">RR</div>
-              <div class="flex-icon head-gender" data-toggle="tooltip" data-placement="top" title="Gender Representation">GR</div>
-              <div class="flex-icon head-adjudicators" {{action "sortBy" "panel"}}  data-toggle="tooltip" data-placement="top" title="Panel Strength">PS</div>
-              <div class="flex-1 text-center">
+              <div class="flex-icon" data-toggle="tooltip" data-placement="top" title="Allocation Iteration">
+                <span class="glyphicon glyphicon-tasks"></span>
+              </div>
+              <div class="flex-icon head-language" data-toggle="tooltip" data-placement="top" title="Language Representation">
+                <span class="glyphicon glyphicon-comment"></span>
+              </div>
+              <div class="flex-icon head-regional" data-toggle="tooltip" data-placement="top" title="Regional Representation">
+                <span class="glyphicon glyphicon-globe"></span>
+              </div>
+              <div class="flex-icon head-gender" data-toggle="tooltip" data-placement="top" title="Gender Representation">
+                <span class="glyphicon glyphicon-queen"></span>
+              </div>
+              <div class="flex-icon head-strength" {{action "sortBy" "panel"}}  data-toggle="tooltip" data-placement="top" title="Panel Strength">
+                <span class="glyphicon glyphicon-stats"></span>
+              </div>
+              <div class="flex-1 ">
                 Chair
               </div>
-              <div class="flex-2 text-center">
+              <div class="flex-2 ">
                 Panel
               </div>
-              <div class="flex-1 text-center">
-                Trainee
+              <div class="flex-1">
+                Trainees
               </div>
               <div class="flex-icon">
 
@@ -155,6 +175,32 @@
 
 </div><!--- ending main -->
 
+{{unused-ui adjudicators=model.adjudicators }}
+
 {{allocation-config config=model.config }}
 
-{{unused-ui adjudicators=model.adjudicators }}
+<!-- Modal -->
+<div class="modal fade" id="exportAllocation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Select Which Allocation To Export</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+        {{#if model.allocations}}
+          {{#each model.allocations as |allocation| }}
+            <button type="button" class="btn btn-default">
+              Export Allocation {{allocation.id}}
+            </button>
+          {{/each}}
+        {{else}}
+          No allocations to export!
+        {{/if}}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+

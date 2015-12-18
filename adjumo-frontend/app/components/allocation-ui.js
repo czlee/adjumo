@@ -149,7 +149,7 @@ export default Ember.Component.extend({
   }.property("sortProperties"),
 
   sortedByWeight: function() {
-    if (this.get('sortProperties') == "weight:asc" || this.get('sortProperties') === "weight:desc") {
+    if (this.get('sortProperties') == "weight:asc" || this.get('sortProperties') == "weight:desc") {
       return true;
     } else {
       return false;
@@ -162,6 +162,12 @@ export default Ember.Component.extend({
     } else {
       return false;
     }
-  }.property("sortProperties")
+  }.property("sortProperties"),
+
+  didInsertElement: function() {
+    Ember.run.scheduleOnce('afterRender', this, function() {
+      this.$('[data-toggle="tooltip"]').tooltip();
+    });
+  }
 
 });

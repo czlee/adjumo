@@ -13,7 +13,7 @@ export default Ember.Route.extend({
           debates:                this.store.findAll('debate'),
           allocations:            this.store.findAll('allocation-iteration', 'id', { reload: true }),
 
-      })
+      });
   },
 
   currentAllocationIteration: 0,
@@ -30,7 +30,7 @@ export default Ember.Route.extend({
 
       // this.store.findAll('panel').then().filterBy('allocation', null).set('allocation', newAllocation)
       this.store.findAll('panelallocation').then((panels) => {
-        panels.forEach(function(item, index) {
+        panels.forEach(function(item) {
           if (item.get('allocation')) {
             item.set('allocation', newAllocation);
           }
