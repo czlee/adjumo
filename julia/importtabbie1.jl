@@ -71,11 +71,11 @@ end
 function gettabbie1roundinfo(username, password, dbname, currentround; host="localhost", port=5432)
     rinfo = RoundInfo(currentround)
 
-    println("Connecting to database...")
+    println("gettabbie1roundinfo: Connecting to database $dbname...")
     conn = connect(Postgres, host, username, password, dbname, port)
 
     # Institutions
-    println("Importing institutions...")
+    println("gettabbie1roundinfo: Importing institutions...")
     stmt = prepare(conn, "SELECT univ_id, univ_name, univ_code FROM university;")
     result = execute(stmt)
     f = open("../misc/institutions-augmented.csv")
@@ -98,7 +98,7 @@ function gettabbie1roundinfo(username, password, dbname, currentround; host="loc
     end
 
     # Teams
-    println("Importing teams...")
+    println("gettabbie1roundinfo: Importing teams...")
     stmt = prepare(conn, "SELECT team_id, univ_id, team_code, esl FROM team;")
     result = execute(stmt)
     f = open("../misc/speakers-augmented.csv")
@@ -126,7 +126,7 @@ function gettabbie1roundinfo(username, password, dbname, currentround; host="loc
     end
 
     # Adjudicators
-    println("Importing adjudicators...")
+    println("gettabbie1roundinfo: Importing adjudicators...")
     stmt = prepare(conn, "SELECT adjud_id, univ_id, adjud_name, region_id FROM adjudicator;")
     result = execute(stmt)
     f = open("../misc/adjudicators-augmented.csv")
@@ -158,7 +158,7 @@ function gettabbie1roundinfo(username, password, dbname, currentround; host="loc
 
     # Previous rounds
     for round in 1:currentround-1
-        println("Importing previous round $round...")
+        println("gettabbie1roundinfo: Importing history from round $round...")
         stmt = prepare(conn, "SELECT adjud_round_$round.debate_id, adjud_id, first, second, third, fourth FROM adjud_round_$round LEFT JOIN result_round_$round ON result_round_$round.debate_id = adjud_round_$round.debate_id ORDER BY adjud_round_$round.debate_id")
         result = execute(stmt)
         iterstate = start(result)
@@ -194,6 +194,19 @@ function gettabbie1roundinfo(username, password, dbname, currentround; host="loc
             end
         end
     end
+
+    # Current round
+    println("gettabbie1roundinfo: Importing draw from round $currentround...")
+    stmt = prepare(conn, "SELECT debate_id, oo, oo, cg, co FROM draw_round_$currentround")
+    result = execute(stmt)
+    for row in result
+        id = Int(row[1])
+        teamids = map(Int, row[2:5])
+        teams = [getobjectwithid(rinfo.teams, tid) for tid in teamids]
+        adddebate!(rinfo, id, teams)
+    end
+
+    println("gettabbie1roundinfo: There are $(numdebates(rinfo)) debates and $(numadjs(rinfo)) adjudicators.")
 
     disconnect(conn)
     return rinfo
