@@ -54,6 +54,13 @@ export default Ember.Component.extend({
       // Adj Area
       $("#allAdjs").addClass("hidden");
       $("#unusedAdjs").removeClass("hidden");
+
+      console.log(this.get('config'));
+      console.log('test');
+      this.get('config').save();
+
+
+      // Test POST
     }
 
   }
