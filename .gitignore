@@ -1,15 +1,18 @@
-adjumo-backend/node_modules/*
-adjumo-backend/data/*
 
-# compiled output
-adjumo-frontend/dist
-adjumo-frontend/tmp
-adjumo-frontend/public
-julia/*.json
+# frontend dependencies
+frontend/node_modules
+frontend/bower_components
 
-# dependencies
-adjumo-frontend/node_modules
-adjumo-frontend/bower_components
+# frontend compiled output
+frontend/dist
+frontend/tmp
+frontend/public
+
+# backend dependencies
+backend/node_modules
+
+# backend data
+backend/data
 
 # misc
 /.sass-cache

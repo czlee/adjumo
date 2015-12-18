@@ -23,7 +23,7 @@ argsettings = ArgParseSettings()
         action = :store_true
     "--json-dir"
         help = "Where to write JSON files upon completion."
-        default = "../adjumo-frontend/public/data"
+        default = "../frontend/public/data"
     "--tabbie1"
         help = "Import a Tabbie1 database: <username> <password> <database>"
         metavar = "ARG"

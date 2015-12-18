@@ -33,5 +33,5 @@ componentweights.adjconflict = 1e6
 @time roundinfo = randomroundinfo(ndebates, currentround)
 roundinfo.componentweights = componentweights
 
-directory = "../adjumo-frontend/public/data"
+directory = "../frontend/public/data"
 exportroundinfo(roundinfo, directory)

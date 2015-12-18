@@ -2,7 +2,7 @@
 
 module.exports = function(environment) {
   var ENV = {
-    modulePrefix: 'adjumo-frontend',
+    modulePrefix: 'adjumo',
     environment: environment,
     baseURL: '/',
     locationType: 'auto',
