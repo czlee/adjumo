@@ -7,39 +7,45 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Adjumo' });
 });
 
-router.get('/allocation-configs/1', function(req, res, next) {
-  console.log('getting config 1');
-  res.json(
-  {
-    data: {
-      type: "allocation-config",
-      id: 1,
-      attributes: {
-        teamhistory: 1,
-        adjhistory: 1,
-        teamconflict: 1,
-        adjconflict: 1,
-        quality: 1,
-        regional: 1,
-        language: 1,
-        gender: 9,
-      }
-    }
-  });
-});
+// router.get('/allocation-configs/1', function(req, res, next) {
+//   console.log('getting config 1');
+//   res.json(
+//   {
+//     data: {
+//       type: "allocation-config",
+//       id: 1,
+//       attributes: {
+//         teamhistory: 1,
+//         adjhistory: 1,
+//         teamconflict: 1,
+//         adjconflict: 1,
+//         quality: 1,
+//         regional: 1,
+//         language: 1,
+//         gender: 9,
+//       }
+//     }
+//   });
+// });
 
-router.patch('/allocation-configs/1', function(req, res, next) {
-  console.log('patching config 1');
-  console.log(req.body);
-  console.log('___');
-})
+// router.patch('/allocation-configs/1', function(req, res, next) {
+//   console.log('patching config 1');
+//   console.log(req.body);
+//   console.log('___');
+// })
 
-router.post('/allocation-configs/', function(req, res, next) {
+router.post('/allocationConfigs/', function(req, res) {
+  console.log('posting an allocation config'); // populated!
+  console.log(req.body); // populated!
   fs.writeFile('data/allocation-config.json', JSON.stringify(req.body, null, 4), function(err){
     if (err) throw err;
-    console.log('It\'s saved!');
+    console.log('File saved!');
   })
+  res.send("ok");
+  res.end();
 })
+
+
 
 router.get('/importround', function(req, res, next) {
 
@@ -54,6 +60,7 @@ router.get('/importround', function(req, res, next) {
 
       //var parsedImport = JSON.parse(body);
       res.send(JSON.parse(body));
+            res.json({ message: 'Bear created!' });
 
     } else {
       console.log('failed to import a round');

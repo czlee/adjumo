@@ -1,5 +1,5 @@
-adjumo-backend/public/vendor/*
 adjumo-backend/node_modules/*
+adjumo-backend/data/*
 
 # compiled output
 adjumo-frontend/dist

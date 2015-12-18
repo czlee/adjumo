@@ -128,6 +128,11 @@ export default Ember.Component.extend({
       } else {
         this.set("sortProperties", [property + ":desc"]);
       }
+    },
+
+    startNewConfig: function() {
+      $('#setAllocationParameters').modal('hide');
+      this.sendAction('finishSaveConfig');
     }
 
   },

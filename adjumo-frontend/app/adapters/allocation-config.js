@@ -1,6 +1,6 @@
 import ApplicationAdapter from './application';
 
-export default DS.JSONAPIAdapter.extend({
+export default DS.RESTAdapter.extend({
 
   suffix: '',
   //host: 'http://localhost:4200',

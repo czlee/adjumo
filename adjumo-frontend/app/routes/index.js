@@ -15,7 +15,8 @@ export default Ember.Route.extend({
 
       return Ember.RSVP.hash({ // Need this to return multiple model types
 
-          config:                 this.store.findRecord('allocation-config', 1),
+          //config:                 this.store.findRecord('allocation-config', 1),
+          config:                 this.store.createRecord('allocation-config', { id:1 }),
           regions:                this.store.findAll('region'),
           institutions:           this.store.findAll('institution'),
           adjudicators:           this.store.findAll('adjudicator'),
@@ -47,7 +48,39 @@ export default Ember.Route.extend({
         });
       });
 
+    },
+
+    finishSaveConfig: function() {
+
+      var onSuccess =  function(post){
+        console.log("success with save");
+        console.log(post);
+      };
+      var onFail =  function(post){
+        console.log("failed to save");
+        console.log(post);
+      };
+
+      console.log('creating config');
+
+      this.store.findRecord('allocation-config', 1).then((config) =>{
+        // make a new object each time so it POSTs the whole thing
+        var test = this.store.createRecord('allocation-config', {
+            quality: config.get('quality'),
+            regional: config.get('regional'),
+            language: config.get('language'),
+            gender: config.get('gender'),
+            teamhistory: config.get('teamhistory'),
+            adjhistory: config.get('adjhistory'),
+            teamconflict: config.get('teamconflict'),
+            adjconflict: config.get('adjconflict'),
+        });
+        test.save().then(onSuccess, onFail);
+      });
+
+
     }
+
 
   }
 
