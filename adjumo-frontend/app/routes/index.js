@@ -30,33 +30,50 @@ export default Ember.Route.extend({
 
   defaultConfig: {
     id: 1,
-    teamhistory: 1,
-    adjhistory: 1,
-    teamconflict: 1,
-    adjconflict: 1,
-    quality: 1,
-    regional: 1,
-    language: 1,
-    gender: 9,
+    teamhistory: 5,
+    adjhistory: 5,
+    teamconflict: 5,
+    adjconflict: 5,
+    quality: 5,
+    regional: 5,
+    language: 5,
+    gender: 5,
   },
 
   actions: {
 
     createAllocation: function() {
+
       this.currentAllocationIteration += 1;
 
-      // Create a new allocation
-      var newAllocation = this.store.createRecord('allocation-iteration', {
-        id: this.currentAllocationIteration,
-      });
-
-      // this.store.findAll('panel').then().filterBy('allocation', null).set('allocation', newAllocation)
-      this.store.findAll('panelallocation').then((panels) => {
-        panels.forEach(function(item) {
-          if (item.get('allocation')) {
-            item.set('allocation', newAllocation);
-          }
+      // Write all debate importances to a file
+      var data = {};
+      this.store.findAll('debate').then((debate) => {
+        // ASYNC: waiting for find
+        debate.forEach(function(debate) {
+          console.log(debate.get('id') + "-" + debate.get('importance'));
+          data[debate.get('id')] = debate.get('importance');
         });
+
+        var posting = $.post( '/debate-importances', data);
+        posting.done(function(data) {
+          // ASYNC: waiting for file write
+          console.log('saved importances to file');
+        });
+
+        var newAllocation = this.store.createRecord('allocation-iteration', {
+          id: this.currentAllocationIteration,
+        });
+        console.log(newAllocation);
+
+        this.store.findAll('panelallocation').then((panels) => {
+          panels.forEach(function(item) {
+            if (item.get('allocation')) {
+              item.set('allocation', newAllocation);
+            }
+          });
+        });
+
       });
 
     },
@@ -80,30 +97,7 @@ export default Ember.Route.extend({
         console.log('saved allocation to file');
       });
 
-
-
-
-      // this.store.findRecord('allocation-config', 1).then((config) =>{
-      //   // make a new object each time so it POSTs the whole thing
-      //   var test = this.store.createRecord('allocation-config', {
-      //       quality: config.get('quality'),
-      //       regional: config.get('regional'),
-      //       language: config.get('language'),
-      //       gender: config.get('gender'),
-      //       teamhistory: config.get('teamhistory'),
-      //       adjhistory: config.get('adjhistory'),
-      //       teamconflict: config.get('teamconflict'),
-      //       adjconflict: config.get('adjconflict'),
-      //   });
-      //   test.save().then(onSuccess, onFail);
-      // });
-
-
     }
-
-
   }
-
-
 
 });
