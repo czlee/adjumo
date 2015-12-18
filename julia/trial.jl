@@ -26,6 +26,7 @@ argsettings = ArgParseSettings()
         default = "../adjumo-frontend/public/data"
     "--tabbie1"
         help = "Import a Tabbie1 database: <username> <password> <database>"
+        metavar = "ARG"
         nargs = 3
 end
 args = parse_args(ARGS, argsettings)
