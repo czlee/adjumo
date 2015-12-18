@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
+var julia = require('node-julia');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -9,13 +10,30 @@ router.get('/', function(req, res, next) {
 
 router.post('/allocation-configs/', function(req, res) {
   console.log('posting an allocation config'); // populated!
-  console.log(req.body); // populated!
+
+  // THE JSON file-write option
   fs.writeFile('data/allocation-config.json', JSON.stringify(req.body, null, 4), function(err){
     if (err) throw err;
     console.log('File saved!');
   })
+
+  // The pass directly to Juila option
+  julia.exec('include','../julia/test.jl');
+  var dummyvalue = julia.exec('pretendAllocation',
+    parseInt(req.body.teamhistory),
+    parseInt(req.body.adjhistory),
+    parseInt(req.body.teamconflict),
+    parseInt(req.body.adjconflict),
+    parseInt(req.body.quality),
+    parseInt(req.body.regional),
+    parseInt(req.body.language),
+    parseInt(req.body.gender)
+  );
+  console.log('dummyvalue=' + dummyvalue);
+
   res.send("ok");
   res.end();
+
 })
 
 router.post('/debate-importances/', function(req, res) {
