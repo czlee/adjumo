@@ -6,6 +6,8 @@
   SSH and HTTP
 
 ## Short version
+For convenience, this is in the file `misc/ec2setup.sh`.
+
 ``` bash
 curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 sudo add-apt-repository ppa:staticfloat/juliareleases
