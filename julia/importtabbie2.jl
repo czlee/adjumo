@@ -212,30 +212,31 @@ function addadjudicatorrelationships!(ri::RoundInfo, d::JsonDict)
         end
     end
     for conflictteamidstr in d["strikedTeams"]
-        conflictteamid = parse(Int, conflictadjidstr)
+        conflictteamid = parse(Int, conflictteamidstr)
         onobjectwithid(ri.teams, conflictteamid) do conflictteam
             addteamadjconflict!(ri, conflictteam, adj)
         end
     end
     for seenadjiddict in d["pastAdjudicatorIDs"]
-        round = parse(Int, seenadjiddict["label"])
+        rd = parse(Int, seenadjiddict["label"])
         seenadjid = parse(Int, seenadjiddict["bid"])
         onobjectwithid(ri.adjudicators, seenadjid) do seenadj
-            addadjadjhistory!(ri, adj, seenadj, round)
+            addadjadjhistory!(ri, adj, seenadj, rd)
         end
     end
     for seenteamiddict in d["pastTeamIDs"]
+        rd = 0
         try
-            round = parse(Int, seenteamiddict["label"])
+            rd = parse(Int, seenteamiddict["label"])
         catch e
-            warn("Adj $(adj.name), pastTeamIDs: $(e.msg)")
+            warn("Adj $(adj.id) $(adj.name), pastTeamIDs: $(e.msg)")
             continue
         end
         for pos in ["og", "oo", "cg", "co"]
             seenteamidkey = pos * "_team_id"
             seenteamid = parse(Int, seenteamiddict[seenteamidkey])
             onobjectwithid(ri.teams, seenteamid) do seenteam
-                addteamadjhistory!(ri, seenteam, adj, round)
+                addteamadjhistory!(ri, seenteam, adj, rd)
             end
         end
     end

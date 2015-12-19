@@ -10,9 +10,9 @@ using JuMP
 using MathProgBase
 
 SUPPORTED_SOLVERS = [
-    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj),
-    ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap),
-    ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap),
+    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj,  :threads),
+    ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap,   :Threads),
+    ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap, :threads),
 ]
 
 include("types.jl")
@@ -172,7 +172,7 @@ end
 
 "Given a user option, returns a solver for use in solving the optimization problem."
 function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
-    for (solvername, solvermod, solversym, gapsym) in SUPPORTED_SOLVERS
+    for (solvername, solvermod, solversym, gapsym, threadssym) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
             try
                 @eval using $solvermod
@@ -187,9 +187,9 @@ function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
             end
             println("Using solver: $solversym")
             kwargs = [gapsym => gap]
-            if solversym == :CbcSolver
-                push!(kwargs, :threads => Integer(threads))
-            end
+            # if solversym == :CbcSolver
+                push!(kwargs, threadssym => Integer(threads))
+            # end
             return solversym, eval(solversym)(;kwargs...)
         end
     end
