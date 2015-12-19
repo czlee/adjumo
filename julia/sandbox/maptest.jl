@@ -2,7 +2,7 @@ push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
 using JuMP
-include("../random.jl")
+using AdjumoDataTools
 
 function regionalrepresentationmatrix1(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)

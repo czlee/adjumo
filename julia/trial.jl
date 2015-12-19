@@ -28,6 +28,9 @@ argsettings = ArgParseSettings()
         help = "Import a Tabbie1 database: <username> <password> <database>"
         metavar = "ARG"
         nargs = 3
+    "--show"
+        help = "Print result to console"
+        action = :store_true
 end
 args = parse_args(ARGS, argsettings)
 
@@ -62,7 +65,9 @@ directory = args["json-dir"]
 exportroundinfo(roundinfo, directory)
 exportallocations(allocations, directory)
 
-showconstraints(roundinfo)
-for allocation in allocations
-    showdebatedetail(roundinfo, allocation)
+if args["show"]
+    showconstraints(roundinfo)
+    for allocation in allocations
+        showdebatedetail(roundinfo, allocation)
+    end
 end

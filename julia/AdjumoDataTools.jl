@@ -12,8 +12,7 @@
 #
 # Requirements:
 #   Pkg.clone("https://github.com/JuliaDB/DBI.jl.git")
-#   Pkg.clone("https://github.com/JuliaDB/PostgreSQL.jl.git")
-# (Both of these are unregistered packages at time of writing.)
+# (This is an unregistered package at time of writing.)
 
 __precompile__()
 

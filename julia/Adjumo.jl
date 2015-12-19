@@ -7,6 +7,7 @@ __precompile__()
 module Adjumo
 
 using JuMP
+using MathProgBase
 
 SUPPORTED_SOLVERS = [
     ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj),
@@ -107,7 +108,7 @@ adjudicator. `Q[p,a]` is 1 if adjudicator `a` is in panel `p`, 0 otherwise.
 function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
     nadjs = numadjs(roundinfo)
-    Q = spzeros(Bool, npanels, nadjs)
+    Q = zeros(Bool, npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
         indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
         Q[p, indices] = true
@@ -195,6 +196,13 @@ function choosesolver(solver::AbstractString)
     end
 end
 
+function infocallback(cb)
+    obj       = MathProgBase.cbgetobj(cb)
+    bestbound = MathProgBase.cbgetbestbound(cb)
+    relgap    = (bestbound - obj) / bestbound * 100
+    println("Best value $obj, best bound $bestbound, relative gap $relgap%")
+end
+
 """
 Solves the optimization problem for score matrix `Σ` and panel membership
     matrix `Q`.
@@ -234,6 +242,7 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
         @addConstraint(m, X[d,:]*Q[:,a] .== 0)
     end
 
+    addInfoCallback(m, infocallback)
 
     @time status = solve(m)
 

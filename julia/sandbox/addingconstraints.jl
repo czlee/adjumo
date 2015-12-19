@@ -3,7 +3,7 @@ using ArgParse
 using Adjumo
 using JuMP
 import Adjumo: panelmembershipmatrix, convertconstraints, choosesolver
-include("../random.jl")
+using AdjumoDataTools
 
 
 argsettings = ArgParseSettings()

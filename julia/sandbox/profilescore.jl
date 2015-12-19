@@ -3,7 +3,7 @@
 push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
-include("../random.jl")
+using AdjumoDataTools
 
 argsettings = ArgParseSettings()
 @add_arg_table argsettings begin
