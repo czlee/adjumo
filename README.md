@@ -15,7 +15,7 @@ Pkg.add("JSON")
 ```
 
 If you plan to use command-line scripts (as opposed to the web interface), you should also install these:
-```
+``` julia
 Pkg.add("ArgParse")
 Pkg.add("Formatting")
 Pkg.clone("https://github.com/JuliaDB/DBI.jl.git")
@@ -92,17 +92,17 @@ Note: the front end requires that there are json files present in ```public/data
 
 The file that tests the Julia part is called `trial.jl` and can be run directly from the shell:
 ``` bash
-$ julia trial.jl
+julia trial.jl
 ```
 
 This generates random data for a pretend round and runs the algorithm on it. You can run it with a different number of debates, or pretend the current round is something else. For example, to run it with a round comprising 10 debates, pretending it is currently round 3:
 ``` bash
-$ julia trial.jl -n 10 -r 3
+julia trial.jl -n 10 -r 3
 ```
 
 If you installed more than one of the solvers above, you can choose which one to use with `--solver`. For example, to use GLPK:
 ``` bash
-$ julia trial.jl --solver glpk
+julia trial.jl --solver glpk
 ```
 The other options are `cbc` and `gurobi`. If you don't specify, it'll try Gurobi, then CBC if Gurobi isn't installed, then GLPK if neither of the other two are installed.
 
