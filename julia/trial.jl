@@ -46,8 +46,11 @@ componentweights.adjconflict = 1e6
 if length(args["tabbie1"]) == 0
     roundinfo = randomroundinfo(ndebates, currentround)
 else
+    using DBI
+    using PostgreSQL
     username, password, database = args["tabbie1"]
-    roundinfo = gettabbie1roundinfo(username, password, database, currentround)
+    dbconnection = connect(Postgres, "localhost", username, password, database, 5432)
+    roundinfo = gettabbie1roundinfo(dbconnection, currentround)
 end
 roundinfo.componentweights = componentweights
 
