@@ -14,12 +14,12 @@ Pkg.add("JuMP")
 Pkg.add("JSON")
 ```
 
-If you plan to use command-line scripts (as opposed to the web interface), you should also install these:
+Some functions also require the following:
 ``` julia
-Pkg.add("ArgParse")
-Pkg.add("Formatting")
-Pkg.clone("https://github.com/JuliaDB/DBI.jl.git")
-Pkg.clone("https://github.com/JuliaDB/PostgreSQL.jl.git")
+Pkg.add("ArgParse")                                        # required only for command-line scripts
+Pkg.add("Formatting")                                      # required only for command-line scripts
+Pkg.clone("https://github.com/JuliaDB/DBI.jl.git")         # required only for Tabbie1 data use
+Pkg.clone("https://github.com/JuliaDB/PostgreSQL.jl.git")  # required only for Tabbie1 data use
 ```
 
 You also need to install a solver. There are three options: Gurobi, CBC and GLPK. You only need one of them.
