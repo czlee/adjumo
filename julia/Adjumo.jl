@@ -186,11 +186,7 @@ function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
 
             end
             println("Using solver: $solversym")
-            kwargs = [gapsym => gap]
-            # if solversym == :CbcSolver
-                push!(kwargs, threadssym => Integer(threads))
-            # end
-            return solversym, eval(solversym)(;kwargs...)
+            return solversym, eval(solversym)(;gapsym=>gap, threadssym=>threads)
         end
     end
     if solver == "default"
