@@ -11,7 +11,7 @@ curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 sudo add-apt-repository ppa:staticfloat/juliareleases
 sudo add-apt-repository ppa:staticfloat/julia-deps
 sudo apt-get update
-sudo apt-get install git julia gcc g++ make libgmp-dev nodejs npm
+sudo apt-get install git julia gcc g++ make libgmp-dev nodejs
 npm install -g bower
 git clone git@github.com:czlee/adjumo.git
 ```
@@ -67,7 +67,6 @@ sudo apt-get install nodejs
 
 #### Bower
 ``` bash
-sudo apt-get install npm
 npm install -g bower
 ```
 
