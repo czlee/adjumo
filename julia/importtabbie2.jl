@@ -54,6 +54,14 @@ function getobjectwithid{T}(v::Vector{T}, id::Int)
     return v[index]
 end
 
+# Calls f on the object with the given id if it is found; does nothing otherwise.
+function onobjectwithid{T}(f::Function, v::Vector{T}, id::Int)
+    index = findfirst(x -> x.id == id, v)
+    if index != 0
+        f(v[index])
+    end
+end
+
 function converttabbiedicttoroundinfo(dict::JsonDict)
     ri = RoundInfo(99)
 
@@ -71,7 +79,7 @@ function converttabbiedicttoroundinfo(dict::JsonDict)
         addadjudicators!(ri, debate["panel"]["adjudicators"])
     end
     for debate in dict["draw"]
-        addadjudicatorrelationships!(ri, debate["panel"]["adjudicators"])
+        addadjudicatorsrelationships!(ri, debate["panel"]["adjudicators"])
     end
 
     return ri
@@ -166,15 +174,20 @@ function addadjudicator!(ri::RoundInfo, d::JsonDict)
     if hasobjectwithid(ri.adjudicators, id)
         error("Duplicate adjudicator ID: $id")
     end
-    name = ITF8String(d["name"])
+    name = d["name"]
     institution = getobjectwithid(ri.institutions, d["society_id"])
     ranking = interpretranking(d["strength"])
     # ranking = Panellist
-    other_institutions = Institution[getobjectwithid(ri.institutions, parse(Int, id)) for id in d["societies"]]
+    other_institutions = Institution[]
+    for otherinstid in d["societies"]
+        onobjectwithid(ri.institutions, parse(Int, otherinstid)) do inst
+            push!(other_institutions, inst)
+        end
+    end
     regions = unique(Region[inst.region for inst in [institution; other_institutions]])
     gender = interpretpersongender(d["gender"])
     language = interpretlanguage(d["language_status"])
-    adj = addadjudicator!(id, name, institution, ranking, regions, gender, language)
+    adj = addadjudicator!(ri, id, name, institution, ranking, regions, gender, language)
 
     # Also add team conflicts for every society
     conflictteams = filter(x -> x.institution ∈ other_institutions, ri.teams)
@@ -183,32 +196,42 @@ function addadjudicator!(ri::RoundInfo, d::JsonDict)
     end
 end
 
+function addadjudicatorsrelationships!(ri::RoundInfo, adjdicts::Array)
+    for adjdict in adjdicts
+        addadjudicatorrelationships!(ri, adjdict)
+    end
+end
+
 function addadjudicatorrelationships!(ri::RoundInfo, d::JsonDict)
     id = d["id"]
     adj = getobjectwithid(ri.adjudicators, id)
     for conflictadjidstr in d["strikedAdjudicators"]
         conflictadjid = parse(Int, conflictadjidstr)
-        conflictadj = getobjectwithid(ri.adjudicators, conflictadjid)
-        addadjadjconflict!(ri, adj, conflictadj)
+        onobjectwithid(ri.adjudicators, conflictadjid) do conflictadj
+            addadjadjconflict!(ri, adj, conflictadj)
+        end
     end
     for conflictteamidstr in d["strikedTeams"]
         conflictteamid = parse(Int, conflictadjidstr)
-        conflictteam = getobjectwithid(ri.teams, conflictteamid)
-        addteamadjconflict!(ri, conflictteam, adj)
+        onobjectwithid(ri.teams, conflictteamid) do conflictteam
+            addteamadjconflict!(ri, conflictteam, adj)
+        end
     end
     for seenadjiddict in d["pastAdjudicatorIDs"]
-        round = parse(Int, seenadjiddict["rno"])
+        round = parse(Int, seenadjiddict["label"])
         seenadjid = parse(Int, seenadjiddict["bid"])
-        seenadj = getobjectwithid(ri.adjudicators, seenadjid)
-        addadjadjhistory!(ri, adj, seenadj, round)
+        onobjectwithid(ri.adjudicators, seenadjid) do seenadj
+            addadjadjhistory!(ri, adj, seenadj, round)
+        end
     end
     for seenteamiddict in d["pastTeamIDs"]
-        round = parse(Int, seenteamiddict["rno"])
+        round = parse(Int, seenteamiddict["label"])
         for pos in ["og", "oo", "cg", "co"]
             seenteamidkey = pos * "_team_id"
             seenteamid = parse(Int, seenteamiddict[seenteamidkey])
-            seenteam = getobjectwithid(ri.teams, seenteamid)
-            addteamadjhistory!(ri, seenteam, adj, round)
+            onobjectwithid(ri.teams, seenteamid) do seenteam
+                addteamadjhistory!(ri, seenteam, adj, round)
+            end
         end
     end
 end
@@ -221,4 +244,5 @@ function interpretranking(val::Int)
             return rank
         end
     end
+    return ChairPlus
 end

@@ -252,6 +252,7 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
 
     println("Starting solver at $(now())")
     @time status = solve(m)
+    println("Solver done at $(now())")
 
     if status == :Optimal
         println("Objective value: ", getObjectiveValue(m))
