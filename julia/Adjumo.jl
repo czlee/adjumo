@@ -186,7 +186,7 @@ function choosesolver(solver::AbstractString)
 
             end
             println("Using solver: $solversym")
-            return eval(solversym)(;gapsym=>1e-2)
+            return solversym, eval(solversym)(;gapsym=>1e-2)
         end
     end
     if solver == "default"
@@ -225,7 +225,7 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
 
     (ndebates, npanels) = size(Σ)
 
-    modelsolver = choosesolver(solver)
+    modeltype, modelsolver = choosesolver(solver)
     m = Model(solver=modelsolver)
 
     @defVar(m, X[1:ndebates,1:npanels], Bin)
@@ -242,7 +242,9 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
         @addConstraint(m, X[d,:]*Q[:,a] .== 0)
     end
 
-    addInfoCallback(m, infocallback)
+    if modeltype == :GLPKSolverMIP
+        addInfoCallback(m, infocallback)
+    end
 
     @time status = solve(m)
 

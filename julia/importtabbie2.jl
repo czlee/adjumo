@@ -168,7 +168,7 @@ function addadjudicator!(ri::RoundInfo, d::JsonDict)
     end
     name = d["name"]
     institution = getobjectwithid(ri.institutions, d["society_id"])
-    ranking = interpretranking(d["strength"])
+    # ranking = interpretranking(d["strength"])
     other_institutions = [getobjectwithid(ri.institutions, id) for id in d["societies"]]
     regions = unique([inst.region for inst in [institution; other_institutions]])
     gender = interpretpersongender(d["gender"])
