@@ -8,6 +8,8 @@
 You need to install Julia, and then install a bunch of Julia packages. Julia downloads are at http://julialang.org/downloads/.
 Download and install the latest **stable** version, which is currently **0.4.1**.
 
+*Lazy package install:* `julia julia/installrequirements.txt` will install all required and optional packages except Gurobi.
+
 You then need to install the required packages:
 ``` julia
 Pkg.add("JuMP")
