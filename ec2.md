@@ -18,11 +18,8 @@ git clone git@github.com:czlee/adjumo.git
 
 In Julia:
 ``` julia
-Pkg.add("JuMP")
-Pkg.add("ArgParse")
-Pkg.add("Formatting")
-Pkg.add("Cbc")
-Pkg.add("GLPKMathProgInterface")
+for p in ["JuMP", "ArgParse", "Formatting", "JSON", "Cbc", "GLPKMathProgInterface"]; Pkg.add(p); end
+for p in ["JuliaDB/DBI", "JuliaDB/PostgreSQL"]; Pkg.clone("https://github.com/$p.jl.git"); end
 ```
 
 ## Long method
