@@ -171,7 +171,7 @@ function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorP
 end
 
 "Given a user option, returns a solver for use in solving the optimization problem."
-function choosesolver(solver::AbstractString; gap::Float64=1e-2, threads::Int=1)
+function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
     for (solvername, solvermod, solversym, gapsym) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
             try
@@ -188,7 +188,7 @@ function choosesolver(solver::AbstractString; gap::Float64=1e-2, threads::Int=1)
             println("Using solver: $solversym")
             kwargs = [gapsym => gap]
             if solversym == :CbcSolver
-                push!(kwargs, :threads => threads)
+                push!(kwargs, :threads => Integer(threads))
             end
             return solversym, eval(solversym)(;kwargs...)
         end

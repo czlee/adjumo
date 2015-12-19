@@ -225,7 +225,12 @@ function addadjudicatorrelationships!(ri::RoundInfo, d::JsonDict)
         end
     end
     for seenteamiddict in d["pastTeamIDs"]
-        round = parse(Int, seenteamiddict["label"])
+        try
+            round = parse(Int, seenteamiddict["label"])
+        catch e
+            warn("Adj $(adj.name), pastTeamIDs: $(e.msg)")
+            continue
+        end
         for pos in ["og", "oo", "cg", "co"]
             seenteamidkey = pos * "_team_id"
             seenteamid = parse(Int, seenteamiddict[seenteamidkey])
