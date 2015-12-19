@@ -13,6 +13,7 @@ You then need to install the required packages:
 julia> Pkg.add("JuMP")
 julia> Pkg.add("ArgParse")
 julia> Pkg.add("Formatting")
+julia> Pkg.add("JSON")
 ```
 
 You also need to install a solver. There are three options: Gurobi, CBC and GLPK. You only need one of them.
