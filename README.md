@@ -10,10 +10,16 @@ Download and install the latest **stable** version, which is currently **0.4.1**
 
 You then need to install the required packages:
 ``` julia
-julia> Pkg.add("JuMP")
-julia> Pkg.add("ArgParse")
-julia> Pkg.add("Formatting")
-julia> Pkg.add("JSON")
+Pkg.add("JuMP")
+Pkg.add("JSON")
+```
+
+If you plan to use command-line scripts (as opposed to the web interface), you should also install these:
+```
+Pkg.add("ArgParse")
+Pkg.add("Formatting")
+Pkg.clone("https://github.com/JuliaDB/DBI.jl.git")
+Pkg.clone("https://github.com/JuliaDB/PostgreSQL.jl.git")
 ```
 
 You also need to install a solver. There are three options: Gurobi, CBC and GLPK. You only need one of them.
@@ -23,7 +29,7 @@ To use it, you need to register for an account at http://www.gurobi.com/ and req
 license. Naturally, this requires you to be a student or staff member at a degree-granting institution.
 If you can get hold of a Gurobi license:
 ``` julia
-julia> Pkg.add("Gurobi")
+Pkg.add("Gurobi")
 ```
 *Note: This will fail if you don't have Gurobi installed.*
 
@@ -31,26 +37,26 @@ If you can't get a Gurobi license, then we can use one of the open-source solver
 
 **Option 2: CBC.** To install CBC:
 ``` julia
-julia> Pkg.add("Cbc")
+Pkg.add("Cbc")
 ```
 
 This will take a while and you'll see lots of gibberish printed on the screen. You need a C compiler, a C++ compiler and Make installed in order to build CBC. If you get error messages complaining about the lack of any of them, exit Julia and run these from the shell:
 ``` bash
-$ sudo apt-get install gcc
-$ sudo apt-get install g++
-$ sudo apt-get install make
+sudo apt-get install gcc
+sudo apt-get install g++
+sudo apt-get install make
 ```
 
 Then try again.
 
 **Option 3: GLPK.** To install GLPK, first install the `libgmp-dev` package, from the shell (outside Julia):
 ``` bash
-$ sudo apt-get install libgmp-dev
+sudo apt-get install libgmp-dev
 ```
 
 Then install in Julia:
 ``` julia
-julia> Pkg.add("GLPKMathProgInterface")
+Pkg.add("GLPKMathProgInterface")
 ```
 
 ### User Interface
