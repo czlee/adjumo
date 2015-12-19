@@ -18,7 +18,7 @@ git clone git@github.com:czlee/adjumo.git
 
 In Julia:
 ``` julia
-for p in ["JuMP", "ArgParse", "Formatting", "Cbc", "GLPKMathProgInterface"]; Pkg.add(p); end
+for p in ["JuMP", "ArgParse", "Formatting", "JSON", "Cbc", "GLPKMathProgInterface"]; Pkg.add(p); end
 ```
 
 ## Long method
