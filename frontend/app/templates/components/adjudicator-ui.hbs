@@ -1,5 +1,6 @@
 {{#if adj}}
-    <div class="flex-1" data-toggle="tooltip" data-placement="bottom" title="{{ adj.name }} of {{ adj.institution.name }}">
+
+    <div class="flex-1">
         <span class="adj-name">
             {{ adj.short_name }}
         </span>
@@ -7,9 +8,34 @@
             {{ adj.institution.code }}
         </span>
     </div>
-    <div class="flex-icon flex-icon adj-ranking hoverable">
-        <span data-toggle="tooltip" data-placement="bottom" title="{{ adj.ranking }}">
+    <div class="flex-icon flex-icon adj-ranking">
+        <span>
             <strong>{{ adj.get_ranking }}</strong>
         </span>
     </div>
+
+    <div class="hover-panel" style="display: none;">
+        <div class="panel panel-default">
+            <div class="panel-heading ranking-display ranking-{{ adj.ranking }}">
+                <h5 class="panel-title">{{ adj.name }}</h5>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item uppercase">
+                    {{ adj.institution.name }}
+                </li>
+                <li class="list-group-item">
+                    <span class="glyphicon glyphicon-queen text-muted pull-right"></span> {{ adj.genderName }}
+                </li>
+                <li class="list-group-item">
+                    <span class="glyphicon glyphicon-comment text-muted pull-right"></span> {{ adj.languageName }}
+                </li>
+                <li class="list-group-item">
+                    <span class="glyphicon glyphicon-globe text-muted pull-right"></span> {{ adj.regionName }}
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
 {{/if}}
+

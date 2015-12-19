@@ -50,16 +50,25 @@
         {{/if}}
         </div>
 
+        {{#if showingGender }}
+        <div class="btn-group-sm btn-group pull-right">
+          <button class="btn btn-default gender-display gender-0">None</button>
+          <button class="btn btn-default gender-display gender-1">Male</button>
+          <button class="btn btn-default gender-display gender-2">Female</button>
+          <button class="btn btn-default gender-display gender-3">Mixed</button>
+        </div>
+        {{/if}}
+
         {{#if showingRegion }}
         <div class="btn-group-sm btn-group pull-right">
           <button class="btn btn-default region-display region-9">Europe</button>
           <button class="btn btn-default region-display region-10">IONA</button>
-          <button class="btn btn-default region-display region-6">ANZ</button>
-          <button class="btn btn-default region-display region-7">North America</button>
-          <button class="btn btn-default region-display region-8">Latin America</button>
-          <button class="btn btn-default region-display region-2">South East Asia</button>
-          <button class="btn btn-default region-display region-1">North Asia</button>
-          <button class="btn btn-default region-display region-4">Sub-Continent</button>
+          <button class="btn btn-default region-display region-6">Oceania</button>
+          <button class="btn btn-default region-display region-7">N. America</button>
+          <button class="btn btn-default region-display region-8">L. America</button>
+          <button class="btn btn-default region-display region-2">SE. Asia</button>
+          <button class="btn btn-default region-display region-1">N. Asia</button>
+          <button class="btn btn-default region-display region-4">S. Asia</button>
           <button class="btn btn-default region-display region-3">Middle East</button>
           <button class="btn btn-default region-display region-5">Africa</button>
         </div>

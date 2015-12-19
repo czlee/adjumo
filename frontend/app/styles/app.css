@@ -9,6 +9,9 @@
     url(/assets/fonts/glyphicons-halflings-regular.ttf) format('truetype'),
     url(/assets/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular) format('svg')
 }
+.uppercase {
+  text-transform: uppercase;
+  }
 
 /* Nav */
 
@@ -95,8 +98,12 @@ span[active="false"].glyphicon {
 .table>tbody>tr>td {
   line-height: 30px;
 }
-.table>tbody>tr>td.debate-team span, .table>tbody>tr>td.debate-team {
+.table>tbody>tr>td.team-ui {
   line-height: 1.1;
+}
+.table>tbody>tr>td.team-ui:hover {
+  color: blue;
+  cursor: help;
 }
 .debate-importance input {
   max-width: 100%;
@@ -164,6 +171,12 @@ td.head-panel {
   cursor: move;
 }
 
+/* Conflicts */
+
+.institution-conflict {
+  border: 4px solid red;
+}
+
 /* Adjudicator Component */
 
 .adjudicator-ui {
@@ -176,8 +189,8 @@ td.head-panel {
   display: flex;
   float: left;
 }
-.adjudicator-ui.btn.focus, , .adjudicator-ui:hover {
-
+.adjudicator-ui:hover {
+  border-color: blue;
 }
 .adjudicator-ui.locked-true {
   border: 2px solid rgb(0, 0, 255);
@@ -196,10 +209,6 @@ td.head-panel {
 .adj-institution {
   line-height: 1;
   font-size: 75%;
-}
-
-.adjudicator-ui:hover {
-  cursor: move;
 }
 .adj-lock {
   flex: none;
@@ -236,19 +245,21 @@ td.head-panel {
 
 /* JS */
 
-.hoverable {
-  cursor: pointer;
+.popover, .popover-content {
+  padding: 0;
 }
+.popover .panel {
+  border: none;
+  margin-bottom: 0px;
+}
+.popover .panel .ranking-display .panel-title {
+  color: #fff;
+  }
 .gender-display.gender-2:focus, .ranking-display:focus, .language-display:focus, .region-display:focus {
   color: #fff;
 }
-.gender-display.debate-team.gender-1 {
-  background: #F89CFF; /* Only show this for teams as for them it represnts M+F*/
-  text-shadow:
-   -1px -1px 0 rgba(255,255,255,0.5),
-    1px -1px 0 rgba(255,255,255,0.5),
-    -1px 1px 0 rgba(255,255,255,0.5),
-     1px 1px 0 rgba(255,255,255,0.5);
+.gender-display.gender-0 {
+  background: #CCC;
 }
 .gender-display.gender-2 {
   background: #F103FF;
@@ -258,6 +269,14 @@ td.head-panel {
     1px -1px 0 rgba(0,0,0,0.5),
     -1px 1px 0 rgba(0,0,0,0.5),
      1px 1px 0 rgba(0,0,0,0.5);
+}
+.gender-display.gender-3 {
+  background: #F89CFF; /* Only show this for teams as for them it represnts M+F*/
+  text-shadow:
+   -1px -1px 0 rgba(255,255,255,0.5),
+    1px -1px 0 rgba(255,255,255,0.5),
+    -1px 1px 0 rgba(255,255,255,0.5),
+     1px 1px 0 rgba(255,255,255,0.5);
 }
 .ranking-display, .region-display,
 .btn.ranking-display:hover, .btn.region-display:hover {

@@ -1,0 +1,24 @@
+
+{{ team.name }}
+
+<div class="hover-panel" style="display: none;">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h5 class="panel-title">{{ team.name }}</h5>
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item uppercase">
+                {{ team.institution.name }}
+            </li>
+            <li class="list-group-item">
+                <span class="glyphicon glyphicon-queen text-muted pull-right"></span> {{ team.genderName }}
+            </li>
+            <li class="list-group-item">
+                <span class="glyphicon glyphicon-comment text-muted pull-right"></span> {{ team.languageName }}
+            </li>
+            <li class="list-group-item">
+                <span class="glyphicon glyphicon-globe text-muted pull-right"></span> {{ team.regionName }}
+            </li>
+        </ul>
+    </div>
+</div>

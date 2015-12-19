@@ -1,27 +1,34 @@
 import DS from 'ember-data';
+import DebateableMixin from '../mixins/debateable';
 
-export default DS.Model.extend({
+export default DS.Model.extend(DebateableMixin, {
 
-  name: DS.attr('string'),
-  institution: DS.belongsTo('institution'),
-  region: DS.attr('number'),
+  // Note: gets its base attributes from the debateable mixin
 
+  regions: DS.attr(), // Leave blank so it will accept an array
   locked: DS.attr('bool', { defaultValue: false }),
   ranking: DS.attr('number'),
-  gender: DS.attr('number'),
-  language: DS.attr('number'),
-
-  // strikedAdjudicators: DS.hasMany('adjudicator', { inverse: null }),
-  //strikedTeams: DS.hasMany('team', { inverse: null }),
-  // pastAdjudicators: DS.hasMany('adjudicator', { inverse: null }),
-  // pastTeams: DS.hasMany('team', { inverse: null }),
-
   panel: DS.belongsTo('panelallocation', { inverse: null }),
 
   short_name: Ember.computed('name', function() {
     var words = this.get('name').split(" ");
     var short_name = words[0] + " " + words[1][0];
     return short_name;
+  }),
+
+  genderName: Ember.computed('gender', function() {
+    var gender = this.get('gender');
+    if (gender === 0) {
+      return "None";
+    } else if (gender === 1){
+      return "Male";
+    } else if (gender === 2){
+      return "Female";
+    } else if (gender === 3){
+      return "Other";
+    } else {
+      return "Unknown";
+    }
   }),
 
   get_ranking: function() {

@@ -7,7 +7,7 @@ export default Ember.Component.extend(DraggableMixin, {
   tagName: 'button',
   draggable: 'true',
 
-  classNames: ['btn', 'adjudicator-ui', 'ranking-display'],
+  classNames: ['btn', 'adjudicator-ui', 'ranking-display', 'js-drag-handle', 'popover-trigger'],
   classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked'],
 
   // CSS Getters
@@ -15,10 +15,14 @@ export default Ember.Component.extend(DraggableMixin, {
     return 'gender-' + String(this.get('adj').get('gender'));
   }.property('adj'),
   region: function() {
-    return 'region-' + String(this.get('adj').get('region'));
+    var regions = "";
+    this.get('adj').get('regions').forEach(function(region) {
+      regions += "region-" + region + " ";
+    });
+    return regions;
   }.property('adj'),
   language: function() {
-    return 'language-' + String(this.get('adj').language);
+    return 'language-' + String(this.get('adj').get('language'));
   }.property('adj'),
   ranking: function() {
     return 'ranking-' + String(this.get('adj').get('ranking'));
@@ -27,8 +31,23 @@ export default Ember.Component.extend(DraggableMixin, {
     return 'locked-' + String(this.get('adj').locked);
   }.property('adj'),
 
+
+  mouseEnter: function(event) {
+    console.log('mouse enter');
+    var institutionConflict = ".institution-" + String(this.get('adj').get('institution').get('id'));
+    console.log(institutionConflict);
+    $(institutionConflict).addClass("institution-conflict");
+  },
+
+  mouseLeave: function(event) {
+    console.log('mouse leave');
+    var institutionConflict = ".institution-" + String(this.get('adj').get('institution').get('id'));
+    console.log(institutionConflict);
+    $(institutionConflict).removeClass("institution-conflict");
+  },
+
   dragStart: function(event) {
-    this.$('.tooltip').hide(); // Is annoying while dragging
+    this.$().popover('hide'); // Is annoying while dragging
 
     // Setup the variables that will communicate with the droppable element
     var dataTransfer = event.originalEvent.dataTransfer;
@@ -63,7 +82,18 @@ export default Ember.Component.extend(DraggableMixin, {
 
   didInsertElement: function() {
     Ember.run.scheduleOnce('afterRender', this, function() {
-      this.$('[data-toggle="tooltip"]').tooltip();
+
+      this.$().popover({
+        html : true,
+        trigger: 'hover',
+        content: function() {
+          return $(this).children('.hover-panel').html();
+        },
+        template: '<div class="popover" role="tooltip"> <div class="arrow"></div> <div class="popover-content"></div> </div>',
+        placement: 'top',
+        container: 'body',
+      });
+
     });
   }
 
