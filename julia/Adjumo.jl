@@ -250,6 +250,7 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
         addInfoCallback(m, infocallback)
     end
 
+    println("Starting solver at $(now())")
     @time status = solve(m)
 
     if status == :Optimal
