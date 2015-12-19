@@ -11,7 +11,7 @@ sudo apt-get install git
 ```
 
 ## Install Julia and required packages
-# Julia
+### Julia
 ``` bash
 sudo add-apt-repository ppa:staticfloat/juliareleases
 sudo add-apt-repository ppa:staticfloat/julia-deps
@@ -19,7 +19,7 @@ sudo apt-get update
 sudo apt-get install julia
 ```
 
-# Non-Julia dependencies for CBC and GLPK
+### Non-Julia dependencies for CBC and GLPK
 ``` bash
 sudo apt-get install gcc
 sudo apt-get install g++
@@ -27,7 +27,7 @@ sudo apt-get install make
 sudo apt-get install libgmp-dev
 ```
 
-# Required packages
+### Required packages
 In Julia:
 ``` julia
 Pkg.add("JuMP")
@@ -38,13 +38,13 @@ Pkg.add("GLPKMathProgInterface")
 ```
 
 ## Install required front-end packages
-# Node
+### Node
 ``` bash
 curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
-# Bower
+### Bower
 ``` bash
 sudo apt-get install npm
 npm install -g bower
