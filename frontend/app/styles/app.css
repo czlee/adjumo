@@ -174,7 +174,8 @@ td.head-panel {
 /* Conflicts */
 
 .institution-conflict {
-  border: 4px solid red;
+  background: red;
+  color: #fff;
 }
 
 /* Adjudicator Component */
@@ -245,6 +246,10 @@ td.head-panel {
 
 /* JS */
 
+.popover {
+  opacity: 0.9 !important;
+}
+
 .popover, .popover-content {
   padding: 0;
 }
@@ -252,9 +257,9 @@ td.head-panel {
   border: none;
   margin-bottom: 0px;
 }
-.popover .panel .ranking-display .panel-title {
+.popover .panel .ranking-display {
   color: #fff;
-  }
+}
 .gender-display.gender-2:focus, .ranking-display:focus, .language-display:focus, .region-display:focus {
   color: #fff;
 }

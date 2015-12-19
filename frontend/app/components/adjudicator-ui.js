@@ -31,18 +31,13 @@ export default Ember.Component.extend(DraggableMixin, {
     return 'locked-' + String(this.get('adj').locked);
   }.property('adj'),
 
-
   mouseEnter: function(event) {
-    console.log('mouse enter');
     var institutionConflict = ".institution-" + String(this.get('adj').get('institution').get('id'));
-    console.log(institutionConflict);
     $(institutionConflict).addClass("institution-conflict");
   },
 
   mouseLeave: function(event) {
-    console.log('mouse leave');
     var institutionConflict = ".institution-" + String(this.get('adj').get('institution').get('id'));
-    console.log(institutionConflict);
     $(institutionConflict).removeClass("institution-conflict");
   },
 
@@ -60,8 +55,6 @@ export default Ember.Component.extend(DraggableMixin, {
   },
   dragEnd: function(event) {
     // Let the controller know this view is done dragging
-    //this.set("content.isDragging", false); // PB: unclear why am doing this
-
     return this._super(event);
   },
 
