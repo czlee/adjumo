@@ -28,6 +28,10 @@ argsettings = ArgParseSettings()
         help = "Import a Tabbie1 database: <username> <password> <database>"
         metavar = "ARG"
         nargs = 3
+    "--tabbie2"
+        help = "Import a Tabbie2 export file"
+        metavar = "JSONFILE"
+        default = nothing
     "--show"
         help = "Print result to console"
         action = :store_true
@@ -48,6 +52,9 @@ componentweights.teamconflict = 1e6
 componentweights.adjconflict = 1e6
 if length(args["tabbie1"]) == 0
     roundinfo = randomroundinfo(ndebates, currentround)
+elseif args["tabbie2"] != nothing
+    tabbie2file = open(args["tabbie2"])
+    roundinfo = importtabbiejson(tabbie2file)
 else
     using DBI
     using PostgreSQL

@@ -200,7 +200,7 @@ function infocallback(cb)
     obj       = MathProgBase.cbgetobj(cb)
     bestbound = MathProgBase.cbgetbestbound(cb)
     relgap    = (bestbound - obj) / bestbound * 100
-    println("Best value $obj, best bound $bestbound, relative gap $relgap%")
+    println("$(now()): Best value $obj, best bound $bestbound, relative gap $relgap%")
 end
 
 """

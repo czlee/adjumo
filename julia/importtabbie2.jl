@@ -12,18 +12,20 @@ using JSON
 
 typealias JsonDict Dict{AbstractString,Any}
 
+export importtabbiejson, converttabbiedicttoroundinfo
+
 # These are set by the adjudicator core. Tabbie2's regions are ignored.
 REGIONS = [
-    NorthAsia     => ["CN","JP","KR"],
-    SouthEastAsia => ["MY","ID","PH","SG"],
-    MiddleEast    => ["IL","LB"],
-    SouthAsia     => ["IN","PK","BD"],
-    Africa        => ["ZA","BW","NA"],
-    Oceania       => ["AU","NZ"],
-    NorthAmerica  => ["CA","US"],
-    LatinAmerica  => ["MX","BR"],
-    Europe        => ["FR","DE","IT","AT","HR","GR"],
-    IONA          => ["UK","IE"],
+    NorthAsia     => ["cn","jp","kr"],
+    SouthEastAsia => ["my","id","ph","sg"],
+    MiddleEast    => ["il","lb"],
+    SouthAsia     => ["in","pk","bd"],
+    Africa        => ["za","bw","na"],
+    Oceania       => ["au","nz"],
+    NorthAmerica  => ["ca","us"],
+    LatinAmerica  => ["mx","br"],
+    Europe        => ["fr","de","it","at","hr","gr","rs","ro","kz","nl","se","az","pt","ee","tr","dk","mk","hu","ru","ua","cz","es","fi","pl","lv","si"],
+    IONA          => ["gb","ie"],
 ]
 
 # These are taken from tabbie2.git/common/models/User.php
@@ -37,7 +39,7 @@ const TABBIE_LANGUAGE_EFL = 3
 
 function importtabbiejson(io::IO)
     d = JSON.parse(io)
-    return converttabbiejson(d)
+    return converttabbiedicttoroundinfo(d)
 end
 
 function hasobjectwithid(v::Vector, id::Int)
@@ -52,25 +54,27 @@ function getobjectwithid{T}(v::Vector{T}, id::Int)
     return v[index]
 end
 
-function converttabbiejson(dict::JsonDict)
+function converttabbiedicttoroundinfo(dict::JsonDict)
     ri = RoundInfo(99)
 
-    for institution in dict["societies"]
+    for institution in values(dict["societies"])
         addinstitution!(ri, institution)
     end
 
-    for debate in dict["debates"]
+    for debate in dict["draw"]
         addteamsanddebate!(ri, debate)
     end
 
     # We need to create all the adjudicators before we can add information about
     # conflicts and history, as they reference each other.
-    for debate in dict
+    for debate in dict["draw"]
         addadjudicators!(ri, debate["panel"]["adjudicators"])
     end
-    for debate in dict
+    for debate in dict["draw"]
         addadjudicatorrelationships!(ri, debate["panel"]["adjudicators"])
     end
+
+    return ri
 end
 
 function addteamsanddebate!(ri::RoundInfo, d::JsonDict)
@@ -96,7 +100,7 @@ function addteam!(ri::RoundInfo, d::JsonDict)
     end
     name = d["name"]
     institution = getobjectwithid(ri.institutions, d["society_id"])
-    gender = interpretteamgender(d["speaker"])
+    gender = interpretteamgender(d["speakers"])
     language = interpretlanguage(d["language_status"])
     points = d["points"]
     addteam!(ri, id, name, institution, institution.region, gender, language, points)
@@ -136,7 +140,7 @@ function interpretregion(countryalpha2::AbstractString)
         end
     end
     warn("Country code $countryalpha2 has no region defined.")
-    return RegionNone
+    return NoRegion
 end
 
 function interpretlanguage(val::Int)
@@ -151,7 +155,7 @@ function interpretlanguage(val::Int)
     end
 end
 
-function addadjudicators!(ri::RoundInfo, adjdicts::Array{JsonDict})
+function addadjudicators!(ri::RoundInfo, adjdicts::Array)
     for adjdict in adjdicts
         addadjudicator!(ri, adjdict)
     end
