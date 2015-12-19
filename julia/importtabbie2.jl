@@ -166,11 +166,12 @@ function addadjudicator!(ri::RoundInfo, d::JsonDict)
     if hasobjectwithid(ri.adjudicators, id)
         error("Duplicate adjudicator ID: $id")
     end
-    name = d["name"]
+    name = ITF8String(d["name"])
     institution = getobjectwithid(ri.institutions, d["society_id"])
-    # ranking = interpretranking(d["strength"])
-    other_institutions = [getobjectwithid(ri.institutions, id) for id in d["societies"]]
-    regions = unique([inst.region for inst in [institution; other_institutions]])
+    ranking = interpretranking(d["strength"])
+    # ranking = Panellist
+    other_institutions = Institution[getobjectwithid(ri.institutions, parse(Int, id)) for id in d["societies"]]
+    regions = unique(Region[inst.region for inst in [institution; other_institutions]])
     gender = interpretpersongender(d["gender"])
     language = interpretlanguage(d["language_status"])
     adj = addadjudicator!(id, name, institution, ranking, regions, gender, language)
@@ -208,6 +209,16 @@ function addadjudicatorrelationships!(ri::RoundInfo, d::JsonDict)
             seenteamid = parse(Int, seenteamiddict[seenteamidkey])
             seenteam = getobjectwithid(ri.teams, seenteamid)
             addteamadjhistory!(ri, seenteam, adj, round)
+        end
+    end
+end
+
+BOUNDARIES = [20, 30, 40, 50, 60, 70, 80, 90]
+
+function interpretranking(val::Int)
+    for (boundary, rank) in zip(BOUNDARIES, instances(Wudc2015AdjudicatorRank))
+        if val < boundary
+            return rank
         end
     end
 end

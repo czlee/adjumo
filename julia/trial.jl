@@ -35,6 +35,14 @@ argsettings = ArgParseSettings()
     "--show"
         help = "Print result to console"
         action = :store_true
+    "-g", "--gap"
+        help = "Tolerance gap"
+        arg_type = Float64
+        default = 1e-2
+    "-t", "--threads"
+        help = "Number of threads to use for solver"
+        arg_type = Int
+        default = 8
 end
 args = parse_args(ARGS, argsettings)
 
@@ -64,7 +72,9 @@ else
 end
 roundinfo.componentweights = componentweights
 
-allocations = allocateadjudicators(roundinfo; solver=args["solver"], enforceteamconflicts=args["enforce-team-conflicts"])
+allocations = allocateadjudicators(roundinfo; solver=args["solver"],
+        enforceteamconflicts=args["enforce-team-conflicts"],
+        gap=args["gap"], threads=args["threads"])
 
 println("Writing JSON files...")
 directory = args["json-dir"]

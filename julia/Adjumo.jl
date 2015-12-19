@@ -23,7 +23,7 @@ include("exportjson.jl")
 export allocateadjudicators, generatefeasiblepanels
 
 "Top-level adjudicator allocation function."
-function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false)
+function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1)
 
     println("panels and score:")
     @time feasiblepanels = generatefeasiblepanels(roundinfo)
@@ -40,7 +40,7 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
         @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
     end
 
-    @time status, debateindices, panelindices = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver)
+    @time status, debateindices, panelindices = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver, gap=gap, threads=threads)
 
     if status != :Optimal
         println("Error: Problem was not solved to optimality. Status was: $status")
@@ -171,7 +171,7 @@ function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorP
 end
 
 "Given a user option, returns a solver for use in solving the optimization problem."
-function choosesolver(solver::AbstractString)
+function choosesolver(solver::AbstractString; gap::Float64=1e-2, threads::Int=1)
     for (solvername, solvermod, solversym, gapsym) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
             try
@@ -186,7 +186,11 @@ function choosesolver(solver::AbstractString)
 
             end
             println("Using solver: $solversym")
-            return solversym, eval(solversym)(;gapsym=>1e-2)
+            kwargs = [gapsym => gap]
+            if solversym == :CbcSolver
+                push!(kwargs, :threads => threads)
+            end
+            return solversym, eval(solversym)(;kwargs...)
         end
     end
     if solver == "default"
@@ -221,11 +225,11 @@ Returns a list of 2-tuples, `(d, p)`, where `d` is the column number of the
 """
 function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool},
         lockedadjs::Vector{Tuple{Int,Int}}, blockedadjs::Vector{Tuple{Int,Int}},
-        istrainee::Vector{Bool}; solver="default")
+        istrainee::Vector{Bool}; solver="default", gap=1e-2, threads=1)
 
     (ndebates, npanels) = size(Σ)
 
-    modeltype, modelsolver = choosesolver(solver)
+    modeltype, modelsolver = choosesolver(solver; gap=gap, threads=threads)
     m = Model(solver=modelsolver)
 
     @defVar(m, X[1:ndebates,1:npanels], Bin)

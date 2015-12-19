@@ -70,6 +70,7 @@ Adjudicator(id::Int, name::UTF8String, institution::Institution) = Adjudicator(i
 Adjudicator(id::Int, name::AbstractString, institution::Institution) = Adjudicator(id, UTF8String(name), institution, Panellist, Region[institution.region], PersonNoGender, NoLanguage)
 Adjudicator(id::Int, name::AbstractString, institution::Institution, gender::PersonGender) = Adjudicator(id, UTF8String(name), institution, Panellist, Region[institution.region], gender, NoLanguage)
 Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(id, UTF8String(name), institution, ranking, Region[institution.region], PersonNoGender, NoLanguage)
+Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank, regions::Vector{Region}, gender::PersonGender, language::LanguageStatus) = Adjudicator(id, UTF8String(name), institution, ranking, regions, gender, language)
 show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator($(adj.id), \"$(adj.name)\", \"$(adj.institution.code)\")")
 
 type Debate
