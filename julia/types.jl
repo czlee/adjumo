@@ -70,6 +70,7 @@ Adjudicator(id::Int, name::UTF8String, institution::Institution) = Adjudicator(i
 Adjudicator(id::Int, name::AbstractString, institution::Institution) = Adjudicator(id, UTF8String(name), institution, Panellist, Region[institution.region], PersonNoGender, NoLanguage)
 Adjudicator(id::Int, name::AbstractString, institution::Institution, gender::PersonGender) = Adjudicator(id, UTF8String(name), institution, Panellist, Region[institution.region], gender, NoLanguage)
 Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(id, UTF8String(name), institution, ranking, Region[institution.region], PersonNoGender, NoLanguage)
+# Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank, regions::Vector{Region}, gender::PersonGender, language::LanguageStatus) = Adjudicator(id, UTF8String(name), institution, ranking, regions, gender, language)
 show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator($(adj.id), \"$(adj.name)\", \"$(adj.institution.code)\")")
 
 type Debate
@@ -115,6 +116,7 @@ end
 
 immutable PanelAllocation <: AbstractPanel
     debate::Debate
+    score::Float64
     chair::Adjudicator
     panellists::Vector{Adjudicator}
     trainees::Vector{Adjudicator}
@@ -268,14 +270,51 @@ numteamsfrominstitution(rinfo::RoundInfo, inst::Institution) = count(x -> x.inst
 # and rinfo.adjudicators. It is the responsibility of the caller to make sure
 # this is the case.
 #
-# TODO only add if entry not already present
-addadjadjconflict!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator) = push!(rinfo.adjadjconflicts, AdjudicatorPair(adj1, adj2))
-addteamadjconflict!(rinfo::RoundInfo, team::Team, adj::Adjudicator) = push!(rinfo.teamadjconflicts, TeamAdjudicator(team, adj))
-addadjadjhistory!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator, round::Int) = push!(get!(rinfo.adjadjhistory, AdjudicatorPair(adj1, adj2), Int[]), round)
-addteamadjhistory!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int) = push!(get!(rinfo.teamadjhistory, TeamAdjudicator(team, adj), Int[]), round)
-addlockedadj!(rinfo::RoundInfo, adj::Adjudicator, debate::Debate) = push!(rinfo.lockedadjs, AdjudicatorDebate(adj, debate))
-addblockedadj!(rinfo::RoundInfo, adj::Adjudicator, debate::Debate) = push!(rinfo.blockedadjs, AdjudicatorDebate(adj, debate))
-addgroupedadjs!(rinfo::RoundInfo, adjs::Vector{Adjudicator}) = push!(rinfo.groupedadjs, adjs)
+function addadjadjconflict!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator)
+    newobj = AdjudicatorPair(adj1, adj2)
+    if newobj ∉ rinfo.adjadjconflicts
+        push!(rinfo.adjadjconflicts, newobj)
+    end
+end
+
+function addteamadjconflict!(rinfo::RoundInfo, team::Team, adj::Adjudicator)
+    newobj = TeamAdjudicator(team, adj)
+    if newobj ∉ rinfo.teamadjconflicts
+        push!(rinfo.teamadjconflicts, newobj)
+    end
+end
+
+function addadjadjhistory!(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator, round::Int)
+    history = get!(rinfo.adjadjhistory, AdjudicatorPair(adj1, adj2), Int[])
+    if round ∉ history
+        push!(history, round)
+    end
+end
+
+function addteamadjhistory!(rinfo::RoundInfo, team::Team, adj::Adjudicator, round::Int)
+    history = get!(rinfo.teamadjhistory, TeamAdjudicator(team, adj), Int[])
+    if round ∉ history
+        push!(history, round)
+    end
+end
+
+function addlockedadj!(rinfo::RoundInfo, adj::Adjudicator, debate::Debate)
+    newobj = AdjudicatorDebate(adj, debate)
+    if newobj ∉ rinfo.lockedadjs
+        push!(rinfo.lockedadjs, newobj)
+    end
+end
+
+function addblockedadj!(rinfo::RoundInfo, adj::Adjudicator, debate::Debate)
+    newobj = AdjudicatorDebate(adj, debate)
+    if newobj ∉ rinfo.blockedadjs
+        push!(rinfo.blockedadjs, newobj)
+    end
+end
+
+function addgroupedadjs!(rinfo::RoundInfo, adjs::Vector{Adjudicator})
+    push!(rinfo.groupedadjs, adjs)
+end
 
 lockedadjs(rinfo::RoundInfo, debate::Debate) = Adjudicator[x.adjudicator for x in filter(y -> y.debate == debate, rinfo.lockedadjs)]
 blockedadjs(rinfo::RoundInfo, debate::Debate) = Adjudicator[x.adjudicator for x in filter(y -> y.debate == debate, rinfo.blockedadjs)]

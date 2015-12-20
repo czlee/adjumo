@@ -1,4 +1,4 @@
-# Import Tabbie1 data into a RoundInfo.
+# Import Tabbie1 data from an SQL database into a RoundInfo.
 #
 # This is intended only for the use of historical datasets. For Thessaloniki
 # WUDC 2016, we used this to try out the dataset from Malaysia WUDC 2015. (For
@@ -6,45 +6,27 @@
 #
 # Requirements:
 #   Pkg.clone("https://github.com/JuliaDB/DBI.jl.git")
-#   Pkg.clone("https://github.com/JuliaDB/PostgreSQL.jl.git")
-# (Both of these are unregistered packages at time of writing.)
+# (This is an unregistered package at time of writing.)
 #
 # Usage:
-#   using Adjumo
 #   using AdjumoDataTools
+#   using DBI
+#   dbconnection = connect(Postgres, host, username, password, dbname, port)
 #   currentround = 5
-#   ri = gettabbie1roundinfo(PSQL_USERNAME, PSQL_PASSWORD, DATABASE_NAME, currentround)
+#   ri = gettabbie1roundinfo(dbconnection, currentround)
 #
 # You can also include("importtabbie1.jl") this file rather than use the
 # AdjumoDataTools module, if you prefer.
 #
-# There is quite a bit of manual work to get a Tabbie1 dataset into a form
-# usable by this script. Specifically, this requires:
-#
-#  1. Access to a PostgreSQL server, probably one installed on your machine.
-#     Note that Tabbie1 uses MySQL, not PostgreSQL. I used PostgreSQL because I
-#     normally use PostgreSQL and couldn't be bothered installing MySQL.
-#
-#  2. A PostgreSQL database that contains a port of the Tabbie1 database you
-#     were using. The database must already exist in PostgreSQL.
-#
-#     If you're importing from a MySQL backup file from Tabbie1, this means you
-#     need to port the backup file to a PostgreSQL backup file, and then run
-#       createdb mydb
-#       psql -d mydb -f mydb.psql
-#
-#     I used a tool at https://github.com/lanyrd/mysql-postgresql-converter, but
-#     it wasn't designed for the general use-case, so I needed to edit the MySQL
-#     backup file in order to avoid offending it.
-#
-#  3. Two CSV files with the information about adjudicators and teams that is
-#     not in the database. To make these files, run this script:
+# Because Tabbie1 doesn't have all of the information Adjumo requires, we
+# require "augmentation files" to provide the missing data. You need to generate
+# these yourself, probably manually. To do so, run this script:
 #       cd ../misc
 #       psql -d mydb -f generatecsv.sql
-#     and the files "adjudicators.csv", "teams.csv" and "institutions.csv" will
-#     show up in that folder. Then add appropriate columns for the missing
-#     fields, and save as "adjudicators-augmented.csv", "teams-augmented.csv"
-#     and "institutions-augmented.csv".
+# and the files "adjudicators.csv", "teams.csv" and "institutions.csv" will show
+# up in that folder. Then add appropriate columns for the missing fields, and
+# save as "adjudicators-augmented.csv", "teams-augmented.csv" and "institutions-
+# augmented.csv".
 #
 # Notes:
 #  - Regions are hardcoded to match those used at Malaysia WUDC 2015. You'll
@@ -54,7 +36,6 @@
 #    institutions CSV file.
 
 using DBI
-using PostgreSQL
 
 function hasobjectwithid(v::Vector, id::Int)
     return findfirst(x -> x.id == id, v) > 0
@@ -68,15 +49,12 @@ function getobjectwithid{T}(v::Vector{T}, id::Int)
     return v[index]
 end
 
-function gettabbie1roundinfo(username, password, dbname, currentround; host="localhost", port=5432)
+function gettabbie1roundinfo(dbconnection, currentround)
     rinfo = RoundInfo(currentround)
-
-    println("gettabbie1roundinfo: Connecting to database $dbname...")
-    conn = connect(Postgres, host, username, password, dbname, port)
 
     # Institutions
     println("gettabbie1roundinfo: Importing institutions...")
-    stmt = prepare(conn, "SELECT univ_id, univ_name, univ_code FROM university;")
+    stmt = prepare(dbconnection, "SELECT univ_id, univ_name, univ_code FROM university;")
     result = execute(stmt)
     f = open("../misc/institutions-augmented.csv")
     (csvdata, header) = readdlm(f, ','; header=true)
@@ -99,7 +77,7 @@ function gettabbie1roundinfo(username, password, dbname, currentround; host="loc
 
     # Teams
     println("gettabbie1roundinfo: Importing teams...")
-    stmt = prepare(conn, "SELECT team_id, univ_id, team_code, esl FROM team;")
+    stmt = prepare(dbconnection, "SELECT team_id, univ_id, team_code, esl FROM team;")
     result = execute(stmt)
     f = open("../misc/speakers-augmented.csv")
     (csvdata, header) = readdlm(f, ','; header=true)
@@ -127,7 +105,7 @@ function gettabbie1roundinfo(username, password, dbname, currentround; host="loc
 
     # Adjudicators
     println("gettabbie1roundinfo: Importing adjudicators...")
-    stmt = prepare(conn, "SELECT adjud_id, univ_id, adjud_name, region_id FROM adjudicator;")
+    stmt = prepare(dbconnection, "SELECT adjud_id, univ_id, adjud_name, region_id FROM adjudicator;")
     result = execute(stmt)
     f = open("../misc/adjudicators-augmented.csv")
     (csvdata, header) = readdlm(f, ','; header=true)
@@ -159,7 +137,7 @@ function gettabbie1roundinfo(username, password, dbname, currentround; host="loc
     # Previous rounds
     for round in 1:currentround-1
         println("gettabbie1roundinfo: Importing history from round $round...")
-        stmt = prepare(conn, "SELECT adjud_round_$round.debate_id, adjud_id, first, second, third, fourth FROM adjud_round_$round LEFT JOIN result_round_$round ON result_round_$round.debate_id = adjud_round_$round.debate_id ORDER BY adjud_round_$round.debate_id")
+        stmt = prepare(dbconnection, "SELECT adjud_round_$round.debate_id, adjud_id, first, second, third, fourth FROM adjud_round_$round LEFT JOIN result_round_$round ON result_round_$round.debate_id = adjud_round_$round.debate_id ORDER BY adjud_round_$round.debate_id")
         result = execute(stmt)
         iterstate = start(result)
         if !done(result, iterstate)
@@ -197,7 +175,7 @@ function gettabbie1roundinfo(username, password, dbname, currentround; host="loc
 
     # Current round
     println("gettabbie1roundinfo: Importing draw from round $currentround...")
-    stmt = prepare(conn, "SELECT debate_id, oo, oo, cg, co FROM draw_round_$currentround")
+    stmt = prepare(dbconnection, "SELECT debate_id, oo, oo, cg, co FROM draw_round_$currentround")
     result = execute(stmt)
     for row in result
         id = Int(row[1])
@@ -208,7 +186,7 @@ function gettabbie1roundinfo(username, password, dbname, currentround; host="loc
 
     println("gettabbie1roundinfo: There are $(numdebates(rinfo)) debates and $(numadjs(rinfo)) adjudicators.")
 
-    disconnect(conn)
+    disconnect(dbconnection)
     return rinfo
 end
 

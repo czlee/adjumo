@@ -7,22 +7,24 @@ __precompile__()
 module Adjumo
 
 using JuMP
+using MathProgBase
 
 SUPPORTED_SOLVERS = [
-    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj),
-    ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap),
-    ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap),
+    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj,  :threads),
+    ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap,   :Threads),
+    ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap, :threads),
 ]
 
 include("types.jl")
 include("score.jl")
 include("importtabbie2.jl")
 include("exportjson.jl")
+include("exporttabbie2.jl")
 
 export allocateadjudicators, generatefeasiblepanels
 
 "Top-level adjudicator allocation function."
-function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false)
+function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1)
 
     println("panels and score:")
     @time feasiblepanels = generatefeasiblepanels(roundinfo)
@@ -39,7 +41,7 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
         @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
     end
 
-    @time status, debateindices, panelindices = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver)
+    @time status, debateindices, panelindices, scores = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver, gap=gap, threads=threads)
 
     if status != :Optimal
         println("Error: Problem was not solved to optimality. Status was: $status")
@@ -47,7 +49,7 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
     end
 
     println("conversion:")
-    @time allocations = convertallocations(roundinfo.debates, feasiblepanels, debateindices, panelindices)
+    @time allocations = convertallocations(roundinfo.debates, feasiblepanels, debateindices, panelindices, scores)
     return allocations
 end
 
@@ -107,7 +109,7 @@ adjudicator. `Q[p,a]` is 1 if adjudicator `a` is in panel `p`, 0 otherwise.
 function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
     nadjs = numadjs(roundinfo)
-    Q = spzeros(Bool, npanels, nadjs)
+    Q = zeros(Bool, npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
         indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
         Q[p, indices] = true
@@ -159,19 +161,19 @@ function convertteamadjconflicts(roundinfo::RoundInfo)
 end
 
 "Converts panel allocations from indices to PanelAllocation objects"
-function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorPanel}, debateindices::Vector{Int}, panelindices::Vector{Int})
+function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorPanel}, debateindices::Vector{Int}, panelindices::Vector{Int}, scores::Vector{Float64})
     allocations = Array{PanelAllocation}(length(debateindices))
-    for (i, (d, p)) in enumerate(zip(debateindices, panelindices))
+    for (i, (d, p, score)) in enumerate(zip(debateindices, panelindices, scores))
         debate = debates[d]
         panel = panels[p]
-        allocations[i] = PanelAllocation(debate, chair(panel), panellists(panel), trainees(panel))
+        allocations[i] = PanelAllocation(debate, score, chair(panel), panellists(panel), trainees(panel))
     end
     return allocations
 end
 
 "Given a user option, returns a solver for use in solving the optimization problem."
-function choosesolver(solver::AbstractString)
-    for (solvername, solvermod, solversym, gapsym) in SUPPORTED_SOLVERS
+function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
+    for (solvername, solvermod, solversym, gapsym, threadssym) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
             try
                 @eval using $solvermod
@@ -185,7 +187,7 @@ function choosesolver(solver::AbstractString)
 
             end
             println("Using solver: $solversym")
-            return eval(solversym)(;gapsym=>1e-2)
+            return solversym, eval(solversym)(;gapsym=>gap, threadssym=>threads)
         end
     end
     if solver == "default"
@@ -193,6 +195,13 @@ function choosesolver(solver::AbstractString)
     else
         error("Solver must be \"gurobi\", \"cbc\" or \"glpk\" (or \"default\").")
     end
+end
+
+function infocallback(cb)
+    obj       = MathProgBase.cbgetobj(cb)
+    bestbound = MathProgBase.cbgetbestbound(cb)
+    relgap    = (bestbound - obj) / bestbound * 100
+    println("$(now()): Best value $obj, best bound $bestbound, relative gap $relgap%")
 end
 
 """
@@ -213,11 +222,11 @@ Returns a list of 2-tuples, `(d, p)`, where `d` is the column number of the
 """
 function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool},
         lockedadjs::Vector{Tuple{Int,Int}}, blockedadjs::Vector{Tuple{Int,Int}},
-        istrainee::Vector{Bool}; solver="default")
+        istrainee::Vector{Bool}; solver="default", gap=1e-2, threads=1)
 
     (ndebates, npanels) = size(Σ)
 
-    modelsolver = choosesolver(solver)
+    modeltype, modelsolver = choosesolver(solver; gap=gap, threads=threads)
     m = Model(solver=modelsolver)
 
     @defVar(m, X[1:ndebates,1:npanels], Bin)
@@ -234,18 +243,26 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
         @addConstraint(m, X[d,:]*Q[:,a] .== 0)
     end
 
+    if modeltype == :GLPKSolverMIP
+        addInfoCallback(m, infocallback)
+    end
 
+    println("Starting solver at $(now())")
     @time status = solve(m)
+    println("Solver done at $(now())")
 
     if status == :Optimal
         println("Objective value: ", getObjectiveValue(m))
-        debates, panels = findn(getValue(X))
+        Xval = Array{Bool}(getValue(X))
+        debates, panels = findn(Xval)
+        scores = Σ[Xval]
     else
         debates = Int[]
         panels = Int[]
+        scores = Float64[]
     end
 
-    return (status, debates, panels)
+    return (status, debates, panels, scores)
 end
 
 end # module

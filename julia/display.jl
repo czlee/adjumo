@@ -102,7 +102,8 @@ function showdebatedetail(roundinfo::RoundInfo, allocation::PanelAllocation)
         printfmtln("{:>25}: {:>9.3f}  {:>12.3f}", name, score, score * weight)
     end
     debatescore = score(roundinfo, debate, panel)
-    printfmtln("{:>25}:            {:>12.3f}  ({:>6.3f})  {:>12.3f}", "Overall", debatescore, debate.weight, debatescore * debate.weight)
+    @assert debatescore == allocation.score
+    printfmtln("{:>25}:            {:>12.3f}  ({:>6.3f})  {:>12.3f}", "Overall", allocation.score, debate.weight, allocation.score * debate.weight)
     println()
 end
 

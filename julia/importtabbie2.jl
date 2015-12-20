@@ -12,18 +12,20 @@ using JSON
 
 typealias JsonDict Dict{AbstractString,Any}
 
+export importtabbiejson, converttabbiedicttoroundinfo
+
 # These are set by the adjudicator core. Tabbie2's regions are ignored.
 REGIONS = [
-    NorthAsia     => ["CN","JP","KR"],
-    SouthEastAsia => ["MY","ID","PH","SG"],
-    MiddleEast    => ["IL","LB"],
-    SouthAsia     => ["IN","PK","BD"],
-    Africa        => ["ZA","BW","NA"],
-    Oceania       => ["AU","NZ"],
-    NorthAmerica  => ["CA","US"],
-    LatinAmerica  => ["MX","BR"],
-    Europe        => ["FR","DE","IT","AT","HR","GR"],
-    IONA          => ["UK","IE"],
+    NorthAsia     => ["cn","jp","kr"],
+    SouthEastAsia => ["my","id","ph","sg"],
+    MiddleEast    => ["il","lb"],
+    SouthAsia     => ["in","pk","bd"],
+    Africa        => ["za","bw","na"],
+    Oceania       => ["au","nz"],
+    NorthAmerica  => ["ca","us"],
+    LatinAmerica  => ["mx","br"],
+    Europe        => ["fr","de","it","at","hr","gr","rs","ro","kz","nl","se","az","pt","ee","tr","dk","mk","hu","ru","ua","cz","es","fi","pl","lv","si"],
+    IONA          => ["gb","ie"],
 ]
 
 # These are taken from tabbie2.git/common/models/User.php
@@ -37,7 +39,7 @@ const TABBIE_LANGUAGE_EFL = 3
 
 function importtabbiejson(io::IO)
     d = JSON.parse(io)
-    return converttabbiejson(d)
+    return converttabbiedicttoroundinfo(d)
 end
 
 function hasobjectwithid(v::Vector, id::Int)
@@ -52,25 +54,35 @@ function getobjectwithid{T}(v::Vector{T}, id::Int)
     return v[index]
 end
 
-function converttabbiejson(dict::JsonDict)
+# Calls f on the object with the given id if it is found; does nothing otherwise.
+function onobjectwithid{T}(f::Function, v::Vector{T}, id::Int)
+    index = findfirst(x -> x.id == id, v)
+    if index != 0
+        f(v[index])
+    end
+end
+
+function converttabbiedicttoroundinfo(dict::JsonDict)
     ri = RoundInfo(99)
 
-    for institution in dict["societies"]
+    for institution in values(dict["societies"])
         addinstitution!(ri, institution)
     end
 
-    for debate in dict["debates"]
+    for debate in dict["draw"]
         addteamsanddebate!(ri, debate)
     end
 
     # We need to create all the adjudicators before we can add information about
     # conflicts and history, as they reference each other.
-    for debate in dict
+    for debate in dict["draw"]
         addadjudicators!(ri, debate["panel"]["adjudicators"])
     end
-    for debate in dict
-        addadjudicatorrelationships!(ri, debate["panel"]["adjudicators"])
+    for debate in dict["draw"]
+        addadjudicatorsrelationships!(ri, debate["panel"]["adjudicators"])
     end
+
+    return ri
 end
 
 function addteamsanddebate!(ri::RoundInfo, d::JsonDict)
@@ -96,7 +108,7 @@ function addteam!(ri::RoundInfo, d::JsonDict)
     end
     name = d["name"]
     institution = getobjectwithid(ri.institutions, d["society_id"])
-    gender = interpretteamgender(d["speaker"])
+    gender = interpretteamgender(d["speakers"])
     language = interpretlanguage(d["language_status"])
     points = d["points"]
     addteam!(ri, id, name, institution, institution.region, gender, language, points)
@@ -136,7 +148,7 @@ function interpretregion(countryalpha2::AbstractString)
         end
     end
     warn("Country code $countryalpha2 has no region defined.")
-    return RegionNone
+    return NoRegion
 end
 
 function interpretlanguage(val::Int)
@@ -151,7 +163,7 @@ function interpretlanguage(val::Int)
     end
 end
 
-function addadjudicators!(ri::RoundInfo, adjdicts::Array{JsonDict})
+function addadjudicators!(ri::RoundInfo, adjdicts::Array)
     for adjdict in adjdicts
         addadjudicator!(ri, adjdict)
     end
@@ -165,11 +177,17 @@ function addadjudicator!(ri::RoundInfo, d::JsonDict)
     name = d["name"]
     institution = getobjectwithid(ri.institutions, d["society_id"])
     ranking = interpretranking(d["strength"])
-    other_institutions = [getobjectwithid(ri.institutions, id) for id in d["societies"]]
-    regions = unique([inst.region for inst in [institution; other_institutions]])
+    # ranking = Panellist
+    other_institutions = Institution[]
+    for otherinstid in d["societies"]
+        onobjectwithid(ri.institutions, parse(Int, otherinstid)) do inst
+            push!(other_institutions, inst)
+        end
+    end
+    regions = unique(Region[inst.region for inst in [institution; other_institutions]])
     gender = interpretpersongender(d["gender"])
     language = interpretlanguage(d["language_status"])
-    adj = addadjudicator!(id, name, institution, ranking, regions, gender, language)
+    adj = addadjudicator!(ri, id, name, institution, ranking, regions, gender, language)
 
     # Also add team conflicts for every society
     conflictteams = filter(x -> x.institution ∈ other_institutions, ri.teams)
@@ -178,32 +196,59 @@ function addadjudicator!(ri::RoundInfo, d::JsonDict)
     end
 end
 
+function addadjudicatorsrelationships!(ri::RoundInfo, adjdicts::Array)
+    for adjdict in adjdicts
+        addadjudicatorrelationships!(ri, adjdict)
+    end
+end
+
 function addadjudicatorrelationships!(ri::RoundInfo, d::JsonDict)
     id = d["id"]
     adj = getobjectwithid(ri.adjudicators, id)
     for conflictadjidstr in d["strikedAdjudicators"]
         conflictadjid = parse(Int, conflictadjidstr)
-        conflictadj = getobjectwithid(ri.adjudicators, conflictadjid)
-        addadjadjconflict!(ri, adj, conflictadj)
+        onobjectwithid(ri.adjudicators, conflictadjid) do conflictadj
+            addadjadjconflict!(ri, adj, conflictadj)
+        end
     end
     for conflictteamidstr in d["strikedTeams"]
-        conflictteamid = parse(Int, conflictadjidstr)
-        conflictteam = getobjectwithid(ri.teams, conflictteamid)
-        addteamadjconflict!(ri, conflictteam, adj)
+        conflictteamid = parse(Int, conflictteamidstr)
+        onobjectwithid(ri.teams, conflictteamid) do conflictteam
+            addteamadjconflict!(ri, conflictteam, adj)
+        end
     end
     for seenadjiddict in d["pastAdjudicatorIDs"]
-        round = parse(Int, seenadjiddict["rno"])
+        rd = parse(Int, seenadjiddict["label"])
         seenadjid = parse(Int, seenadjiddict["bid"])
-        seenadj = getobjectwithid(ri.adjudicators, seenadjid)
-        addadjadjhistory!(ri, adj, seenadj, round)
+        onobjectwithid(ri.adjudicators, seenadjid) do seenadj
+            addadjadjhistory!(ri, adj, seenadj, rd)
+        end
     end
     for seenteamiddict in d["pastTeamIDs"]
-        round = parse(Int, seenteamiddict["rno"])
+        rd = 0
+        try
+            rd = parse(Int, seenteamiddict["label"])
+        catch e
+            warn("Adj $(adj.id) $(adj.name), pastTeamIDs: $(e.msg)")
+            continue
+        end
         for pos in ["og", "oo", "cg", "co"]
             seenteamidkey = pos * "_team_id"
             seenteamid = parse(Int, seenteamiddict[seenteamidkey])
-            seenteam = getobjectwithid(ri.teams, seenteamid)
-            addteamadjhistory!(ri, seenteam, adj, round)
+            onobjectwithid(ri.teams, seenteamid) do seenteam
+                addteamadjhistory!(ri, seenteam, adj, rd)
+            end
         end
     end
+end
+
+BOUNDARIES = [20, 30, 40, 50, 60, 70, 80, 90]
+
+function interpretranking(val::Int)
+    for (boundary, rank) in zip(BOUNDARIES, instances(Wudc2015AdjudicatorRank))
+        if val < boundary
+            return rank
+        end
+    end
+    return ChairPlus
 end

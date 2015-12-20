@@ -14,7 +14,7 @@ push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
 import Adjumo: historyscore, conflictsscore
-include("../random.jl")
+using AdjumoDataTools
 
 # ==============================================================================
 # Functions that go in types.jl

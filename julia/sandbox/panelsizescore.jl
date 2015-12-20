@@ -2,7 +2,7 @@ push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
 using JuMP
-include("../random.jl")
+using AdjumoDataTools
 
 panelsizescore1(panel::AdjudicatorPanel) = [10,10,0,3][numadjs(panel)]
 function panelsizescore2(panel::AdjudicatorPanel)

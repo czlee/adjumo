@@ -4,7 +4,7 @@ push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
 import Adjumo: historyscore, conflictsscore
-include("../random.jl")
+using AdjumoDataTools
 
 traineeindices1(adjs::Vector{Adjudicator}) = [adj.ranking <= TraineePlus for adj in adjs]
 traineeindices2(adjs::Vector{Adjudicator}) = map(x -> x.ranking <= TraineePlus, adjs)

@@ -4,7 +4,7 @@ push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
 import Adjumo: panelregionalrepresentationscore
-include("../random.jl")
+using AdjumoDataTools
 
 function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)

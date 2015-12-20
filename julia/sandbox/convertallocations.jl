@@ -5,7 +5,7 @@ using ArgParse
 using Adjumo
 using StatsBase
 import Adjumo.PanelAllocation
-include("../random.jl")
+using AdjumoDataTools
 
 function convertallocations1(debates::Vector{Debate}, panels::Vector{AdjudicatorPanel}, debateindices::Vector{Int}, panelindices::Vector{Int})
     map(debateindices, panelindices) do d, p

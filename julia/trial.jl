@@ -28,6 +28,21 @@ argsettings = ArgParseSettings()
         help = "Import a Tabbie1 database: <username> <password> <database>"
         metavar = "ARG"
         nargs = 3
+    "--tabbie2"
+        help = "Import a Tabbie2 export file"
+        metavar = "JSONFILE"
+        default = ""
+    "--show"
+        help = "Print result to console"
+        action = :store_true
+    "-g", "--gap"
+        help = "Tolerance gap"
+        arg_type = Float64
+        default = 1e-2
+    "-t", "--threads"
+        help = "Number of threads to use for solver"
+        arg_type = Int
+        default = 8
 end
 args = parse_args(ARGS, argsettings)
 
@@ -43,23 +58,35 @@ componentweights.teamhistory = 100
 componentweights.adjhistory = 100
 componentweights.teamconflict = 1e6
 componentweights.adjconflict = 1e6
-if length(args["tabbie1"]) == 0
-    roundinfo = randomroundinfo(ndebates, currentround)
-else
+if length(args["tabbie2"]) > 0
+    tabbie2file = open(args["tabbie2"])
+    roundinfo = importtabbiejson(tabbie2file)
+elseif length(args["tabbie1"]) > 0
+    using DBI
+    using PostgreSQL
     username, password, database = args["tabbie1"]
-    roundinfo = gettabbie1roundinfo(username, password, database, currentround)
+    dbconnection = connect(Postgres, "localhost", username, password, database, 5432)
+    roundinfo = gettabbie1roundinfo(dbconnection, currentround)
+else
+    roundinfo = randomroundinfo(ndebates, currentround)
 end
 roundinfo.componentweights = componentweights
 
-allocations = allocateadjudicators(roundinfo; solver=args["solver"], enforceteamconflicts=args["enforce-team-conflicts"])
+allocations = allocateadjudicators(roundinfo; solver=args["solver"],
+        enforceteamconflicts=args["enforce-team-conflicts"],
+        gap=args["gap"], threads=args["threads"])
 
 println("Writing JSON files...")
 directory = args["json-dir"]
 
 exportroundinfo(roundinfo, directory)
 exportallocations(allocations, directory)
+exporttabbiejson(allocations, directory)
 
-showconstraints(roundinfo)
-for allocation in allocations
-    showdebatedetail(roundinfo, allocation)
+
+if args["show"]
+    showconstraints(roundinfo)
+    for allocation in allocations
+        showdebatedetail(roundinfo, allocation)
+    end
 end
