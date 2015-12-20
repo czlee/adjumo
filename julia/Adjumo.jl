@@ -120,10 +120,10 @@ adjudicator. `Q[p,a]` is 1 if adjudicator `a` is in panel `p`, 0 otherwise.
 function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
     nadjs = numadjs(roundinfo)
-    Q = zeros(Bool, npanels, nadjs)
+    Q = zeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
         indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
-        Q[p, indices] = true
+        Q[p, indices] = 1.0
     end
     return Q
 end
@@ -231,9 +231,10 @@ Solves the optimization problem for score matrix `Σ` and panel membership
 Returns a list of 2-tuples, `(d, p)`, where `d` is the column number of the
     debate and `p` is the row number of the panel in `Σ`.
 """
-function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool},
-        lockedadjs::Vector{Tuple{Int,Int}}, blockedadjs::Vector{Tuple{Int,Int}},
-        istrainee::Vector{Bool}; solver="default", gap=1e-2, threads=1)
+function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
+        Q::AbstractMatrix{T2}, lockedadjs::Vector{Tuple{Int,Int}},
+        blockedadjs::Vector{Tuple{Int,Int}}, istrainee::Vector{Bool};
+        solver="default", gap=1e-2, threads=1)
 
     (ndebates, npanels) = size(Σ)
 
