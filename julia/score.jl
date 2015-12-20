@@ -102,9 +102,9 @@ qualityvector(feasiblepanels::Vector{AdjudicatorPanel}) = Float64[panelquality(p
 panelquality(panel::AdjudicatorPanel) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in adjlist(panel)])
 
 const JUDGE_SCORES = Float64[
-  -50   -50   -20     5    10   20  30  40  50
- -200  -200  -200  -100  -100   10  20  30  40
- -200  -200  -200  -200  -200    5  15  25  35
+  -50   -50   -20     5    10   30  20  40  50
+ -200  -200  -200  -100  -100   20  10  30  40
+ -200  -200  -200  -200  -200   15   5  25  35
 ]
 const CHAIR_SCORES = Float64[
  -200  -200  -200  -200  -100  -20  10  15  20
