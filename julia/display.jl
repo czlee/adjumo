@@ -30,7 +30,7 @@ function showadjudicators(rinfo::RoundInfo)
 end
 
 "Prints information about the given debate."
-function showdebatedetail(roundinfo::RoundInfo, allocation::PanelAllocation)
+function showdebatedetail(roundinfo::RoundInfo, allocation::PanelAllocation; α::Float64=1.0)
     debate = allocation.debate
     println("== Debate with id $(debate.id) ==")
 
@@ -105,10 +105,11 @@ function showdebatedetail(roundinfo::RoundInfo, allocation::PanelAllocation)
         printfmtln("{:>25}: {:>9.3f}  {:>12.3f}", name, score, score * weight)
     end
     debatescore = score(roundinfo, debate, panel)
-    if debatescore == allocation.score
-        warn("Score mismatch: $debatescore != $(allocation.score)")
+    weightedscore = weightedαfairness(debate.weight, debatescore, α)
+    if weightedscore != allocation.score
+        warn("Score mismatch: $weightedscore != $(allocation.score)")
     end
-    printfmtln("{:>25}:            {:>12.3f}  ({:>6.3f})  {:>12.3f}", "Overall", allocation.score, debate.weight, allocation.score * debate.weight)
+    printfmtln("{:>25}:            {:>12.3f}  ({:>6.3f})  {:>12.3f}", "Overall", debatescore, debate.weight, weightedscore)
     println()
 end
 

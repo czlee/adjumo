@@ -47,6 +47,10 @@ argsettings = ArgParseSettings()
         help = "Limit how many panels it samples"
         arg_type = Int
         default = typemax(Int)
+    "-a", "--alpha"
+        help = "α-fairness parameter"
+        arg_type = Float64
+        default = 1.0
 end
 args = parse_args(ARGS, argsettings)
 
@@ -78,7 +82,8 @@ println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) ad
 
 allocations = allocateadjudicators(roundinfo; solver=args["solver"],
         enforceteamconflicts=args["enforce-team-conflicts"],
-        gap=args["gap"], threads=args["threads"], limitpanels=args["limitpanels"])
+        gap=args["gap"], threads=args["threads"], limitpanels=args["limitpanels"],
+        α=args["alpha"])
 
 println("Writing JSON files...")
 directory = args["json-dir"]
@@ -91,6 +96,6 @@ exporttabbiejson(allocations, directory)
 if args["show"]
     showconstraints(roundinfo)
     for allocation in allocations
-        showdebatedetail(roundinfo, allocation)
+        showdebatedetail(roundinfo, allocation; α=args["alpha"])
     end
 end

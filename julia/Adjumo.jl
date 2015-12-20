@@ -25,12 +25,12 @@ include("exporttabbie2.jl")
 export allocateadjudicators, generatefeasiblepanels
 
 "Top-level adjudicator allocation function."
-function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int))
+function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int), α=1.0)
 
     println("feasible panels:")
     @time feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=limitpanels)
     println("score matrix:")
-    @time Σ = scorematrix(roundinfo, feasiblepanels)
+    @time Σ = scorematrix(roundinfo, feasiblepanels; α=α)
     println("panel membership matrix:")
     @time Q = panelmembershipmatrix(roundinfo, feasiblepanels)
     println("trainee indicators:")

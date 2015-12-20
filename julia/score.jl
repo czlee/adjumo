@@ -10,11 +10,43 @@ import Base.string
 export scorematrix, score, panelquality,
     panelregionalrepresentationscore, panellanguagerepresentationscore,
     panelgenderrepresentationscore, teamadjhistoryscore, adjadjhistoryscore,
-    teamadjconflictsscore, adjadjconflictsscore
+    teamadjconflictsscore, adjadjconflictsscore, weightedαfairness
 
 # ==============================================================================
 # Top-level functions
 # ==============================================================================
+
+"""
+Returns the weighted α-fairness value for the given weight w, score σ and α.
+This will return -Inf if σ is 0 or negative.
+"""
+function weightedαfairness(w::Float64, σ::Float64, α::Float64)
+    σ = max(σ, zero(σ))
+    if α < 1.0
+        σ = w^α * σ^(1.0-α)
+    elseif α == 1.0
+        σ = w * log(σ)
+    else
+        σ = - w^α * σ^(1.0-α)
+    end
+end
+
+"""
+Returns the weighted α-fairness values for the given weights w, score matrix Σ
+and α. This will return log(eps()) if Σ is 0 or negative.
+"""
+function weightedαfairness(w::Vector{Float64}, Σ::Matrix{Float64}, α::Float64)
+    Σ = max(Σ, zeros(Σ))
+    if α < 1.0
+        return spdiagm(w.^α) * Σ.^(1.0-α)
+    elseif α == 1.0
+        Σ = spdiagm(w) * log(Σ)
+        return max(Σ, nextfloat(-Inf)*ones(Σ))
+    else
+        Σ = -spdiagm(w.^α) * Σ.^(1.0-α)
+        return max(Σ, nextfloat(-Inf)*ones(Σ))
+    end
+end
 
 """
 Returns the score matrix using the round information.
@@ -26,7 +58,7 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 - `feasiblepanels` is a list of AdjudicatorPanel instances.
 `roundinfo` is a RoundInfo instance.
 """
-function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
+function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; α::Float64=1.0)
     componentweights = roundinfo.componentweights
     debateweights = getdebateweights(roundinfo)
     Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
@@ -37,8 +69,7 @@ function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPan
     Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
     Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
-    Σ = max(Σ, zeros(Σ))
-    Σ = spdiagm(debateweights.^0.9) * Σ.^0.1
+    Σ = weightedαfairness(debateweights, Σ, α)
     return Σ
 end
 
@@ -62,7 +93,6 @@ function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
     σ += componentweights.adjhistory   * adjadjhistoryscore(roundinfo, panel)
     σ += componentweights.teamconflict * teamadjconflictsscore(roundinfo, debate, panel)
     σ += componentweights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
-    σ = max(σ, zero(σ))
     return σ
 end
 
