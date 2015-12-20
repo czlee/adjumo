@@ -11,9 +11,9 @@ using MathProgBase
 using StatsBase
 
 SUPPORTED_SOLVERS = [
-    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj,  :threads),
     ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap,   :Threads),
     ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap, :threads),
+    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj,  :threads),
 ]
 
 include("types.jl")
