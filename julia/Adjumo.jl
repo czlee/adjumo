@@ -99,7 +99,8 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
     println("There are $(length(panels)) panels to choose from.")
 
     if length(panels) > 50000
-        sample(panels, 50000; replace=false)
+        panels = sample(panels, 50000; replace=false)
+        println("Reduced to 50000 panels, picking at random")
     end
 
     return panels

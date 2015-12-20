@@ -91,8 +91,6 @@ function randomroundinfo(ndebates::Int, currentround::Int)
         adddebate!(roundinfo, rand(1:100000), 10rand(), teams_shuffled[:,i])
     end
 
-    println("randomroundinfo: There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
-
     for i in 1:nadjs÷4
         addadjadjconflict!(roundinfo, randpair(adjudicators)...)
         addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
