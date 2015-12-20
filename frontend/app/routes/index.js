@@ -4,15 +4,6 @@ export default Ember.Route.extend({
 
   model: function() {
 
-      // console.log('___');
-      // var config = this.store.peekRecord('allocation-config', 1);
-
-      // .save().then(function(config) {
-      //   console.log(config);
-      //   console.log(config.get('quality'));
-      // });
-      // console.log('___');
-
       return Ember.RSVP.hash({ // Need this to return multiple model types (these load in parallel as promises)
 
           config:                 this.defaultConfig,
@@ -22,8 +13,10 @@ export default Ember.Route.extend({
           teams:                  this.store.findAll('team'),
           debates:                this.store.findAll('debate'),
           allocations:            this.store.findAll('allocation-iteration'),
+          teamadjudicator:        this.store.findAll('teamadjudicator'),
 
       });
+
   },
 
   setupController(controller, models) {

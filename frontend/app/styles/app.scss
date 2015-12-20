@@ -268,22 +268,22 @@ td.head-panel {
 
 .popover {
   opacity: 0.95 !important;
-}
 
-.popover, .popover-content {
-  padding: 0;
+  .ranking-display .panel-title {
+    color: #000; // white doesnt work with rank bg
+  }
+  .popover-content {
+    padding: 0;
+  }
+  .list-group-item {
+    padding: 4px 8px;
+  }
 }
-.popover .panel {
+.popover, .popover .panel {
   border: none;
   margin-bottom: 0px;
 }
-.popover .panel .ranking-display {
-  color: #fff;
-}
-.popover .list-group-item {
-  padding: 4px 8px;
-}
-.btn-sm.hover-key {
+.popover .panel .popover .btn-sm.hover-key {
   padding-left: 5px;
   padding-right: 5px;
 }

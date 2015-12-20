@@ -33,10 +33,14 @@
                 <li class="list-group-item">
                     <span class="glyphicon glyphicon-globe text-muted pull-right"></span> {{ adj.regionName }}
                 </li>
+                {{#if adj.teamConflicts }}
                 <li class="list-group-item">
-                    <span class="glyphicon glyphicon-globe text-muted pull-right"></span>
-                    A: {{ adj.adjconflicts.adj1.id }} {{ adj.adjconflicts.adj1.name }}
+                    <span class="glyphicon glyphicon-remove text-muted pull-right"></span>
+                    {{#each adj.teamConflicts as |conflict| }}
+                        {{conflict.team.name }}
+                    {{/each}}
                 </li>
+                {{/if}}
             </ul>
         </div>
 

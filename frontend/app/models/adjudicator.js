@@ -10,6 +10,12 @@ export default DS.Model.extend(DebateableMixin, {
   ranking: DS.attr('number'),
   panel: DS.belongsTo('panelallocation', { inverse: null }),
 
+  teamConflicts: DS.hasMany('teamadjudicator', {async: true}),
+
+  // listConflictsNames: Ember.computed('teamConflicts', function() {
+  //   this.get('teamConflicts').objectAt(0);
+  // }),
+
   short_name: Ember.computed('name', function() {
     var words = this.get('name').split(" ");
     var short_name = words[0] + " " + words[1][0];

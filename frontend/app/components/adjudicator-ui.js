@@ -10,6 +10,7 @@ export default Ember.Component.extend(DraggableMixin, {
   classNames: ['btn', 'adjudicator-ui', 'ranking-display', 'js-drag-handle', 'popover-trigger'],
   classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked'],
 
+
   // CSS Getters
   gender: function(){
     return 'gender-' + String(this.get('adj').get('gender'));
