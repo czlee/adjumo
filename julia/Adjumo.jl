@@ -248,9 +248,9 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
     println("every debate has one panel:")
     @time @addConstraint(m, X*ones(npanels) .== 1)          # each debate has exactly one panel
     println("accredited adjudicators should be allocated once:")
-    @time @addConstraint(m, sum(X*Q[:,~istrainee],1) .== 1) # each accredited adjudicator is allocated once
+    @time @addConstraint(m, ones(1,ndebates)*X*Q[:,~istrainee] .== 1) # each accredited adjudicator is allocated once
     println("trainee adjudicators should be allocated at most once:")
-    @time @addConstraint(m, sum(X*Q[:, istrainee],1) .<= 1) # each trainee adjudicator is allocated at most once
+    @time @addConstraint(m, ones(1,ndebates)*X*Q[:, istrainee] .<= 1) # each trainee adjudicator is allocated at most once
 
     # adjudicator constraints
     println("locked adjudicators ($(length(lockedadjs))):")
