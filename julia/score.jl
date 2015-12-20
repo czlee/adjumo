@@ -7,7 +7,7 @@
 using DataStructures
 import Base.string
 
-export scorematrix, score, panelsizescore, panelquality,
+export scorematrix, score, panelquality,
     panelregionalrepresentationscore, panellanguagerepresentationscore,
     panelgenderrepresentationscore, teamadjhistoryscore, adjadjhistoryscore,
     teamadjconflictsscore, adjadjconflictsscore
@@ -64,23 +64,6 @@ function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
     σ += componentweights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
     σ = max(σ, zero(σ))
     return σ
-end
-
-# ==============================================================================
-# Panel size
-# ==============================================================================
-panelsizevector(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo) = panelsizevector(feasiblepanels)
-panelsizevector(panels::Vector{AdjudicatorPanel}) = map(panelsizescore, panels)
-
-function panelsizescore(panel::AdjudicatorPanel)
-    nadjs = numadjs(panel)
-    if nadjs == 3
-        return 0.0
-    elseif nadjs < 3
-        return -10.0
-    else
-        return -3.0
-    end
 end
 
 # ==============================================================================
