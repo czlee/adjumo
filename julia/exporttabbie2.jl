@@ -29,6 +29,7 @@ function convertallocationstotabbiedict(allocations::Vector{PanelAllocation})
             "id" => alloc.debate.id,
             "strength" => alloc.score,
             "panel" => panel,
+            "messages" => [],
         )
         v[i] = d
     end

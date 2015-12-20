@@ -4,12 +4,16 @@
 using Formatting
 import Adjumo: debateregionclass, namewithrolelist
 
-# These functions are not efficiently written, and not performance-critical.
-abbr(g::TeamGender) = ["-", "M", "F", "X"][Integer(g)+1]
-abbr(g::PersonGender) = ["-", "m", "f", "o"][Integer(g)+1]
-abbr(r::Region) = ["-", "NAsia", "SEAsi", "MEast", "SAsia", "Afric", "Ocean", "NAmer", "LAmer", "Europ", "IONA"][Integer(r)+1]
-abbr(l::LanguageStatus) = ["-", "EPL", "ESL", "EFL"][Integer(l)+1]
-abbr(r::Wudc2015AdjudicatorRank) = ["T-", "T", "T+", "P-", "P", "P+", "C-", "C", "C+"][Integer(r)+1]
+const TEAM_GENDER_ABBRS = ["-", "M", "F", "X"]
+const PERSON_GENDER_ABBRS = ["-", "m", "f", "o"]
+const REGION_ABBRS = ["-", "NAsia", "SEAsi", "MEast", "SAsia", "Afric", "Ocean", "NAmer", "LAmer", "Europ", "IONA"]
+const LANGUAGE_ABBRS = ["-", "EPL", "ESL", "EFL"]
+const ADJUDICATOR_RANK_ABBRS = ["T-", "T", "T+", "P-", "P", "P+", "C-", "C", "C+"]
+abbr(g::TeamGender) = TEAM_GENDER_ABBRS[Integer(g)+1]
+abbr(g::PersonGender) = PERSON_GENDER_ABBRS[Integer(g)+1]
+abbr(r::Region) = REGION_ABBRS[Integer(r)+1]
+abbr(l::LanguageStatus) = LANGUAGE_ABBRS[Integer(l)+1]
+abbr(r::Wudc2015AdjudicatorRank) = ADJUDICATOR_RANK_ABBRS[Integer(r)+1]
 
 function showteams(rinfo::RoundInfo)
     for team in sort(rinfo.teams, by=t->t.points, rev=true)
@@ -102,7 +106,9 @@ function showdebatedetail(roundinfo::RoundInfo, allocation::PanelAllocation)
         printfmtln("{:>25}: {:>9.3f}  {:>12.3f}", name, score, score * weight)
     end
     debatescore = score(roundinfo, debate, panel)
-    @assert debatescore == allocation.score
+    if debatescore == allocation.score
+        warn("Score mismatch: $debatescore != $(allocation.score)")
+    end
     printfmtln("{:>25}:            {:>12.3f}  ({:>6.3f})  {:>12.3f}", "Overall", allocation.score, debate.weight, allocation.score * debate.weight)
     println()
 end

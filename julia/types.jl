@@ -7,7 +7,7 @@ import Base.convert
 export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
     Debate, AdjumoComponentWeights, RoundInfo, PanelAllocation,
     TeamGender, TeamNoGender, TeamMale, TeamFemale, TeamMixed,
-    PersonGender, PersonNoGender, PersonMale, PersonFemale, PersonOther,
+    PersonGender, PersonNoGender, PersonMale, PersonFemale,
     Region, NoRegion, NorthAsia, SouthEastAsia, MiddleEast, SouthAsia, Africa, Oceania, NorthAmerica, LatinAmerica, Europe, IONA,
     LanguageStatus, NoLanguage, EnglishPrimary, EnglishSecond, EnglishForeign,
     Wudc2015AdjudicatorRank, TraineeMinus, Trainee, TraineePlus, PanellistMinus, Panellist, PanellistPlus, ChairMinus, Chair, ChairPlus,
@@ -24,7 +24,7 @@ export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
 # ==============================================================================
 
 @enum TeamGender TeamNoGender TeamMale TeamFemale TeamMixed
-@enum PersonGender PersonNoGender PersonMale PersonFemale PersonOther
+@enum PersonGender PersonNoGender PersonMale PersonFemale
 @enum Region NoRegion NorthAsia SouthEastAsia MiddleEast SouthAsia Africa Oceania NorthAmerica LatinAmerica Europe IONA
 @enum LanguageStatus NoLanguage EnglishPrimary EnglishSecond EnglishForeign
 @enum Wudc2015AdjudicatorRank TraineeMinus Trainee TraineePlus PanellistMinus Panellist PanellistPlus ChairMinus Chair ChairPlus
