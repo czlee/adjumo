@@ -116,6 +116,7 @@ end
 
 immutable PanelAllocation <: AbstractPanel
     debate::Debate
+    score::Float64
     chair::Adjudicator
     panellists::Vector{Adjudicator}
     trainees::Vector{Adjudicator}

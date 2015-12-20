@@ -31,7 +31,7 @@ argsettings = ArgParseSettings()
     "--tabbie2"
         help = "Import a Tabbie2 export file"
         metavar = "JSONFILE"
-        default = nothing
+        default = ""
     "--show"
         help = "Print result to console"
         action = :store_true
@@ -58,17 +58,17 @@ componentweights.teamhistory = 100
 componentweights.adjhistory = 100
 componentweights.teamconflict = 1e6
 componentweights.adjconflict = 1e6
-if length(args["tabbie1"]) == 0
-    roundinfo = randomroundinfo(ndebates, currentround)
-elseif args["tabbie2"] != nothing
+if length(args["tabbie2"]) > 0
     tabbie2file = open(args["tabbie2"])
     roundinfo = importtabbiejson(tabbie2file)
-else
+elseif length(args["tabbie1"]) > 0
     using DBI
     using PostgreSQL
     username, password, database = args["tabbie1"]
     dbconnection = connect(Postgres, "localhost", username, password, database, 5432)
     roundinfo = gettabbie1roundinfo(dbconnection, currentround)
+else
+    roundinfo = randomroundinfo(ndebates, currentround)
 end
 roundinfo.componentweights = componentweights
 
@@ -81,6 +81,8 @@ directory = args["json-dir"]
 
 exportroundinfo(roundinfo, directory)
 exportallocations(allocations, directory)
+exporttabbiejson(allocations, directory)
+
 
 if args["show"]
     showconstraints(roundinfo)

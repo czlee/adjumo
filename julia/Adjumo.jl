@@ -19,6 +19,7 @@ include("types.jl")
 include("score.jl")
 include("importtabbie2.jl")
 include("exportjson.jl")
+include("exporttabbie2.jl")
 
 export allocateadjudicators, generatefeasiblepanels
 
@@ -40,7 +41,7 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
         @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
     end
 
-    @time status, debateindices, panelindices = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver, gap=gap, threads=threads)
+    @time status, debateindices, panelindices, scores = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver, gap=gap, threads=threads)
 
     if status != :Optimal
         println("Error: Problem was not solved to optimality. Status was: $status")
@@ -48,7 +49,7 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
     end
 
     println("conversion:")
-    @time allocations = convertallocations(roundinfo.debates, feasiblepanels, debateindices, panelindices)
+    @time allocations = convertallocations(roundinfo.debates, feasiblepanels, debateindices, panelindices, scores)
     return allocations
 end
 
@@ -160,12 +161,12 @@ function convertteamadjconflicts(roundinfo::RoundInfo)
 end
 
 "Converts panel allocations from indices to PanelAllocation objects"
-function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorPanel}, debateindices::Vector{Int}, panelindices::Vector{Int})
+function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorPanel}, debateindices::Vector{Int}, panelindices::Vector{Int}, scores::Vector{Float64})
     allocations = Array{PanelAllocation}(length(debateindices))
-    for (i, (d, p)) in enumerate(zip(debateindices, panelindices))
+    for (i, (d, p, score)) in enumerate(zip(debateindices, panelindices, scores))
         debate = debates[d]
         panel = panels[p]
-        allocations[i] = PanelAllocation(debate, chair(panel), panellists(panel), trainees(panel))
+        allocations[i] = PanelAllocation(debate, score, chair(panel), panellists(panel), trainees(panel))
     end
     return allocations
 end
@@ -252,13 +253,16 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
 
     if status == :Optimal
         println("Objective value: ", getObjectiveValue(m))
-        debates, panels = findn(getValue(X))
+        Xval = Array{Bool}(getValue(X))
+        debates, panels = findn(Xval)
+        scores = Σ[Xval]
     else
         debates = Int[]
         panels = Int[]
+        scores = Float64[]
     end
 
-    return (status, debates, panels)
+    return (status, debates, panels, scores)
 end
 
 end # module
