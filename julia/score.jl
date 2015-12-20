@@ -29,8 +29,7 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     componentweights = roundinfo.componentweights
     debateweights = getdebateweights(roundinfo)
-    Σ  = componentweights.panelsize    * matrixfromvector(panelsizevector, feasiblepanels, roundinfo)
-    Σ += componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
+    Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
     Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
@@ -38,7 +37,8 @@ function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPan
     Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
     Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
-    Σ = spdiagm(debateweights) * Σ
+    Σ = max(Σ, zeros(Σ))
+    Σ = spdiagm(debateweights.^0.9) * Σ.^0.1
     return Σ
 end
 
@@ -54,8 +54,7 @@ This score does *not* account for the weight of the debate.
 """
 function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
     componentweights = roundinfo.componentweights
-    σ  = componentweights.panelsize    * panelsizescore(panel)
-    σ += componentweights.quality      * panelquality(panel)
+    σ  = componentweights.quality      * panelquality(panel)
     σ += componentweights.regional     * panelregionalrepresentationscore(debate, panel)
     σ += componentweights.language     * panellanguagerepresentationscore(debate, panel)
     σ += componentweights.gender       * panelgenderrepresentationscore(debate, panel)
@@ -63,6 +62,7 @@ function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
     σ += componentweights.adjhistory   * adjadjhistoryscore(roundinfo, panel)
     σ += componentweights.teamconflict * teamadjconflictsscore(roundinfo, debate, panel)
     σ += componentweights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
+    σ = max(σ, zero(σ))
     return σ
 end
 
@@ -102,6 +102,7 @@ qualityvector(feasiblepanels::Vector{AdjudicatorPanel}) = Float64[panelquality(p
 panelquality(panel::AdjudicatorPanel) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in adjlist(panel)])
 
 const JUDGE_SCORES = Float64[
+#  T-    T0    T+    P-    P0   P+  C-  C0  C+
   -50   -50   -20     5    10   30  20  40  50
  -200  -200  -200  -100  -100   20  10  30  40
  -200  -200  -200  -200  -200   15   5  25  35
@@ -154,14 +155,14 @@ function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, 
         debateinfos[i] = debateregionclass(teamregions)
     end
 
-    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
-    for (i, panel) in enumerate(feasiblepanels)
-        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
-    end
+    # panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
+    # for (i, panel) in enumerate(feasiblepanels)
+    #     panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
+    # end
 
     Πα = Matrix{Float64}(ndebates, npanels)
-    for (p, (nadjs, ar)) in enumerate(panelinfos), (d, (drc, tr)) in enumerate(debateinfos)
-        Πα[d,p] = panelregionalrepresentationscore(drc, tr, ar, nadjs)
+    for (p, panel) in enumerate(feasiblepanels), (d, dinfo) in enumerate(debateinfos)
+        Πα[d,p] = panelregionalrepresentationscore(dinfo..., panel)
     end
     return Πα
 end
@@ -180,9 +181,10 @@ The 'region class' is:
     - RegionClassC if two teams are from each of two regions
     - RegionClassD if two teams are from one region, and the other two are from different regions
     - RegionClassE if all four teams are from different regions
+
 Returns a tuple with two elements. The first is the class a DebateRegionClass,
-and the second is a list of regions in the debate in descending order of
-frequency.
+and the second is a list of regions in no particular order (not in descending
+order of frequency).
 """
 function debateregionclass(teamregions::Vector{Region})
     # A lot of work has been done to make this function faster. See
@@ -206,16 +208,9 @@ function debateregionclass(teamregions::Vector{Region})
         end
     end
     deleteat!(regioncounts, nregions+1:4)
-    regions = Vector{Region}(nregions)
+    regions = [rc.first for rc in regioncounts]
     counts = [rc.second for rc in regioncounts]
     maxcount = maximum(counts)
-    j = 1
-    for i = 4:-1:1, regioncount in regioncounts
-        if regioncount.second == i
-            regions[j] = regioncount.first
-            j += 1
-        end
-    end
     if maxcount == 4
         return RegionClassA, regions
     elseif maxcount == 3
@@ -231,88 +226,98 @@ end
 
 function panelregionalrepresentationscore(debate::Debate, panel::AdjudicatorPanel)
     teamregions = Region[t.region for t in debate.teams]
-    drc, teamregionsordered = debateregionclass(teamregions)
-    adjregions = vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...)
-    nadjs = numadjs(panel)
-    return panelregionalrepresentationscore(drc, teamregions, adjregions, nadjs)
+    drc, teamregions = debateregionclass(teamregions)
+    return panelregionalrepresentationscore(drc, teamregions, panel)
 end
+
+function panelregionbreakdown(teamregions::Vector{Region}, panel::AdjudicatorPanel)
+    externalregions = Region[]
+    internalcounts = zeros(Int, length(teamregions))
+    externaladjscount = 0
+    uniqueexternaladjscount = 0
+    for adj in adjlist(panel)
+        internalfound = false
+        for region in adj.regions
+            index = findfirst(teamregions, region)
+            if index != 0 # i.e., if region is internal
+                internalfound = true
+                internalcounts[index] += 1
+            end
+        end
+        if !internalfound # i.e., all regions are external
+            externaladjscount += 1
+            uniqueexternalfound = false
+            for region in adj.regions
+                if region ∉ externalregions
+                    push!(externalregions, region)
+                    uniqueexternalfound = true
+                end
+            end
+            if uniqueexternalfound
+                uniqueexternaladjscount += 1
+            end
+        end
+    end
+    return internalcounts, externaladjscount, uniqueexternaladjscount
+end
+
+REGION_CLASS_WEIGHTS = [1, 5, 4, 4.5, 4]
 
 "Returns the regional representation score for a debate whose teams have the given
 regions, and whose adjudicators have the given regions."
-function panelregionalrepresentationscore(regionclass::DebateRegionClass, teamregionsordered::Vector{Region}, adjregions::Vector{Region}, nadjs::Int)
-    cost = 0
+function panelregionalrepresentationscore(regionclass::DebateRegionClass, teamregions::Vector{Region}, panel::AdjudicatorPanel)
+    internalcounts, externaladjscount, uniqueexternaladjscount = panelregionbreakdown(teamregions, panel)
+    score = 0
 
-    if nadjs == 3
+    # Per external and per unique external, applies to all classes
+    score += 1.5 * externaladjscount
+    score += 0.25 * uniqueexternaladjscount
 
-        if regionclass == RegionClassA
-            # There must be at least two regions on the panel.
-            costfactor = 10
-            if length(unique(adjregions)) < 2
-                cost += 20
-            end
-
-        elseif regionclass == RegionClassB
-            costfactor = 100
-            for tr in teamregionsordered
-                if tr ∉ adjregions
-                    cost += 20
-                end
-            end
-            if all([ar ∈ teamregionsordered for ar in adjregions])
-                cost += 100
-            end
-
-        elseif regionclass == RegionClassC
-            costfactor = 80
-            for tr in teamregionsordered
-                if tr ∉ adjregions
-                    cost += 10
-                end
-            end
-            if all([ar ∈ teamregionsordered for ar in adjregions])
-                cost += 80
-            end
-
-        elseif regionclass == RegionClassD
-            costfactor = 60
-            for tr in teamregionsordered
-                if tr ∉ adjregions
-                    cost += 40
-                end
-            end
-
-        elseif regionclass == RegionClassE
-            costfactor =  60
-            externaladjs = count(ar -> ar ∉ teamregionsordered, adjregions)
-            if externaladjs == 0
-                cost += 30
-            elseif externaladjs == 1
-                cost += 10
-            end
-            if length(teamregionsordered) < 2
-                cost += 5
-            end
-
+    # Less than two or three regions, applies to class A
+    if regionclass == RegionClassA
+        numregions = countnz(internalcounts) + uniqueexternaladjscount
+        if numregions < 2
+            score -= 3
+        elseif numregions < 3
+            score -= 1
         end
-
-
-    elseif nadjs == 2
-        return -0.1
-
-    elseif nadjs == 4
-        return -0.1
-
-
-    elseif nadjs == 1
-        return -0.1
-
-    else
-        return -0.1
-
     end
 
-    return -costfactor * cost
+    # Per internal region absent, applies to classes B, C, D and E
+    if regionclass != RegionClassA
+        numregionsabsent = count(x -> x == 0, internalcounts)
+        score += numregionsabsent * -4
 
+    else
+        nadjs = numadjs(panel)
+        majority = nadjs - (nadjs // 2)
+        balancedruleapplies = false
+
+        # Single internal region majority, applies to classes B and C
+        if regionclass == RegionClassB || regionclass == RegionClassC
+            if any(x -> x >= majority, internalcounts)
+                score += -10
+            end
+            if nadjs == 3
+                balancedruleapplies = true
+            end
+
+        # Majority are internal (interested majority), applies to classes D and E
+        else
+            if sum(internalcounts) >= majority
+                score += -10
+            end
+            balancedruleapplies = true
+        end
+
+        # Balanced, applies to classes B3, C3, D3, E3, D4, E4
+        if balancedruleapplies
+            score += 7
+        end
+    end
+
+    score *= REGION_CLASS_WEIGHTS[Integer(regionclass)+1]
+    return score
 end
 
 # ==============================================================================

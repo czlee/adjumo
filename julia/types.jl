@@ -37,6 +37,7 @@ type Institution
 end
 
 Institution(id::Int, name::UTF8String) = Institution(id, name, name[1:5], NoRegion)
+Institution(id::Int, name::AbstractString) = Institution(id, UTF8String(name), name[1:5], NoRegion)
 Institution(id::Int, name::UTF8String, code::UTF8String) = Institution(id, name, code, NoRegion)
 Institution(id::Int, name::AbstractString, code::AbstractString) = Institution(id, UTF8String(name), UTF8String(code), NoRegion)
 
@@ -177,7 +178,6 @@ end
 # ==============================================================================
 
 type AdjumoComponentWeights
-    panelsize::Float64
     quality::Float64
     regional::Float64
     language::Float64
@@ -188,7 +188,7 @@ type AdjumoComponentWeights
     adjconflict::Float64
 end
 
-AdjumoComponentWeights() = AdjumoComponentWeights(1,1,1,1,1,1,1,1,1)
+AdjumoComponentWeights() = AdjumoComponentWeights(1,1,1,1,1,1,1,1)
 AdjumoComponentWeights(v::Vector) = AdjumoComponentWeights(v...)
 
 # ==============================================================================
