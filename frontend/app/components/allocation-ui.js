@@ -49,27 +49,27 @@ export default Ember.Component.extend({
 
   genderOn: function() {
     this.set('showingGender', true);
-    $(".adjudicator-ui, .debate-team").addClass("gender-display");
+    $(".adjudicator-ui, .team-ui").addClass("gender-display");
   },
   genderOff: function() {
     this.set('showingGender', false);
-    $(".adjudicator-ui, .debate-team").removeClass("gender-display");
+    $(".adjudicator-ui, .team-ui").removeClass("gender-display");
   },
   regionOn: function() {
     this.set('showingRegion', true);
-    $(".adjudicator-ui, .debate-team").addClass("region-display");
+    $(".adjudicator-ui, .team-ui").addClass("region-display");
   },
   regionOff: function() {
     this.set('showingRegion', false);
-    $(".adjudicator-ui, .debate-team").removeClass("region-display");
+    $(".adjudicator-ui, .team-ui").removeClass("region-display");
   },
   languageOn: function() {
     this.set('showingLanguage', true);
-    $(".adjudicator-ui, .debate-team").addClass("language-display");
+    $(".adjudicator-ui, .team-ui").addClass("language-display");
   },
   languageOff: function() {
     this.set('showingLanguage', false);
-    $(".adjudicator-ui, .debate-team").removeClass("language-display");
+    $(".adjudicator-ui, .team-ui").removeClass("language-display");
   },
   rankingOn: function() {
     this.set('showingRanking', true);

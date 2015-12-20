@@ -12,6 +12,10 @@ export default Ember.Component.extend(DroppableMixin, {
     var droppedAdj = this.get('adjudicators').findBy('id', droppedAdjID);
     var droppedAdjOldPanel = droppedAdj.get('panel');
 
+    // Stop highlighting their conflicts
+    var institutionConflict = ".institution-" + String(droppedAdj.get('institution').get('id'));
+    $(institutionConflict).removeClass("institution-conflict");
+
     // If coming from somewhere
     if (droppedAdjOldPanel.get('content')) {
       if (droppedAdj === droppedAdjOldPanel.get('chair').get('content')) {

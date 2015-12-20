@@ -51,31 +51,32 @@
         </div>
 
         {{#if showingGender }}
-        <div class="btn-group-sm btn-group pull-right">
+        <div class="btn-group-sm btn-group pull-right hover-key">
           <button class="btn btn-default gender-display gender-0">None</button>
           <button class="btn btn-default gender-display gender-1">Male</button>
+          <button class="btn btn-default gender-display gender-3">Male+Female</button>
           <button class="btn btn-default gender-display gender-2">Female</button>
-          <button class="btn btn-default gender-display gender-3">Mixed</button>
         </div>
         {{/if}}
 
         {{#if showingRegion }}
-        <div class="btn-group-sm btn-group pull-right">
+        <div class="btn-group-sm btn-group pull-right hover-key">
           <button class="btn btn-default region-display region-9">Europe</button>
           <button class="btn btn-default region-display region-10">IONA</button>
           <button class="btn btn-default region-display region-6">Oceania</button>
           <button class="btn btn-default region-display region-7">N. America</button>
-          <button class="btn btn-default region-display region-8">L. America</button>
           <button class="btn btn-default region-display region-2">SE. Asia</button>
           <button class="btn btn-default region-display region-1">N. Asia</button>
           <button class="btn btn-default region-display region-4">S. Asia</button>
           <button class="btn btn-default region-display region-3">Middle East</button>
+          <button class="btn btn-default region-display region-8">L. America</button>
           <button class="btn btn-default region-display region-5">Africa</button>
+          <button class="btn btn-default region-display multiple-regions">Multiple</button>
         </div>
         {{/if}}
 
         {{#if showingLanguage }}
-        <div class="btn-group-sm btn-group pull-right">
+        <div class="btn-group-sm btn-group pull-right hover-key">
           <button class="btn btn-default language-display language-1">EPL</button>
           <button class="btn btn-default language-display language-2">ESL</button>
           <button class="btn btn-default language-display language-3">EFL</button>
@@ -86,6 +87,36 @@
 
     </div><!--- ending col-sm-12 -->
   </div><!--- ending table toggle row -->
+
+  <div class="row preallocation">
+
+    <table id="groupings" class="table table-bordered" cellpadding="0" cellspacing="0">
+      <thead>
+        <tr>
+          <th class="head-panel">
+            <div class="flex-1 ">
+              Chair
+            </div>
+            <div class="flex-2 ">
+              Panel
+            </div>
+            <div class="flex-1">
+              Trainees
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="debate-panel allocation">
+            {{panel-ui panel=panel adjudicators=''}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
 
   <div class="row">
 

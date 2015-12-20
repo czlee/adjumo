@@ -37,4 +37,38 @@ export default Ember.Component.extend(DroppableMixin, {
 
   },
 
+
+  didInsertElement: function() {
+    Ember.run.scheduleOnce('afterRender', this, function() {
+
+      var resize = false;
+      var adj_area_height = $(".adj-bottom-panel").height();
+
+      $(document).mouseup(function(event) {
+        resize = false;
+        adj_area_height = $(".adj-bottom-panel").height();
+      });
+
+      $(".resize-holder").mousedown(function(event) {
+        resize = event.pageY;
+        event.preventDefault(); // Prevent text highlight selections  while dragging
+      });
+
+      $(document).mousemove(function(event) {
+        if (resize) {
+          if (adj_area_height + resize - event.pageY < 50) {
+            $(".adj-bottom-panel").height(50);
+          } else if (adj_area_height + resize - event.pageY > 400) {
+            $(".adj-bottom-panel").height(400);
+          } else {
+            $(".adj-bottom-panel").height(adj_area_height + resize - event.pageY);
+            $("#allocation").css( "margin-bottom", adj_area_height + 25 +resize - event.pageY);
+
+          }
+        }
+      });
+
+    });
+  }
+
 });
