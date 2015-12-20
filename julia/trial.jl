@@ -71,6 +71,7 @@ else
     roundinfo = randomroundinfo(ndebates, currentround)
 end
 roundinfo.componentweights = componentweights
+println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 
 allocations = allocateadjudicators(roundinfo; solver=args["solver"],
         enforceteamconflicts=args["enforce-team-conflicts"],
