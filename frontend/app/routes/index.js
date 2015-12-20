@@ -13,7 +13,7 @@ export default Ember.Route.extend({
       // });
       // console.log('___');
 
-      return Ember.RSVP.hash({ // Need this to return multiple model types
+      return Ember.RSVP.hash({ // Need this to return multiple model types (these load in parallel as promises)
 
           config:                 this.defaultConfig,
           regions:                this.store.findAll('region'),
@@ -21,9 +21,22 @@ export default Ember.Route.extend({
           adjudicators:           this.store.findAll('adjudicator'),
           teams:                  this.store.findAll('team'),
           debates:                this.store.findAll('debate'),
-          allocations:            this.store.findAll('allocation-iteration', 'id', { reload: true }),
+          allocations:            this.store.findAll('allocation-iteration'),
 
       });
+  },
+
+  setupController(controller, models) {
+    // This is called after all the previous promises resolve
+    controller.set('config', models.config);
+    controller.set('regions', models.regions);
+    controller.set('institutions', models.institutions);
+    controller.set('adjudicators', models.adjudicators);
+    controller.set('teams', models.teams);
+    controller.set('debates', models.debates);
+    controller.set('allocations', models.allocations);
+    // or, more concisely:
+    // controller.setProperties(models);
   },
 
   currentAllocationIteration: 0,

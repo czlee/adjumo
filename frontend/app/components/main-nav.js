@@ -56,6 +56,11 @@ export default Ember.Component.extend({
       $("#unusedAdjs").removeClass("hidden");
 
       // Test POST
+    },
+
+    startNewConfig: function() {
+      $('#setAllocationParameters').modal('hide');
+      this.sendAction('finishSaveConfig');
     }
 
   }

@@ -3,7 +3,7 @@ import Ember from 'ember';
 export default Ember.Component.extend({
 
   sortProperties: ['weight:desc'],
-  sortedDebates: Ember.computed.sort('model.debates', 'sortProperties'),
+  sortedDebates: Ember.computed.sort('debates', 'sortProperties'),
   sortAscending: false,
   theFilter: "",
 
@@ -129,11 +129,6 @@ export default Ember.Component.extend({
         this.set("sortProperties", [property + ":desc"]);
       }
     },
-
-    startNewConfig: function() {
-      $('#setAllocationParameters').modal('hide');
-      this.sendAction('finishSaveConfig');
-    }
 
   },
 
