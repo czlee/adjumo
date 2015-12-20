@@ -27,18 +27,24 @@ export allocateadjudicators, generatefeasiblepanels
 "Top-level adjudicator allocation function."
 function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1)
 
-    println("panels and score:")
+    println("feasible panels:")
     @time feasiblepanels = generatefeasiblepanels(roundinfo)
+    println("score matrix:")
     @time Σ = scorematrix(roundinfo, feasiblepanels)
+    println("panel membership matrix:")
     @time Q = panelmembershipmatrix(roundinfo, feasiblepanels)
+    println("trainee indicators:")
     @time istrainee = [adj.ranking <= TraineePlus for adj in roundinfo.adjudicators]
 
-    println("constraints:")
+    println("locked adjudicator constraint conversion:")
     @time lockedadjs = convertconstraints(roundinfo, roundinfo.lockedadjs)
+    println("blocked adjudicator constraint conversion:")
     @time blockedadjs = convertconstraints(roundinfo, roundinfo.blockedadjs)
 
     if enforceteamconflicts
+        println("team-adjudicator conflict conversion:")
         @time teamadjconflicts = convertteamadjconflicts(roundinfo)
+        println("team-adjudicator conflict conversion (append):")
         @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
     end
 
@@ -98,8 +104,8 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
 
     println("There are $(length(panels)) panels to choose from.")
 
-    if length(panels) > 50000
-        panels = sample(panels, 50000; replace=false)
+    if length(panels) > 20000
+        panels = sample(panels, 20000; replace=false)
         println("Reduced to 50000 panels, picking at random")
     end
 
@@ -235,17 +241,24 @@ function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool
     modeltype, modelsolver = choosesolver(solver; gap=gap, threads=threads)
     m = Model(solver=modelsolver)
 
-    @defVar(m, X[1:ndebates,1:npanels], Bin)
-    @setObjective(m, Max, sum(Σ.*X))
-    @addConstraint(m, X*ones(npanels) .== 1)          # each debate has exactly one panel
-    @addConstraint(m, sum(X*Q[:,~istrainee],1) .== 1) # each accredited adjudicator is allocated once
-    @addConstraint(m, sum(X*Q[:, istrainee],1) .<= 1) # each trainee adjudicator is allocated at most once
+    println("define variables:")
+    @time @defVar(m, X[1:ndebates,1:npanels], Bin)
+    println("set objective:")
+    @time @setObjective(m, Max, sum(Σ.*X))
+    println("every debate has one panel:")
+    @time @addConstraint(m, X*ones(npanels) .== 1)          # each debate has exactly one panel
+    println("accredited adjudicators should be allocated once:")
+    @time @addConstraint(m, sum(X*Q[:,~istrainee],1) .== 1) # each accredited adjudicator is allocated once
+    println("trainee adjudicators should be allocated at most once:")
+    @time @addConstraint(m, sum(X*Q[:, istrainee],1) .<= 1) # each trainee adjudicator is allocated at most once
 
     # adjudicator constraints
-    for (a, d) in lockedadjs
+    println("locked adjudicators ($(length(lockedadjs))):")
+    @time for (a, d) in lockedadjs
         @addConstraint(m, X[d,:]*Q[:,a] .== 1)
     end
-    for (a, d) in blockedadjs
+    println("blocked adjudicators ($(length(blockedadjs))):")
+    @time for (a, d) in blockedadjs
         @addConstraint(m, X[d,:]*Q[:,a] .== 0)
     end
 
