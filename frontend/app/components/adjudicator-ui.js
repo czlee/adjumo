@@ -19,6 +19,9 @@ export default Ember.Component.extend(DraggableMixin, {
     this.get('adj').get('regions').forEach(function(region) {
       regions += "region-" + region + " ";
     });
+    if (this.get('adj').get('regions').length > 1) {
+      regions += "multiple-regions";
+    }
     return regions;
   }.property('adj'),
   language: function() {

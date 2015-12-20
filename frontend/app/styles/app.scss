@@ -65,8 +65,6 @@ td {
 .head-co {
   width: 8.5%;
 }
-
-
 .head-bans {
   width: 26%;
 }
@@ -112,6 +110,9 @@ span[active="false"].glyphicon {
 }
 input[type=range] {
   height: 30px;
+}
+input[type=range]:hover {
+  cursor: col-resize;
 }
 
 /* Panel Component */
@@ -181,7 +182,7 @@ td.head-panel {
 /* Adjudicator Component */
 
 .adjudicator-ui {
-  background: rgb(220, 220, 220);
+  background: #fff;
   text-align: left;
   padding: 0 0 0 4px;
   border: 2px solid rgb(200, 200, 200);
@@ -230,13 +231,32 @@ td.head-panel {
 .droppable-area.dragging-over {
   background: #00FF50;
 }
-.adj-bottom-panel {
-  border-top: 2px solid rgb(200, 200, 200);
-  background: #EFEFEF;
-  padding: 5px;
-  max-height: 150px;
-  overflow: auto;
+
+#allocation {
+  margin-bottom: 125px; /* So you can scroll past the unused table */
 }
+.adj-bottom-panel {
+  height: 100px;
+  overflow: auto;
+  padding: 4px 5px 5px 5px;
+  border-top: 2px solid rgb(200, 200, 200);
+  overflow: hidden;
+}
+.resize-holder {
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
+  float: right;
+  color: #666;
+}
+.resize-holder:hover {
+  cursor: row-resize;
+  color: #000;
+}
+
+
+
+
 .adj-bottom-panel .adjudicator-ui {
   padding-left: 5px;
 }
@@ -247,7 +267,7 @@ td.head-panel {
 /* JS */
 
 .popover {
-  opacity: 0.9 !important;
+  opacity: 0.95 !important;
 }
 
 .popover, .popover-content {
@@ -260,116 +280,128 @@ td.head-panel {
 .popover .panel .ranking-display {
   color: #fff;
 }
+.popover .list-group-item {
+  padding: 4px 8px;
+}
+.btn-sm.hover-key {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .gender-display.gender-2:focus, .ranking-display:focus, .language-display:focus, .region-display:focus {
   color: #fff;
 }
-.gender-display.gender-0 {
-  background: #CCC;
-}
-.gender-display.gender-2 {
-  background: #F103FF;
-  color: #fff;
-  text-shadow:
-   -1px -1px 0 rgba(0,0,0,0.5),
-    1px -1px 0 rgba(0,0,0,0.5),
-    -1px 1px 0 rgba(0,0,0,0.5),
-     1px 1px 0 rgba(0,0,0,0.5);
-}
-.gender-display.gender-3 {
-  background: #F89CFF; /* Only show this for teams as for them it represnts M+F*/
-  text-shadow:
-   -1px -1px 0 rgba(255,255,255,0.5),
-    1px -1px 0 rgba(255,255,255,0.5),
-    -1px 1px 0 rgba(255,255,255,0.5),
-     1px 1px 0 rgba(255,255,255,0.5);
-}
-.ranking-display, .region-display,
-.btn.ranking-display:hover, .btn.region-display:hover {
-  color: #fff;
-  text-shadow:
-   -1px -1px 0 rgba(0,0,0,0.5),
-    1px -1px 0 rgba(0,0,0,0.5),
-    -1px 1px 0 rgba(0,0,0,0.5),
-     1px 1px 0 rgba(0,0,0,0.5);
-}
-.language-display.language-2 {
-  background: blue;
+
+.gender-display {
+
+  &.gender-0 {
+    background: #CCC;
+  }
+  &.gender-2 {  /* F */
+    background: #fd64ff;
     color: #fff;
-  text-shadow:
-   -1px -1px 0 rgba(0,0,0,0.5),
-    1px -1px 0 rgba(0,0,0,0.5),
-    -1px 1px 0 rgba(0,0,0,0.5),
-     1px 1px 0 rgba(0,0,0,0.5);
+  }
+  &.gender-3 {  /* Only show this for teams as for them it represnts M+F*/
+    background: #fedbff;
+  }
+
 }
-.language-display.language-3 {
-  background: red;
+.btn.ranking-display:hover {
+  color: #fff;
+}
+
+
+.language-display {
+
+  &.language-2 {
+    background: #ec91af;
     color: #fff;
-  text-shadow:
-   -1px -1px 0 rgba(0,0,0,0.5),
-    1px -1px 0 rgba(0,0,0,0.5),
-    -1px 1px 0 rgba(0,0,0,0.5),
-     1px 1px 0 rgba(0,0,0,0.5);
-}
-.region-display.region-9 {
-  background: #E900FF; /* Europe */
-}
-.region-display.region-10 {
-  background: #FF3600; /* IONA */
-}
-.region-display.region-6 {
-  background: #FF870D; /* ANZ */
-}
-.region-display.region-7 {
-  background: #E8E400; /* North America */
-}
-.region-display.region-8 {
-  background: #B4FF0D; /* Latin America */
-}
-.region-display.region-1 {
-  background: #00FF01; /* North Asia */
-}
-.region-display.region-2 {
-  background: #0DFF97; /* SE Asia */
-}
-.region-display.region-4 {
-  background: #0DD3FF; /* Sub Continent */
-}
-.region-display.region-3 {
-  background: #0C12E8; /* Middle East */
-}
-.region-display.region-5 {
-  background: #7E00FF; /* Africa */
+  }
+  &.language-3 {
+    background: #91ece9;
+  }
 }
 
+.region-display {
 
-.ranking-display.ranking-0 {
-  background: #000;
-}
-.ranking-display.ranking-1 {
-  background: #660200;
-}
-.ranking-display.ranking-2 {
-  background: #FF0100;
-}
-.ranking-display.ranking-3 {
-  background: #FF5D00;
-}
-.ranking-display.ranking-4 {
-  background: #E8920C;
-}
-.ranking-display.ranking-5 {
-  background: #FFC800;
-}
-.ranking-display.ranking-6 {
-  background: #E8DF00;
-}
-.ranking-display.ranking-7 {
-  background: #87FF00;
-}
-.ranking-display.ranking-8 {
-  background: #00FF45;
-}
-.ranking-display.ranking-9 {
-  background: #005E16;
+  &.region-display.region-9 {
+    background: lighten(#330831, 6%); /* Europe */
+    color: #fff;
+  }
+  &.region-display.region-10 {
+    background: lighten(#180833, 6%); /* IONA */
+    color: #fff;
+  }
+  &.region-display.region-6 {
+    background: lighten(#002339, 6%); /* ANZ */
+    color: #fff;
+  }
+  &.region-display.region-7 {
+    background: lighten(#003937, 6%); /* North America */
+    color: #fff;
+  }
+  &.region-display.region-1 {
+    background: #57f8fa; /* North Asia */
+  }
+  &.region-display.region-2 {
+    background: #eaff00; /* SE Asia */
+  }
+  &.region-display.region-4 {
+    background: #40ff71; /* S Asia */
+  }
+  &.region-display.region-8 {
+    background: lighten(#c0e7ff, 8%); /* Latin America */
+  }
+  &.region-display.region-3 {
+    background: lighten(#ffc0f1, 8%); /* Middle East */
+  }
+  &.region-display.region-5 {
+    background: lighten(#c7ffc0, 8%); /* Africa */
+  }
+  &.region-display.multiple-regions {
+    background: #fff;
+    color: #000
+  }
+
 }
 
+.ranking-display {
+
+  &.ranking-0 {
+    background: #000;
+  }
+    &.ranking-1 {
+    background: #bdac7c;
+  }
+    &.ranking-2 {
+    background: #e9b771;
+  }
+    &.ranking-3 {
+    background: #ffbe63;
+  }
+    &.ranking-4 {
+    background: #ffdf53;
+    color: #000;
+  }
+  &.ranking-5 {
+    background: #fcff41;
+    color: #000;
+  }
+  &.ranking-6 {
+    background: #b6ff2f;
+    color: #000;
+  }
+  &.ranking-7 {
+    background: #58ff1f;
+  }
+  &.ranking-8 {
+    background: #19e910;
+  }
+  &.ranking-9 {
+    background: #1aa71c;
+  }
+  &.ranking-10 {
+    background: #007102;
+  }
+
+}

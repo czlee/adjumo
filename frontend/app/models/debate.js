@@ -16,7 +16,7 @@ export default DS.Model.extend({
   }),
 
   rankingClass: Ember.computed('importance', function() {
-    return Math.round(this.get('importance') * 0.9) / 1;
+    return Math.round(this.get('importance'));
   }),
 
   og: Ember.computed('teams', function() {
