@@ -8,6 +8,7 @@ module Adjumo
 
 using JuMP
 using MathProgBase
+using StatsBase
 
 SUPPORTED_SOLVERS = [
     ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj,  :threads),
@@ -81,11 +82,11 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
     panellistcombs = combinations(panellists, 2)
     panels = AdjudicatorPanel[AdjudicatorPanel(c, [p...]) for c in chairs, p in panellistcombs][:]
 
-    accreditedadjs = filter(x -> x.ranking >= PanellistMinus, adjssorted)
-    chairs = accreditedadjs[1:nchairs]
-    panellists = accreditedadjs[nchairs+1:end]
-    accreditedpairs = AdjudicatorPanel[AdjudicatorPanel(c, [p]) for c in chairs, p in panellists][:]
-    append!(panels, accreditedpairs)
+    # accreditedadjs = filter(x -> x.ranking >= PanellistMinus, adjssorted)
+    # chairs = accreditedadjs[1:nchairs]
+    # panellists = accreditedadjs[nchairs+1:end]
+    # accreditedpairs = AdjudicatorPanel[AdjudicatorPanel(c, [p]) for c in chairs, p in panellists][:]
+    # append!(panels, accreditedpairs)
 
     # panels with judges that conflict with each other are not feasible
     panels = filter(panel -> !hasconflict(roundinfo, panel), panels) # remove panels with adj-adj conflicts
@@ -96,6 +97,10 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
     end
 
     println("There are $(length(panels)) panels to choose from.")
+
+    if length(panels) > 50000
+        sample(panels, 50000; replace=false)
+    end
 
     return panels
 end
