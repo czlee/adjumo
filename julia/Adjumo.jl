@@ -25,10 +25,10 @@ include("exporttabbie2.jl")
 export allocateadjudicators, generatefeasiblepanels
 
 "Top-level adjudicator allocation function."
-function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1)
+function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int))
 
     println("feasible panels:")
-    @time feasiblepanels = generatefeasiblepanels(roundinfo)
+    @time feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=limitpanels)
     println("score matrix:")
     @time Σ = scorematrix(roundinfo, feasiblepanels)
     println("panel membership matrix:")
@@ -79,7 +79,7 @@ end
 Generates a list of feasible panels using the information about the round.
 Returns a list of AdjudicatorPanel instances.
 """
-function generatefeasiblepanels(roundinfo::RoundInfo)
+function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(Int))
     nchairs = numdebates(roundinfo)
 
     adjssorted = sort(roundinfo.adjudicators, by=adj->adj.ranking, rev=true)
@@ -102,12 +102,11 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
         filter!(panel -> count(a -> a ∈ adjlist(panel), adjs) ∈ [0, length(adjs)], panels)
     end
 
-    println("There are $(length(panels)) panels to choose from.")
-
-    if length(panels) > 20000
-        panels = sample(panels, 20000; replace=false)
-        println("Reduced to 50000 panels, picking at random")
+    if length(panels) > limitpanels
+        println("There are $(length(panels)) feasible panels, but limiting to $limitpanels panels, picking at random.")
+        panels = sample(panels, limitpanels; replace=false)
     end
+    println("There are $(length(panels)) panels to choose from.")
 
     return panels
 end

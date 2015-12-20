@@ -43,6 +43,10 @@ argsettings = ArgParseSettings()
         help = "Number of threads to use for solver"
         arg_type = Int
         default = 8
+    "-l", "--limitpanels"
+        help = "Limit how many panels it samples"
+        arg_type = Int
+        default = typemax(Int)
 end
 args = parse_args(ARGS, argsettings)
 
@@ -75,7 +79,7 @@ println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) ad
 
 allocations = allocateadjudicators(roundinfo; solver=args["solver"],
         enforceteamconflicts=args["enforce-team-conflicts"],
-        gap=args["gap"], threads=args["threads"])
+        gap=args["gap"], threads=args["threads"], limitpanels=args["limitpanels"])
 
 println("Writing JSON files...")
 directory = args["json-dir"]
