@@ -11,7 +11,7 @@
     {{ debate.importance }}
 </td>
 <td class="debate-importance-edit preallocation">
-    {{input type="range" min="1" max="10" step="1" value=debate.importance class="form-control" }}
+    {{input type="range" min="1" list="debate-ticks" max="10" step="1" value=debate.importance class="" }}
 </td>
 {{team-ui team=debate.og}}
 {{team-ui team=debate.oo}}
@@ -32,4 +32,5 @@
 {{else}}
     <td class="debate-panel allocation hidden"></td>
 {{/if}}
+
 

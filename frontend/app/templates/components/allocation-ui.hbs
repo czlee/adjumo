@@ -208,6 +208,20 @@
             {{debate-ui debate=debate-instance adjudicators=model.adjudicators allocations=model.allocations}}
         {{/each}}
 
+        <!-- ticker for input ranges -->
+        <datalist id="debate-ticks">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+        </datalist>
+
         </tbody>
       </table>
 
@@ -230,7 +244,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Quality</label>
             <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1"  value=model.config.quality  class="form-control" }}
+              {{input type="range" min="1" max="10" step="1" list="debate-ticks" value=model.config.quality  }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control"                  value=model.config.quality}}
@@ -239,7 +253,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Regional</label>
             <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1"  value=model.config.regional  class="form-control" }}
+              {{input type="range" min="1" max="10" step="1" list="debate-ticks" value=model.config.regional  }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control"                  value=model.config.regional}}
@@ -248,7 +262,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Language</label>
             <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1"  value=model.config.language class="form-control" }}
+              {{input type="range" min="1" max="10" step="1" list="debate-ticks" value=model.config.language }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control"                  value=model.config.language}}
@@ -257,7 +271,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Gender</label>
             <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1"  value=model.config.gender class="form-control" }}
+              {{input type="range" min="1" max="10" step="1" list="debate-ticks" value=model.config.gender }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control"                  value=model.config.gender}}
@@ -266,7 +280,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Team History</label>
             <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1" value=model.config.teamhistory class="form-control" }}
+              {{input type="range" min="1" max="10" step="1" list="debate-ticks" value=model.config.teamhistory }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control" value=model.config.teamhistory}}
@@ -275,7 +289,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Adj History</label>
             <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1" value=model.config.adjhistory class="form-control" }}
+              {{input type="range" min="1" max="10" step="1" list="debate-ticks" value=model.config.adjhistory }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control" value=model.config.adjhistory}}
@@ -284,7 +298,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Team Conflict</label>
             <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1" value=model.config.teamconflict class="form-control" }}
+              {{input type="range" min="1" max="10" step="1" list="debate-ticks" value=model.config.teamconflict }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control" value=model.config.teamconflict}}
@@ -293,7 +307,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Adj Conflict</label>
             <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1" value=model.config.adjconflict class="form-control" }}
+              {{input type="range" min="1" max="10" step="1" list="debate-ticks" value=model.config.adjconflict }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control" value=model.config.adjconflict}}
