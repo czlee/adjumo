@@ -41,6 +41,14 @@
                     {{/each}}
                 </li>
                 {{/if}}
+                {{#if adj.adjConflicts }}
+                <li class="list-group-item">
+                    <span class="glyphicon glyphicon-remove text-muted pull-right"></span>
+                    {{#each adj.adjConflictsWithOutSelf as |conflict| }}
+                        {{conflict.name }}
+                    {{/each}}
+                </li>
+                {{/if}}
             </ul>
         </div>
 

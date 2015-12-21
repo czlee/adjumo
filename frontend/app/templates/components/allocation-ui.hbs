@@ -1,12 +1,14 @@
 <div id="main" class="container-fluid">
 
   <div class="row">
-    <div class="col-sm-12">
-
-      <div id="alerts-holder"></div>
 
       <div class="form-group col-sm-2">
-        {{input value=theFilter type='text' class="form-control col-sm-10" placeholder='Search the debates'}}
+        <div class="input-group input-group-sm">
+          <div class="input-group-addon">
+            <span class="glyphicon glyphicon-search"></span>
+          </div>
+          {{input value=theFilter type='text' class="form-control col-sm-10" placeholder='Search'}}
+        </div>
       </div>
 
       <div class="btn-toolbar col-sm-10">
@@ -50,9 +52,10 @@
         {{/if}}
         </div>
 
-        <div class="btn-group-sm btn-group pull-right hover-key" id="conflictsKey" style="display: none;">
-          <button class="btn btn-default institution-conflict-key">Institutional Conflict</button>
-          <button class="btn btn-default team-conflict-key">Team Conflict</button>
+        <div class="btn-group-sm btn-group pull-right" id="conflictsKey" style="display: none;">
+          <button class="btn btn-default institution-conflict-key">Institutional</button>
+          <button class="btn btn-default team-conflict-key">Personal</button>
+          <button class="btn btn-default team-conflict-key">History</button>
         </div>
 
         {{#if showingGender }}
@@ -90,7 +93,6 @@
 
       </div>
 
-    </div><!--- ending col-sm-12 -->
   </div><!--- ending table toggle row -->
 
   <div class="row preallocation">

@@ -2,9 +2,8 @@ import DS from 'ember-data';
 
 export default DS.Model.extend({
 
-  //id: DS.attr('number'),
-  //points: DS.attr('number'),
-  //venue: DS.attr('string'),
+  points: DS.attr('number', { default: "" }),
+  venue: DS.attr('string', { default: "" }),
   weight: DS.attr('number'),
   importance: DS.attr('number'),
 

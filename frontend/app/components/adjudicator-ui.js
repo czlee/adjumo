@@ -8,8 +8,7 @@ export default Ember.Component.extend(DraggableMixin, {
   draggable: 'true',
 
   classNames: ['btn', 'adjudicator-ui', 'ranking-display', 'js-drag-handle', 'popover-trigger'],
-  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked'],
-
+  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked', 'id'],
 
   // CSS Getters
   gender: function(){
@@ -34,6 +33,9 @@ export default Ember.Component.extend(DraggableMixin, {
   locked: function() {
     return 'locked-' + String(this.get('adj').locked);
   }.property('adj'),
+  id: function() {
+    return 'adj-' + String(this.get('adj').get('id'));
+  }.property('adj'),
 
   mouseEnter: function(event) {
     var institutionConflict = ".institution-" + String(this.get('adj').get('institution').get('id'));
@@ -43,8 +45,13 @@ export default Ember.Component.extend(DraggableMixin, {
       var teamConflict = ".team-" + id;
       $(teamConflict).addClass("team-conflict");
     });
+    this.get('adj').get('adjConflictIDs').forEach(function(id) {
+      var adjConflict = ".adj-" + id;
+      $(adjConflict).addClass("adj-conflict");
+    });
 
     $("#conflictsKey").show();
+    $(".hover-key").hide();
 
   },
 
@@ -52,7 +59,9 @@ export default Ember.Component.extend(DraggableMixin, {
 
     $(".institution-conflict").removeClass("institution-conflict");
     $(".team-conflict").removeClass("team-conflict");
+    $(".adj-conflict").removeClass("adj-conflict");
     $("#conflictsKey").hide();
+    $(".hover-key").show();
 
   },
 

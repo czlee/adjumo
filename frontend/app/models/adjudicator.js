@@ -11,6 +11,33 @@ export default DS.Model.extend(DebateableMixin, {
   panel: DS.belongsTo('panelallocation', { inverse: null }),
 
   teamConflicts: DS.hasMany('teamadjudicator', {async: true}),
+  adjConflicts: DS.hasMany('adjudicatorpair', {async: true, inverse: null }),
+
+  adjConflictsWithOutSelf: Ember.computed('teamConflicts', function() {
+    var adjs = [];
+    var thisAdjID = this.get('id');
+    this.get('adjConflicts').forEach(function(conflict) {
+      if (conflict.get('adj1').get('id') === thisAdjID) {
+        adjs.push(conflict.get('adj2'));
+      } else {
+        adjs.push(conflict.get('adj1'));
+      }
+    });
+    return adjs;
+  }),
+
+  adjConflictIDs: Ember.computed('adjConflicts', function() {
+    var adjIDs = [];
+    var thisAdjID = this.get('id');
+    this.get('adjConflicts').forEach(function(conflict) {
+      if (conflict.get('adj1').get('id') === thisAdjID) {
+        adjIDs.push(conflict.get('adj2').get('id'));
+      } else {
+        adjIDs.push(conflict.get('adj1').get('id'));
+      }
+    });
+    return adjIDs;
+  }),
 
   teamConflictIDs: Ember.computed('teamConflicts', function() {
     var teamIDs = [];

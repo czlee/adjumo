@@ -19,6 +19,14 @@
             <li class="list-group-item">
                 <span class="glyphicon glyphicon-globe text-muted pull-right"></span> {{ team.regionName }}
             </li>
+            {{#if team.adjConflicts }}
+            <li class="list-group-item">
+                <span class="glyphicon glyphicon-remove text-muted pull-right"></span>
+                {{#each team.adjConflicts as |conflict| }}
+                    {{conflict.adjudicator.name }}
+                {{/each}}
+            </li>
+            {{/if}}
         </ul>
     </div>
 </div>

@@ -14,6 +14,7 @@ export default Ember.Route.extend({
           debates:                this.store.findAll('debate'),
           allocations:            this.store.findAll('allocation-iteration'),
           teamadjudicator:        this.store.findAll('teamadjudicator'),
+          adjudicatorpair:        this.store.findAll('adjudicatorpair'),
 
       });
 

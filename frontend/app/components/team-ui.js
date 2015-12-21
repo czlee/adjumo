@@ -24,6 +24,22 @@ export default Ember.Component.extend({
     return 'team-' + String(this.get('team').get('id'));
   }.property('id'),
 
+
+  mouseEnter: function(event) {
+    this.get('team').get('adjConflictIDs').forEach(function(id) {
+      var adjConflict = ".adj-" + id;
+      $(adjConflict).addClass("team-conflict");
+    });
+    $("#conflictsKey").show();
+    $(".hover-key").hide();
+  },
+
+  mouseLeave: function(event) {
+    $(".team-conflict").removeClass("team-conflict");
+    $("#conflictsKey").hide();
+    $(".hover-key").show();
+  },
+
   didInsertElement: function() {
     Ember.run.scheduleOnce('afterRender', this, function() {
       //this.$('[data-toggle="tooltip"]').tooltip();
@@ -38,9 +54,9 @@ export default Ember.Component.extend({
         placement: 'top',
         container: 'body',
       });
-
-
     });
   }
+
+
 
 });
