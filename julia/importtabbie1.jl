@@ -181,7 +181,9 @@ function gettabbie1roundinfo(dbconnection, currentround)
         id = Int(row[1])
         teamids = map(Int, row[2:5])
         teams = [getobjectwithid(rinfo.teams, tid) for tid in teamids]
-        adddebate!(rinfo, id, teams)
+        # stopgap: weight by number of points
+        weight = max([team.points for team in teams])
+        adddebate!(rinfo, id, weight, teams)
     end
 
     println("gettabbie1roundinfo: There are $(numdebates(rinfo)) debates and $(numadjs(rinfo)) adjudicators.")

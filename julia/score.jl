@@ -7,14 +7,46 @@
 using DataStructures
 import Base.string
 
-export scorematrix, score, panelsizescore, panelquality,
+export scorematrix, score, panelquality,
     panelregionalrepresentationscore, panellanguagerepresentationscore,
     panelgenderrepresentationscore, teamadjhistoryscore, adjadjhistoryscore,
-    teamadjconflictsscore, adjadjconflictsscore
+    teamadjconflictsscore, adjadjconflictsscore, weightedαfairness
 
 # ==============================================================================
 # Top-level functions
 # ==============================================================================
+
+"""
+Returns the weighted α-fairness value for the given weight w, score σ and α.
+This will return -Inf if σ is 0 or negative.
+"""
+function weightedαfairness(w::Float64, σ::Float64, α::Float64)
+    σ = max(σ, zero(σ))
+    if α < 1.0
+        σ = w^α * σ^(1.0-α)
+    elseif α == 1.0
+        σ = w * log(σ)
+    else
+        σ = - w^α * σ^(1.0-α)
+    end
+end
+
+"""
+Returns the weighted α-fairness values for the given weights w, score matrix Σ
+and α. This will return log(eps()) if Σ is 0 or negative.
+"""
+function weightedαfairness(w::Vector{Float64}, Σ::Matrix{Float64}, α::Float64)
+    Σ = max(Σ, zeros(Σ))
+    if α < 1.0
+        return spdiagm(w.^α) * Σ.^(1.0-α)
+    elseif α == 1.0
+        Σ = spdiagm(w) * log(Σ)
+        return max(Σ, nextfloat(-Inf)*ones(Σ))
+    else
+        Σ = -spdiagm(w.^α) * Σ.^(1.0-α)
+        return max(Σ, nextfloat(-Inf)*ones(Σ))
+    end
+end
 
 """
 Returns the score matrix using the round information.
@@ -26,11 +58,10 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 - `feasiblepanels` is a list of AdjudicatorPanel instances.
 `roundinfo` is a RoundInfo instance.
 """
-function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
+function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; α::Float64=1.0)
     componentweights = roundinfo.componentweights
     debateweights = getdebateweights(roundinfo)
-    Σ  = componentweights.panelsize    * matrixfromvector(panelsizevector, feasiblepanels, roundinfo)
-    Σ += componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
+    Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
     Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
@@ -38,7 +69,7 @@ function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPan
     Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
     Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
-    Σ = spdiagm(debateweights) * Σ
+    Σ = weightedαfairness(debateweights, Σ, α)
     return Σ
 end
 
@@ -54,8 +85,7 @@ This score does *not* account for the weight of the debate.
 """
 function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
     componentweights = roundinfo.componentweights
-    σ  = componentweights.panelsize    * panelsizescore(panel)
-    σ += componentweights.quality      * panelquality(panel)
+    σ  = componentweights.quality      * panelquality(panel)
     σ += componentweights.regional     * panelregionalrepresentationscore(debate, panel)
     σ += componentweights.language     * panellanguagerepresentationscore(debate, panel)
     σ += componentweights.gender       * panelgenderrepresentationscore(debate, panel)
@@ -64,23 +94,6 @@ function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
     σ += componentweights.teamconflict * teamadjconflictsscore(roundinfo, debate, panel)
     σ += componentweights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
     return σ
-end
-
-# ==============================================================================
-# Panel size
-# ==============================================================================
-panelsizevector(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo) = panelsizevector(feasiblepanels)
-panelsizevector(panels::Vector{AdjudicatorPanel}) = map(panelsizescore, panels)
-
-function panelsizescore(panel::AdjudicatorPanel)
-    nadjs = numadjs(panel)
-    if nadjs == 3
-        return 0.0
-    elseif nadjs < 3
-        return -10.0
-    else
-        return -3.0
-    end
 end
 
 # ==============================================================================
@@ -101,60 +114,35 @@ qualityvector(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo) = 
 qualityvector(feasiblepanels::Vector{AdjudicatorPanel}) = Float64[panelquality(panel) for panel in feasiblepanels]
 panelquality(panel::AdjudicatorPanel) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in adjlist(panel)])
 
+const JUDGE_SCORES = Float64[
+#  T-    T0    T+    P-    P0   P+  C-  C0  C+
+  -50   -50   -20     5    10   30  20  40  50
+ -200  -200  -200  -100  -100   20  10  30  40
+ -200  -200  -200  -200  -200   15   5  25  35
+]
+const CHAIR_SCORES = Float64[
+ -200  -200  -200  -200  -100  -20  10  15  20
+]
+const NUM_RANKS = length(instances(Wudc2015AdjudicatorRank))
+
 "Returns the quality of a panel whose adjudicators have the given rankings."
 function panelquality(rankings::Vector{Wudc2015AdjudicatorRank})
-    sort!(rankings, rev=true)
     score = 0
+    counts = zeros(Int, NUM_RANKS)
 
-    # Score for chair: 25 if there is a Chair or above, -25 if there are no
-    # chairs but there is a PanellistPlus, -75 if the best-ranked judge is
-    # Panellist or lower.
-    const GOOD_CHAIR = 25
-    const CHAIR_IS_PANELLIST_PLUS = -25
-    const CHAIR_IS_PANELLIST_OR_LOWER = -75
-
-    if rankings[1] >= Chair
-        score += GOOD_CHAIR
-    elseif rankings[1] == PanellistPlus
-        score += CHAIR_IS_PANELLIST_PLUS
-    elseif rankings[1] <= Panellist
-        score += CHAIR_IS_PANELLIST_OR_LOWER
-    end
-
-    # Score for trainees: -100 if there is more than one trainee, -10 if there
-    # is a trainee on the panel but a majority comprises PanellistPlus or
-    # higher, -50 if there is a trainee on the panel but no 'safe majority'.
-    const MORE_THAN_ONE_TRAINEE = -100
-    const ONE_TRAINEE_SAFE_MAJORITY = -10
-    const ONE_TRAINEE_UNSAFE_MAJORITY = -50
-    numtrainees = count(x -> x <= TraineePlus, rankings)
-    if numtrainees > 1
-        score += MORE_THAN_ONE_TRAINEE
-    elseif numtrainees == 1
-        numsafejudges = count(x -> x >= PanellistPlus, rankings)
-        if numsafejudges >= 2
-            score += ONE_TRAINEE_SAFE_MAJORITY
-        else
-            score += ONE_TRAINEE_UNSAFE_MAJORITY
+    # General value of judges
+    for rank in rankings
+        rankindex = Integer(rank)+1
+        count = counts[rankindex] += 1
+        if count > 3
+            count = 3
         end
+        score += JUDGE_SCORES[count, rankindex]
     end
 
-    # Score for safe majority: 15 if there is a safe majority, 5 for tolerable
-    # majority, 0 otherwise.
-    const SAFE_MAJORITY = 15
-    const TOLERABLE_MAJORITY = 5
-    values_safe = Dict(zip(instances(Wudc2015AdjudicatorRank), (0, 0, 0, 0, 0, 1, 1, 2, 2)))
-    total_safe = sum([values_safe[r] for r in rankings])
-    if total_safe > 2
-        score += SAFE_MAJORITY
-    else
-        values_tolerable = Dict(zip(instances(Wudc2015AdjudicatorRank), (0, 0, 0, 0, 1, 2, 2, 2, 4)))
-        total_tolerable = sum([values_tolerable[r] for r in rankings])
-        if total_tolerable > 2
-            score += TOLERABLE_MAJORITY
-        end
-    end
-
+    # Bonus for chair
+    chairrankindex = findlast(x -> x > 0, counts)
+    score += CHAIR_SCORES[chairrankindex]
     return score
 end
 
@@ -163,10 +151,8 @@ end
 # ==============================================================================
 
 """
-Returns a matrix of representation scores for regions, denoted βr.
-- `feasiblepanels` is a list of feasible panels (see definition of
-`Vector{AdjudicatorPanel}`).
-- `roundinfo` is a RoundInfo instance.
+Returns a matrix of representation scores for regions, denoted Πα (περιφερειακή
+αντιπροσώπευση).
 
 In rough terms, we expect regions in the debate to be represented in
 adjudicators on the panel. This function returns zero if that is the case; a
@@ -176,21 +162,22 @@ function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, 
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
 
-    teamregions = Vector{Vector{Region}}(ndebates)
+    debateinfos = Vector{Tuple{DebateRegionClass, Vector{Region}}}(ndebates)
     for (i, debate) in enumerate(roundinfo.debates)
-        teamregions[i] = Region[t.region for t in debate.teams]
+        teamregions = Region[t.region for t in debate.teams]
+        debateinfos[i] = debateregionclass(teamregions)
     end
 
-    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
-    for (i, panel) in enumerate(feasiblepanels)
-        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
-    end
+    # panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
+    # for (i, panel) in enumerate(feasiblepanels)
+    #     panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
+    # end
 
-    βr = Matrix{Float64}(ndebates, npanels)
-    for (p, (nadjs, adjregions)) in enumerate(panelinfos), (d, tr) in enumerate(teamregions)
-        βr[d,p] = panelregionalrepresentationscore(tr, adjregions, nadjs)
+    Πα = Matrix{Float64}(ndebates, npanels)
+    for (p, panel) in enumerate(feasiblepanels), (d, dinfo) in enumerate(debateinfos)
+        Πα[d,p] = panelregionalrepresentationscore(dinfo..., panel)
     end
-    return βr
+    return Πα
 end
 
 @enum DebateRegionClass RegionClassA RegionClassB RegionClassC RegionClassD RegionClassE
@@ -207,8 +194,10 @@ The 'region class' is:
     - RegionClassC if two teams are from each of two regions
     - RegionClassD if two teams are from one region, and the other two are from different regions
     - RegionClassE if all four teams are from different regions
-Returns a tuple with two elements. The first is the class (an integer), and the
-second is a list of regions in the debate in descending order of frequency.
+
+Returns a tuple with two elements. The first is the class a DebateRegionClass,
+and the second is a list of regions in no particular order (not in descending
+order of frequency).
 """
 function debateregionclass(teamregions::Vector{Region})
     # A lot of work has been done to make this function faster. See
@@ -232,16 +221,9 @@ function debateregionclass(teamregions::Vector{Region})
         end
     end
     deleteat!(regioncounts, nregions+1:4)
-    regions = Vector{Region}(nregions)
+    regions = [rc.first for rc in regioncounts]
     counts = [rc.second for rc in regioncounts]
     maxcount = maximum(counts)
-    j = 1
-    for i = 4:-1:1, regioncount in regioncounts
-        if regioncount.second == i
-            regions[j] = regioncount.first
-            j += 1
-        end
-    end
     if maxcount == 4
         return RegionClassA, regions
     elseif maxcount == 3
@@ -257,88 +239,98 @@ end
 
 function panelregionalrepresentationscore(debate::Debate, panel::AdjudicatorPanel)
     teamregions = Region[t.region for t in debate.teams]
-    adjregions = vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...)
-    nadjs = numadjs(panel)
-    return panelregionalrepresentationscore(teamregions, adjregions, nadjs)
+    drc, teamregions = debateregionclass(teamregions)
+    return panelregionalrepresentationscore(drc, teamregions, panel)
 end
+
+function panelregionbreakdown(teamregions::Vector{Region}, panel::AdjudicatorPanel)
+    externalregions = Region[]
+    internalcounts = zeros(Int, length(teamregions))
+    externaladjscount = 0
+    uniqueexternaladjscount = 0
+    for adj in adjlist(panel)
+        internalfound = false
+        for region in adj.regions
+            index = findfirst(teamregions, region)
+            if index != 0 # i.e., if region is internal
+                internalfound = true
+                internalcounts[index] += 1
+            end
+        end
+        if !internalfound # i.e., all regions are external
+            externaladjscount += 1
+            uniqueexternalfound = false
+            for region in adj.regions
+                if region ∉ externalregions
+                    push!(externalregions, region)
+                    uniqueexternalfound = true
+                end
+            end
+            if uniqueexternalfound
+                uniqueexternaladjscount += 1
+            end
+        end
+    end
+    return internalcounts, externaladjscount, uniqueexternaladjscount
+end
+
+REGION_CLASS_WEIGHTS = [1, 5, 4, 4.5, 4]
 
 "Returns the regional representation score for a debate whose teams have the given
 regions, and whose adjudicators have the given regions."
-function panelregionalrepresentationscore(teamregions::Vector{Region}, adjregions::Vector{Region}, nadjs::Int)
-    regionclass, teamregionsordered = debateregionclass(teamregions)
-    cost = 0
+function panelregionalrepresentationscore(regionclass::DebateRegionClass, teamregions::Vector{Region}, panel::AdjudicatorPanel)
+    internalcounts, externaladjscount, uniqueexternaladjscount = panelregionbreakdown(teamregions, panel)
+    score = 0
 
-    if nadjs == 3
+    # Per external and per unique external, applies to all classes
+    score += 1.5 * externaladjscount
+    score += 0.25 * uniqueexternaladjscount
 
-        if regionclass == RegionClassA
-            # There must be at least two regions on the panel.
-            costfactor = 10
-            if length(unique(adjregions)) < 2
-                cost += 20
-            end
-
-        elseif regionclass == RegionClassB
-            costfactor = 100
-            for tr in teamregionsordered
-                if tr ∉ adjregions
-                    cost += 20
-                end
-            end
-            if all([ar ∈ teamregionsordered for ar in adjregions])
-                cost += 100
-            end
-
-        elseif regionclass == RegionClassC
-            costfactor = 80
-            for tr in teamregionsordered
-                if tr ∉ adjregions
-                    cost += 10
-                end
-            end
-            if all([ar ∈ teamregionsordered for ar in adjregions])
-                cost += 80
-            end
-
-        elseif regionclass == RegionClassD
-            costfactor = 60
-            for tr in teamregionsordered
-                if tr ∉ adjregions
-                    cost += 40
-                end
-            end
-
-        elseif regionclass == RegionClassE
-            costfactor =  60
-            externaladjs = count(ar -> ar ∉ teamregionsordered, adjregions)
-            if externaladjs == 0
-                cost += 30
-            elseif externaladjs == 1
-                cost += 10
-            end
-            if length(teamregionsordered) < 2
-                cost += 5
-            end
-
+    # Less than two or three regions, applies to class A
+    if regionclass == RegionClassA
+        numregions = countnz(internalcounts) + uniqueexternaladjscount
+        if numregions < 2
+            score -= 3
+        elseif numregions < 3
+            score -= 1
         end
-
-
-    elseif nadjs == 2
-        return -0.1
-
-    elseif nadjs == 4
-        return -0.1
-
-
-    elseif nadjs == 1
-        return -0.1
-
-    else
-        return -0.1
-
     end
 
-    return -costfactor * cost
+    # Per internal region absent, applies to classes B, C, D and E
+    if regionclass != RegionClassA
+        numregionsabsent = count(x -> x == 0, internalcounts)
+        score += numregionsabsent * -4
 
+    else
+        nadjs = numadjs(panel)
+        majority = nadjs - (nadjs // 2)
+        balancedruleapplies = false
+
+        # Single internal region majority, applies to classes B and C
+        if regionclass == RegionClassB || regionclass == RegionClassC
+            if any(x -> x >= majority, internalcounts)
+                score += -10
+            end
+            if nadjs == 3
+                balancedruleapplies = true
+            end
+
+        # Majority are internal (interested majority), applies to classes D and E
+        else
+            if sum(internalcounts) >= majority
+                score += -10
+            end
+            balancedruleapplies = true
+        end
+
+        # Balanced, applies to classes B3, C3, D3, E3, D4, E4
+        if balancedruleapplies
+            score += 7
+        end
+    end
+
+    score *= REGION_CLASS_WEIGHTS[Integer(regionclass)+1]
+    return score
 end
 
 # ==============================================================================
@@ -346,17 +338,73 @@ end
 # ==============================================================================
 
 """
-Returns a matrix of representation scores for language, denoted βl. Elements
-correspond to elements in `representation()`. Arguments are as for `representation()`.
+Returns a matrix of representation scores for language, denoted Γα (γλώσσα
+αντιπροσώπευση).
 """
 function languagerepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
-    return zeros(ndebates, npanels)
+
+    classweights = Array{Float64}(ndebates)
+    for (i, debate) in enumerate(roundinfo.debates)
+        classweights[i] = debatelanguageclassweight(debate)
+    end
+
+    γα = Array{Float64}(1,npanels)
+    for (i, panel) in enumerate(feasiblepanels)
+        γα[i] = panellanguagescore(panel)
+    end
+
+    Γα = classweights * γα
+    return Γα
 end
 
 function panellanguagerepresentationscore(debate::Debate, panel::AdjudicatorPanel)
-    return 0.0
+    return debatelanguageclassweight(debate) * panellanguagescore(panel)
+end
+
+"""
+Returns the debate language class weight for the debate.
+Here's the table:
+   EPL 4 3 3 2 2 2 1 1 1 1 0 0 0 0 0
+   ESL 0 1 0 2 1 0 3 2 1 0 4 3 2 1 0
+   EFL 0 0 1 0 1 2 0 1 2 3 0 1 2 3 4
+Weight 0 3 3 4 4 4 3 3 3 3 1 2 2 2 1
+"""
+function debatelanguageclassweight(debate::Debate)
+    nprimary = count(t -> t.language == EnglishPrimary, debate.teams)
+    if nprimary == 4
+        return 0.0
+    elseif nprimary == 2
+        return 4.0
+    elseif nprimary != 0
+        return 3.0
+    elseif length(unique(debate.teams)) == 1
+        return 1.0
+    else
+        return 2.0
+    end
+end
+
+"""
+Returns part 1 of the panel language score for the panel.
+Here's the table:
+Number of EPL judges 0   1 2 3 4
+               Score 3 2.5 2 1 0
+"""
+function panellanguagescore(panel::AdjudicatorPanel)
+    nnonprimary = count(a -> a.language != EnglishPrimary, adjlist(panel))
+    if nnonprimary == 0
+        return -1.5
+    elseif nnonprimary == 1
+        return 0
+    elseif nnonprimary == 2
+        return 1
+    elseif nnonprimary == 3
+        return 1.5
+    else
+        return 2
+    end
 end
 
 # ==============================================================================
@@ -364,17 +412,70 @@ end
 # ==============================================================================
 
 """
-Returns a matrix of representation scores for gender, denoted βg. Elements
-correspond to elements in `representation()`. Arguments are as for `representation()`.
+Returns a matrix of representation scores for gender, denoted Φα (φύλο
+αντιπροσώπευση).
 """
 function genderrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
-    return zeros(ndebates, npanels)
+
+    classweights = Array{Float64}(ndebates)
+    for (i, debate) in enumerate(roundinfo.debates)
+        classweights[i] = debategenderclassweight(debate)
+    end
+
+    φα = Array{Float64}(1,npanels)
+    for (i, panel) in enumerate(feasiblepanels)
+        φα[i] = panelgenderscore(panel)
+    end
+
+    Φα = classweights * φα
+    return Φα
 end
 
 function panelgenderrepresentationscore(debate::Debate, panel::AdjudicatorPanel)
-    return 0.0
+    return debategenderclassweight(debate) * panelgenderscore(panel)
+end
+
+
+GENDER_WEIGHTS = [
+    0.5     1.75    2.5     2.25    1.0
+    3.25    5.0     5.75    4.0   NaN
+    4.5     6.25    5.0   NaN     NaN
+    3.75    4.0   NaN     NaN     NaN
+    1.0   NaN     NaN     NaN     NaN
+]
+
+"""
+Returns the debate gender class weight for the debate.
+Here's the table:
+Female   0    0   0    0 0    1 1    1 1   2    2 2    3 3 4
+ Mixed   0    1   2    3 4    0 1    2 3   0    1 2    0 1 0
+Weight 0.5 1.75 2.5 2.25 1 3.25 5 5.75 4 4.5 6.25 5 3.75 4 1
+"""
+function debategenderclassweight(debate::Debate)
+    nfemale = 0
+    nmixed = 0
+    for team in debate.teams
+        if team.gender == TeamFemale
+            nfemale += 1
+        elseif team.gender == TeamMixed
+            nmixed += 1
+        end
+    end
+    return GENDER_WEIGHTS[nfemale+1, nmixed+1]
+end
+
+"""
+Returns part 1 of the panel language score for the panel.
+Here's the table:
+Number of EPL judges 0   1 2 3 4
+               Score 3 2.5 2 1 0
+"""
+function panelgenderscore(panel::AdjudicatorPanel)
+    nfemale = count(a -> a.gender == PersonFemale, adjlist(panel))
+    proportion = nfemale / numadjs(panel)
+    return nfemale - 0.5
 end
 
 # ==============================================================================

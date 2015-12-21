@@ -7,7 +7,7 @@ import Base.convert
 export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
     Debate, AdjumoComponentWeights, RoundInfo, PanelAllocation,
     TeamGender, TeamNoGender, TeamMale, TeamFemale, TeamMixed,
-    PersonGender, PersonNoGender, PersonMale, PersonFemale, PersonOther,
+    PersonGender, PersonNoGender, PersonMale, PersonFemale,
     Region, NoRegion, NorthAsia, SouthEastAsia, MiddleEast, SouthAsia, Africa, Oceania, NorthAmerica, LatinAmerica, Europe, IONA,
     LanguageStatus, NoLanguage, EnglishPrimary, EnglishSecond, EnglishForeign,
     Wudc2015AdjudicatorRank, TraineeMinus, Trainee, TraineePlus, PanellistMinus, Panellist, PanellistPlus, ChairMinus, Chair, ChairPlus,
@@ -24,7 +24,7 @@ export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
 # ==============================================================================
 
 @enum TeamGender TeamNoGender TeamMale TeamFemale TeamMixed
-@enum PersonGender PersonNoGender PersonMale PersonFemale PersonOther
+@enum PersonGender PersonNoGender PersonMale PersonFemale
 @enum Region NoRegion NorthAsia SouthEastAsia MiddleEast SouthAsia Africa Oceania NorthAmerica LatinAmerica Europe IONA
 @enum LanguageStatus NoLanguage EnglishPrimary EnglishSecond EnglishForeign
 @enum Wudc2015AdjudicatorRank TraineeMinus Trainee TraineePlus PanellistMinus Panellist PanellistPlus ChairMinus Chair ChairPlus
@@ -37,6 +37,7 @@ type Institution
 end
 
 Institution(id::Int, name::UTF8String) = Institution(id, name, name[1:5], NoRegion)
+Institution(id::Int, name::AbstractString) = Institution(id, UTF8String(name), name[1:5], NoRegion)
 Institution(id::Int, name::UTF8String, code::UTF8String) = Institution(id, name, code, NoRegion)
 Institution(id::Int, name::AbstractString, code::AbstractString) = Institution(id, UTF8String(name), UTF8String(code), NoRegion)
 
@@ -177,7 +178,6 @@ end
 # ==============================================================================
 
 type AdjumoComponentWeights
-    panelsize::Float64
     quality::Float64
     regional::Float64
     language::Float64
@@ -188,7 +188,7 @@ type AdjumoComponentWeights
     adjconflict::Float64
 end
 
-AdjumoComponentWeights() = AdjumoComponentWeights(1,1,1,1,1,1,1,1,1)
+AdjumoComponentWeights() = AdjumoComponentWeights(1,1,1,1,1,1,1,1)
 AdjumoComponentWeights(v::Vector) = AdjumoComponentWeights(v...)
 
 # ==============================================================================

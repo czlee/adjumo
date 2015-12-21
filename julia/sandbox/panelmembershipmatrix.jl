@@ -7,24 +7,6 @@ using ArgParse
 using Adjumo
 using AdjumoDataTools
 
-argsettings = ArgParseSettings()
-@add_arg_table argsettings begin
-    "-n", "--ndebates"
-        help = "Number of debates in round"
-        arg_type = Int
-        default = 5
-    "-r", "--currentround"
-        help = "Current round number"
-        arg_type = Int
-        default = 5
-end
-args = parse_args(ARGS, argsettings)
-
-ndebates = args["ndebates"]
-currentround = args["currentround"]
-roundinfo = randomroundinfo(ndebates, currentround)
-feasiblepanels = generatefeasiblepanels(roundinfo)
-
 function panelmembershipmatrix1(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
     nadjs = numadjs(roundinfo)
@@ -68,6 +50,24 @@ function panelmembershipmatrix4(roundinfo::RoundInfo, feasiblepanels::Vector{Adj
     end
     return Q
 end
+
+argsettings = ArgParseSettings()
+@add_arg_table argsettings begin
+    "-n", "--ndebates"
+        help = "Number of debates in round"
+        arg_type = Int
+        default = 5
+    "-r", "--currentround"
+        help = "Current round number"
+        arg_type = Int
+        default = 5
+end
+args = parse_args(ARGS, argsettings)
+
+ndebates = args["ndebates"]
+currentround = args["currentround"]
+roundinfo = randomroundinfo(ndebates, currentround)
+feasiblepanels = generatefeasiblepanels(roundinfo)
 
 funcs = [
     panelmembershipmatrix1,

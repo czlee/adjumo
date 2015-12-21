@@ -11,9 +11,9 @@ using MathProgBase
 using StatsBase
 
 SUPPORTED_SOLVERS = [
-    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj,  :threads),
     ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap,   :Threads),
     ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap, :threads),
+    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj,  :threads),
 ]
 
 include("types.jl")
@@ -25,12 +25,12 @@ include("exporttabbie2.jl")
 export allocateadjudicators, generatefeasiblepanels
 
 "Top-level adjudicator allocation function."
-function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1)
+function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int), α=1.0)
 
     println("feasible panels:")
-    @time feasiblepanels = generatefeasiblepanels(roundinfo)
+    @time feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=limitpanels)
     println("score matrix:")
-    @time Σ = scorematrix(roundinfo, feasiblepanels)
+    @time Σ = scorematrix(roundinfo, feasiblepanels; α=α)
     println("panel membership matrix:")
     @time Q = panelmembershipmatrix(roundinfo, feasiblepanels)
     println("trainee indicators:")
@@ -79,7 +79,7 @@ end
 Generates a list of feasible panels using the information about the round.
 Returns a list of AdjudicatorPanel instances.
 """
-function generatefeasiblepanels(roundinfo::RoundInfo)
+function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(Int))
     nchairs = numdebates(roundinfo)
 
     adjssorted = sort(roundinfo.adjudicators, by=adj->adj.ranking, rev=true)
@@ -102,12 +102,11 @@ function generatefeasiblepanels(roundinfo::RoundInfo)
         filter!(panel -> count(a -> a ∈ adjlist(panel), adjs) ∈ [0, length(adjs)], panels)
     end
 
-    println("There are $(length(panels)) panels to choose from.")
-
-    if length(panels) > 20000
-        panels = sample(panels, 20000; replace=false)
-        println("Reduced to 50000 panels, picking at random")
+    if length(panels) > limitpanels
+        println("There are $(length(panels)) feasible panels, but limiting to $limitpanels panels, picking at random.")
+        panels = sample(panels, limitpanels; replace=false)
     end
+    println("There are $(length(panels)) panels to choose from.")
 
     return panels
 end
@@ -121,10 +120,10 @@ adjudicator. `Q[p,a]` is 1 if adjudicator `a` is in panel `p`, 0 otherwise.
 function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
     nadjs = numadjs(roundinfo)
-    Q = zeros(Bool, npanels, nadjs)
+    Q = zeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
         indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
-        Q[p, indices] = true
+        Q[p, indices] = 1.0
     end
     return Q
 end
@@ -232,9 +231,10 @@ Solves the optimization problem for score matrix `Σ` and panel membership
 Returns a list of 2-tuples, `(d, p)`, where `d` is the column number of the
     debate and `p` is the row number of the panel in `Σ`.
 """
-function solveoptimizationproblem{T<:Real}(Σ::Matrix{T}, Q::AbstractMatrix{Bool},
-        lockedadjs::Vector{Tuple{Int,Int}}, blockedadjs::Vector{Tuple{Int,Int}},
-        istrainee::Vector{Bool}; solver="default", gap=1e-2, threads=1)
+function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
+        Q::AbstractMatrix{T2}, lockedadjs::Vector{Tuple{Int,Int}},
+        blockedadjs::Vector{Tuple{Int,Int}}, istrainee::Vector{Bool};
+        solver="default", gap=1e-2, threads=1)
 
     (ndebates, npanels) = size(Σ)
 
