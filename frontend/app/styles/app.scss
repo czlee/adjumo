@@ -144,6 +144,9 @@ input[type=range]:hover {
 
 .debate-panel {
   padding: 1px !important;
+  .panel-stats {
+    line-height: 44px; // Vertically align with the adj elements
+  }
 }
 
 /* Panel Component */
@@ -179,13 +182,37 @@ td.head-panel {
 /* Conflicts */
 
 .institution-conflict, .institution-conflict-key {
-  background: #b0207b !important; /* Important to overrule highlights */
+  //background: #b0207b !important; /* Important to overrule highlights */
+  background-image: repeating-linear-gradient(
+      45deg,
+      #ff0000,
+      #ff0000 2px,
+      #d0009d 2px, /* purple */
+      #d0009d 4px /* purple */
+  );
   color: #fff !important;
 }
 .team-conflict, .adj-conflict, .team-conflict-key {
-  background: #ff3131 !important; /* Important to overrule highlights */
+  background-image: repeating-linear-gradient(
+      45deg,
+      #ff0000,
+      #ff0000 2px,
+      #cf0000 2px,
+      #cf0000 4px
+  );/* Important to overrule highlights */
   color: #fff !important;
 }
+.history-conflict, .adj-conflict, .history-conflict-key {
+  background-image: repeating-linear-gradient(
+      45deg,
+      #37a5c8,
+      #37a5c8 2px,
+      #2d86a3 2px,
+      #2d86a3 4px
+  );/* Important to overrule highlights */
+  color: #fff !important;
+}
+
 
 /* Adjudicator Component */
 
