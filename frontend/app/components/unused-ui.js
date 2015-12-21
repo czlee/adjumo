@@ -27,9 +27,9 @@ export default Ember.Component.extend(DroppableMixin, {
       if (droppedAdj === oldPanel.get('chair').get('content')) {
         oldPanel.set('chair', null);
       } else if (oldPanel.get('panellists').contains(droppedAdj)) {
-        oldPanel.set('panellists', oldPanel.get('panellists').removeObject(droppedAdj));
+        oldPanel.get('panellists').removeObject(droppedAdj);
       } else if (oldPanel.get('trainees').contains(droppedAdj)) {
-        oldPanel.set('trainees', oldPanel.get('trainees').removeObject(droppedAdj));
+        oldPanel.get('trainees').removeObject(droppedAdj);
       }
     }
 
