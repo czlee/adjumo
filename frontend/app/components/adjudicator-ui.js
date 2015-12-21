@@ -8,7 +8,7 @@ export default Ember.Component.extend(DraggableMixin, {
   draggable: 'true',
 
   classNames: ['btn', 'adjudicator-ui', 'ranking-display', 'js-drag-handle', 'popover-trigger'],
-  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked', 'id', 'institution', 'panelTeamConflict', 'panelAdjConflict', 'panelInstitutionConflict'],
+  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked', 'id', 'institution', 'panelTeamConflict', 'adjConflict', 'institutionConflict'],
 
   // CSS Getters
   gender: function(){
@@ -26,14 +26,33 @@ export default Ember.Component.extend(DraggableMixin, {
     return regions;
   }.property('adj'),
 
-  language: function() { return 'language-' + String(this.get('adj').get('language')); }.property('adj'),
-  ranking: function() { return 'ranking-' + String(this.get('adj').get('ranking')); }.property('adj'),
-  locked: function() { return 'locked-' + String(this.get('adj').locked); }.property('adj'),
-  institution: function() { return 'institution-' + String(this.get('adj').get('institution').get('id')); }.property('adj'),
-  id: function() { return 'adj-' + String(this.get('adj').get('id')); }.property('adj'),
-  panelTeamConflict: function() { if (this.get('adj').get('panelTeamConflict')) { return true; }}.property('adj'),
-  panelAdjConflict: function() { if (this.get('adj').get('panelAdjConflict')) { return true; }}.property('adj'),
-  panelInstitutionConflict: function() { if (this.get('adj').get('panelInstitutionConflict')) { return true; }}.property('adj'),
+  language: function() {
+    return 'language-' + String(this.get('adj').get('language'));
+  }.property('adj'),
+  ranking: function() {
+    return 'ranking-' + String(this.get('adj').get('ranking'));
+  }.property('adj'),
+  locked: function() {
+    return 'locked-' + String(this.get('adj').locked);
+  }.property('adj'),
+  institution: function() {
+    return 'institution-' + String(this.get('adj').get('institution').get('id'));
+  }.property('adj'),
+  id: function() {
+    return 'adj-' + String(this.get('adj').get('id'));
+  }.property('adj'),
+
+  panelTeamConflict: function() {
+    if (this.get('adj').get('panelTeamConflict') === true) { return "panel-team-conflict"; }
+  }.property('adj.panelTeamConflict'),
+
+  adjConflict: function() {
+    if (this.get('adj').get('panelAdjConflict') === true) { return "panel-adj-conflict"; }
+  }.property('adj.panelAdjConflict'),
+
+  institutionConflict: function() {
+    if (this.get('adj').get('panelInstitutionConflict') === true) { return "panel-institution-conflict"; }
+  }.property('adj.panelInstitutionConflict'),
 
   mouseEnter: function(event) {
 

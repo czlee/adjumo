@@ -13,10 +13,12 @@ export default Ember.Mixin.create({
   regionID: Ember.computed('institution', function() {
     if (this.get('institution').get('region').get('id')) {
       return this.get('institution').get('region').get('id');
-    } else {
-
     }
   }),
+
+  panelTeamConflict: DS.attr('bool', { default: false }),
+  panelAdjConflict: DS.attr('bool', { default: false }),
+  panelInstitutionConflict: DS.attr('bool', { default: false }),
 
   regionName: Ember.computed('institution', function() {
 

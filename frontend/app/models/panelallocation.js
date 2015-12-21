@@ -10,6 +10,56 @@ export default DS.Model.extend({
 
   allocation: DS.belongsTo('allocation-iteration'),
 
+  // Change these to a single all adjs property
+  conflicts: Ember.computed('chair', 'panellists', 'trainees', function() {
+
+    var debateTeams = this.get('debate').get('teams').get('content');
+
+    // Constructing this the labourious way to get around issues merging belongsTo and hasMany
+    var debateAdjs = [];
+    debateAdjs.push(this.get('chair'));
+    this.get('panellists').forEach(function(adj) {
+      debateAdjs.push(adj);
+    });
+    this.get('trainees').forEach(function(adj) {
+      debateAdjs.push(adj);
+    });
+
+    var setTrue = [];
+    var setFalse = debateAdjs.concat(debateTeams);
+
+    debateAdjs.forEach(function(debateAdj) {
+
+      debateAdj.get('teamConflicts').forEach(function(teamConflict) {
+        // Get the team object each conflict linkts to
+        var conflictedTeam = teamConflict.get('team');
+        debateTeams.forEach(function(debateTeam) {
+          //console.log('checking ' + debateTeam.get('name') + ' vs ' + conflictedTeam.get('name'));
+          // Check if the conflicted team is in the debate - have to match by ID as object matching not working
+          if (debateTeam.get('id') === conflictedTeam.get('id')) {
+            debateAdj.set('panelTeamConflict', true);
+            conflictedTeam.set('panelTeamConflict', true);
+          }
+        });
+      });
+
+      debateAdj.get('adjConflictsWithOutSelf').forEach(function(conflictingAdj) {
+        // For each conflict each adj has go through its panellists
+        debateAdjs.forEach(function(debateAdjAgain) {
+          // Check if the conflict adj matches any person on the panel
+          //console.log('checking ' + debateAdj.get('name') + ' vs ' + conflictingAdj.get('name'));
+          if (debateAdjAgain.get('id') === conflictingAdj.get('id')) {
+            debateAdjAgain.set('panelAdjConflict', true);
+            conflictingAdj.set('panelAdjConflict', true);
+          }
+        });
+      });
+
+    });
+
+  }),
+
+
   ranking: function() {
     var rankings = [];
 

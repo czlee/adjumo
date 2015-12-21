@@ -13,9 +13,18 @@ export default Ember.Component.extend({
   language: function() { return 'language-' + String(this.get('team').get('language')); }.property('team'),
   institution: function() { return 'institution-' + String(this.get('team').get('institution').get('id')); }.property('team'),
   id: function() { return 'team-' + String(this.get('team').get('id')); }.property('id'),
-  panelTeamConflict: function() {if (this.get('team').get('panelTeamConflict')) { return true; }}.property('team'),
-  panelAdjConflict: function() {if (this.get('team').get('panelAdjConflict')) { return true; }  }.property('team'),
-  panelInstitutionConflict: function() {if (this.get('team').get('panelInstitutionConflict')) { return true; }  }.property('team'),
+
+  panelTeamConflict: function() {
+    if (this.get('team').get('panelTeamConflict') === true) { return "panel-team-conflict"; }
+  }.property('team.panelTeamConflict'),
+
+  adjConflict: function() {
+    if (this.get('team').get('panelAdjConflict') === true) { return "panel-adj-conflict"; }
+  }.property('team.panelAdjConflict'),
+
+  institutionConflict: function() {
+    if (this.get('team').get('panelInstitutionConflict') === true) { return "panel-institution-conflict"; }
+  }.property('team.panelInstitutionConflict'),
 
   mouseEnter: function(event) {
     this.get('team').get('adjConflictIDs').forEach(function(id) {

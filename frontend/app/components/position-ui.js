@@ -85,8 +85,6 @@ export default Ember.Component.extend(DroppableMixin, {
         break;
     }
 
-    this.sendAction('action', droppedAdj); // Send the dropped adj to the panel component to check for in debate/panel conflicts
-
     return this._super(event);
   }
 
