@@ -2,18 +2,9 @@
 
   <div class="row">
 
-      <div class="form-group col-sm-2">
-        <div class="input-group input-group-sm">
-          <div class="input-group-addon">
-            <span class="glyphicon glyphicon-search"></span>
-          </div>
-          {{input value=theFilter type='text' class="form-control col-sm-10" placeholder='Search'}}
-        </div>
-      </div>
-
       <div class="btn-toolbar col-sm-10">
 
-        <div class="pull-right btn-group btn-group-sm">
+        <div class="btn-group btn-group-sm">
         {{#if showingRegion }}
           <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRegion"}}>
             <span class="glyphicon glyphicon-eye-close"></span> Region
@@ -52,14 +43,14 @@
         {{/if}}
         </div>
 
-        <div class="btn-group-sm btn-group pull-right" id="conflictsKey" style="display: none;">
+        <div class="btn-group-sm btn-group" id="conflictsKey" style="display: none;">
           <button class="btn btn-default institution-conflict-key">Institutional</button>
           <button class="btn btn-default team-conflict-key">Personal</button>
           <button class="btn btn-default history-conflict-key">History</button>
         </div>
 
         {{#if showingGender }}
-        <div class="btn-group-sm btn-group pull-right hover-key">
+        <div class="btn-group-sm btn-group hover-key">
           <button class="btn btn-default gender-display gender-0">None</button>
           <button class="btn btn-default gender-display gender-1">Male</button>
           <button class="btn btn-default gender-display gender-3">Male+Female</button>
@@ -68,7 +59,7 @@
         {{/if}}
 
         {{#if showingRegion }}
-        <div class="btn-group-sm btn-group pull-right hover-key">
+        <div class="btn-group-sm btn-group hover-key">
           <button class="btn btn-default region-display region-9">Europe</button>
           <button class="btn btn-default region-display region-10">IONA</button>
           <button class="btn btn-default region-display region-6">Oceania</button>
@@ -84,13 +75,23 @@
         {{/if}}
 
         {{#if showingLanguage }}
-        <div class="btn-group-sm btn-group pull-right hover-key">
+        <div class="btn-group-sm btn-group hover-key">
           <button class="btn btn-default language-display language-1">EPL</button>
           <button class="btn btn-default language-display language-2">ESL</button>
           <button class="btn btn-default language-display language-3">EFL</button>
         </div>
         {{/if}}
 
+      </div>
+
+
+      <div class="form-group col-sm-2">
+        <div class="input-group input-group-sm">
+          <div class="input-group-addon">
+            <span class="glyphicon glyphicon-search"></span>
+          </div>
+          {{input value=theFilter type='text' class="form-control col-sm-10" placeholder='Search'}}
+        </div>
       </div>
 
   </div><!--- ending table toggle row -->

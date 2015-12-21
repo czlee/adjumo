@@ -13,6 +13,28 @@ export default DS.Model.extend(DebateableMixin, {
   teamConflicts: DS.hasMany('teamadjudicator', {async: true}),
   adjConflicts: DS.hasMany('adjudicatorpair', {async: true, inverse: null }),
 
+  teamHistory: DS.hasMany('teamadjhistory', {async: true}),
+
+  teamHistoryLinear: Ember.computed('teamHistory', function() {
+    var linearHistory = Array(20); // Hack, should by dynamic
+    this.get('teamHistory').forEach(function(history) {
+      history.get('rounds').forEach(function(round) {
+        if (linearHistory[round]) {
+          linearHistory[round].teams.push(history.get('team'));
+        } else {
+          linearHistory[round] = {round: round, teams: [history.get('team')]};
+        }
+      });
+    });
+    return linearHistory;
+  }),
+
+  hasConflicts: Ember.computed('teamConflicts', 'adjConflicts', function() {
+    var conflicts = this.get('teamConflicts').get('content').length;
+    conflicts += this.get('adjConflicts').get('content').length;
+    return conflicts; // 0 = false
+  }),
+
   adjConflictsWithOutSelf: Ember.computed('adjConflicts', function() {
     var adjs = [];
     var thisAdjID = this.get('id');
