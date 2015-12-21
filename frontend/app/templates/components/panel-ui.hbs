@@ -15,13 +15,13 @@
 </div>
 <div class="panel-ui">
   <div class="debate-chair-holder flex-1 position-holder">
-    {{chair-ui panel=panel adjudicators=adjudicators}}
+    {{position-ui adjudicators=adjudicators panel=panel type="chair" isChairPosition=true }}
   </div>
   <div class="debate-panel-holder flex-2 position-holder">
-    {{panellists-ui panel=panel adjudicators=adjudicators}}
+    {{position-ui adjudicators=adjudicators panel=panel type="panellists" isPanellistsPosition=true }}
   </div>
   <div class="debate-trainee-holder flex-1 position-holder">
-    {{trainees-ui panel=panel adjudicators=adjudicators}}
+    {{position-ui adjudicators=adjudicators panel=panel type="trainees" isTraineesPosition=true }}
   </div>
   <div class="js-drag-handle flex-icon flex-icon">
     <span class="glyphicon glyphicon-align-justify"></span>
