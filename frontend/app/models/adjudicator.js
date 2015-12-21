@@ -47,28 +47,28 @@ export default DS.Model.extend(DebateableMixin, {
 
   get_ranking: function() {
     var ranking_word = "";
-    if (this.get('ranking') <= 3) {
+    if (this.get('ranking') <= 2) {
       ranking_word = "T";
-      if (this.get('ranking') == 1) {
+      if (this.get('ranking') == 0) {
         ranking_word += "-";
       }
-      else if (this.get('ranking') == 3) {
+      else if (this.get('ranking') == 2) {
         ranking_word += "+";
       }
-    } else if (this.get('ranking') <= 6) {
+    } else if (this.get('ranking') <= 5) {
       ranking_word = "P";
-      if (this.get('ranking') == 4) {
+      if (this.get('ranking') == 3) {
         ranking_word += "-";
       }
-      else if (this.get('ranking') == 6) {
+      else if (this.get('ranking') == 5) {
         ranking_word += "+";
       }
-    } else if (this.get('ranking') <= 9) {
+    } else if (this.get('ranking') <= 8) {
       ranking_word = "C";
-      if (this.get('ranking') == 7) {
+      if (this.get('ranking') == 6) {
         ranking_word += "-";
       }
-      else if (this.get('ranking') == 9) {
+      else if (this.get('ranking') == 8) {
         ranking_word += "+";
       }
     }
