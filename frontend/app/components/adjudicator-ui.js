@@ -38,11 +38,22 @@ export default Ember.Component.extend(DraggableMixin, {
   mouseEnter: function(event) {
     var institutionConflict = ".institution-" + String(this.get('adj').get('institution').get('id'));
     $(institutionConflict).addClass("institution-conflict");
+
+    this.get('adj').get('teamConflictIDs').forEach(function(id) {
+      var teamConflict = ".team-" + id;
+      $(teamConflict).addClass("team-conflict");
+    });
+
+    $("#conflictsKey").show();
+
   },
 
   mouseLeave: function(event) {
-    var institutionConflict = ".institution-" + String(this.get('adj').get('institution').get('id'));
-    $(institutionConflict).removeClass("institution-conflict");
+
+    $(".institution-conflict").removeClass("institution-conflict");
+    $(".team-conflict").removeClass("team-conflict");
+    $("#conflictsKey").hide();
+
   },
 
   dragStart: function(event) {

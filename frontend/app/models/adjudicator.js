@@ -12,6 +12,14 @@ export default DS.Model.extend(DebateableMixin, {
 
   teamConflicts: DS.hasMany('teamadjudicator', {async: true}),
 
+  teamConflictIDs: Ember.computed('teamConflicts', function() {
+    var teamIDs = [];
+    this.get('teamConflicts').forEach(function(conflict) {
+      teamIDs.push(conflict.get('team').get('id'));
+    });
+    return teamIDs;
+  }),
+
   // listConflictsNames: Ember.computed('teamConflicts', function() {
   //   this.get('teamConflicts').objectAt(0);
   // }),

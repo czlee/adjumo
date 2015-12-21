@@ -5,7 +5,7 @@ export default Ember.Component.extend({
   tagName: 'td',
 
   classNames: ['team-ui hover-panel-trigger"'],
-  classNameBindings: ['gender', 'region', 'institution', 'language'],
+  classNameBindings: ['gender', 'region', 'institution', 'language', 'id'],
 
   // CSS Getters
   gender: function(){
@@ -20,6 +20,9 @@ export default Ember.Component.extend({
   institution: function() {
     return 'institution-' + String(this.get('team').get('institution').get('id'));
   }.property('team'),
+  id: function() {
+    return 'team-' + String(this.get('team').get('id'));
+  }.property('id'),
 
   didInsertElement: function() {
     Ember.run.scheduleOnce('afterRender', this, function() {

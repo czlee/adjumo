@@ -174,8 +174,12 @@ td.head-panel {
 
 /* Conflicts */
 
-.institution-conflict {
-  background: red;
+.institution-conflict, .institution-conflict-key {
+  background: #c60146;
+  color: #fff;
+}
+.team-conflict, .team-conflict-key {
+  background: #ff3131;
   color: #fff;
 }
 
