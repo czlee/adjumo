@@ -15,6 +15,8 @@ export default Ember.Route.extend({
           allocations:            this.store.findAll('allocation-iteration'),
           teamadjudicator:        this.store.findAll('teamadjudicator'),
           adjudicatorpair:        this.store.findAll('adjudicatorpair'),
+          teamadjhistory:         this.store.findAll('teamadjhistory'),
+          adjadjhistory:          this.store.findAll('adjadjhistory'),
 
       });
 
