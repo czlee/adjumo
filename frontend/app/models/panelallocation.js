@@ -29,6 +29,18 @@ export default DS.Model.extend({
     var setFalse = debateAdjs.concat(debateTeams);
 
     debateAdjs.forEach(function(debateAdj) {
+      debateAdj.set('panelTeamConflict', false);
+      debateAdj.set('panelAdjConflict', false);
+      debateAdj.set('panelInstitutionConflict', false);
+    });
+
+    debateTeams.forEach(function(debateTeam) {
+      debateTeam.set('panelTeamConflict', false);
+      debateTeam.set('panelAdjConflict', false);
+      debateTeam.set('panelInstitutionConflict', false);
+    });
+
+    debateAdjs.forEach(function(debateAdj) {
 
       debateAdj.get('teamConflicts').forEach(function(teamConflict) {
         // Get the team object each conflict linkts to
@@ -39,6 +51,10 @@ export default DS.Model.extend({
           if (debateTeam.get('id') === conflictedTeam.get('id')) {
             debateAdj.set('panelTeamConflict', true);
             conflictedTeam.set('panelTeamConflict', true);
+          }
+          if (debateTeam.get('institution').get('id') === debateAdj.get('institution').get('id')) {
+            debateAdj.set('panelInstitutionConflict', true);
+            debateTeam.set('panelInstitutionConflict', true);
           }
         });
       });
@@ -54,6 +70,8 @@ export default DS.Model.extend({
           }
         });
       });
+
+
 
     });
 

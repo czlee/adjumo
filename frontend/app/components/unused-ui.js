@@ -33,6 +33,11 @@ export default Ember.Component.extend(DroppableMixin, {
       }
     }
 
+    // Remove all conflicts
+    droppedAdj.set('panelTeamConflict', false);
+    droppedAdj.set('panelAdjConflict', false);
+    droppedAdj.set('panelInstitutionConflict', false);
+
     return this._super(event);
 
   },
