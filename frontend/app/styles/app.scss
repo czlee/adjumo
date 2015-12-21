@@ -186,9 +186,9 @@ td.head-panel {
   background-image: repeating-linear-gradient(
       45deg,
       #ff0000,
-      #ff0000 2px,
-      #d0009d 2px, /* purple */
-      #d0009d 4px /* purple */
+      #ff0000 3px,
+      #d0009d 6px, /* purple */
+      #d0009d 6px /* purple */
   );
   color: #fff !important;
 }
@@ -196,9 +196,9 @@ td.head-panel {
   background-image: repeating-linear-gradient(
       45deg,
       #ff0000,
-      #ff0000 2px,
-      #cf0000 2px,
-      #cf0000 4px
+      #ff0000 3px,
+      #cf0000 6px,
+      #cf0000 6px
   );/* Important to overrule highlights */
   color: #fff !important;
 }
@@ -206,9 +206,9 @@ td.head-panel {
   background-image: repeating-linear-gradient(
       45deg,
       #37a5c8,
-      #37a5c8 2px,
-      #2d86a3 2px,
-      #2d86a3 4px
+      #37a5c8 3px,
+      #2d86a3 6px,
+      #2d86a3 6px
   );/* Important to overrule highlights */
   color: #fff !important;
 }
