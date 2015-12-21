@@ -73,11 +73,11 @@ export default Ember.Component.extend({
   },
   rankingOn: function() {
     this.set('showingRanking', true);
-    $(".adjudicator-ui, .preallocation .debate-importance").addClass("ranking-display");
+    $(".adjudicator-ui, .preallocation.debate-importance, .allocation.debate-importance").addClass("ranking-display");
   },
   rankingOff: function() {
     this.set('showingRanking', false);
-    $(".adjudicator-ui, .preallocation .debate-importance").removeClass("ranking-display");
+    $(".adjudicator-ui, .preallocation.debate-importance, .allocation.debate-importance").removeClass("ranking-display");
   },
 
 
