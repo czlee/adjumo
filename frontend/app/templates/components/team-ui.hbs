@@ -3,30 +3,49 @@
 
 <div class="hover-panel" style="display: none;">
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h5 class="panel-title">{{ team.name }}</h5>
-        </div>
+
         <ul class="list-group">
-            <li class="list-group-item uppercase">
-                {{ team.institution.name }}
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-md-2">
+                        <strong>{{ team.name }}</strong>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>{{ team.institution.name }}</strong>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                          <div class="col-md-5">
+                            <span class="glyphicon glyphicon-globe text-muted"></span> {{ team.regionName }}
+                          </div>
+                          <div class="col-md-3">
+                            <span class="glyphicon glyphicon-queen text-muted"></span> {{ team.genderName }}
+                          </div>
+                          <div class="col-md-2">
+                            <span class="glyphicon glyphicon-comment text-muted"></span> {{ team.languageName }}
+                          </div>
+                        </div>
+                    </div>
+                </div>
             </li>
             <li class="list-group-item">
-                <span class="glyphicon glyphicon-queen text-muted pull-right"></span> {{ team.genderName }}
+                <span class="glyphicon glyphicon-remove text-muted"></span>
+                {{#if team.teamConflicts }}
+                    {{#each team.adjConflicts as |conflict| }}
+                        {{conflict.adjudicator.name }},
+                    {{/each}}
+                {{/if}}
+                {{#if team.adjConflicts }}
+                    {{#each team.adjConflictsWithOutSelf as |conflict| }}
+                        {{conflict.name }},
+                    {{/each}}
+                {{/if}}
             </li>
             <li class="list-group-item">
-                <span class="glyphicon glyphicon-comment text-muted pull-right"></span> {{ team.languageName }}
+                <span class="glyphicon glyphicon-time text-muted"></span>
+                R1 (team), R1 (team), R1 (team), R1 (team)
             </li>
-            <li class="list-group-item">
-                <span class="glyphicon glyphicon-globe text-muted pull-right"></span> {{ team.regionName }}
-            </li>
-            {{#if team.adjConflicts }}
-            <li class="list-group-item">
-                <span class="glyphicon glyphicon-remove text-muted pull-right"></span>
-                {{#each team.adjConflicts as |conflict| }}
-                    {{conflict.adjudicator.name }}
-                {{/each}}
-            </li>
-            {{/if}}
         </ul>
+
     </div>
 </div>

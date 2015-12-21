@@ -44,7 +44,7 @@ export default Ember.Mixin.create({
       } else if (regionID === 10){
         return "IONA";
       } else {
-        return "Unknown Gender";
+        return "?";
       }
     }
 
@@ -69,7 +69,7 @@ export default Ember.Mixin.create({
     } else if (language === 2){
       return "EFL";
     } else {
-      return "Unknown Language";
+      return "?";
     }
   }),
 

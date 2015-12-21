@@ -13,7 +13,7 @@ export default DS.Model.extend(DebateableMixin, {
   teamConflicts: DS.hasMany('teamadjudicator', {async: true}),
   adjConflicts: DS.hasMany('adjudicatorpair', {async: true, inverse: null }),
 
-  adjConflictsWithOutSelf: Ember.computed('teamConflicts', function() {
+  adjConflictsWithOutSelf: Ember.computed('adjConflicts', function() {
     var adjs = [];
     var thisAdjID = this.get('id');
     this.get('adjConflicts').forEach(function(conflict) {
@@ -68,7 +68,7 @@ export default DS.Model.extend(DebateableMixin, {
     } else if (gender === 3){
       return "Other";
     } else {
-      return "Unknown";
+      return "?";
     }
   }),
 

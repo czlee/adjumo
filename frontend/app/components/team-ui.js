@@ -5,25 +5,17 @@ export default Ember.Component.extend({
   tagName: 'td',
 
   classNames: ['team-ui hover-panel-trigger"'],
-  classNameBindings: ['gender', 'region', 'institution', 'language', 'id'],
+  classNameBindings: ['gender', 'region', 'institution', 'language', 'id', 'panelTeamConflict', 'panelAdjConflict', 'panelInstitutionConflict'],
 
   // CSS Getters
-  gender: function(){
-    return 'gender-' + String(this.get('team').get('gender'));
-  }.property('team'),
-  region: function() {
-    return 'region-' + String(this.get('team').get('region'));
-  }.property('team'),
-  language: function() {
-    return 'language-' + String(this.get('team').get('language'));
-  }.property('team'),
-  institution: function() {
-    return 'institution-' + String(this.get('team').get('institution').get('id'));
-  }.property('team'),
-  id: function() {
-    return 'team-' + String(this.get('team').get('id'));
-  }.property('id'),
-
+  gender: function(){ return 'gender-' + String(this.get('team').get('gender')); }.property('team'),
+  region: function() { return 'region-' + String(this.get('team').get('region')); }.property('team'),
+  language: function() { return 'language-' + String(this.get('team').get('language')); }.property('team'),
+  institution: function() { return 'institution-' + String(this.get('team').get('institution').get('id')); }.property('team'),
+  id: function() { return 'team-' + String(this.get('team').get('id')); }.property('id'),
+  panelTeamConflict: function() {if (this.get('team').get('panelTeamConflict')) { return true; }}.property('team'),
+  panelAdjConflict: function() {if (this.get('team').get('panelAdjConflict')) { return true; }  }.property('team'),
+  panelInstitutionConflict: function() {if (this.get('team').get('panelInstitutionConflict')) { return true; }  }.property('team'),
 
   mouseEnter: function(event) {
     this.get('team').get('adjConflictIDs').forEach(function(id) {

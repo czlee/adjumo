@@ -106,6 +106,7 @@ span[active="false"].glyphicon {
 }
 .table>tbody>tr>td.team-ui:hover {
   cursor: help;
+  color: #0980bd;
 }
 .debate-importance input {
   max-width: 100%;
@@ -181,35 +182,35 @@ td.head-panel {
 
 /* Conflicts */
 
-.institution-conflict, .institution-conflict-key {
+.institution-conflict, .panel-institution-conflict, .institution-conflict-key {
   //background: #b0207b !important; /* Important to overrule highlights */
   background-image: repeating-linear-gradient(
       45deg,
-      #ff0000,
-      #ff0000 3px,
-      #d0009d 6px, /* purple */
-      #d0009d 6px /* purple */
-  );
+      #da1ac1,
+      #da1ac1 3px,
+      #ae319e 6px, /* purple */
+      #ae319e 6px /* purple */
+  ) !important;
   color: #fff !important;
 }
-.team-conflict, .adj-conflict, .team-conflict-key {
+.team-conflict, .adj-conflict, .panel-team-conflict, .panel-adj-conflict, .team-conflict-key {
   background-image: repeating-linear-gradient(
       45deg,
       #ff0000,
       #ff0000 3px,
       #cf0000 6px,
       #cf0000 6px
-  );/* Important to overrule highlights */
+  ) !important;/* Important to overrule highlights */
   color: #fff !important;
 }
-.history-conflict, .adj-conflict, .history-conflict-key {
+.history-conflict, .history-conflict-key {
   background-image: repeating-linear-gradient(
       45deg,
       #37a5c8,
       #37a5c8 3px,
       #2d86a3 6px,
       #2d86a3 6px
-  );/* Important to overrule highlights */
+  ) !important;/* Important to overrule highlights */
   color: #fff !important;
 }
 
@@ -227,7 +228,7 @@ td.head-panel {
   float: left;
 }
 .adjudicator-ui:hover {
-  border-color: blue;
+  border-color: #0980bd;
 }
 .adjudicator-ui.locked-true {
   border: 2px solid rgb(0, 0, 255);
@@ -303,7 +304,15 @@ td.head-panel {
 
 .popover {
   opacity: 0.95 !important;
+  min-width: 98%;
+  top: 25px !important;
+  left: 1% !important;
+  right: 1% !important;
+  position: fixed;
 
+  .arrow {
+    display: none;
+  }
   .ranking-display .panel-title {
     color: #000; // white doesnt work with rank bg
   }

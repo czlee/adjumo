@@ -8,12 +8,13 @@ export default Ember.Component.extend(DraggableMixin, {
   draggable: 'true',
 
   classNames: ['btn', 'adjudicator-ui', 'ranking-display', 'js-drag-handle', 'popover-trigger'],
-  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked', 'id'],
+  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked', 'id', 'institution', 'panelTeamConflict', 'panelAdjConflict', 'panelInstitutionConflict'],
 
   // CSS Getters
   gender: function(){
     return 'gender-' + String(this.get('adj').get('gender'));
   }.property('adj'),
+
   region: function() {
     var regions = "";
     this.get('adj').get('regions').forEach(function(region) {
@@ -24,30 +25,26 @@ export default Ember.Component.extend(DraggableMixin, {
     }
     return regions;
   }.property('adj'),
-  language: function() {
-    return 'language-' + String(this.get('adj').get('language'));
-  }.property('adj'),
-  ranking: function() {
-    return 'ranking-' + String(this.get('adj').get('ranking'));
-  }.property('adj'),
-  locked: function() {
-    return 'locked-' + String(this.get('adj').locked);
-  }.property('adj'),
-  id: function() {
-    return 'adj-' + String(this.get('adj').get('id'));
-  }.property('adj'),
+
+  language: function() { return 'language-' + String(this.get('adj').get('language')); }.property('adj'),
+  ranking: function() { return 'ranking-' + String(this.get('adj').get('ranking')); }.property('adj'),
+  locked: function() { return 'locked-' + String(this.get('adj').locked); }.property('adj'),
+  institution: function() { return 'institution-' + String(this.get('adj').get('institution').get('id')); }.property('adj'),
+  id: function() { return 'adj-' + String(this.get('adj').get('id')); }.property('adj'),
+  panelTeamConflict: function() { if (this.get('adj').get('panelTeamConflict')) { return true; }}.property('adj'),
+  panelAdjConflict: function() { if (this.get('adj').get('panelAdjConflict')) { return true; }}.property('adj'),
+  panelInstitutionConflict: function() { if (this.get('adj').get('panelInstitutionConflict')) { return true; }}.property('adj'),
 
   mouseEnter: function(event) {
+
     var institutionConflict = ".institution-" + String(this.get('adj').get('institution').get('id'));
-    $(institutionConflict).addClass("institution-conflict");
+    $(institutionConflict).not(this.$()).addClass("institution-conflict");
 
     this.get('adj').get('teamConflictIDs').forEach(function(id) {
-      var teamConflict = ".team-" + id;
-      $(teamConflict).addClass("team-conflict");
+      $(String(".team-" + id)).addClass("team-conflict");
     });
     this.get('adj').get('adjConflictIDs').forEach(function(id) {
-      var adjConflict = ".adj-" + id;
-      $(adjConflict).addClass("adj-conflict");
+      $(String(".adj-" + id)).addClass("adj-conflict");
     });
 
     $("#conflictsKey").show();
