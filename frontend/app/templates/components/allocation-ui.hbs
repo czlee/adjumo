@@ -1,92 +1,14 @@
 <div id="main" class="container-fluid">
 
+
   <div class="row">
     <div class="col-sm-12">
 
-      <div id="alerts-holder"></div>
+    {{representations-ui config=config}}
 
-      <div class="form-group col-sm-2">
-        {{input value=theFilter type='text' class="form-control col-sm-10" placeholder='Search the debates'}}
-      </div>
+    </div>
+  </div>
 
-      <div class="btn-toolbar col-sm-10">
-
-        <div class="pull-right btn-group btn-group-sm">
-        {{#if showingRegion }}
-          <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRegion"}}>
-            <span class="glyphicon glyphicon-eye-close"></span> Region
-          </button>
-        {{else}}
-          <button class="btn btn-default nav-link hoverable" onclick={{action "showRegion"}}>
-            <span class="glyphicon glyphicon glyphicon-eye-open"></span> Region
-          </button>
-        {{/if}}
-        {{#if showingGender }}
-          <button class="btn btn-default nav-link hoverable active" onclick={{action "hideGender"}}>
-            <span class="glyphicon glyphicon-eye-close"></span> Gender
-          </button>
-        {{else}}
-          <button class="btn btn-default nav-link hoverable" onclick={{action "showGender"}}>
-            <span class="glyphicon glyphicon glyphicon-eye-open"></span> Gender
-          </button>
-        {{/if}}
-        {{#if showingLanguage }}
-          <button class="btn btn-default nav-link hoverable active" onclick={{action "hideLanguage"}}>
-            <span class="glyphicon glyphicon-eye-close"></span> Language
-          </button>
-        {{else}}
-          <button class="btn btn-default nav-link hoverable" onclick={{action "showLanguage"}}>
-            <span class="glyphicon glyphicon glyphicon-eye-open"></span> Language
-          </button>
-        {{/if}}
-        {{#if showingRanking }}
-          <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRanking"}} >
-            <span class="glyphicon glyphicon-eye-close"></span> Rankings
-          </button>
-        {{else}}
-          <button class="btn btn-default nav-link hoverable" onclick={{action "showRanking"}}>
-            <span class="glyphicon glyphicon glyphicon-eye-open"></span> Rankings
-          </button>
-        {{/if}}
-        </div>
-
-        {{#if showingGender }}
-        <div class="btn-group-sm btn-group pull-right hover-key">
-          <button class="btn btn-default gender-display gender-0">None</button>
-          <button class="btn btn-default gender-display gender-1">Male</button>
-          <button class="btn btn-default gender-display gender-3">Male+Female</button>
-          <button class="btn btn-default gender-display gender-2">Female</button>
-        </div>
-        {{/if}}
-
-        {{#if showingRegion }}
-        <div class="btn-group-sm btn-group pull-right hover-key">
-          <button class="btn btn-default region-display region-9">Europe</button>
-          <button class="btn btn-default region-display region-10">IONA</button>
-          <button class="btn btn-default region-display region-6">Oceania</button>
-          <button class="btn btn-default region-display region-7">N. America</button>
-          <button class="btn btn-default region-display region-2">SE. Asia</button>
-          <button class="btn btn-default region-display region-1">N. Asia</button>
-          <button class="btn btn-default region-display region-4">S. Asia</button>
-          <button class="btn btn-default region-display region-3">Middle East</button>
-          <button class="btn btn-default region-display region-8">L. America</button>
-          <button class="btn btn-default region-display region-5">Africa</button>
-          <button class="btn btn-default region-display multiple-regions">Multiple</button>
-        </div>
-        {{/if}}
-
-        {{#if showingLanguage }}
-        <div class="btn-group-sm btn-group pull-right hover-key">
-          <button class="btn btn-default language-display language-1">EPL</button>
-          <button class="btn btn-default language-display language-2">ESL</button>
-          <button class="btn btn-default language-display language-3">EFL</button>
-        </div>
-        {{/if}}
-
-      </div>
-
-    </div><!--- ending col-sm-12 -->
-  </div><!--- ending table toggle row -->
 
   <div class="row preallocation">
 
@@ -168,8 +90,12 @@
             <th class="head-oo">OO</th>
             <th class="head-cg">CO</th>
             <th class="head-co">CG</th>
-            <th class="head-bans preallocation">Bans</th>
-            <th class="head-locks preallocation">Locks</th>
+            <th class="head-bans preallocation" data-toggle="tooltip" data-placement="top" title="Adjs dragged here will be blocked from seing this debate">
+              Bans
+            </th>
+            <th class="head-locks preallocation" data-toggle="tooltip" data-placement="top" title="Adjs dragged here will be allocated to this debate">
+              Locks
+            </th>
             <th class="head-panel allocation hidden">
 
               <div class="flex-icon" data-toggle="tooltip" data-placement="top" title="Allocation Iteration">
@@ -205,137 +131,27 @@
         <tbody>
 
         {{#each filteredDebates as |debate-instance|}}
-            {{debate-ui debate=debate-instance adjudicators=model.adjudicators allocations=model.allocations}}
+            {{debate-ui debate=debate-instance adjudicators=adjudicators allocations=allocations}}
         {{/each}}
+
+        <!-- ticker for input ranges -->
+        <datalist id="debate-ticks">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+        </datalist>
 
         </tbody>
       </table>
 
   </div><!--- ending table row -->
 
+
 </div><!--- ending main -->
-
-{{unused-ui adjudicators=model.adjudicators }}
-
-<!-- Modal -->
-<div class="modal fade" id="setAllocationParameters" tabindex="-1" role="dialog" aria-labelledby="parametersModal">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="setAllocationParameters">Set Allocation Parameters</h4>
-      </div>
-      <div class="modal-body">
-        <form>
-          <fieldset class="form-group row">
-            <label for="adjconflict_fader" class="col-sm-2">Quality</label>
-            <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1"  value=model.config.quality  class="form-control" }}
-            </div>
-            <div class="col-sm-1">
-                {{input class="form-control"                  value=model.config.quality}}
-            </div>
-          </fieldset>
-          <fieldset class="form-group row">
-            <label for="adjconflict_fader" class="col-sm-2">Regional</label>
-            <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1"  value=model.config.regional  class="form-control" }}
-            </div>
-            <div class="col-sm-1">
-                {{input class="form-control"                  value=model.config.regional}}
-            </div>
-          </fieldset>
-          <fieldset class="form-group row">
-            <label for="adjconflict_fader" class="col-sm-2">Language</label>
-            <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1"  value=model.config.language class="form-control" }}
-            </div>
-            <div class="col-sm-1">
-                {{input class="form-control"                  value=model.config.language}}
-            </div>
-          </fieldset>
-          <fieldset class="form-group row">
-            <label for="adjconflict_fader" class="col-sm-2">Gender</label>
-            <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1"  value=model.config.gender class="form-control" }}
-            </div>
-            <div class="col-sm-1">
-                {{input class="form-control"                  value=model.config.gender}}
-            </div>
-          </fieldset>
-          <fieldset class="form-group row">
-            <label for="adjconflict_fader" class="col-sm-2">Team History</label>
-            <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1" value=model.config.teamhistory class="form-control" }}
-            </div>
-            <div class="col-sm-1">
-                {{input class="form-control" value=model.config.teamhistory}}
-            </div>
-          </fieldset>
-          <fieldset class="form-group row">
-            <label for="adjconflict_fader" class="col-sm-2">Adj History</label>
-            <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1" value=model.config.adjhistory class="form-control" }}
-            </div>
-            <div class="col-sm-1">
-                {{input class="form-control" value=model.config.adjhistory}}
-            </div>
-          </fieldset>
-          <fieldset class="form-group row">
-            <label for="adjconflict_fader" class="col-sm-2">Team Conflict</label>
-            <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1" value=model.config.teamconflict class="form-control" }}
-            </div>
-            <div class="col-sm-1">
-                {{input class="form-control" value=model.config.teamconflict}}
-            </div>
-          </fieldset>
-          <fieldset class="form-group row">
-            <label for="adjconflict_fader" class="col-sm-2">Adj Conflict</label>
-            <div class="col-sm-8">
-              {{input type="range" min="1" max="10" step="1" value=model.config.adjconflict class="form-control" }}
-            </div>
-            <div class="col-sm-1">
-                {{input class="form-control" value=model.config.adjconflict}}
-            </div>
-          </fieldset>
-          <fieldset class="form-group row">
-            <div class="col-sm-1">
-            </div>
-            <div class="col-sm-11">
-              <button type="submit" class="btn btn-default" {{action "startNewConfig"}}>
-                Save Configuration
-              </button>
-            </div>
-          </fieldset>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="exportAllocation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Select Which Allocation To Export</h4>
-      </div>
-      <div class="modal-body">
-        <form>
-        {{#if model.allocations}}
-          {{#each model.allocations as |allocation| }}
-            <button type="button" class="btn btn-default">
-              Export Allocation {{allocation.id}}
-            </button>
-          {{/each}}
-        {{else}}
-          No allocations to export!
-        {{/if}}
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-

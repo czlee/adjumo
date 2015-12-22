@@ -1,0 +1,25 @@
+
+<!-- Modal -->
+<div class="modal fade" id="exportAllocation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Select Which Allocation To Export</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+        {{#if allocations}}
+          {{#each allocations as |allocation| }}
+            <button type="button" class="btn btn-default btn-block">
+              Export Allocation {{allocation.id}}
+            </button>
+          {{/each}}
+        {{else}}
+          No allocations to export!
+        {{/if}}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

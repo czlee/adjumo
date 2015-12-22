@@ -1,0 +1,10 @@
+<div class="resize-holder text-center" data-toggle="tooltip" placement="top" title="Drag to resize">
+    <span class="glyphicon glyphicon-align-justify"></span>
+</div>
+
+{{#each sortedAdjudicators as |adj|}}
+    {{#if adj.lockedTo }}
+    {{else}}
+        {{adjudicator-ui adj=adj}}
+    {{/if}}
+{{/each}}

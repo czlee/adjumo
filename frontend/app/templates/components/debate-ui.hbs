@@ -7,29 +7,27 @@
 <td class="debate-weight text-center preallocation">
     {{ debate.weightRounded }}
 </td>
-<td class="debate-importance text-center ranking-display ranking-{{ debate.rankingClass }}">
+<td class="debate-importance text-center ranking-display preallocation ranking-{{ debate.rankingClass }}">
+    {{ debate.importance }}
+</td>
+<td class="debate-importance text-center allocation hidden ranking-{{ debate.rankingClass }}">
     {{ debate.importance }}
 </td>
 <td class="debate-importance-edit preallocation">
-    {{input type="range" min="1" max="10" step="1" value=debate.importance class="form-control" }}
+    {{input type="range" min="1" list="debate-ticks" max="10" step="1" value=debate.importance class="" }}
 </td>
 {{team-ui team=debate.og}}
 {{team-ui team=debate.oo}}
 {{team-ui team=debate.cg}}
 {{team-ui team=debate.co}}
-<td class="debate-panel debate-bans preallocation">
-    <div class="panel-ui i droppable-area"></div>
-</td>
-<td class="debate-panel debate-locks preallocation">
-    <div class="panel-ui i droppable-area"></div>
-</td>
+{{bans-ui debate=debate adjudicators=adjudicators}}
+{{locks-ui debate=debate adjudicators=adjudicators}}
 {{#if debate.panels }}
-    <td class="debate-panel allocation">
-        {{#each debate.panels as |panel|}}
-            {{panel-ui panel=panel adjudicators=adjudicators}}
-        {{/each}}
-    </td>
+    {{#each debate.panels as |panel|}}
+        {{panel-ui panel=panel adjudicators=adjudicators}}
+    {{/each}}
 {{else}}
     <td class="debate-panel allocation hidden"></td>
 {{/if}}
+
 

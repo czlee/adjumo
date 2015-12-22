@@ -15,13 +15,18 @@
 
 /* Nav */
 
-.breadcrumb {
-  margin-bottom: 0px;
-  padding: 0 10px 10px;
+.btn-group-sm>.btn, .btn-sm {
+  padding: 5px 7px; // free up space with the hover keys
 }
-.breadcrumb li a {
-  padding: 2px 4px;
+.navbar {
+  margin-bottom: 10px;
 }
+.debate-search-form {
+  width: 170px;
+  margin-left: 5px;
+}
+
+
 /* Table Widths */
 
 table {
@@ -98,9 +103,9 @@ span[active="false"].glyphicon {
 }
 .table>tbody>tr>td.team-ui {
   line-height: 1.1;
+  border: 1px solid #c8c8c8;
 }
 .table>tbody>tr>td.team-ui:hover {
-  color: blue;
   cursor: help;
 }
 .debate-importance input {
@@ -128,6 +133,28 @@ input[type=range]:hover {
 .panel-ui {
   padding: 0px !important;
   line-height: 40px;
+  height: 100%;
+  overflow: hidden;
+  .chair {
+    flex-grow: 1;
+    flex-basis: 10px;
+    border: 2px solid rgb(200, 200, 200);
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+  }
+  .panellists {
+    flex-grow: 2;
+    flex-basis: 10px;
+    border-top: 2px solid rgb(200, 200, 200);
+    border-bottom: 2px solid rgb(200, 200, 200);
+  }
+  .trainees {
+    flex-grow: 1;
+    flex-basis: 10px;
+    border: 2px solid rgb(200, 200, 200);
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
 }
 .flex-1 {
   flex-grow: 2;
@@ -139,15 +166,15 @@ input[type=range]:hover {
 }
 
 .debate-panel {
-  padding: 1px !important;
+  padding: 3px !important;
+  .panel-stats {
+    line-height: 44px; // Vertically align with the adj elements
+  }
 }
 
 /* Panel Component */
 .panel-ui {
-  border: 2px solid rgb(200, 200, 200);
-  border-radius: 6px;
   overflow: auto;
-  margin-bottom: 0px;
   display: flex;
   min-height: 40px;
 }
@@ -160,9 +187,6 @@ td.head-panel {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
-.position-holder {
-  border-right: 2px solid rgb(200, 200, 200);
-}
 .position-holder .droppable-area {
   min-height: 40px;
   float: left;
@@ -170,13 +194,6 @@ td.head-panel {
 }
 .js-drag-handle:hover {
   cursor: move;
-}
-
-/* Conflicts */
-
-.institution-conflict {
-  background: red;
-  color: #fff;
 }
 
 /* Adjudicator Component */
@@ -192,7 +209,7 @@ td.head-panel {
   float: left;
 }
 .adjudicator-ui:hover {
-  border-color: blue;
+  border-color: #0980bd;
 }
 .adjudicator-ui.locked-true {
   border: 2px solid rgb(0, 0, 255);
@@ -235,16 +252,22 @@ td.head-panel {
 #allocation {
   margin-bottom: 125px; /* So you can scroll past the unused table */
 }
-.adj-bottom-panel {
+#allAdjs {
   height: 100px;
+}
+#unusedAdjs {
+  height: 51px;
+}
+
+.adj-bottom-panel {
   overflow: auto;
   padding: 4px 5px 5px 5px;
   border-top: 2px solid rgb(200, 200, 200);
   overflow: hidden;
 }
 .resize-holder {
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  min-height: 40px;
   line-height: 38px;
   float: right;
   color: #666;
@@ -268,28 +291,34 @@ td.head-panel {
 
 .popover {
   opacity: 0.95 !important;
-}
+  min-width: 100%;
+  top: 12px !important;
+  left: 0 !important;
+  position: fixed;
+  border-radius: 0px;
 
-.popover, .popover-content {
-  padding: 0;
+  .arrow {
+    display: none;
+  }
+  .ranking-display .panel-title {
+    color: #000; // white doesnt work with rank bg
+  }
+  .popover-content {
+    padding: 0;
+  }
+  .list-group-item {
+    padding: 4px 8px;
+  }
+  .btn-group {
+    margin-bottom: 5px;
+  }
+  .list-group-item.btn-toolbar-holder {
+    padding-bottom: 0px;
+  }
 }
-.popover .panel {
+.popover, .popover .panel {
   border: none;
   margin-bottom: 0px;
-}
-.popover .panel .ranking-display {
-  color: #fff;
-}
-.popover .list-group-item {
-  padding: 4px 8px;
-}
-.btn-sm.hover-key {
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-.gender-display.gender-2:focus, .ranking-display:focus, .language-display:focus, .region-display:focus {
-  color: #fff;
 }
 
 .gender-display {
@@ -306,10 +335,6 @@ td.head-panel {
   }
 
 }
-.btn.ranking-display:hover {
-  color: #fff;
-}
-
 
 .language-display {
 
@@ -367,41 +392,118 @@ td.head-panel {
 
 .ranking-display {
 
-  &.ranking-0 {
-    background: #000;
+    &.ranking-0 {
+    background: #bdac7c; // T-
   }
     &.ranking-1 {
-    background: #bdac7c;
-  }
-    &.ranking-2 {
     background: #e9b771;
   }
-    &.ranking-3 {
+    &.ranking-2 {
     background: #ffbe63;
   }
-    &.ranking-4 {
+  &.ranking-3 {
     background: #ffdf53;
     color: #000;
   }
-  &.ranking-5 {
+  &.ranking-4 {
     background: #fcff41;
     color: #000;
   }
-  &.ranking-6 {
+  &.ranking-5 {
     background: #b6ff2f;
     color: #000;
   }
-  &.ranking-7 {
+  &.ranking-6 {
     background: #58ff1f;
   }
-  &.ranking-8 {
+  &.ranking-7 {
     background: #19e910;
   }
-  &.ranking-9 {
+  &.ranking-8 {
     background: #1aa71c;
   }
+  &.ranking-9 {
+    background: #0b880d; // C+
+  }
   &.ranking-10 {
-    background: #007102;
+    background: #007102; // C+
   }
 
 }
+
+/* Conflicts */
+// Need to be here and to use .ember-view to overrule ranking/gender/etc displays
+
+@mixin conflict-bg($color1, $color2, $opacity) {
+  background-color: #fff;
+  background-image: repeating-linear-gradient(
+      45deg,
+      rgba($color1, $opacity),
+      rgba($color1, $opacity) 3px,
+      rgba($color2, $opacity) 6px,
+      rgba($color2, $opacity) 6px
+  );
+  color: #fff;
+}
+
+.ember-view.panel-history-conflict {      // An in-situ conflict; lighten so hovers are more obvious
+  @include conflict-bg(#37a5c8, #2d86a3, 0.5);
+}
+.ember-view.hover-history-conflict,       // An overed conflict; darker so hovers are more obvious
+.history-conflict-key,                    // The legend for this conflict type
+.btn-group .btn.panel-history-conflict {  // The highlighted conflict in the hovering area up top
+  @include conflict-bg(#37a5c8, #2d86a3, 1);
+}
+
+.ember-view.panel-institution-conflict {
+  @include conflict-bg(#da1ac1, #ae319e, 0.5);
+}
+.ember-view.hover-institution-conflict,
+.institution-conflict-key,  .btn-group .btn.panel-institution-conflict {
+  @include conflict-bg(#da1ac1, #ae319e, 1);
+}
+
+.ember-view.panel-team-conflict,
+.ember-view.panel-adj-conflict {
+  @include conflict-bg(#ff0000, #cf0000, 0.5);
+}
+.ember-view.hover-team-conflict,
+.ember-view.hover-adj-conflict,
+.team-conflict-key,
+.btn-group .btn.panel-adj-conflict,
+.btn-group .btn.panel-team-conflict {
+  @include conflict-bg(#ff0000, #cf0000, 1);
+}
+
+// .btn.hover-institution-conflict,
+// .ember-view.hover-institution-conflict,
+// .ember-view.hover-institution-conflict.history-conflict, // Institution takes precedent
+// .institution-conflict-key {
+//   //background: #b0207b !important; /* Important to overrule highlights */
+//   background-image: repeating-linear-gradient(
+//       45deg,
+//       #da1ac1,
+//       #da1ac1 3px,
+//       #ae319e 6px, /* purple */
+//       #ae319e 6px /* purple */
+//   );
+//   color: #fff;
+// }
+// .btn.team-conflict,
+// .ember-view.hover-team-conflict,
+// .ember-view.hover-team-conflict.institution-conflict,
+// .ember-view.hover-team-conflict.history-conflict,
+// .btn.adj-conflict,
+// .ember-view.hover-adj-conflict,
+// .ember-view.hover-adj-conflict.institution-conflict,
+// .ember-view.hover-adj-conflict.history-conflict,
+// .team-conflict-key {
+//   background-image: repeating-linear-gradient(
+//       45deg,
+//       #ff0000,
+//       #ff0000 3px,
+//       #cf0000 6px,
+//       #cf0000 6px
+//   );
+//   color: #fff;
+// }

@@ -10,6 +10,97 @@ export default DS.Model.extend(DebateableMixin, {
   ranking: DS.attr('number'),
   panel: DS.belongsTo('panelallocation', { inverse: null }),
 
+  teamConflicts: DS.hasMany('teamadjudicator', {async: true}),
+  adjConflicts: DS.hasMany('adjudicatorpair', {async: true, inverse: null }), // Need inverse null as multiple possible reversals
+
+  lockedTo: DS.belongsTo('debate', { inverse: 'locks' }),
+  bannedFrom: DS.hasMany('debate', { inverse: 'bans' }),
+
+  adjHistory: DS.hasMany('adjadjhistory', {async: true, inverse: null }), // Need inverse null as multiple possible reversals
+  adjHistoryLinear: Ember.computed('adjHistory', function() {
+    var linearHistory = Array(20); // Hack, should by dynamic
+    var thisAdjID = this.get('id');
+
+    this.get('adjHistory').forEach(function(historyEvent) {
+
+      // Need to figure out which person is being conflicted with
+      var conflictingAdj;
+      if (historyEvent.get('adj1').get('id') === thisAdjID) {
+        conflictingAdj = historyEvent.get('adj2');
+      } else {
+        conflictingAdj = historyEvent.get('adj1');
+      }
+      historyEvent.get('rounds').forEach(function(round) {
+        if (linearHistory[round]) {
+          linearHistory[round].historyWrapper.push({ conflictingAdj: conflictingAdj, adjadjhistory: historyEvent});
+        } else {
+          linearHistory[round] = {round: round, historyWrapper: [{ conflictingAdj: conflictingAdj, adjadjhistory: historyEvent}]};
+        }
+      });
+
+    });
+    return linearHistory;
+  }),
+
+  teamHistory: DS.hasMany('teamadjhistory', {async: true}),
+  teamHistoryLinear: Ember.computed('teamHistory', function() {
+    var linearHistory = Array(20); // Hack, should by dynamic
+    this.get('teamHistory').forEach(function(historyEvent) {
+      historyEvent.get('rounds').forEach(function(round) {
+        if (linearHistory[round]) {
+          linearHistory[round].teamHistories.push(historyEvent);
+        } else {
+          linearHistory[round] = {round: round, teamHistories: [historyEvent]};
+        }
+      });
+    });
+    return linearHistory;
+  }),
+
+  hasConflicts: Ember.computed('teamConflicts', 'adjConflicts', function() {
+    var conflicts = this.get('teamConflicts').get('content').length;
+    conflicts += this.get('adjConflicts').get('content').length;
+    return conflicts; // 0 = false
+  }),
+
+  adjConflictsWithOutSelf: Ember.computed('adjConflicts', function() {
+    var adjs = [];
+    var thisAdjID = this.get('id');
+    this.get('adjConflicts').forEach(function(conflict) {
+      if (conflict.get('adj1').get('id') === thisAdjID) {
+        adjs.push(conflict.get('adj2'));
+      } else {
+        adjs.push(conflict.get('adj1'));
+      }
+    });
+    return adjs;
+  }),
+
+  adjConflictIDs: Ember.computed('adjConflicts', function() {
+    var adjIDs = [];
+    var thisAdjID = this.get('id');
+    this.get('adjConflicts').forEach(function(conflict) {
+      if (conflict.get('adj1').get('id') === thisAdjID) {
+        adjIDs.push(conflict.get('adj2').get('id'));
+      } else {
+        adjIDs.push(conflict.get('adj1').get('id'));
+      }
+    });
+    return adjIDs;
+  }),
+
+  teamConflictIDs: Ember.computed('teamConflicts', function() {
+    var teamIDs = [];
+    this.get('teamConflicts').forEach(function(conflict) {
+      teamIDs.push(conflict.get('team').get('id'));
+    });
+    return teamIDs;
+  }),
+
+  // listConflictsNames: Ember.computed('teamConflicts', function() {
+  //   this.get('teamConflicts').objectAt(0);
+  // }),
+
   short_name: Ember.computed('name', function() {
     var words = this.get('name').split(" ");
     var short_name = words[0] + " " + words[1][0];
@@ -27,34 +118,34 @@ export default DS.Model.extend(DebateableMixin, {
     } else if (gender === 3){
       return "Other";
     } else {
-      return "Unknown";
+      return "?";
     }
   }),
 
   get_ranking: function() {
     var ranking_word = "";
-    if (this.get('ranking') <= 3) {
+    if (this.get('ranking') <= 2) {
       ranking_word = "T";
-      if (this.get('ranking') == 1) {
+      if (this.get('ranking') == 0) {
         ranking_word += "-";
       }
-      else if (this.get('ranking') == 3) {
+      else if (this.get('ranking') == 2) {
         ranking_word += "+";
       }
-    } else if (this.get('ranking') <= 6) {
+    } else if (this.get('ranking') <= 5) {
       ranking_word = "P";
-      if (this.get('ranking') == 4) {
+      if (this.get('ranking') == 3) {
         ranking_word += "-";
       }
-      else if (this.get('ranking') == 6) {
+      else if (this.get('ranking') == 5) {
         ranking_word += "+";
       }
-    } else if (this.get('ranking') <= 9) {
+    } else if (this.get('ranking') <= 8) {
       ranking_word = "C";
-      if (this.get('ranking') == 7) {
+      if (this.get('ranking') == 6) {
         ranking_word += "-";
       }
-      else if (this.get('ranking') == 9) {
+      else if (this.get('ranking') == 8) {
         ranking_word += "+";
       }
     }

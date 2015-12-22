@@ -1,42 +1,128 @@
 {{#if adj}}
 
-    <div class="flex-1">
-        <span class="adj-name">
-            {{ adj.short_name }}
-        </span>
-        <span class="text-uppercase adj-institution">
-            {{ adj.institution.code }}
-        </span>
-    </div>
-    <div class="flex-icon flex-icon adj-ranking">
-        <span>
-            <strong>{{ adj.get_ranking }}</strong>
-        </span>
-    </div>
+<div class="flex-1">
+    <span class="adj-name">
+        {{ adj.short_name }}
+    </span>
+    <span class="text-uppercase adj-institution">
+        {{ adj.institution.code }}
+    </span>
+</div>
+<div class="flex-icon flex-icon adj-ranking">
+    <span>
+        <strong>{{ adj.get_ranking }}</strong>
+    </span>
+</div>
 
-    <div class="hover-panel" style="display: none;">
-        <div class="panel panel-default">
-            <div class="panel-heading ranking-display ranking-{{ adj.ranking }}">
-                <span class="pull-right">{{ adj.get_ranking }}</span>
-                <h5 class="panel-title">{{ adj.name }}</h5>
-            </div>
-            <ul class="list-group">
-                <li class="list-group-item uppercase">
-                    {{ adj.institution.name }}
+<div class="hover-panel" style="display: none;">
+    <div class="panel panel-default">
+
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-md-5">
+                        <strong>{{ adj.name }}</strong> of <strong>{{ adj.institution.name }}</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="glyphicon glyphicon-globe text-muted"></span> {{ adj.regionName }}
+                    </div>
+                    <div class="col-md-2">
+                        <span class="glyphicon glyphicon-queen text-muted"></span> {{ adj.genderName }}
+                    </div>
+                    <div class="col-md-1">
+                        <span class="glyphicon glyphicon-comment text-muted"></span> {{ adj.languageName }}
+                    </div>
+                    <div class="col-md-1">
+                        <span class="glyphicon glyphicon-stats text-muted"></span> {{ adj.get_ranking }}
+                    </div>
+                </div>
+            </li>
+
+            <li class="list-group-item btn-toolbar-holder">
+                <div class="btn-toolbar">
+                    <div class="btn-group" role="group">
+                        <div class="btn btn-default btn-sm">
+                            <span class="text-danger glyphicon glyphicon-remove"></span>
+                        </div>
+                        {{#if adj.teamConflicts }}
+                            {{#each adj.teamConflicts as |conflict| }}
+                                {{#if conflict.active }}
+                                    <div class="btn btn-default btn-sm panel-team-conflict">{{conflict.team.name}}</div>
+                                 {{else}}
+                                    <div class="btn btn-default btn-sm">{{conflict.team.name}}</div>
+                                {{/if}}
+                            {{/each}}
+                        {{else}}
+                            <div class="btn btn-default btn-sm">None</div>
+                        {{/if}}
+                    </div>
+                    <div class="btn-group" role="group">
+                        <div class="btn btn-default btn-sm">
+                            <span class="text-danger glyphicon glyphicon-remove"></span>
+                        </div>
+                        {{#if adj.adjConflicts }}
+                            {{#each adj.adjConflictsWithOutSelf as |conflict| }}
+                                {{#if conflict.active }}
+                                    <div class="btn btn-default panel-adj-conflict btn-sm">{{conflict.name}}</div>
+                                {{else}}
+                                    <div class="btn btn-default btn-sm">{{conflict.name}}</div>
+                                {{/if}}
+                            {{/each}}
+                        {{else}}
+                            <div class="btn btn-default btn-sm">None</div>
+                        {{/if}}
+                    </div>
+
+                    {{#if adj.teamHistory }}
+                        {{#each adj.teamHistoryLinear as |history| }}
+                            <div class="btn-group" role="group">
+                                <div class="btn btn-default btn-sm">
+                                    <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.round}}</span>
+                                </div>
+                                {{#each history.teamHistories as |teamHistory| }}
+                                    {{#if teamHistory.active }}
+                                        <div class="btn btn-default panel-history-conflict btn-sm">{{teamHistory.team.name }}</div>
+                                    {{else}}
+                                        <div class="btn btn-default btn-sm">{{teamHistory.team.name }}</div>
+                                    {{/if}}
+                                {{/each}}
+                            </div>
+                        {{/each}}
+                    {{else}}
+                        <div class="btn btn-default btn-sm">None</div>
+                    {{/if}}
+
+
+                </div>
+
+            {{#if adj.adjHistory }}
+                <li class="list-group-item btn-toolbar-holder">
+                    {{#if adj.adjHistory }}
+                    <div class="btn-group" role="group">
+                        {{#each adj.adjHistoryLinear as |history| }}
+                            <div class="btn-group" role="group">
+                                <div class="btn btn-default btn-sm">
+                                    <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.round}}</span>
+                                </div>
+                                {{#each history.historyWrapper as |historyWrap| }}
+                                    {{#if historyWrap.active }}
+                                        <div class="btn btn-default panel-history-conflict btn-sm">{{ historyWrap.conflictingAdj.short_name }}</div>
+                                    {{else}}
+                                        <div class="btn btn-default btn-sm">{{ historyWrap.conflictingAdj.short_name }}</div>
+                                    {{/if}}
+                                {{/each}}
+                            </div>
+                        {{/each}}
+                    </div>
+                    {{/if}}
                 </li>
-                <li class="list-group-item">
-                    <span class="glyphicon glyphicon-queen text-muted pull-right"></span> {{ adj.genderName }}
-                </li>
-                <li class="list-group-item">
-                    <span class="glyphicon glyphicon-comment text-muted pull-right"></span> {{ adj.languageName }}
-                </li>
-                <li class="list-group-item">
-                    <span class="glyphicon glyphicon-globe text-muted pull-right"></span> {{ adj.regionName }}
-                </li>
-            </ul>
-        </div>
+            {{/if}}
+
+            </li>
+        </ul>
 
     </div>
+</div>
 
 {{/if}}
 

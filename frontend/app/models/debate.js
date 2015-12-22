@@ -2,14 +2,16 @@ import DS from 'ember-data';
 
 export default DS.Model.extend({
 
-  //id: DS.attr('number'),
-  //points: DS.attr('number'),
-  //venue: DS.attr('string'),
+  points: DS.attr('number', { default: "" }),
+  venue: DS.attr('string', { default: "" }),
   weight: DS.attr('number'),
   importance: DS.attr('number'),
 
   panels: DS.hasMany('panelallocations'),
   teams: DS.hasMany('team'),
+
+  bans: DS.hasMany('adjudicator', { inverse: 'bannedFrom' }),
+  locks: DS.hasMany('adjudicator', { inverse: 'lockedTo' }),
 
   weightRounded: Ember.computed('weight', function() {
     return Math.round(this.get('weight') * 10) / 10; // normalise to 1-9 like adjs

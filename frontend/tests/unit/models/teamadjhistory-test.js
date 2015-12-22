@@ -1,6 +1,6 @@
 import { moduleForModel, test } from 'ember-qunit';
 
-moduleForModel('allocation-parameters', 'Unit | Model | allocation parameters', {
+moduleForModel('teamadjhistory', 'Unit | Model | teamadjhistory', {
   // Specify the other units that are required for this test.
   needs: []
 });

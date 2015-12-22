@@ -3,14 +3,9 @@ import Ember from 'ember';
 export default Ember.Component.extend({
 
   sortProperties: ['weight:desc'],
-  sortedDebates: Ember.computed.sort('model.debates', 'sortProperties'),
+  sortedDebates: Ember.computed.sort('debates', 'sortProperties'),
   sortAscending: false,
   theFilter: "",
-
-  showingGender: false,
-  showingRegion: false,
-  showingLanguage: false,
-  showingRanking: true,
 
   checkFilterMatch: function(theObject, searchString) {
     var match = false;
@@ -47,79 +42,7 @@ export default Ember.Component.extend({
     })(this));
   }).property("theFilter", "sortProperties"),
 
-  genderOn: function() {
-    this.set('showingGender', true);
-    $(".adjudicator-ui, .team-ui").addClass("gender-display");
-  },
-  genderOff: function() {
-    this.set('showingGender', false);
-    $(".adjudicator-ui, .team-ui").removeClass("gender-display");
-  },
-  regionOn: function() {
-    this.set('showingRegion', true);
-    $(".adjudicator-ui, .team-ui").addClass("region-display");
-  },
-  regionOff: function() {
-    this.set('showingRegion', false);
-    $(".adjudicator-ui, .team-ui").removeClass("region-display");
-  },
-  languageOn: function() {
-    this.set('showingLanguage', true);
-    $(".adjudicator-ui, .team-ui").addClass("language-display");
-  },
-  languageOff: function() {
-    this.set('showingLanguage', false);
-    $(".adjudicator-ui, .team-ui").removeClass("language-display");
-  },
-  rankingOn: function() {
-    this.set('showingRanking', true);
-    $(".adjudicator-ui, .debate-importance").addClass("ranking-display");
-  },
-  rankingOff: function() {
-    this.set('showingRanking', false);
-    $(".adjudicator-ui, .debate-importance").removeClass("ranking-display");
-  },
-
-
   actions: {
-
-    showGender: function() {
-      this.genderOn();
-      this.regionOff();
-      this.languageOff();
-      this.rankingOff();
-    },
-    hideGender: function() {
-      this.genderOff();
-    },
-    showRegion: function() {
-      this.regionOn();
-      this.languageOff();
-      this.rankingOff();
-      this.genderOff();
-    },
-    hideRegion: function() {
-      this.regionOff();
-    },
-    showLanguage: function() {
-      this.languageOn();
-      this.genderOff();
-      this.regionOff();
-      this.rankingOff();
-    },
-    hideLanguage: function() {
-      this.languageOff();
-    },
-
-    showRanking: function() {
-      this.rankingOn();
-      this.genderOff();
-      this.regionOff();
-      this.languageOff();
-    },
-    hideRanking: function() {
-      this.rankingOff();
-    },
 
     sortBy: function(property) {
       this.toggleProperty('sortAscending');
@@ -129,11 +52,6 @@ export default Ember.Component.extend({
         this.set("sortProperties", [property + ":desc"]);
       }
     },
-
-    startNewConfig: function() {
-      $('#setAllocationParameters').modal('hide');
-      this.sendAction('finishSaveConfig');
-    }
 
   },
 

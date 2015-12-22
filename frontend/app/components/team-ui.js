@@ -1,25 +1,16 @@
 import Ember from 'ember';
+import AdjorTeam from '../mixins/adjorteam';
 
-export default Ember.Component.extend({
+export default Ember.Component.extend(AdjorTeam, {
 
   tagName: 'td',
 
   classNames: ['team-ui hover-panel-trigger"'],
-  classNameBindings: ['gender', 'region', 'institution', 'language'],
 
-  // CSS Getters
-  gender: function(){
-    return 'gender-' + String(this.get('team').get('gender'));
-  }.property('team'),
-  region: function() {
-    return 'region-' + String(this.get('team').get('region'));
-  }.property('team'),
-  language: function() {
-    return 'language-' + String(this.get('team').get('language'));
-  }.property('team'),
-  institution: function() {
-    return 'institution-' + String(this.get('team').get('institution').get('id'));
-  }.property('team'),
+  adjorTeam: Ember.computed('team', function() {
+    return this.get('team'); // Used by adjorteam.js to share properties
+  }),
+  isTeam: true,
 
   didInsertElement: function() {
     Ember.run.scheduleOnce('afterRender', this, function() {
@@ -35,8 +26,6 @@ export default Ember.Component.extend({
         placement: 'top',
         container: 'body',
       });
-
-
     });
   }
 

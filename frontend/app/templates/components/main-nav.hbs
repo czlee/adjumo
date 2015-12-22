@@ -1,7 +1,6 @@
-<header class="navbar navbar-default navbar-static-top">
-<div class="container-fluid">
+<nav class="navbar navbar-static-top navbar-default">
 
-  <div class="nav navbar-nav navbar-form btn-group">
+  <div class="nav navbar-nav navbar-form btn-group btn-group-sm">
     <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#setAllocationParameters">
       Set Parameters
     </button>
@@ -12,18 +11,18 @@
 
   <div class="form-inline pull-left navbar-form">
     {{#if showingLockBans }}
-      <button class="active btn btn-default lock-ban-nav" {{action "showLockAndBans" }}>
+      <button class="active btn btn-default lock-ban-nav btn-sm" {{action "showLockAndBans" }}>
         <span class="glyphicon glyphicon-eye-close"></span>
-         Locks, Bans, & Groups
+         Locks/Bans/Groups
       </button>
     {{else}}
-      <button class="btn btn-default lock-ban-nav" {{action "showLockAndBans" }}>
+      <button class="btn btn-default lock-ban-nav btn-sm" {{action "showLockAndBans" }}>
         <span class="glyphicon glyphicon-eye-open"></span>
-         Locks, Bans, & Groups
+         Locks/Bans/Groups
       </button>
     {{/if}}
     {{#each allocations as |allocation| }}
-      <button class="btn btn-default active allocation-nav allocation-nav-{{allocation.id}}" {{action "showAllocation" allocation.id }}>
+      <button class="btn btn-default active btn-sm allocation-nav allocation-nav-{{allocation.id}}" {{action "showAllocation" allocation.id }}>
         <span class="glyphicon glyphicon-eye-close"></span><span class="glyphicon glyphicon-eye-open hidden"></span>
           Allocation {{ allocation.id }}
       </button>
@@ -31,10 +30,13 @@
   </div>
 
   <div class="form-inline pull-right navbar-form">
-    <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#exportAllocation">
-      Export Allocation
+    <button type="submit" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exportAllocation">
+      <span class="glyphicon glyphicon-share-alt"></span> Select & Export Allocation
     </button>
   </div>
 
-</div>
-</header>
+</nav>
+
+{{export-ui allocations=allocations}}
+
+{{parameters-ui config=config}}

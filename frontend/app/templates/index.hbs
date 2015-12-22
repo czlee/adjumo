@@ -1,4 +1,8 @@
 
-{{main-nav allocations=model.allocations startNewAllocation='createAllocation'}}
+{{main-nav allocations=allocations config=config startNewAllocation='createAllocation'}}
 
-{{allocation-ui model=model finishSaveConfig='finishSaveConfig'}}
+{{allocation-ui allocations=allocations debates=debates adjudicators=adjudicators finishSaveConfig='finishSaveConfig'}}
+
+{{unused-adjs-ui adjudicators=adjudicators }}
+
+{{all-adjs-ui adjudicators=adjudicators }}

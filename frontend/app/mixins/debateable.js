@@ -13,10 +13,20 @@ export default Ember.Mixin.create({
   regionID: Ember.computed('institution', function() {
     if (this.get('institution').get('region').get('id')) {
       return this.get('institution').get('region').get('id');
-    } else {
-
     }
   }),
+
+  activeHoveringInstitutionConflict: DS.attr('bool', { default: false }),
+  activePanelInstitutionConflict: DS.attr('bool', { default: false }),
+
+  activeHoveringTeamConflict: DS.attr('bool', { default: false }),
+  activePanelTeamConflict: DS.attr('bool', { default: false }),
+
+  activeHoveringAdjConflict: DS.attr('bool', { default: false }),
+  activePanelAdjConflict: DS.attr('bool', { default: false }),
+
+  activeHoveringHistoryConflict: DS.attr('bool', { default: false }),
+  activePanelHistoryConflict: DS.attr('bool', { default: false }),
 
   regionName: Ember.computed('institution', function() {
 
@@ -44,7 +54,7 @@ export default Ember.Mixin.create({
       } else if (regionID === 10){
         return "IONA";
       } else {
-        return "Unknown Gender";
+        return "?";
       }
     }
 
@@ -69,7 +79,7 @@ export default Ember.Mixin.create({
     } else if (language === 2){
       return "EFL";
     } else {
-      return "Unknown Language";
+      return "?";
     }
   }),
 

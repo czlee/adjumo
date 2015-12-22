@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import DraggableMixin from '../mixins/draggable';
+import DraggableMixin from '../mixins/draggable'; // Draggable inherits from adjOrTeam
 
 export default Ember.Component.extend(DraggableMixin, {
 
@@ -8,12 +8,13 @@ export default Ember.Component.extend(DraggableMixin, {
   draggable: 'true',
 
   classNames: ['btn', 'adjudicator-ui', 'ranking-display', 'js-drag-handle', 'popover-trigger'],
-  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked'],
+  classNameBindings: ['ranking', 'locked'],
 
-  // CSS Getters
-  gender: function(){
-    return 'gender-' + String(this.get('adj').get('gender'));
-  }.property('adj'),
+  adjorTeam: Ember.computed('adj', function() {
+    return this.get('adj'); // normalise to 1-9 like adjs
+  }),
+  isAdj: true,
+
   region: function() {
     var regions = "";
     this.get('adj').get('regions').forEach(function(region) {
@@ -24,55 +25,61 @@ export default Ember.Component.extend(DraggableMixin, {
     }
     return regions;
   }.property('adj'),
-  language: function() {
-    return 'language-' + String(this.get('adj').get('language'));
-  }.property('adj'),
+
   ranking: function() {
     return 'ranking-' + String(this.get('adj').get('ranking'));
   }.property('adj'),
+
   locked: function() {
     return 'locked-' + String(this.get('adj').locked);
   }.property('adj'),
 
-  mouseEnter: function(event) {
-    var institutionConflict = ".institution-" + String(this.get('adj').get('institution').get('id'));
-    $(institutionConflict).addClass("institution-conflict");
-  },
-
-  mouseLeave: function(event) {
-    var institutionConflict = ".institution-" + String(this.get('adj').get('institution').get('id'));
-    $(institutionConflict).removeClass("institution-conflict");
-  },
-
   dragStart: function(event) {
     this.$().popover('hide'); // Is annoying while dragging
-
     // Setup the variables that will communicate with the droppable element
     var dataTransfer = event.originalEvent.dataTransfer;
     dataTransfer.setData('AdjID', this.get('adj').get('id'));
-    dataTransfer.setData('PanelID', this.get('adj').get('panel').get('id'));
+    var containerElement = this.$().parent();
 
-    //dataTransfer.setData('Text', this.get('elementId'));
+    if (containerElement.hasClass("debate-bans")) {
+      dataTransfer.setData('fromType', 'bans');
+      var debateID = containerElement.parent().attr('class').split('debate-')[1];
+      dataTransfer.setData('debateID', debateID);
+    } else if (containerElement.hasClass("debate-locks")) {
+      dataTransfer.setData('fromType', 'locks');
+    } else if (containerElement.hasClass("all-adjs-panel")) {
+      dataTransfer.setData('fromType', 'all-adjs');
+    } else if (containerElement.hasClass("unused-adjs-panel")) {
+      dataTransfer.setData('fromType', 'unused-adjs');
+    } else if (containerElement.hasClass("chair")) {
+      dataTransfer.setData('fromType', 'chair');
+      dataTransfer.setData('PanelID', this.get('adj').get('panel').get('id'));
+    } else if (containerElement.hasClass("panellists")) {
+      dataTransfer.setData('fromType', 'panellists');
+      dataTransfer.setData('PanelID', this.get('adj').get('panel').get('id'));
+    } else if (containerElement.hasClass("trainee")) {
+      dataTransfer.setData('fromType', 'trainees');
+      dataTransfer.setData('PanelID', this.get('adj').get('panel').get('id'));
+    }
 
     return this._super(event);
   },
+
   dragEnd: function(event) {
     // Let the controller know this view is done dragging
     return this._super(event);
   },
 
-  //locked: Ember.computed.alias('adj.locked'),
-
   actions: {
 
-    lockAdj: function() {
-      this.get('adj').set('locked', true);
-      // this.sendAction('setAdjLocked', this.get('adj')); sends an action the route which can then change the store
-    },
-    unlockAdj: function() {
-      this.get('adj').set('locked', false);
-      // this.sendAction('setAdjUnlocked', this.get('adj'));sends an action the route which can then change the store
-    }
+    // lockAdj: function() {
+    //   this.get('adj').set('locked', true);
+    //   // this.sendAction('setAdjLocked', this.get('adj')); sends an action the route which can then change the store
+    // },
+    // unlockAdj: function() {
+    //   this.get('adj').set('locked', false);
+    //   // this.sendAction('setAdjUnlocked', this.get('adj'));sends an action the route which can then change the store
+    // }
 
   },
 

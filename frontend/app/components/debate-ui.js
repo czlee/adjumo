@@ -2,7 +2,13 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
 
+  classNameBindings: ['id'],
   tagName: 'tr',
+
+  id: function(){
+    return 'debate-' + String(this.get('debate').get('id'));
+  }.property('id'),
+
 
   actions: {
     receivePanel: function(obj,ops) {

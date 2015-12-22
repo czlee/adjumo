@@ -1,6 +1,6 @@
 import { moduleFor, test } from 'ember-qunit';
 
-moduleFor('adapter:allocation-config', 'Unit | Adapter | allocation config', {
+moduleFor('adapter:adjudicatorpair', 'Unit | Adapter | adjudicatorpair', {
   // Specify the other units that are required for this test.
   // needs: ['serializer:foo']
 });
