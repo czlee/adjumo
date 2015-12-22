@@ -45,25 +45,12 @@ export default DS.Model.extend({
         teamConflict.set('active', false);
         // Get the team object each conflict linkts to
         debateTeams.forEach(function(debateTeam) {
-          //console.log('checking ' + debateTeam.get('name') + ' vs ' + conflictedTeam.get('name'));
+          console.log('checking ' + teamConflict.get('team'));
           // Check if the conflicted team is in the debate - have to match by ID as object matching not working
           if (debateTeam.get('id') === teamConflict.get('team').get('id')) {
             debateAdj.set('activePanelTeamConflict', true);
             debateTeam.set('activePanelAdjConflict', true);
             teamConflict.set('active', true);
-          }
-        });
-      });
-
-      // Adj-Adj Conflicts
-      debateAdj.get('adjConflictsWithOutSelf').forEach(function(conflictingAdj) {
-        // For each conflict each adj has go through
-        debateAdjs.forEach(function(debateAdjAgain) {
-          // Check if the conflict matches any person on the panel
-          //console.log('checking ' + debateAdj.get('name') + ' vs ' + conflictingAdj.get('name'));
-          if (debateAdjAgain.get('id') === conflictingAdj.get('id')) {
-            debateAdj.set('activePanelAdjConflict', true);
-            conflictingAdj.set('activePanelAdjConflict', true);
           }
         });
       });
@@ -103,23 +90,46 @@ export default DS.Model.extend({
         });
       });
 
+      // Adj-Adj Conflicts
+      debateAdj.get('adjConflicts').forEach(function(adjConflict) {
+        // Get the conflicts of each adjudicator
+
+        adjConflict.set('active', false);
+        var conflictingAdj; // ID which adj is the conflictee
+        if (adjConflict.get('adj1').get('id') === debateAdj.get('id')) {
+          conflictingAdj = adjConflict.get('adj2');
+        } else {
+          conflictingAdj = adjConflict.get('adj1');
+        }
+
+        debateAdjs.forEach(function(debateAdjAgain) {
+          // Check if the conflict matches any person on the panel
+          if (debateAdjAgain.get('id') === conflictingAdj.get('id')) {
+            debateAdj.set('activePanelAdjConflict', true);
+            conflictingAdj.set('activePanelAdjConflict', true);
+            adjConflict.set('active', true);
+          }
+        });
+
+      });
+
       // Adj-Adj History Conflicts
       debateAdj.get('adjHistory').forEach(function(historyItem) {
+        // Get the histories of each adjudicator
 
         historyItem.set('active', false);
-        // Get the histories of each adjudicator
-        var conflictingAdj;
+        var seenAdj; // ID which adj is the seen adj
         if (historyItem.get('adj1').get('id') === debateAdj.get('id')) {
-          conflictingAdj = historyItem.get('adj2');
+          seenAdj = historyItem.get('adj2');
         } else {
-          conflictingAdj = historyItem.get('adj1');
+          seenAdj = historyItem.get('adj1');
         }
 
         debateAdjs.forEach(function(debateAdjAgain) {
           // Loop through other panellists to check for history matchs
-          if (debateAdjAgain.get('id') === conflictingAdj.get('id')) {
+          if (debateAdjAgain.get('id') === seenAdj.get('id')) {
             debateAdj.set('activePanelHistoryConflict', true);
-            conflictingAdj.set('activePanelHistoryConflict', true);
+            seenAdj.set('activePanelHistoryConflict', true);
             historyItem.set('active', true);
           }
         });

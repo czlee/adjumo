@@ -30,7 +30,7 @@
                         {{#if team.adjConflicts }}
                             {{#each team.adjConflicts as |conflict| }}
                                 {{#if conflict.active }}
-                                    <div class="btn btn-default  btn-sm adj-conflict">{{conflict.adjudicator.name}}</div>
+                                    <div class="btn btn-default btn-sm panel-adj-conflict">{{conflict.adjudicator.name}}</div>
                                 {{else}}
                                     <div class="btn btn-default btn-sm">{{conflict.adjudicator.name}}</div>
                                 {{/if}}
@@ -47,7 +47,7 @@
                             </div>
                             {{#each history.teamHistories as |teamHistory| }}
                                 {{#if teamHistory.active }}
-                                    <div class="btn btn-default history-conflict btn-sm">{{teamHistory.adjudicator.short_name }}</div>
+                                    <div class="btn btn-default panel-history-conflict btn-sm">{{teamHistory.adjudicator.short_name }}</div>
                                 {{else}}
                                     <div class="btn btn-default btn-sm">{{teamHistory.adjudicator.short_name }}</div>
                                 {{/if}}

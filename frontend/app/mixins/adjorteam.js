@@ -4,7 +4,8 @@ export default Ember.Mixin.create({
 
   classNameBindings: [
     'gender', 'region', 'language', 'id', 'institution',
-    'historyConflict', 'teamConflict', 'adjConflict', 'institutionConflict'
+    'panelHistoryConflict', 'panelTeamConflict', 'panelAdjConflict', 'panelInstitutionConflict',
+    'hoverHistoryConflict', 'hoverTeamConflict', 'hoverAdjConflict', 'hoverInstitutionConflict',
   ],
 
   // CSS Getters
@@ -28,29 +29,47 @@ export default Ember.Mixin.create({
     return 'team-' + String(this.get('adjorTeam').get('id'));
   }.property('id'),
 
-  historyConflict: function() {
-    if ((this.get('adjorTeam').get('activeHoveringHistoryConflict') === true) || (this.get('adjorTeam').get('activePanelHistoryConflict') === true)) {
-      return "history-conflict";
+  panelHistoryConflict: function() {
+    if (this.get('adjorTeam').get('activePanelHistoryConflict') === true) {
+      return 'panel-history-conflict';
     }
-  }.property('adjorTeam.activeHoveringHistoryConflict', 'adjorTeam.activePanelHistoryConflict'),
+  }.property('adjorTeam.activePanelHistoryConflict'),
+  panelTeamConflict: function() {
+    if (this.get('adjorTeam').get('activePanelTeamConflict') === true) {
+      return 'panel-team-conflict';
+    }
+  }.property('adjorTeam.activePanelTeamConflict'),
+  panelAdjConflict: function() {
+    if (this.get('adjorTeam').get('activePanelAdjConflict') === true) {
+      return 'panel-adj-conflict';
+    }
+  }.property('adjorTeam.activePanelAdjConflict'),
+  panelInstitutionConflict: function() {
+    if (this.get('adjorTeam').get('activePanelInstitutionConflict') === true) {
+      return 'panel-institution-conflict';
+    }
+  }.property('adjorTeam.activePanelInstitutionConflict'),
 
-  teamConflict: function() {
-    if ((this.get('adjorTeam').get('activeHoveringTeamConflict') === true) || (this.get('adjorTeam').get('activePanelTeamConflict') === true)) {
-      return "team-conflict";
+  hoverHistoryConflict: function() {
+    if (this.get('adjorTeam').get('activeHoveringHistoryConflict') === true) {
+      return 'hover-history-conflict';
     }
-  }.property('adjorTeam.activeHoveringTeamConflict', 'adjorTeam.activePanelTeamConflict'),
-
-  adjConflict: function() {
-    if ((this.get('adjorTeam').get('activeHoveringAdjConflict') === true) || (this.get('adjorTeam').get('activePanelAdjConflict') === true)) {
-      return "adj-conflict";
+  }.property('adjorTeam.activeHoveringHistoryConflict'),
+  hoverTeamConflict: function() {
+    if (this.get('adjorTeam').get('activeHoveringTeamConflict') === true) {
+      return 'hover-team-conflict';
     }
-  }.property('adjorTeam.activeHoveringAdjConflict', 'adjorTeam.activePanelAdjConflict'),
-
-  institutionConflict: function() {
-    if ((this.get('adjorTeam').get('activeHoveringInstitutionConflict') === true) || (this.get('adjorTeam').get('activePanelInstitutionConflict') === true)) {
-      return "institution-conflict";
+  }.property('adjorTeam.activeHoveringTeamConflict'),
+  hoverAdjConflict: function() {
+    if (this.get('adjorTeam').get('activeHoverAdjConflict') === true) {
+      return 'hover-adj-conflict';
     }
-  }.property('adjorTeam.activeHoveringInstitutionConflict', 'adjorTeam.activePanelInstitutionConflict'),
+  }.property('adjorTeam.activeHoveringAdjConflict'),
+  hoverInstitutionConflict: function() {
+    if (this.get('adjorTeam').get('activeHoveringInstitutionConflict') === true) {
+      return 'hover-institution-conflict';
+    }
+  }.property('adjorTeam.activeHoveringInstitutionConflict'),
 
   // Hover triggers for conflict
   // TODO can merge isAdj with the else but mapping the various types

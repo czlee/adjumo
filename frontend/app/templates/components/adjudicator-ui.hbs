@@ -47,7 +47,7 @@
                         {{#if adj.teamConflicts }}
                             {{#each adj.teamConflicts as |conflict| }}
                                 {{#if conflict.active }}
-                                    <div class="btn btn-default team-conflict btn-sm">{{conflict.team.name}}</div>
+                                    <div class="btn btn-default btn-sm panel-team-conflict">{{conflict.team.name}}</div>
                                  {{else}}
                                     <div class="btn btn-default btn-sm">{{conflict.team.name}}</div>
                                 {{/if}}
@@ -63,7 +63,7 @@
                         {{#if adj.adjConflicts }}
                             {{#each adj.adjConflictsWithOutSelf as |conflict| }}
                                 {{#if conflict.active }}
-                                    <div class="btn btn-default adj-conflict btn-sm">{{conflict.name}}</div>
+                                    <div class="btn btn-default panel-adj-conflict btn-sm">{{conflict.name}}</div>
                                 {{else}}
                                     <div class="btn btn-default btn-sm">{{conflict.name}}</div>
                                 {{/if}}
@@ -81,7 +81,7 @@
                                 </div>
                                 {{#each history.teamHistories as |teamHistory| }}
                                     {{#if teamHistory.active }}
-                                        <div class="btn btn-default history-conflict btn-sm">{{teamHistory.team.name }}</div>
+                                        <div class="btn btn-default panel-history-conflict btn-sm">{{teamHistory.team.name }}</div>
                                     {{else}}
                                         <div class="btn btn-default btn-sm">{{teamHistory.team.name }}</div>
                                     {{/if}}
@@ -105,8 +105,8 @@
                                     <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.round}}</span>
                                 </div>
                                 {{#each history.historyWrapper as |historyWrap| }}
-                                    {{#if historyWrap.adjadjhistory.active }}
-                                        <div class="btn btn-default history-conflict btn-sm">{{ historyWrap.conflictingAdj.short_name }}</div>
+                                    {{#if historyWrap.active }}
+                                        <div class="btn btn-default panel-history-conflict btn-sm">{{ historyWrap.conflictingAdj.short_name }}</div>
                                     {{else}}
                                         <div class="btn btn-default btn-sm">{{ historyWrap.conflictingAdj.short_name }}</div>
                                     {{/if}}

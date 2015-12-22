@@ -13,8 +13,10 @@ export default Ember.Route.extend({
           teams:                  this.store.findAll('team'),
           debates:                this.store.findAll('debate'),
           allocations:            this.store.findAll('allocation-iteration'),
-          teamadjudicator:        this.store.findAll('teamadjudicator'),
-          adjudicatorpair:        this.store.findAll('adjudicatorpair'),
+
+          teamadjconflicts:       this.store.findAll('teamadjudicator'),
+          adjadjconflicts:        this.store.findAll('adjudicatorpair'),
+
           teamadjhistory:         this.store.findAll('teamadjhistory'),
           adjadjhistory:          this.store.findAll('adjadjhistory'),
 
