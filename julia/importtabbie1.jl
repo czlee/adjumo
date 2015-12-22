@@ -11,6 +11,7 @@
 # Usage:
 #   using AdjumoDataTools
 #   using DBI
+#   using PostgreSQL
 #   dbconnection = connect(Postgres, host, username, password, dbname, port)
 #   currentround = 5
 #   ri = gettabbie1roundinfo(dbconnection, currentround)

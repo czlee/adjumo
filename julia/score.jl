@@ -117,6 +117,7 @@ panelquality(panel::AdjudicatorPanel) = panelquality(Wudc2015AdjudicatorRank[adj
 const JUDGE_SCORES = Float64[
 #  T-    T0    T+    P-    P0   P+  C-  C0  C+
   -50   -50   -20     5    10   30  20  40  50
+  -50   -50   -20     5    10   30  20  40  50
  -200  -200  -200  -100  -100   20  10  30  40
  -200  -200  -200  -200  -200   15   5  25  35
 ]
@@ -134,8 +135,8 @@ function panelquality(rankings::Vector{Wudc2015AdjudicatorRank})
     for rank in rankings
         rankindex = Integer(rank)+1
         count = counts[rankindex] += 1
-        if count > 3
-            count = 3
+        if count > 4
+            count = 4
         end
         score += JUDGE_SCORES[count, rankindex]
     end
