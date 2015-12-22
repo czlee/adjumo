@@ -20,10 +20,8 @@
 {{team-ui team=debate.oo}}
 {{team-ui team=debate.cg}}
 {{team-ui team=debate.co}}
-<td class="debate-panel debate-bans preallocation">
-    <div class="panel-ui i droppable-area"></div>
-</td>
-<td class="debate-panel debate-locks preallocation">
+{{bans-ui debate=debate adjudicators=adjudicators}}
+<td class="debate-panel debate-locks preallocation ">
     <div class="panel-ui i droppable-area"></div>
 </td>
 {{#if debate.panels }}

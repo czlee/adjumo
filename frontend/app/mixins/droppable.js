@@ -20,15 +20,10 @@ export default Ember.Mixin.create({
 
   drop: function(event) {
     event.preventDefault();
+
     this.$().removeClass('dragging-over');
     $('.droppable-area').removeClass('dragging-active');
-
-    // When dropping it can sometimes not stop the hovering effects
-    $(".institution-conflict").removeClass("institution-conflict");
-    $(".team-conflict").removeClass("team-conflict");
-    $(".adj-conflict").removeClass("adj-conflict");
     $(".hover-key").show();
-
 
     return false;
   }

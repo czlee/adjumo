@@ -267,7 +267,7 @@ td.head-panel {
 }
 .resize-holder {
   width: 30px;
-  height: 100%;
+  min-height: 40px;
   line-height: 38px;
   float: right;
   color: #666;
@@ -473,7 +473,7 @@ td.head-panel {
 }
 .ember-view.hover-team-conflict,
 .ember-view.hover-adj-conflict,
-.team-conflict-key
+.team-conflict-key,
 .btn-group .btn.panel-adj-conflict,
 .btn-group .btn.panel-team-conflict {
   @include conflict-bg(#ff0000, #cf0000, 1);
