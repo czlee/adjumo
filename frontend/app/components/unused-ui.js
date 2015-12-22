@@ -46,29 +46,46 @@ export default Ember.Component.extend(DroppableMixin, {
   didInsertElement: function() {
     Ember.run.scheduleOnce('afterRender', this, function() {
 
-      var resize = false;
-      var adj_area_height = $(".adj-bottom-panel").height();
+      var allAdjsResize = false;
+      var allAdjsadj_area_height = $("#allAdjs.adj-bottom-panel").height();
+      var unusedAdjsResize = false;
+      var unusedAdjsadj_area_height = $("#unusedAdjs.adj-bottom-panel").height();
 
       $(document).mouseup(function(event) {
-        resize = false;
-        adj_area_height = $(".adj-bottom-panel").height();
+        allAdjsResize = false;
+        allAdjsadj_area_height = $("#allAdjs.adj-bottom-panel").height();
+        unusedAdjsResize = false;
+        unusedAdjsadj_area_height = $("#unusedAdjs.adj-bottom-panel").height();
       });
 
-      $(".resize-holder").mousedown(function(event) {
-        resize = event.pageY;
+      $("#allAdjs .resize-holder").mousedown(function(event) {
+        allAdjsResize = event.pageY;
+        event.preventDefault(); // Prevent text highlight selections  while dragging
+      });
+
+      $("#unusedAdjs .resize-holder").mousedown(function(event) {
+        unusedAdjsResize = event.pageY;
         event.preventDefault(); // Prevent text highlight selections  while dragging
       });
 
       $(document).mousemove(function(event) {
-        if (resize) {
-          if (adj_area_height + resize - event.pageY < 50) {
-            $(".adj-bottom-panel").height(50);
-          } else if (adj_area_height + resize - event.pageY > 400) {
-            $(".adj-bottom-panel").height(400);
+        if (allAdjsResize) {
+          if (allAdjsadj_area_height + allAdjsResize - event.pageY < 45) {
+            $("#allAdjs.adj-bottom-panel").height(45);
+          } else if (allAdjsadj_area_height + allAdjsResize - event.pageY > 400) {
+            $("#allAdjs.adj-bottom-panel").height(400);
           } else {
-            $(".adj-bottom-panel").height(adj_area_height + resize - event.pageY);
-            $("#allocation").css( "margin-bottom", adj_area_height + 25 +resize - event.pageY);
-
+            $("#allAdjs.adj-bottom-panel").height(allAdjsadj_area_height + allAdjsResize - event.pageY);
+            $("#allocation").css( "margin-bottom", allAdjsadj_area_height + 25 + allAdjsResize - event.pageY);
+          }
+        } else if (unusedAdjsResize) {
+          if (unusedAdjsadj_area_height + unusedAdjsResize - event.pageY < 50) {
+            $("#unusedAdjs.adj-bottom-panel").height(50);
+          } else if (unusedAdjsadj_area_height + unusedAdjsResize - event.pageY > 400) {
+            $("#unusedAdjs.adj-bottom-panel").height(400);
+          } else {
+            $("#unusedAdjs.adj-bottom-panel").height(unusedAdjsadj_area_height + unusedAdjsResize - event.pageY);
+            $("#allocation").css( "margin-bottom", unusedAdjsadj_area_height + 25 + unusedAdjsResize - event.pageY);
           }
         }
       });
