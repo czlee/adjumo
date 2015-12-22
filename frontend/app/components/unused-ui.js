@@ -79,8 +79,8 @@ export default Ember.Component.extend(DroppableMixin, {
             $("#allocation").css( "margin-bottom", allAdjsadj_area_height + 25 + allAdjsResize - event.pageY);
           }
         } else if (unusedAdjsResize) {
-          if (unusedAdjsadj_area_height + unusedAdjsResize - event.pageY < 50) {
-            $("#unusedAdjs.adj-bottom-panel").height(50);
+          if (unusedAdjsadj_area_height + unusedAdjsResize - event.pageY < 45) {
+            $("#unusedAdjs.adj-bottom-panel").height(45);
           } else if (unusedAdjsadj_area_height + unusedAdjsResize - event.pageY > 400) {
             $("#unusedAdjs.adj-bottom-panel").height(400);
           } else {

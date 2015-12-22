@@ -34,20 +34,15 @@
         {{/if}}
         {{#if showingRanking }}
           <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRanking"}} >
-            <span class="glyphicon glyphicon-eye-close"></span> Rankings
+            <span class="glyphicon glyphicon-eye-close"></span> Rank
           </button>
         {{else}}
           <button class="btn btn-default nav-link hoverable" onclick={{action "showRanking"}}>
-            <span class="glyphicon glyphicon glyphicon-eye-open"></span> Rankings
+            <span class="glyphicon glyphicon glyphicon-eye-open"></span> Rank
           </button>
         {{/if}}
         </div>
 
-        <div class="btn-group-sm btn-group" id="conflictsKey" style="display: none;">
-          <button class="btn btn-default institution-conflict-key">Institutional</button>
-          <button class="btn btn-default team-conflict-key">Personal</button>
-          <button class="btn btn-default history-conflict-key">History</button>
-        </div>
 
         {{#if showingGender }}
         <div class="btn-group-sm btn-group hover-key">
@@ -76,11 +71,19 @@
 
         {{#if showingLanguage }}
         <div class="btn-group-sm btn-group hover-key">
-          <button class="btn btn-default language-display language-1">EPL</button>
-          <button class="btn btn-default language-display language-2">ESL</button>
-          <button class="btn btn-default language-display language-3">EFL</button>
+          <button class="btn btn-default language-display language-1">English Primary</button>
+          <button class="btn btn-default language-display language-2">English Secondary</button>
+          <button class="btn btn-default language-display language-3">English Foreign</button>
         </div>
         {{/if}}
+
+        {{#unless showingRegion }}
+        <div class="btn-group-sm btn-group pull-right">
+          <button class="btn btn-default team-conflict-key">Personal Conflict</button>
+          <button class="btn btn-default institution-conflict-key">Institutional Conflict</button>
+          <button class="btn btn-default history-conflict-key">History Conflict</button>
+        </div>
+        {{/unless}}
 
       </div>
 

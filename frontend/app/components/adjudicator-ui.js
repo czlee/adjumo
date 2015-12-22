@@ -66,7 +66,6 @@ export default Ember.Component.extend(DraggableMixin, {
       $(String(".adj-" + id)).addClass("adj-conflict");
     });
 
-    $("#conflictsKey").show();
     $(".hover-key").hide();
 
   },
@@ -76,7 +75,6 @@ export default Ember.Component.extend(DraggableMixin, {
     $(".institution-conflict").removeClass("institution-conflict");
     $(".team-conflict").removeClass("team-conflict");
     $(".adj-conflict").removeClass("adj-conflict");
-    $("#conflictsKey").hide();
     $(".hover-key").show();
 
   },

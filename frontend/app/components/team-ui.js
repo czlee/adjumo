@@ -31,13 +31,11 @@ export default Ember.Component.extend({
       var adjConflict = ".adj-" + id;
       $(adjConflict).addClass("team-conflict");
     });
-    $("#conflictsKey").show();
     $(".hover-key").hide();
   },
 
   mouseLeave: function(event) {
     $(".team-conflict").removeClass("team-conflict");
-    $("#conflictsKey").hide();
     $(".hover-key").show();
   },
 

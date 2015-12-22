@@ -27,7 +27,6 @@ export default Ember.Mixin.create({
     $(".institution-conflict").removeClass("institution-conflict");
     $(".team-conflict").removeClass("team-conflict");
     $(".adj-conflict").removeClass("adj-conflict");
-    $("#conflictsKey").hide();
     $(".hover-key").show();
 
 
