@@ -21,9 +21,7 @@
 {{team-ui team=debate.cg}}
 {{team-ui team=debate.co}}
 {{bans-ui debate=debate adjudicators=adjudicators}}
-<td class="debate-panel debate-locks preallocation ">
-    <div class="panel-ui i droppable-area"></div>
-</td>
+{{locks-ui debate=debate adjudicators=adjudicators}}
 {{#if debate.panels }}
     {{#each debate.panels as |panel|}}
         {{panel-ui panel=panel adjudicators=adjudicators}}

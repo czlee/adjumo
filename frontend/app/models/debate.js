@@ -10,7 +10,8 @@ export default DS.Model.extend({
   panels: DS.hasMany('panelallocations'),
   teams: DS.hasMany('team'),
 
-  bans: DS.hasMany('adjudicator'),
+  bans: DS.hasMany('adjudicator', { inverse: 'bannedFrom' }),
+  locks: DS.hasMany('adjudicator', { inverse: 'lockedTo' }),
 
   weightRounded: Ember.computed('weight', function() {
     return Math.round(this.get('weight') * 10) / 10; // normalise to 1-9 like adjs

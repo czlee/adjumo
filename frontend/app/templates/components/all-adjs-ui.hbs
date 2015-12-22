@@ -2,6 +2,9 @@
     <span class="glyphicon glyphicon-align-justify"></span>
 </div>
 
-{{#each unusedAdjudicators as |adj|}}
-    {{adjudicator-ui adj=adj}}
+{{#each sortedAdjudicators as |adj|}}
+    {{#if adj.lockedTo }}
+    {{else}}
+        {{adjudicator-ui adj=adj}}
+    {{/if}}
 {{/each}}

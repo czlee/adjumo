@@ -39,7 +39,29 @@ export default Ember.Component.extend(DraggableMixin, {
     // Setup the variables that will communicate with the droppable element
     var dataTransfer = event.originalEvent.dataTransfer;
     dataTransfer.setData('AdjID', this.get('adj').get('id'));
-    dataTransfer.setData('PanelID', this.get('adj').get('panel').get('id'));
+    var containerElement = this.$().parent();
+
+    if (containerElement.hasClass("debate-bans")) {
+      dataTransfer.setData('fromType', 'bans');
+      var debateID = containerElement.parent().attr('class').split('debate-')[1];
+      dataTransfer.setData('debateID', debateID);
+    } else if (containerElement.hasClass("debate-locks")) {
+      dataTransfer.setData('fromType', 'locks');
+    } else if (containerElement.hasClass("all-adjs-panel")) {
+      dataTransfer.setData('fromType', 'all-adjs');
+    } else if (containerElement.hasClass("unused-adjs-panel")) {
+      dataTransfer.setData('fromType', 'unused-adjs');
+    } else if (containerElement.hasClass("chair")) {
+      dataTransfer.setData('fromType', 'chair');
+      dataTransfer.setData('PanelID', this.get('adj').get('panel').get('id'));
+    } else if (containerElement.hasClass("panellists")) {
+      dataTransfer.setData('fromType', 'panellists');
+      dataTransfer.setData('PanelID', this.get('adj').get('panel').get('id'));
+    } else if (containerElement.hasClass("trainee")) {
+      dataTransfer.setData('fromType', 'trainees');
+      dataTransfer.setData('PanelID', this.get('adj').get('panel').get('id'));
+    }
+
     return this._super(event);
   },
 

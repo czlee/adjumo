@@ -1,0 +1,5 @@
+{{#if debate.locks }}
+    {{#each debate.locks as |adj|}}
+        {{ adjudicator-ui adj=adj }}
+    {{/each}}
+{{/if}}

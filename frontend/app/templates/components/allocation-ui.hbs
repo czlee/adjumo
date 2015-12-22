@@ -1,15 +1,14 @@
 <div id="main" class="container-fluid">
 
 
-
   <div class="row">
-      <div class="col-sm-12">
+    <div class="col-sm-12">
 
-      {{representations-ui config=config}}
+    {{representations-ui config=config}}
 
-      </div>
+    </div>
+  </div>
 
-  </div><!--- ending table toggle row -->
 
   <div class="row preallocation">
 
@@ -91,8 +90,12 @@
             <th class="head-oo">OO</th>
             <th class="head-cg">CO</th>
             <th class="head-co">CG</th>
-            <th class="head-bans preallocation">Bans</th>
-            <th class="head-locks preallocation">Locks</th>
+            <th class="head-bans preallocation" data-toggle="tooltip" data-placement="top" title="Adjs dragged here will be blocked from seing this debate">
+              Bans
+            </th>
+            <th class="head-locks preallocation" data-toggle="tooltip" data-placement="top" title="Adjs dragged here will be allocated to this debate">
+              Locks
+            </th>
             <th class="head-panel allocation hidden">
 
               <div class="flex-icon" data-toggle="tooltip" data-placement="top" title="Allocation Iteration">
@@ -149,5 +152,6 @@
       </table>
 
   </div><!--- ending table row -->
+
 
 </div><!--- ending main -->
