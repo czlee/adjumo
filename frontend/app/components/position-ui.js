@@ -4,6 +4,8 @@ import DroppableMixin from '../mixins/droppable';
 export default Ember.Component.extend(DroppableMixin, {
 
   tagName: 'section',
+  classNames: ['droppable-area', 'position-holder'],
+  classNameBindings: ['type'],
 
   drop: function(event) {
     var positionType = this.type;

@@ -8,7 +8,7 @@ export default Ember.Component.extend(DraggableMixin, {
   draggable: 'true',
 
   classNames: ['btn', 'adjudicator-ui', 'ranking-display', 'js-drag-handle', 'popover-trigger'],
-  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked', 'id', 'institution', 'historyConflict', 'teamConflict', 'adjConflict', 'institutionConflict'],
+  classNameBindings: ['ranking', 'locked'],
 
   adjorTeam: Ember.computed('adj', function() {
     return this.get('adj'); // normalise to 1-9 like adjs

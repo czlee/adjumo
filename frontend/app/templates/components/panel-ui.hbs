@@ -14,17 +14,11 @@
   {{ panel.ranking }}
 </div>
 <div class="panel-ui">
-  <div class="debate-chair-holder flex-1 position-holder">
     {{position-ui adjudicators=adjudicators panel=panel type="chair" isChairPosition=true }}
-  </div>
-  <div class="debate-panel-holder flex-2 position-holder">
     {{position-ui adjudicators=adjudicators panel=panel type="panellists" isPanellistsPosition=true }}
-  </div>
-  <div class="debate-trainee-holder flex-1 position-holder">
     {{position-ui adjudicators=adjudicators panel=panel type="trainees" isTraineesPosition=true }}
-  </div>
-  <div class="js-drag-handle flex-icon flex-icon">
-    <span class="glyphicon glyphicon-align-justify"></span>
-  </div>
- {{ panel.conflicts }} <!-- returns nothing just there to trigger updates -->
+    <div class="js-drag-handle flex-icon flex-icon">
+      <span class="glyphicon glyphicon-align-justify"></span>
+    </div>
 </div>
+<span class="hidden">{{ panel.conflicts }}</span> <!-- returns nothing just there to trigger updates -->

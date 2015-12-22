@@ -27,11 +27,9 @@
     <div class="panel-ui i droppable-area"></div>
 </td>
 {{#if debate.panels }}
-    <td class="debate-panel allocation">
-        {{#each debate.panels as |panel|}}
-            {{panel-ui panel=panel adjudicators=adjudicators}}
-        {{/each}}
-    </td>
+    {{#each debate.panels as |panel|}}
+        {{panel-ui panel=panel adjudicators=adjudicators}}
+    {{/each}}
 {{else}}
     <td class="debate-panel allocation hidden"></td>
 {{/if}}

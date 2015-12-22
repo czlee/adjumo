@@ -6,7 +6,6 @@ export default Ember.Component.extend(AdjorTeam, {
   tagName: 'td',
 
   classNames: ['team-ui hover-panel-trigger"'],
-  classNameBindings: ['gender', 'region', 'institution', 'language', 'id', 'teamConflict', 'adjConflict', 'institutionConflict', 'historyConflict'],
 
   adjorTeam: Ember.computed('team', function() {
     return this.get('team'); // Used by adjorteam.js to share properties

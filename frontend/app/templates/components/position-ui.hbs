@@ -1,25 +1,21 @@
-<div class="droppable-area">
-
-    {{#if isChairPosition }}
-        {{#if panel.chair }}
-            {{adjudicator-ui adj=panel.chair}}
-        {{/if }}
+{{#if isChairPosition }}
+    {{#if panel.chair }}
+        {{adjudicator-ui adj=panel.chair}}
     {{/if }}
+{{/if }}
 
-    {{#if isPanellistsPosition}}
-        {{#if panel.panellists }}
-        {{#each panel.panellists as |panellist|}}
-            {{adjudicator-ui adj=panellist}}
-        {{/each}}
-        {{/if }}
+{{#if isPanellistsPosition}}
+    {{#if panel.panellists }}
+    {{#each panel.panellists as |panellist|}}
+        {{adjudicator-ui adj=panellist}}
+    {{/each}}
     {{/if }}
+{{/if }}
 
-    {{#if isTraineesPosition }}
-        {{#if panel.trainees }}
-        {{#each panel.trainees as |trainee|}}
-            {{adjudicator-ui adj=trainee}}
-        {{/each}}
-        {{/if }}
+{{#if isTraineesPosition }}
+    {{#if panel.trainees }}
+    {{#each panel.trainees as |trainee|}}
+        {{adjudicator-ui adj=trainee}}
+    {{/each}}
     {{/if }}
-
-</div>
+{{/if }}

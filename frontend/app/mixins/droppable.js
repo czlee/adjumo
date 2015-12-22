@@ -8,19 +8,19 @@ export default Ember.Mixin.create({
 
   dragEnter: function(event){
     event.preventDefault();
-    this.$('.droppable-area').addClass('dragging-over');
+    this.$().addClass('dragging-over');
     return false;
   },
 
   dragLeave: function(event){
     event.preventDefault();
-    this.$('.droppable-area').removeClass('dragging-over');
+    this.$().removeClass('dragging-over');
     return false;
   },
 
   drop: function(event) {
     event.preventDefault();
-    this.$('.droppable-area').removeClass('dragging-over');
+    this.$().removeClass('dragging-over');
     $('.droppable-area').removeClass('dragging-active');
 
     // When dropping it can sometimes not stop the hovering effects

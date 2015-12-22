@@ -133,6 +133,28 @@ input[type=range]:hover {
 .panel-ui {
   padding: 0px !important;
   line-height: 40px;
+  height: 100%;
+  overflow: hidden;
+  .chair {
+    flex-grow: 1;
+    flex-basis: 10px;
+    border: 2px solid rgb(200, 200, 200);
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+  }
+  .panellists {
+    flex-grow: 2;
+    flex-basis: 10px;
+    border-top: 2px solid rgb(200, 200, 200);
+    border-bottom: 2px solid rgb(200, 200, 200);
+  }
+  .trainees {
+    flex-grow: 1;
+    flex-basis: 10px;
+    border: 2px solid rgb(200, 200, 200);
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
 }
 .flex-1 {
   flex-grow: 2;
@@ -144,7 +166,7 @@ input[type=range]:hover {
 }
 
 .debate-panel {
-  padding: 1px !important;
+  padding: 3px !important;
   .panel-stats {
     line-height: 44px; // Vertically align with the adj elements
   }
@@ -152,10 +174,7 @@ input[type=range]:hover {
 
 /* Panel Component */
 .panel-ui {
-  border: 2px solid rgb(200, 200, 200);
-  border-radius: 6px;
   overflow: auto;
-  margin-bottom: 0px;
   display: flex;
   min-height: 40px;
 }
@@ -167,9 +186,6 @@ input[type=range]:hover {
 td.head-panel {
   padding-left: 0px !important;
   padding-right: 0px !important;
-}
-.position-holder {
-  border-right: 2px solid rgb(200, 200, 200);
 }
 .position-holder .droppable-area {
   min-height: 40px;
