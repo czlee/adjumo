@@ -1,6 +1,7 @@
 import Ember from 'ember';
+import AdjorTeam from '../mixins/adjorteam';
 
-export default Ember.Mixin.create({
+export default Ember.Mixin.create(AdjorTeam, {
 
   dragStart: function(event) {
     //console.log("dragStart");

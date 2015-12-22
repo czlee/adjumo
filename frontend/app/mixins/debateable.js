@@ -16,9 +16,14 @@ export default Ember.Mixin.create({
     }
   }),
 
-  panelTeamConflict: DS.attr('bool', { default: false }),
-  panelAdjConflict: DS.attr('bool', { default: false }),
-  panelInstitutionConflict: DS.attr('bool', { default: false }),
+  activeHoveringInstitutionConflict: DS.attr('bool', { default: false }),
+  activePanelInstitutionConflict: DS.attr('bool', { default: false }),
+
+  activeHoveringTeamConflict: DS.attr('bool', { default: false }),
+  activePanelTeamConflict: DS.attr('bool', { default: false }),
+
+  activeHoveringAdjConflict: DS.attr('bool', { default: false }),
+  activePanelAdjConflict: DS.attr('bool', { default: false }),
 
   activeHoveringHistoryConflict: DS.attr('bool', { default: false }),
   activePanelHistoryConflict: DS.attr('bool', { default: false }),

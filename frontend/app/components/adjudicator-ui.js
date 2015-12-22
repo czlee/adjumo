@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import DraggableMixin from '../mixins/draggable';
+import DraggableMixin from '../mixins/draggable'; // Draggable inherits from adjOrTeam
 
 export default Ember.Component.extend(DraggableMixin, {
 
@@ -10,10 +10,10 @@ export default Ember.Component.extend(DraggableMixin, {
   classNames: ['btn', 'adjudicator-ui', 'ranking-display', 'js-drag-handle', 'popover-trigger'],
   classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked', 'id', 'institution', 'historyConflict', 'teamConflict', 'adjConflict', 'institutionConflict'],
 
-  // CSS Getters
-  gender: function(){
-    return 'gender-' + String(this.get('adj').get('gender'));
-  }.property('adj'),
+  adjorTeam: Ember.computed('adj', function() {
+    return this.get('adj'); // normalise to 1-9 like adjs
+  }),
+  isAdj: true,
 
   region: function() {
     var regions = "";
@@ -26,102 +26,38 @@ export default Ember.Component.extend(DraggableMixin, {
     return regions;
   }.property('adj'),
 
-  language: function() {
-    return 'language-' + String(this.get('adj').get('language'));
-  }.property('adj'),
   ranking: function() {
     return 'ranking-' + String(this.get('adj').get('ranking'));
   }.property('adj'),
+
   locked: function() {
     return 'locked-' + String(this.get('adj').locked);
   }.property('adj'),
-  institution: function() {
-    return 'institution-' + String(this.get('adj').get('institution').get('id'));
-  }.property('adj'),
-  id: function() {
-    return 'adj-' + String(this.get('adj').get('id'));
-  }.property('adj'),
-
-  historyConflict: function() {
-    if (this.get('adj').get('historyConflict') === true) { return "history-conflict"; }
-  }.property('adj.historyConflict'),
-
-  teamConflict: function() {
-    if (this.get('adj').get('panelTeamConflict') === true) { return "panel-team-conflict"; }
-  }.property('adj.panelTeamConflict'),
-
-  adjConflict: function() {
-    if (this.get('adj').get('panelAdjConflict') === true) { return "panel-adj-conflict"; }
-  }.property('adj.panelAdjConflict'),
-
-  institutionConflict: function() {
-    if (this.get('adj').get('panelInstitutionConflict') === true) { return "panel-institution-conflict"; }
-  }.property('adj.panelInstitutionConflict'),
-
-  mouseEnter: function(event) {
-
-    var institutionConflict = ".institution-" + String(this.get('adj').get('institution').get('id'));
-    $(institutionConflict).not(this.$()).addClass("institution-conflict");
-
-    this.get('adj').get('teamConflictIDs').forEach(function(id) {
-      $(String(".team-" + id)).addClass("team-conflict");
-    });
-    this.get('adj').get('adjConflictIDs').forEach(function(id) {
-      $(String(".adj-" + id)).addClass("adj-conflict");
-    });
-
-    this.get('adj').get('teamHistory').forEach(function(historyItem) {
-      historyItem.get('team').set('activeHoveringHistoryConflict', true);
-    });
-
-
-    $(".hover-key").hide();
-
-  },
-
-  mouseLeave: function(event) {
-
-    $(".institution-conflict").removeClass("institution-conflict");
-    $(".team-conflict").removeClass("team-conflict");
-    $(".adj-conflict").removeClass("adj-conflict");
-    $(".hover-key").show();
-
-    this.get('adj').get('teamHistory').forEach(function(historyItem) {
-      historyItem.get('team').set('activeHoveringHistoryConflict', false);
-    });
-
-
-  },
 
   dragStart: function(event) {
     this.$().popover('hide'); // Is annoying while dragging
-
     // Setup the variables that will communicate with the droppable element
     var dataTransfer = event.originalEvent.dataTransfer;
     dataTransfer.setData('AdjID', this.get('adj').get('id'));
     dataTransfer.setData('PanelID', this.get('adj').get('panel').get('id'));
-
-    //dataTransfer.setData('Text', this.get('elementId'));
-
     return this._super(event);
   },
+
   dragEnd: function(event) {
     // Let the controller know this view is done dragging
     return this._super(event);
   },
 
-  //locked: Ember.computed.alias('adj.locked'),
-
   actions: {
 
-    lockAdj: function() {
-      this.get('adj').set('locked', true);
-      // this.sendAction('setAdjLocked', this.get('adj')); sends an action the route which can then change the store
-    },
-    unlockAdj: function() {
-      this.get('adj').set('locked', false);
-      // this.sendAction('setAdjUnlocked', this.get('adj'));sends an action the route which can then change the store
-    }
+    // lockAdj: function() {
+    //   this.get('adj').set('locked', true);
+    //   // this.sendAction('setAdjLocked', this.get('adj')); sends an action the route which can then change the store
+    // },
+    // unlockAdj: function() {
+    //   this.get('adj').set('locked', false);
+    //   // this.sendAction('setAdjUnlocked', this.get('adj'));sends an action the route which can then change the store
+    // }
 
   },
 

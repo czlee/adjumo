@@ -180,41 +180,6 @@ td.head-panel {
   cursor: move;
 }
 
-/* Conflicts */
-
-.institution-conflict, .panel-institution-conflict, .institution-conflict-key {
-  //background: #b0207b !important; /* Important to overrule highlights */
-  background-image: repeating-linear-gradient(
-      45deg,
-      #da1ac1,
-      #da1ac1 3px,
-      #ae319e 6px, /* purple */
-      #ae319e 6px /* purple */
-  ) !important;
-  color: #fff !important;
-}
-.team-conflict, .adj-conflict, .panel-team-conflict, .panel-adj-conflict, .team-conflict-key {
-  background-image: repeating-linear-gradient(
-      45deg,
-      #ff0000,
-      #ff0000 3px,
-      #cf0000 6px,
-      #cf0000 6px
-  ) !important;/* Important to overrule highlights */
-  color: #fff !important;
-}
-.history-conflict, .history-conflict-key {
-  background-image: repeating-linear-gradient(
-      45deg,
-      #37a5c8,
-      #37a5c8 3px,
-      #2d86a3 6px,
-      #2d86a3 6px
-  ) !important;/* Important to overrule highlights */
-  color: #fff !important;
-}
-
-
 /* Adjudicator Component */
 
 .adjudicator-ui {
@@ -452,4 +417,48 @@ td.head-panel {
     background: #007102; // C+
   }
 
+}
+
+/* Conflicts */
+// Need to be here and to use .ember-view to overrule ranking/gender/etc displays
+
+.ember-view.history-conflict,
+.history-conflict-key {
+  background-image: repeating-linear-gradient(
+      45deg,
+      #37a5c8,
+      #37a5c8 3px,
+      #2d86a3 6px,
+      #2d86a3 6px
+  );
+  color: #fff;
+}
+.ember-view.institution-conflict,
+.ember-view.institution-conflict.history-conflict, // Institution takes precedent
+.institution-conflict-key {
+  //background: #b0207b !important; /* Important to overrule highlights */
+  background-image: repeating-linear-gradient(
+      45deg,
+      #da1ac1,
+      #da1ac1 3px,
+      #ae319e 6px, /* purple */
+      #ae319e 6px /* purple */
+  );
+  color: #fff;
+}
+.ember-view.team-conflict,
+.ember-view.team-conflict.institution-conflict,
+.ember-view.team-conflict.history-conflict,
+.ember-view.adj-conflict,
+.ember-view.adj-conflict.institution-conflict,
+.ember-view.adj-conflict.history-conflict,
+.team-conflict-key {
+  background-image: repeating-linear-gradient(
+      45deg,
+      #ff0000,
+      #ff0000 3px,
+      #cf0000 6px,
+      #cf0000 6px
+  );
+  color: #fff;
 }
