@@ -8,7 +8,7 @@ export default Ember.Component.extend(DraggableMixin, {
   draggable: 'true',
 
   classNames: ['btn', 'adjudicator-ui', 'ranking-display', 'js-drag-handle', 'popover-trigger'],
-  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked', 'id', 'institution', 'teamConflict', 'adjConflict', 'institutionConflict'],
+  classNameBindings: ['gender', 'region', 'language', 'ranking', 'locked', 'id', 'institution', 'historyConflict', 'teamConflict', 'adjConflict', 'institutionConflict'],
 
   // CSS Getters
   gender: function(){
@@ -41,6 +41,10 @@ export default Ember.Component.extend(DraggableMixin, {
   id: function() {
     return 'adj-' + String(this.get('adj').get('id'));
   }.property('adj'),
+
+  historyConflict: function() {
+    if (this.get('adj').get('historyConflict') === true) { return "history-conflict"; }
+  }.property('adj.historyConflict'),
 
   teamConflict: function() {
     if (this.get('adj').get('panelTeamConflict') === true) { return "panel-team-conflict"; }

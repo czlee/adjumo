@@ -5,7 +5,7 @@ export default Ember.Component.extend({
   tagName: 'td',
 
   classNames: ['team-ui hover-panel-trigger"'],
-  classNameBindings: ['gender', 'region', 'institution', 'language', 'id', 'teamConflict', 'adjConflict', 'institutionConflict'],
+  classNameBindings: ['gender', 'region', 'institution', 'language', 'id', 'teamConflict', 'adjConflict', 'institutionConflict', 'historyConflict'],
 
   // CSS Getters
   gender: function(){ return 'gender-' + String(this.get('team').get('gender')); }.property('team'),
@@ -13,6 +13,10 @@ export default Ember.Component.extend({
   language: function() { return 'language-' + String(this.get('team').get('language')); }.property('team'),
   institution: function() { return 'institution-' + String(this.get('team').get('institution').get('id')); }.property('team'),
   id: function() { return 'team-' + String(this.get('team').get('id')); }.property('id'),
+
+  historyConflict: function() {
+    if (this.get('team').get('historyConflict') === true) { return "history-conflict"; }
+  }.property('team.historyConflict'),
 
   teamConflict: function() {
     if (this.get('team').get('panelTeamConflict') === true) { return "panel-team-conflict"; }

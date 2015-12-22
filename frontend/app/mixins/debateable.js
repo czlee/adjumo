@@ -20,6 +20,9 @@ export default Ember.Mixin.create({
   panelAdjConflict: DS.attr('bool', { default: false }),
   panelInstitutionConflict: DS.attr('bool', { default: false }),
 
+  historyConflict: DS.attr('bool', { default: false }),
+  historyConflictRounds: DS.attr(); // array of rounds
+
   regionName: Ember.computed('institution', function() {
 
     function regionMap(regionID) {

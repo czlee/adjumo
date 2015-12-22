@@ -59,6 +59,24 @@ export default DS.Model.extend({
         });
       });
 
+
+      debateAdj.get('teamHistory').forEach(function(historyItem) {
+        // Get the histories of each adjudicator
+        var seenTeamID = historyItem.get('team').get('id');
+        //console.log('checking history for ' + debateAdj.get('name') + 'in round ' + round.round);
+        //console.log('seen ' + seenTeamsIDs);
+        // Check if the each team in the debate has been seen
+        debateTeams.forEach(function(debateTeam) {
+          if (debateTeam.get('id') === historyItem.get('team').get('id')) {
+            debateAdj.set('historyConflict', true);
+            debateTeam.set('historyConflict', true);
+            historyItem.set('active', true);
+          }
+        });
+
+      });
+
+
       debateAdj.get('adjConflictsWithOutSelf').forEach(function(conflictingAdj) {
         // For each conflict each adj has go through its panellists
         debateAdjs.forEach(function(debateAdjAgain) {

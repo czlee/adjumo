@@ -17,12 +17,12 @@ export default DS.Model.extend(DebateableMixin, {
 
   teamHistoryLinear: Ember.computed('teamHistory', function() {
     var linearHistory = Array(20); // Hack, should by dynamic
-    this.get('teamHistory').forEach(function(history) {
-      history.get('rounds').forEach(function(round) {
+    this.get('teamHistory').forEach(function(historyEvent) {
+      historyEvent.get('rounds').forEach(function(round) {
         if (linearHistory[round]) {
-          linearHistory[round].teams.push(history.get('team'));
+          linearHistory[round].teamHistories.push(historyEvent);
         } else {
-          linearHistory[round] = {round: round, teams: [history.get('team')]};
+          linearHistory[round] = {round: round, teamHistories: [historyEvent]};
         }
       });
     });
