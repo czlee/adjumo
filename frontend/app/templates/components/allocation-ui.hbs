@@ -2,7 +2,8 @@
 
   <div class="row">
 
-      <div class="btn-toolbar col-sm-10">
+      <div class="col-sm-12">
+      <div class="btn-toolbar">
 
         <div class="btn-group btn-group-sm">
         {{#if showingRegion }}
@@ -78,23 +79,23 @@
         {{/if}}
 
         {{#unless showingRegion }}
-        <div class="btn-group-sm btn-group pull-right">
+        <div class="btn-group-sm btn-group">
           <button class="btn btn-default team-conflict-key">Personal Conflict</button>
           <button class="btn btn-default institution-conflict-key">Institutional Conflict</button>
           <button class="btn btn-default history-conflict-key">History Conflict</button>
         </div>
         {{/unless}}
 
-      </div>
-
-
-      <div class="form-group col-sm-2">
-        <div class="input-group input-group-sm">
-          <div class="input-group-addon">
-            <span class="glyphicon glyphicon-search"></span>
+        <div class="form-group pull-right debate-search-form">
+          <div class="input-group input-group-sm">
+            <div class="input-group-addon">
+              <span class="glyphicon glyphicon-search"></span>
+            </div>
+            {{input value=theFilter type='text' class="form-control col-sm-10" placeholder='Search debates'}}
           </div>
-          {{input value=theFilter type='text' class="form-control col-sm-10" placeholder='Search'}}
         </div>
+
+      </div>
       </div>
 
   </div><!--- ending table toggle row -->
