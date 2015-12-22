@@ -46,7 +46,11 @@
                         </div>
                         {{#if adj.teamConflicts }}
                             {{#each adj.teamConflicts as |conflict| }}
-                                <div class="btn btn-default btn-sm">{{conflict.team.name}}</div>
+                                {{#if conflict.active }}
+                                    <div class="btn btn-default team-conflict btn-sm">{{conflict.team.name}}</div>
+                                 {{else}}
+                                    <div class="btn btn-default btn-sm">{{conflict.team.name}}</div>
+                                {{/if}}
                             {{/each}}
                         {{else}}
                             <div class="btn btn-default btn-sm">None</div>
@@ -58,7 +62,11 @@
                         </div>
                         {{#if adj.adjConflicts }}
                             {{#each adj.adjConflictsWithOutSelf as |conflict| }}
-                                <div class="btn btn-default btn-sm">{{conflict.name}}</div>
+                                {{#if conflict.active }}
+                                    <div class="btn btn-default adj-conflict btn-sm">{{conflict.name}}</div>
+                                {{else}}
+                                    <div class="btn btn-default btn-sm">{{conflict.name}}</div>
+                                {{/if}}
                             {{/each}}
                         {{else}}
                             <div class="btn btn-default btn-sm">None</div>

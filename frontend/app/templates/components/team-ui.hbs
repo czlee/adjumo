@@ -29,7 +29,11 @@
                         </div>
                         {{#if team.adjConflicts }}
                             {{#each team.adjConflicts as |conflict| }}
-                                <div class="btn btn-default btn-sm">{{conflict.adjudicator.name}}</div>
+                                {{#if conflict.active }}
+                                    <div class="btn btn-default  btn-sm adj-conflict">{{conflict.adjudicator.name}}</div>
+                                {{else}}
+                                    <div class="btn btn-default btn-sm">{{conflict.adjudicator.name}}</div>
+                                {{/if}}
                             {{/each}}
                         {{else}}
                             <div class="btn btn-default btn-sm">None</div>

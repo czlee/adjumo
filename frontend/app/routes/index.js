@@ -47,6 +47,7 @@ export default Ember.Route.extend({
     regional: 5,
     language: 5,
     gender: 5,
+    fairness: 5,
   },
 
   actions: {

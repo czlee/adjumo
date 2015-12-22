@@ -42,6 +42,7 @@ export default DS.Model.extend({
 
       // Adj-Team Conflicts
       debateAdj.get('teamConflicts').forEach(function(teamConflict) {
+        teamConflict.set('active', false);
         // Get the team object each conflict linkts to
         debateTeams.forEach(function(debateTeam) {
           //console.log('checking ' + debateTeam.get('name') + ' vs ' + conflictedTeam.get('name'));
@@ -49,6 +50,7 @@ export default DS.Model.extend({
           if (debateTeam.get('id') === teamConflict.get('team').get('id')) {
             debateAdj.set('activePanelTeamConflict', true);
             debateTeam.set('activePanelAdjConflict', true);
+            teamConflict.set('active', true);
           }
         });
       });
@@ -86,6 +88,7 @@ export default DS.Model.extend({
 
       // Adj-Team History Conflicts
       debateAdj.get('teamHistory').forEach(function(historyItem) {
+        historyItem.set('active', false);
         // Get the histories of each adjudicator
         var seenTeamID = historyItem.get('team').get('id');
         //console.log('checking history for ' + debateAdj.get('name') + 'in round ' + round.round);

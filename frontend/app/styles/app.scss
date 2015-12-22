@@ -438,6 +438,7 @@ td.head-panel {
 /* Conflicts */
 // Need to be here and to use .ember-view to overrule ranking/gender/etc displays
 
+.btn.history-conflict,
 .ember-view.history-conflict,
 .history-conflict-key {
   background-image: repeating-linear-gradient(
@@ -449,6 +450,7 @@ td.head-panel {
   );
   color: #fff;
 }
+.btn.institution-conflict,
 .ember-view.institution-conflict,
 .ember-view.institution-conflict.history-conflict, // Institution takes precedent
 .institution-conflict-key {
@@ -462,9 +464,11 @@ td.head-panel {
   );
   color: #fff;
 }
+.btn.team-conflict,
 .ember-view.team-conflict,
 .ember-view.team-conflict.institution-conflict,
 .ember-view.team-conflict.history-conflict,
+.btn.adj-conflict,
 .ember-view.adj-conflict,
 .ember-view.adj-conflict.institution-conflict,
 .ember-view.adj-conflict.history-conflict,
