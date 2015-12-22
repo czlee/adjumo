@@ -12,33 +12,24 @@
 
   <div class="row preallocation">
 
-    <table id="groupings" class="table table-bordered" cellpadding="0" cellspacing="0">
+    <table id="grouping" class="table table-bordered" cellpadding="0" cellspacing="0">
       <thead>
-        <tr>
-          <th class="head-panel">
-            <div class="flex-1 ">
-              Chair
-            </div>
-            <div class="flex-2 ">
-              Panel
-            </div>
-            <div class="flex-1">
-              Trainees
-            </div>
-          </th>
-        </tr>
-      </thead>
+          <tr>
+            <th class="text-center">
+              Groups
+            </th>
+          </tr>
+        </thead>
       <tbody>
         <tr>
-          <td class="debate-panel allocation">
-            {{panel-ui panel=panel adjudicators=''}}
-          </td>
+          {{#each groups as |group|}}
+            {{group-ui group=group adjudicators=adjudicators}}
+          {{/each}}
         </tr>
       </tbody>
     </table>
 
   </div>
-
 
   <div class="row">
 

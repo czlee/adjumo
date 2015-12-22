@@ -1,0 +1,5 @@
+{{#if group.groupAadjudicators }}
+    {{#each group.groupAadjudicators as |adj|}}
+        {{ adjudicator-ui adj=adj }}
+    {{/each}}
+{{/if}}

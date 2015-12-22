@@ -14,6 +14,8 @@ export default Ember.Route.extend({
           debates:                this.store.findAll('debate'),
           allocations:            this.store.findAll('allocation-iteration'),
 
+          groups:                 [this.store.createRecord('group', { id: 1 }), this.store.createRecord('group', { id: 2 })],
+
           teamadjconflicts:       this.store.findAll('teamadjudicator'),
           adjadjconflicts:        this.store.findAll('adjudicatorpair'),
 
@@ -30,6 +32,7 @@ export default Ember.Route.extend({
     controller.set('regions', models.regions);
     controller.set('institutions', models.institutions);
     controller.set('adjudicators', models.adjudicators);
+    controller.set('groups', models.groups);
     controller.set('teams', models.teams);
     controller.set('debates', models.debates);
     controller.set('allocations', models.allocations);

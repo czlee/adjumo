@@ -16,6 +16,8 @@ export default DS.Model.extend(DebateableMixin, {
   lockedTo: DS.belongsTo('debate', { inverse: 'locks' }),
   bannedFrom: DS.hasMany('debate', { inverse: 'bans' }),
 
+  group: DS.belongsTo('group', { inverse: 'groupAadjudicators' }),
+
   adjHistory: DS.hasMany('adjadjhistory', {async: true, inverse: null }), // Need inverse null as multiple possible reversals
   adjHistoryLinear: Ember.computed('adjHistory', function() {
     var linearHistory = Array(20); // Hack, should by dynamic

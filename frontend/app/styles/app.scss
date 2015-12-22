@@ -173,6 +173,7 @@ input[type=range]:hover {
 }
 
 /* Panel Component */
+
 .panel-ui {
   overflow: auto;
   display: flex;
@@ -247,6 +248,13 @@ td.head-panel {
 }
 .droppable-area.dragging-over {
   background: #00FF50;
+}
+
+.adj-group {
+  min-height: 40px;
+  width: 50%;
+  float: left;
+  border-right: 1px solid #ddd;
 }
 
 #allocation {
