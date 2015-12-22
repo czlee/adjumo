@@ -7,31 +7,45 @@ export default Ember.Component.extend({
   classNames: ['team-ui hover-panel-trigger"'],
   classNameBindings: ['gender', 'region', 'institution', 'language', 'id', 'teamConflict', 'adjConflict', 'institutionConflict', 'historyConflict'],
 
+  team: function() { return this.get('team') },
+
   // CSS Getters
-  gender: function(){ return 'gender-' + String(this.get('team').get('gender')); }.property('team'),
-  region: function() { return 'region-' + String(this.get('team').get('region')); }.property('team'),
-  language: function() { return 'language-' + String(this.get('team').get('language')); }.property('team'),
-  institution: function() { return 'institution-' + String(this.get('team').get('institution').get('id')); }.property('team'),
-  id: function() { return 'team-' + String(this.get('team').get('id')); }.property('id'),
+  gender: function(){
+    return 'gender-' + String(this.team.get('gender'));
+  }.property('team'),
+  region: function() {
+    return 'region-' + String(this.team.get('region'));
+  }.property('team'),
+  language: function() {
+    return 'language-' + String(this.team.get('language'));
+  }.property('team'),
+  institution: function() {
+    return 'institution-' + String(this.team.get('institution').get('id'));
+  }.property('team'),
+  id: function() {
+    return 'team-' + String(this.team.get('id'));
+  }.property('id'),
 
   historyConflict: function() {
-    if (this.get('team').get('historyConflict') === true) { return "history-conflict"; }
-  }.property('team.historyConflict'),
+    if ((this.team.get('activeHoveringHistoryConflict') == true) || (this.team.get('activePanelHistoryConflict') == true)) {
+      return "history-conflict";
+    }
+  }.property('team.activeHoveringHistoryConflict', 'team.activePanelHistoryConflict'),
 
   teamConflict: function() {
-    if (this.get('team').get('panelTeamConflict') === true) { return "panel-team-conflict"; }
+    if (this.team.get('panelTeamConflict') === true) { return "panel-team-conflict"; }
   }.property('team.panelTeamConflict'),
 
   adjConflict: function() {
-    if (this.get('team').get('panelAdjConflict') === true) { return "panel-adj-conflict"; }
+    if (this.team.get('panelAdjConflict') === true) { return "panel-adj-conflict"; }
   }.property('team.panelAdjConflict'),
 
   institutionConflict: function() {
-    if (this.get('team').get('panelInstitutionConflict') === true) { return "panel-institution-conflict"; }
+    if (this.team.get('panelInstitutionConflict') === true) { return "panel-institution-conflict"; }
   }.property('team.panelInstitutionConflict'),
 
   mouseEnter: function(event) {
-    this.get('team').get('adjConflictIDs').forEach(function(id) {
+    this.team.get('adjConflictIDs').forEach(function(id) {
       var adjConflict = ".adj-" + id;
       $(adjConflict).addClass("team-conflict");
     });

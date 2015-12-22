@@ -70,6 +70,11 @@ export default Ember.Component.extend(DraggableMixin, {
       $(String(".adj-" + id)).addClass("adj-conflict");
     });
 
+    this.get('adj').get('teamHistory').forEach(function(historyItem) {
+      historyItem.get('team').set('activeHoveringHistoryConflict', true);
+    });
+
+
     $(".hover-key").hide();
 
   },
@@ -80,6 +85,11 @@ export default Ember.Component.extend(DraggableMixin, {
     $(".team-conflict").removeClass("team-conflict");
     $(".adj-conflict").removeClass("adj-conflict");
     $(".hover-key").show();
+
+    this.get('adj').get('teamHistory').forEach(function(historyItem) {
+      historyItem.get('team').set('activeHoveringHistoryConflict', false);
+    });
+
 
   },
 

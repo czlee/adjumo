@@ -20,8 +20,8 @@ export default Ember.Mixin.create({
   panelAdjConflict: DS.attr('bool', { default: false }),
   panelInstitutionConflict: DS.attr('bool', { default: false }),
 
-  historyConflict: DS.attr('bool', { default: false }),
-  historyConflictRounds: DS.attr(); // array of rounds
+  activeHoveringHistoryConflict: DS.attr('bool', { default: false }),
+  activePanelHistoryConflict: DS.attr('bool', { default: false }),
 
   regionName: Ember.computed('institution', function() {
 
