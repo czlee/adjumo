@@ -11,10 +11,35 @@ export default DS.Model.extend(DebateableMixin, {
   panel: DS.belongsTo('panelallocation', { inverse: null }),
 
   teamConflicts: DS.hasMany('teamadjudicator', {async: true}),
-  adjConflicts: DS.hasMany('adjudicatorpair', {async: true, inverse: null }),
+  adjConflicts: DS.hasMany('adjudicatorpair', {async: true, inverse: null }), // Need inverse null as multiple possible reversals
+
+  adjHistory: DS.hasMany('adjadjhistory', {async: true, inverse: null }), // Need inverse null as multiple possible reversals
+  adjHistoryLinear: Ember.computed('adjHistory', function() {
+    var linearHistory = Array(20); // Hack, should by dynamic
+    var thisAdjID = this.get('id');
+
+    this.get('adjHistory').forEach(function(historyEvent) {
+
+      // Need to figure out which person is being conflicted with
+      var conflictingAdj;
+      if (historyEvent.get('adj1').get('id') === thisAdjID) {
+        conflictingAdj = historyEvent.get('adj2');
+      } else {
+        conflictingAdj = historyEvent.get('adj1');
+      }
+      historyEvent.get('rounds').forEach(function(round) {
+        if (linearHistory[round]) {
+          linearHistory[round].historyWrapper.push({ conflictingAdj: conflictingAdj, adjadjhistory: historyEvent});
+        } else {
+          linearHistory[round] = {round: round, historyWrapper: [{ conflictingAdj: conflictingAdj, adjadjhistory: historyEvent}]};
+        }
+      });
+
+    });
+    return linearHistory;
+  }),
 
   teamHistory: DS.hasMany('teamadjhistory', {async: true}),
-
   teamHistoryLinear: Ember.computed('teamHistory', function() {
     var linearHistory = Array(20); // Hack, should by dynamic
     this.get('teamHistory').forEach(function(historyEvent) {

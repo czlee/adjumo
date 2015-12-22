@@ -103,6 +103,29 @@ export default DS.Model.extend({
         });
       });
 
+      // Adj-Adj History Conflicts
+      debateAdj.get('adjHistory').forEach(function(historyItem) {
+
+        historyItem.set('active', false);
+        // Get the histories of each adjudicator
+        var conflictingAdj;
+        if (historyItem.get('adj1').get('id') === debateAdj.get('id')) {
+          conflictingAdj = historyItem.get('adj2');
+        } else {
+          conflictingAdj = historyItem.get('adj1');
+        }
+
+        debateAdjs.forEach(function(debateAdjAgain) {
+          // Loop through other panellists to check for history matchs
+          if (debateAdjAgain.get('id') === conflictingAdj.get('id')) {
+            debateAdj.set('activePanelHistoryConflict', true);
+            conflictingAdj.set('activePanelHistoryConflict', true);
+            historyItem.set('active', true);
+          }
+        });
+
+      });
+
 
     });
 

@@ -59,19 +59,28 @@ export default Ember.Mixin.create({
 
     if (this.isAdj) {
 
+      // Conflicts
       this.get('adjorTeam').get('adjConflictsWithOutSelf').forEach(function(adjConflict) {
         adjConflict.set('activeHoveringAdjConflict', true);
       });
       this.get('adjorTeam').get('teamConflicts').forEach(function(teamConflict) {
         teamConflict.get('team').set('activeHoveringTeamConflict', true);
       });
-      this.get('adjorTeam').get('teamHistory').forEach(function(historyItem) {
-        historyItem.get('team').set('activeHoveringHistoryConflict', true);
-      });
       this.get('adjorTeam').get('institution').get('teams').forEach(function(insitutionalTeam) {
         insitutionalTeam.set('activeHoveringInstitutionConflict', true);
       });
       this.get('adjorTeam').set('activeHoveringInstitutionConflict', false); // Dont highlight the current adj
+
+      // Histories
+      this.get('adjorTeam').get('teamHistory').forEach(function(historyItem) {
+        historyItem.get('team').set('activeHoveringHistoryConflict', true);
+      });
+      this.get('adjorTeam').get('adjHistory').forEach(function(historyItem) {
+        historyItem.get('adj1').set('activeHoveringHistoryConflict', true);
+        historyItem.get('adj2').set('activeHoveringHistoryConflict', true);
+      });
+      this.get('adjorTeam').set('activeHoveringHistoryConflict', false); // Dont highlight the current adj
+
 
     } else {
 
@@ -94,17 +103,24 @@ export default Ember.Mixin.create({
 
 
     if (this.isAdj) {
+
+      // Conflicts
       this.get('adjorTeam').get('adjConflictsWithOutSelf').forEach(function(adjConflict) {
         adjConflict.set('activeHoveringAdjConflict', false); // TODO will break
       });
       this.get('adjorTeam').get('teamConflicts').forEach(function(teamConflict) {
         teamConflict.get('team').set('activeHoveringTeamConflict', false);
       });
-      this.get('adjorTeam').get('teamHistory').forEach(function(historyItem) {
-        historyItem.get('team').set('activeHoveringHistoryConflict', false);
-      });
       this.get('adjorTeam').get('institution').get('teams').forEach(function(insitutionalTeam) {
         insitutionalTeam.set('activeHoveringInstitutionConflict', false);
+      });
+      // Histories
+      this.get('adjorTeam').get('adjHistory').forEach(function(historyItem) {
+        historyItem.get('adj1').set('activeHoveringHistoryConflict', false);
+        historyItem.get('adj2').set('activeHoveringHistoryConflict', false);
+      });
+      this.get('adjorTeam').get('teamHistory').forEach(function(historyItem) {
+        historyItem.get('team').set('activeHoveringHistoryConflict', false);
       });
 
     } else {

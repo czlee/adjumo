@@ -92,7 +92,32 @@
                         <div class="btn btn-default btn-sm">None</div>
                     {{/if}}
 
+
                 </div>
+
+            {{#if adj.adjHistory }}
+                <li class="list-group-item btn-toolbar-holder">
+                    {{#if adj.adjHistory }}
+                    <div class="btn-group" role="group">
+                        {{#each adj.adjHistoryLinear as |history| }}
+                            <div class="btn-group" role="group">
+                                <div class="btn btn-default btn-sm">
+                                    <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.round}}</span>
+                                </div>
+                                {{#each history.historyWrapper as |historyWrap| }}
+                                    {{#if historyWrap.adjadjhistory.active }}
+                                        <div class="btn btn-default history-conflict btn-sm">{{ historyWrap.conflictingAdj.short_name }}</div>
+                                    {{else}}
+                                        <div class="btn btn-default btn-sm">{{ historyWrap.conflictingAdj.short_name }}</div>
+                                    {{/if}}
+                                {{/each}}
+                            </div>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+                </li>
+            {{/if}}
+
             </li>
         </ul>
 
