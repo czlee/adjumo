@@ -1,4 +1,5 @@
 import DS from 'ember-data';
+import Ember from 'ember';
 
 export default DS.Model.extend({
 
@@ -77,7 +78,6 @@ export default DS.Model.extend({
       debateAdj.get('teamHistory').forEach(function(historyItem) {
         historyItem.set('active', false);
         // Get the histories of each adjudicator
-        var seenTeamID = historyItem.get('team').get('id');
         //console.log('checking history for ' + debateAdj.get('name') + 'in round ' + round.round);
         //console.log('seen ' + seenTeamsIDs);
         // Check if the each team in the debate has been seen

@@ -56,11 +56,13 @@ export default Ember.Route.extend({
 
     createAllocation: function() {
 
+      console.log('starting to create a new allocation');
       this.currentAllocationIteration += 1;
 
       // Write all debate importances to a file
-      var data = {};
+
       this.store.findAll('debate').then((debate) => {
+        var data = {};
         // ASYNC: waiting for find
         debate.forEach(function(debate) {
           data[debate.get('id')] = debate.get('importance');

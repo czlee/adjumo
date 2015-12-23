@@ -265,6 +265,9 @@ td.head-panel {
   border-top: 2px solid rgb(200, 200, 200);
   overflow: hidden;
 }
+.all-adjs-panel {
+  height: 200px; // Otherwise it becomes huge loading all the adjs
+}
 .resize-holder {
   width: 30px;
   min-height: 40px;
