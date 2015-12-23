@@ -8,7 +8,7 @@
 
   <div class="row preallocation">
 
-    <table id="grouping" class="table table-bordered" cellpadding="0" cellspacing="0">
+    <table id="grouping" class="table" cellpadding="0" cellspacing="0">
       <thead>
           <tr>
             <th class="text-center">
@@ -19,7 +19,7 @@
       <tbody>
         <tr>
           {{#each groups as |group|}}
-            {{group-ui group=group adjudicators=adjudicators}}
+            {{model/group-ui group=group adjudicators=adjudicators checkWhetherToAddNewGroups='checkWhetherToAddNewGroups'}}
           {{/each}}
         </tr>
       </tbody>

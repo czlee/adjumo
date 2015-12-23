@@ -93,7 +93,6 @@ export default Ember.Route.extend({
         var newAllocation = this.store.createRecord('allocation-iteration', {
           id: this.currentAllocationIteration,
         });
-        console.log(newAllocation);
 
         this.store.findAll('panelallocation').then((panels) => {
           panels.forEach(function(item) {
@@ -104,6 +103,20 @@ export default Ember.Route.extend({
         });
 
       });
+
+      this.store.findAll('group').save();
+      // var groupData = {};
+      // this.store.findAll('groups').then((group) => {
+      //   groupData[group.get('id')] = debate.get('importance');
+      // });
+
+      // this.store.findAll('bans').then((ban) => {
+      //   var data = {};
+      // });
+
+      // this.store.findAll('locks').then((lock) => {
+      //   var data = {};
+      // });
 
     },
 

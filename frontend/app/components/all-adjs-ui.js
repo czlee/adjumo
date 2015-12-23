@@ -29,6 +29,11 @@ export default Ember.Component.extend(AdjHolderMixing, {
         }
       });
     }
+    else if (fromType === 'group')
+    {
+      // If coming from a group just remove it
+      droppedAdj.set('group', null)
+    }
     return this._super(event);
 
   },

@@ -251,10 +251,10 @@ td.head-panel {
 }
 
 .adj-group {
-  min-height: 40px;
+  min-height: 43px;
   width: 50%;
   float: left;
-  border-right: 1px solid #ddd;
+  border: 1px solid #ddd;
 }
 
 #allocation {
@@ -274,7 +274,7 @@ td.head-panel {
   overflow: hidden;
 }
 .all-adjs-panel {
-  height: 200px; // Otherwise it becomes huge loading all the adjs
+  height: 100px; // Otherwise it becomes huge loading all the adjs
 }
 .resize-holder {
   width: 30px;
