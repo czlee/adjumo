@@ -15,9 +15,6 @@ export default Ember.Component.extend(AdjHolderMixing, {
     var droppedAdjID = event.originalEvent.dataTransfer.getData('AdjID');
     var droppedAdj = this.get('adjudicators').findBy('id', droppedAdjID);
 
-    console.log('trigger');
-    console.log(fromType);
-
     if (fromType === 'locks') {
       // If coming from a lock just remove it (can only be locked to one thing at a time)
       droppedAdj.set('lockedTo', null);
