@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import DraggableMixin from '../mixins/draggable'; // Draggable inherits from adjOrTeam
+import DraggableMixin from '../../mixins/draggable'; // Draggable inherits from adjOrTeam
 
 export default Ember.Component.extend(DraggableMixin, {
 

@@ -17,7 +17,6 @@ export default Ember.Component.extend(DroppableMixin, {
     if (positionType === 'chair') {
       // If coming from a chair
       var currentAdj = this.get('panel').get('chair');
-      var currentAdjID = currentAdj.id;
 
       if (droppedAdj === droppedAdjOldPanel.get('chair').get('content')) {
         // If the dropped adj was previously in the chairing position
@@ -72,7 +71,7 @@ export default Ember.Component.extend(DroppableMixin, {
         } else if (droppedAdjOldPanel.get('trainees').contains(droppedAdj)) {
           droppedAdjOldPanel.get('trainees').removeObject(droppedAdj);
         }
-      };
+      }
     }
 
     switch (positionType) {

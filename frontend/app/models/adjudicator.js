@@ -1,5 +1,6 @@
 import DS from 'ember-data';
 import DebateableMixin from '../mixins/debateable';
+import Ember from 'ember';
 
 export default DS.Model.extend(DebateableMixin, {
 

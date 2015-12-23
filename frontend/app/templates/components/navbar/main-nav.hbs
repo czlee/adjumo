@@ -5,7 +5,7 @@
       Set Parameters
     </button>
     <button type="submit" class="btn btn-default" {{action "startNewAllocation"}}>
-      Create Allocation
+      Load Allocation
     </button>
   </div>
 
@@ -37,6 +37,6 @@
 
 </nav>
 
-{{export-ui allocations=allocations}}
+{{navbar/export-ui allocations=allocations}}
 
-{{parameters-ui config=config}}
+{{navbar/parameters-ui config=config}}

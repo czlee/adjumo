@@ -14,6 +14,7 @@ You then need to install the required packages:
 ``` julia
 Pkg.add("JuMP")
 Pkg.add("JSON")
+Pkg.add("StatsBase")
 ```
 
 Some functions also require the following:

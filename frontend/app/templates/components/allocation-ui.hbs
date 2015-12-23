@@ -1,14 +1,10 @@
 <div id="main" class="container-fluid">
 
-
   <div class="row">
     <div class="col-sm-12">
-
-    {{representations-ui config=config}}
-
+      {{navbar/representations-ui config=config}}
     </div>
   </div>
-
 
   <div class="row preallocation">
 
@@ -122,7 +118,7 @@
         <tbody>
 
         {{#each filteredDebates as |debate-instance|}}
-            {{debate-ui debate=debate-instance adjudicators=adjudicators allocations=allocations}}
+            {{model/debate-ui debate=debate-instance adjudicators=adjudicators allocations=allocations}}
         {{/each}}
 
         <!-- ticker for input ranges -->

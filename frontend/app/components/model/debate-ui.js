@@ -11,9 +11,9 @@ export default Ember.Component.extend({
 
 
   actions: {
-    receivePanel: function(obj,ops) {
-      console.log('receiving a panel');
-    }
+    // receivePanel: function() {
+    //   console.log('receiving a panel');
+    // }
   },
 
   didInsertElement: function() {
