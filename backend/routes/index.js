@@ -86,9 +86,8 @@ router.post('/debate-importances/', function(req, res) {
 
 
 router.post('/tabbie2-test/', function(req, res) {
-  // console.log('posting debate importances'); // populated!
-  // console.log(req.body); // populated!
-  fs.writeFile('data/tabbie2-test.json', JSON.stringify(req.body, null, 2), function(err){
+  console.log(req.body);
+  fs.writeFile('data/tabbie2-test.json', JSON.stringify(req.body.exportData, null, 2), function(err){
     if (err) throw err;
     console.log('Tabbie 2 export file saved!');
   })

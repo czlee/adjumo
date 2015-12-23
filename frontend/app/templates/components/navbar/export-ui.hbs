@@ -11,9 +11,7 @@
         <form>
         {{#if allocations}}
           {{#each allocations as |allocation| }}
-            <button type="button" class="btn btn-default btn-block" value={{allocation.id}} {{action "exportAllocation" value="target.value"}}>
-              Export Allocation {{allocation.id}}
-            </button>
+            {{allocation-export-ui allocation=allocation}}
           {{/each}}
         {{else}}
           No allocations to export!

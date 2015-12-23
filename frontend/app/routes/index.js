@@ -158,6 +158,7 @@ export default Ember.Route.extend({
 
 
       this.store.findAll('debate').then((debate) => {
+
         var locksData = { data: [] }; // Hold a representation of all groups
 
         debate.forEach(function(debate) {
@@ -195,7 +196,7 @@ export default Ember.Route.extend({
         if (locksData.data.length > 0) { // Only post is groups exist
 
           var posting = $.post('/locks', locksData);
-          posting.done(function(locksData) { // ASYNC: waiting for file write
+          posting.done(function() { // ASYNC: waiting for file write
             console.log('GROUP EXPORT: saved locks data to file');
           });
 
