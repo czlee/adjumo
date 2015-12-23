@@ -5,6 +5,6 @@
 {{#each sortedAdjudicators as |adj|}}
     {{#if adj.lockedTo }}
     {{else}}
-        {{adjudicator-ui adj=adj}}
+        {{model/adjudicator-ui adj=adj}}
     {{/if}}
 {{/each}}
