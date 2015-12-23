@@ -46,7 +46,7 @@ export default DS.Model.extend({
         teamConflict.set('active', false);
         // Get the team object each conflict linkts to
         debateTeams.forEach(function(debateTeam) {
-          console.log('checking ' + teamConflict.get('team'));
+          //console.log('checking ' + teamConflict.get('team'));
           // Check if the conflicted team is in the debate - have to match by ID as object matching not working
           if (debateTeam.get('id') === teamConflict.get('team').get('id')) {
             debateAdj.set('activePanelTeamConflict', true);
