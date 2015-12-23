@@ -4,10 +4,23 @@ export default Ember.Route.extend({
 
   model: function() {
 
+      var regions = [
+        this.store.createRecord('region', { id: 1, name: "North Asia" }),
+        this.store.createRecord('region', { id: 2, name: "South East Asia" }),
+        this.store.createRecord('region', { id: 3, name: "Middle East" }),
+        this.store.createRecord('region', { id: 4, name: "Sub Sub-Continent" }),
+        this.store.createRecord('region', { id: 5, name: "Africa" }),
+        this.store.createRecord('region', { id: 6, name: "ANZ" }),
+        this.store.createRecord('region', { id: 7, name: "North America" }),
+        this.store.createRecord('region', { id: 8, name: "Latin America" }),
+        this.store.createRecord('region', { id: 9, name: "Europe" }),
+        this.store.createRecord('region', { id: 10, name: "IONA" })
+      ]
+
       return Ember.RSVP.hash({ // Need this to return multiple model types (these load in parallel as promises)
 
           config:                 this.defaultConfig,
-          regions:                this.store.findAll('region'),
+          regions:                regions,
           institutions:           this.store.findAll('institution'),
           adjudicators:           this.store.findAll('adjudicator'),
           teams:                  this.store.findAll('team'),
