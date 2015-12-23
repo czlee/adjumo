@@ -84,6 +84,19 @@ router.post('/debate-importances/', function(req, res) {
 })
 
 
+
+router.post('/tabbie2-test/', function(req, res) {
+  // console.log('posting debate importances'); // populated!
+  // console.log(req.body); // populated!
+  fs.writeFile('data/tabbie2-test.json', JSON.stringify(req.body, null, 2), function(err){
+    if (err) throw err;
+    console.log('Tabbie 2 export file saved!');
+  })
+  res.send("ok");
+  res.end();
+})
+
+
 // OLD
 
 // router.get('/importround', function(req, res, next) {

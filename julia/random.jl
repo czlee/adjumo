@@ -91,10 +91,10 @@ function randomroundinfo(ndebates::Int, currentround::Int)
         adddebate!(roundinfo, rand(1:100000), 10rand(), teams_shuffled[:,i])
     end
 
-    for i in 1:nadjs÷4
-        addadjadjconflict!(roundinfo, randpair(adjudicators)...)
-        addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
-    end
+    # for i in 1:nadjs÷4
+    #     addadjadjconflict!(roundinfo, randpair(adjudicators)...)
+    #     addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
+    # end
 
     for r in 1:currentround-1
         teams_shuffled = reshape(shuffle(teams), (4, ndebates))
