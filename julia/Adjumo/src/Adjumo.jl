@@ -25,20 +25,26 @@ include("importjson.jl")
 include("exportjson.jl")
 include("importtabbie2.jl")
 include("exporttabbie2.jl")
+include("deficit.jl")
 
 export allocateadjudicators, generatefeasiblepanels
 
 "Top-level adjudicator allocation function."
 function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int))
+    println("feasible panels:")
+    @time feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=limitpanels)
+    return allocateadjudicators(roundinfo, feasiblepanels; solver=solver, enforceteamconflicts=enforceteamconflicts, gap=gap, threads=threads)
+end
+
+"Top-level adjudicator allocation function, but takes in a pre-generated set of
+feasible panels."
+function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1)
 
     procstoadd = threads - nprocs()
     if procstoadd > 0
         println("Adding $procstoadd processes to make $threads processes in total")
         procsadded = addprocs(procstoadd)
     end
-
-    println("feasible panels:")
-    @time feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=limitpanels)
 
     println("score matrix:")
     @time Σ = scorematrix(roundinfo, feasiblepanels)

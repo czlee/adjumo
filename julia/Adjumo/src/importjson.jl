@@ -22,3 +22,12 @@ function convertcomponentweightsdict(dict::JsonDict)
     end
     return weights
 end
+
+function importfeasiblepanels(io::IO)
+    paneldicts = JSON.parse(io)
+    feasiblepanels = Array{AdjudicatorPanel}(length(paneldicts))
+    for (i, paneldict) in enumerate(paneldicts)
+        feasiblepanels[i] = AdjudicatorPanel(paneldict["adjs"], paneldict["np"])
+    end
+    return feasiblepanels
+end

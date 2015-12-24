@@ -7,7 +7,7 @@ using JsonAPI
 # export exportjsoninstitutions, exportjsonteams, exportjsonadjudicators, exportjsondebates,
 #     jsoninstitutions, jsonteams, jsonadjudicators, jsondebates
 # export exportjsonadjadjhistory, exportjsonteamadjhistory, exportjsongroupedadjs
-export exportroundinfo, exportallocations
+export exportroundinfo, exportallocations, exportfeasiblepanels
 
 exportjsonapi(io::IO, ri::RoundInfo, field::Symbol) = printjsonapi(io, getfield(ri, field))
 jsonapi(ri::RoundInfo, field::Symbol) = jsonapi(getfield(ri, field))
@@ -97,4 +97,15 @@ function exportallocations(allocations::Vector{PanelAllocation}, directory::Abst
     f = open(filename, "w")
     printjsonapi(f, allocations)
     close(f)
+end
+
+function exportfeasiblepanels(io::IO, feasiblepanels::Vector{AdjudicatorPanel})
+    panelsjson = Array{JsonDict}(length(feasiblepanels))
+    for (i, panel) in enumerate(feasiblepanels)
+        panelsjson[i] = JsonDict(
+            "adjs" => [adj.id for adj in panel.adjs],
+            "np" => panel.np
+        )
+    end
+    JSON.print(io, panelsjson)
 end

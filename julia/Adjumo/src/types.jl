@@ -78,9 +78,14 @@ type Debate
     id::Int
     weight::Float64
     teams::Vector{Team}
+    qualitydeficit::Float64
+    regionaldeficit::Float64
+    genderdeficit::Float64
+    languagedeficit::Float64
 end
 
-Debate(id::Int, teams::Vector{Team}) = Debate(id, 1, teams)
+Debate(id::Int, weight::Real, teams::Vector{Team}) = Debate(id, Float64(weight), teams, 0, 0, 0, 0)
+Debate(id::Int, teams::Vector{Team}) = Debate(id, 1, teams, 0, 0, 0, 0)
 show(io::Base.IO, debate::Debate) = print(io, "Debate($(debate.id), $(debate.weight), $(debate.teams))")
 
 # ==============================================================================

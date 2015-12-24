@@ -50,6 +50,9 @@ argsettings = ArgParseSettings()
         help = "Limit how many panels it samples"
         arg_type = Int
         default = typemax(Int)
+    "-f", "--feasible-panels"
+        help = "Feasible panels file"
+        default = ""
 end
 args = parse_args(ARGS, argsettings)
 
@@ -75,9 +78,18 @@ close(componentweightsfile)
 
 println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 
-allocations = allocateadjudicators(roundinfo; solver=args["solver"],
-        enforceteamconflicts=args["enforce-team-conflicts"],
-        gap=args["gap"], threads=args["threads"], limitpanels=args["limitpanels"])
+kwargs = Dict(solver=>args["solver"],
+        enforceteamconflicts=>args["enforce-team-conflicts"],
+        gap=>args["gap"], threads=>args["threads"], limitpanels=>args["limitpanels"])
+
+if args["feasible-panels"]
+    f = open(args["feasible-panels"])
+    feasiblepanels = importfeasiblepanels(f)
+    close(f)
+    allocations = allocateadjudicators(roundinfo, feasiblepanels, kwargs...)
+else
+    allocations = allocateadjudicators(roundinfo; kwargs...)
+end
 
 println("Writing JSON files...")
 directory = args["json-dir"]
