@@ -125,11 +125,11 @@ export default Ember.Route.extend({
           active: true,
         });
 
-        //console.log('    loading in data');
+        console.log('    loading in data');
         // Load in the allocation information from Julia
         this.store.findAll('panelallocation').then((panels) => {
           panels.forEach(function(panel){
-            //console.log('        checking panelID=' + panel.get('id') + ' allocationID=' + panel.get('allocationID'));
+            // console.log('        checking panelID=' + panel.get('id') + ' allocationID=' + panel.get('allocationID'));
             if ((panel.get('allocationID') === undefined) || (panel.get('allocationID') === currentAllocationIteration - 1)) {
               //console.log('            setting panelID=' + panel.get('id') + ' to=' + currentAllocationIteration);
               // For the first run through where the 1-10s are loaded without allocations OR
