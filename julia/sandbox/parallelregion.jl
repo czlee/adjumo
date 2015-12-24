@@ -17,7 +17,7 @@ function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, 
     end
 
     Πα = Matrix{Float64}(ndebates, npanels)
-    @time for (p, panel) in enumerate(feasiblepanels), (d, dinfo) in enumerate(debateinfos)
+    for (p, panel) in enumerate(feasiblepanels), (d, dinfo) in enumerate(debateinfos)
         Πα[d,p] = panelregionalrepresentationscore(dinfo..., panel)
     end
     return Πα
@@ -35,7 +35,7 @@ function regionalrepresentationmatrix_dist(feasiblepanels::Vector{AdjudicatorPan
 
     # Parallelize this part, it's heavy
     Πα = SharedArray(Float64, (ndebates, npanels))
-    @time @sync @parallel for p in 1:length(feasiblepanels)
+    @sync @parallel for p in 1:length(feasiblepanels)
         panel = feasiblepanels[p]
         for (d, dinfo) in enumerate(debateinfos)
             Πα[d,p] = panelregionalrepresentationscore(dinfo..., panel)
