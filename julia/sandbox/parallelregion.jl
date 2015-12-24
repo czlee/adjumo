@@ -3,7 +3,7 @@
 push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
-import Adjumo: panelregionalrepresentationscore
+import Adjumo: debateregionclass, DebateRegionClass, panelregionalrepresentationscore
 using AdjumoDataTools
 
 function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
@@ -35,8 +35,10 @@ function regionalrepresentationmatrix_dist(feasiblepanels::Vector{AdjudicatorPan
 
     # Parallelize this part, it's heavy
     Πα = SharedArray(Float64, (ndebates, npanels))
-    @time @sync @parallel for (p, panel) in enumerate(feasiblepanels), (d, dinfo) in enumerate(debateinfos)
-        Πα[d,p] = panelregionalrepresentationscore(dinfo..., panel)
+    @time @sync @parallel for (p, panel) in enumerate(feasiblepanels)
+        for (d, dinfo) in enumerate(debateinfos)
+            Πα[d,p] = panelregionalrepresentationscore(dinfo..., panel)
+        end
     end
     return Πα
 end
