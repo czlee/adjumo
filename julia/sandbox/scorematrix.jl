@@ -86,6 +86,10 @@ argsettings = ArgParseSettings()
         help = "Import a Tabbie2 export file"
         metavar = "JSONFILE"
         default = ""
+    "-l", "--limitpanels"
+        help = "Limit how many panels it samples"
+        arg_type = Int
+        default = typemax(Int)
 end
 args = parse_args(ARGS, argsettings)
 
@@ -103,7 +107,7 @@ elseif length(args["tabbie1"]) > 0
 else
     roundinfo = randomroundinfo(ndebates, currentround)
 end
-feasiblepanels = generatefeasiblepanels(roundinfo)
+feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=args["limitpanels"])
 
 # once first to compile
 smallroundinfo = randomroundinfo(5, 2)
