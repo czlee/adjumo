@@ -14,6 +14,7 @@ You then need to install the required packages:
 ``` julia
 Pkg.add("JuMP")
 Pkg.add("JSON")
+Pkg.add("StatsBase")
 ```
 
 Some functions also require the following:
@@ -23,7 +24,6 @@ Pkg.add("Formatting")                                      # required only for c
 Pkg.add("Iterators")                                       # required only for AdjumoDataTools
 Pkg.clone("https://github.com/JuliaDB/DBI.jl.git")         # required only for Tabbie1 data use
 Pkg.clone("https://github.com/JuliaDB/PostgreSQL.jl.git")  # required only for Tabbie1 data use
-Pkg.add("StatsBase")                                       # required only for some sandbox scripts
 ```
 
 You also need to install a solver. There are three options: Gurobi, CBC and GLPK. You only need one of them.

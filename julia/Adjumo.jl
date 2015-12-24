@@ -8,7 +8,10 @@ module Adjumo
 
 using JuMP
 using MathProgBase
+using JSON
 using StatsBase
+
+typealias JsonDict Dict{AbstractString,Any}
 
 SUPPORTED_SOLVERS = [
     ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap,   :Threads),
@@ -18,18 +21,19 @@ SUPPORTED_SOLVERS = [
 
 include("types.jl")
 include("score.jl")
-include("importtabbie2.jl")
+include("importjson.jl")
 include("exportjson.jl")
+include("importtabbie2.jl")
 include("exporttabbie2.jl")
 
 export allocateadjudicators, generatefeasiblepanels
 
 "Top-level adjudicator allocation function."
-function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int), α=1.0)
+function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int))
 
     procstoadd = threads - nprocs()
     if procstoadd > 0
-        println("Adding $procstoadd to make $threads processes in total")
+        println("Adding $procstoadd processes to make $threads processes in total")
         procsadded = addprocs(procstoadd)
     end
 
@@ -37,7 +41,7 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
     @time feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=limitpanels)
 
     println("score matrix:")
-    @time Σ = scorematrix(roundinfo, feasiblepanels; α=α)
+    @time Σ = scorematrix(roundinfo, feasiblepanels)
 
     println("panel membership matrix:")
     @time Q = panelmembershipmatrix(roundinfo, feasiblepanels)

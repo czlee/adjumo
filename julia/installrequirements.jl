@@ -7,6 +7,7 @@
 Pkg.add("JuMP")
 Pkg.add("ArgParse")
 Pkg.add("Iterators")
+Pkg.add("StatsBase")
 Pkg.clone("https://github.com/czlee/Formatting.jl.git")
 if "gurobi" ∈ ARGS
     Pkg.add("Gurobi")

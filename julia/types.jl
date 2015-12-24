@@ -186,10 +186,11 @@ type AdjumoComponentWeights
     adjhistory::Float64
     teamconflict::Float64
     adjconflict::Float64
+    α::Float64
 end
 
-AdjumoComponentWeights() = AdjumoComponentWeights(1,1,1,1,1,1,1,1)
 AdjumoComponentWeights(v::Vector) = AdjumoComponentWeights(v...)
+AdjumoComponentWeights() = AdjumoComponentWeights(ones(nfields(AdjumoComponentWeights)))
 
 # ==============================================================================
 # Round information

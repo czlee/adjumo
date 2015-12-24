@@ -1,5 +1,5 @@
-include("types.jl")
-include("score.jl")
+push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
+using Adjumo
 using Iterators
 
 ranks = [instances(Wudc2015AdjudicatorRank)...]

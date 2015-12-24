@@ -61,7 +61,7 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 - `feasiblepanels` is a list of AdjudicatorPanel instances.
 `roundinfo` is a RoundInfo instance.
 """
-function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; α::Float64=1.0)
+function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     componentweights = roundinfo.componentweights
     debateweights = getdebateweights(roundinfo)
     Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
@@ -72,7 +72,7 @@ function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPan
     Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
     Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
-    Σ = weightedαfairness(debateweights, Σ, α)
+    Σ = weightedαfairness(debateweights, Σ, componentweights.α)
     return Σ
 end
 
@@ -84,7 +84,8 @@ end
 
 """
 Returns the score for the given panel and debate, using the round information.
-This score does *not* account for the weight of the debate.
+This score does *not* account for the weight of the debate, nor does it account
+for weighted α-fairness.
 """
 function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
     componentweights = roundinfo.componentweights

@@ -23,7 +23,10 @@ argsettings = ArgParseSettings()
         action = :store_true
     "--json-dir"
         help = "Where to write JSON files upon completion."
-        default = "../frontend/public/data"
+        default = joinpath(Base.source_dir(), "../frontend/public/data")
+    "--weights-file"
+        help = "Where to find the component weights JSON file."
+        default = joinpath(Base.source_dir(), "../backend/data/allocation-config.json")
     "--tabbie1"
         help = "Import a Tabbie1 database: <username> <password> <database>"
         metavar = "ARG"
@@ -38,7 +41,7 @@ argsettings = ArgParseSettings()
     "-g", "--gap"
         help = "Tolerance gap"
         arg_type = Float64
-        default = 1e-2
+        default = 1.2e-2
     "-t", "--threads"
         help = "Number of threads to use for solver"
         arg_type = Int
@@ -47,24 +50,12 @@ argsettings = ArgParseSettings()
         help = "Limit how many panels it samples"
         arg_type = Int
         default = typemax(Int)
-    "-a", "--alpha"
-        help = "α-fairness parameter"
-        arg_type = Float64
-        default = 1.0
 end
 args = parse_args(ARGS, argsettings)
 
 ndebates = args["ndebates"]
 currentround = args["currentround"]
-componentweights = AdjumoComponentWeights()
-componentweights.quality = 1
-componentweights.regional = 1
-componentweights.language = 1
-componentweights.gender = 5
-componentweights.teamhistory = 25
-componentweights.adjhistory = 25
-componentweights.teamconflict = 1e3
-componentweights.adjconflict = 1e3
+
 if length(args["tabbie2"]) > 0
     tabbie2file = open(args["tabbie2"])
     roundinfo = importtabbiejson(tabbie2file)
@@ -77,13 +68,16 @@ elseif length(args["tabbie1"]) > 0
 else
     roundinfo = randomroundinfo(ndebates, currentround)
 end
-roundinfo.componentweights = componentweights
+
+componentweightsfile = open(args["weights-file"])
+importcomponentweightsjsonintoroundinfo!(roundinfo, componentweightsfile)
+close(componentweightsfile)
+
 println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 
 allocations = allocateadjudicators(roundinfo; solver=args["solver"],
         enforceteamconflicts=args["enforce-team-conflicts"],
-        gap=args["gap"], threads=args["threads"], limitpanels=args["limitpanels"],
-        α=args["alpha"])
+        gap=args["gap"], threads=args["threads"], limitpanels=args["limitpanels"])
 
 println("Writing JSON files...")
 directory = args["json-dir"]
@@ -92,10 +86,9 @@ exportroundinfo(roundinfo, directory)
 exportallocations(allocations, directory)
 exporttabbiejson(allocations, directory)
 
-
 if args["show"]
     showconstraints(roundinfo)
     for allocation in allocations
-        showdebatedetail(roundinfo, allocation; α=args["alpha"])
+        showdebatedetail(roundinfo, allocation)
     end
 end
