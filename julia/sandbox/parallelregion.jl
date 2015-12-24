@@ -62,12 +62,31 @@ argsettings = ArgParseSettings()
         help = "Current round number"
         arg_type = Int
         default = 5
+    "--tabbie1"
+        help = "Import a Tabbie1 database: <username> <password> <database>"
+        metavar = "ARG"
+        nargs = 3
+    "--tabbie2"
+        help = "Import a Tabbie2 export file"
+        metavar = "JSONFILE"
+        default = ""
 end
 args = parse_args(ARGS, argsettings)
 
 ndebates = args["ndebates"]
 currentround = args["currentround"]
-roundinfo = randomroundinfo(ndebates, currentround)
+if length(args["tabbie2"]) > 0
+    tabbie2file = open(args["tabbie2"])
+    roundinfo = importtabbiejson(tabbie2file)
+elseif length(args["tabbie1"]) > 0
+    using DBI
+    using PostgreSQL
+    username, password, database = args["tabbie1"]
+    dbconnection = connect(Postgres, "localhost", username, password, database, 5432)
+    roundinfo = gettabbie1roundinfo(dbconnection, currentround)
+else
+    roundinfo = randomroundinfo(ndebates, currentround)
+end
 feasiblepanels = generatefeasiblepanels(roundinfo)
 
 # once first to compile
