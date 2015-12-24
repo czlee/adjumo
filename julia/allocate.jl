@@ -82,7 +82,7 @@ kwargs = Dict(:solver=>args["solver"],
         :enforceteamconflicts=>args["enforce-team-conflicts"],
         :gap=>args["gap"], :threads=>args["threads"], :limitpanels=>args["limitpanels"])
 
-if args["feasible-panels"]
+if length(args["feasible-panels"]) > 0
     f = open(args["feasible-panels"])
     feasiblepanels = importfeasiblepanels(f)
     close(f)
