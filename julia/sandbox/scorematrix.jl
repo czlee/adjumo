@@ -17,8 +17,7 @@ function scorematrix1(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPa
     Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
     Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
     Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
-    Σ = weightedαfairness(debateweights, Σ, componentweights.α)
-    return Σ
+    return weightedαfairness(debateweights, Σ, componentweights.α)
 end
 
 function scorematrix2(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
@@ -40,8 +39,7 @@ function scorematrix2(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPa
     Σ += componentweights.adjhistory   * fetch(Ha)
     Σ += componentweights.teamconflict * fetch(Ct)
     Σ += componentweights.adjconflict  * fetch(Ca)
-    Σ = weightedαfairness(debateweights, Σ, componentweights.α)
-    return Σ
+    return weightedαfairness(debateweights, Σ, componentweights.α)
 end
 
 function scorematrix3(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
@@ -63,8 +61,7 @@ function scorematrix3(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPa
     Σ += componentweights.adjconflict  * fetch(Ca)
     Σ += componentweights.teamhistory  * fetch(Ht)
     Σ += componentweights.adjhistory   * fetch(Ha)
-    Σ = weightedαfairness(debateweights, Σ, componentweights.α)
-    return Σ
+    return weightedαfairness(debateweights, Σ, componentweights.α)
 end
 
 argsettings = ArgParseSettings()

@@ -38,7 +38,7 @@ function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPan
     @time Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
     @time Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
     @time Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
-    Σ = weightedαfairness(debateweights, Σ, componentweights.α)
+    return weightedαfairness(debateweights, Σ, componentweights.α)
     return Σ
 end
 
