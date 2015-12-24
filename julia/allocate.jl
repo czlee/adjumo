@@ -78,9 +78,9 @@ close(componentweightsfile)
 
 println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 
-kwargs = Dict(solver=>args["solver"],
-        enforceteamconflicts=>args["enforce-team-conflicts"],
-        gap=>args["gap"], threads=>args["threads"], limitpanels=>args["limitpanels"])
+kwargs = Dict(:solver=>args["solver"],
+        :enforceteamconflicts=>args["enforce-team-conflicts"],
+        :gap=>args["gap"], :threads=>args["threads"], :limitpanels=>args["limitpanels"])
 
 if args["feasible-panels"]
     f = open(args["feasible-panels"])
