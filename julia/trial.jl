@@ -61,10 +61,10 @@ componentweights.quality = 1
 componentweights.regional = 1
 componentweights.language = 1
 componentweights.gender = 1
-componentweights.teamhistory = 100
-componentweights.adjhistory = 100
-componentweights.teamconflict = 1e6
-componentweights.adjconflict = 1e6
+componentweights.teamhistory = 25
+componentweights.adjhistory = 25
+componentweights.teamconflict = 1e3
+componentweights.adjconflict = 1e3
 if length(args["tabbie2"]) > 0
     tabbie2file = open(args["tabbie2"])
     roundinfo = importtabbiejson(tabbie2file)
