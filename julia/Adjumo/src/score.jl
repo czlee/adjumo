@@ -17,41 +17,6 @@ export scorematrix, score, panelquality,
 # ==============================================================================
 
 """
-Returns the weighted α-fairness value for the given weight w, score σ and α.
-This will return -Inf if σ is 0 or negative.
-"""
-function weightedαfairness(w::Float64, σ::Float64, α::Float64)
-    if α < 1.0
-        σ = max(σ, zero(σ))
-        σ = w^α * σ^(1.0-α)
-    elseif α == 1.0
-        σ = max(σ, eps())
-        σ = w * log(σ)
-    else
-        σ = max(σ, eps())
-        σ = - w^α * σ^(1.0-α)
-    end
-end
-
-"""
-Returns the weighted α-fairness values for the given weights w, score matrix Σ
-and α. This will return log(eps()) if Σ is 0 or negative.
-"""
-function weightedαfairness(w::Vector{Float64}, Σ::Matrix{Float64}, α::Float64)
-    if α < 1.0
-        Σ = max(Σ, zeros(Σ))
-        return spdiagm(w.^α) * Σ.^(1.0-α)
-    elseif α == 1.0
-        Σ = max(Σ, eps()*ones(Σ))
-        return spdiagm(w) * log(Σ)
-        # return max(Σ, nextfloat(-Inf)*ones(Σ))
-    else
-        Σ = max(Σ, eps()*ones(Σ))
-        return -spdiagm(w.^α) * Σ.^(1.0-α)
-    end
-end
-
-"""
 Returns the score matrix using the round information.
 
 The score matrix (denoted `Σ`) will be an `ndebates`-by-`npanels` matrix, where
@@ -99,6 +64,45 @@ function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
     σ += componentweights.teamconflict * teamadjconflictsscore(roundinfo, debate, panel)
     σ += componentweights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
     return σ
+end
+
+# ==============================================================================
+# Weighted α-fairness
+# ==============================================================================
+
+"""
+Returns the weighted α-fairness value for the given weight w, score σ and α.
+This will return -Inf if σ is 0 or negative.
+"""
+function weightedαfairness(w::Float64, σ::Float64, α::Float64)
+    if α < 1.0
+        σ = max(σ, zero(σ))
+        σ = w^α * σ^(1.0-α)
+    elseif α == 1.0
+        σ = max(σ, eps())
+        σ = w * log(σ)
+    else
+        σ = max(σ, eps())
+        σ = - w^α * σ^(1.0-α)
+    end
+end
+
+"""
+Returns the weighted α-fairness values for the given weights w, score matrix Σ
+and α. This will return log(eps()) if Σ is 0 or negative.
+"""
+function weightedαfairness(w::Vector{Float64}, Σ::Matrix{Float64}, α::Float64)
+    if α < 1.0
+        Σ = max(Σ, zeros(Σ))
+        return spdiagm(w.^α) * Σ.^(1.0-α)
+    elseif α == 1.0
+        Σ = max(Σ, eps()*ones(Σ))
+        return spdiagm(w) * log(Σ)
+        # return max(Σ, nextfloat(-Inf)*ones(Σ))
+    else
+        Σ = max(Σ, eps()*ones(Σ))
+        return -spdiagm(w.^α) * Σ.^(1.0-α)
+    end
 end
 
 # ==============================================================================
