@@ -10,46 +10,35 @@ function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, 
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
 
-    teamregions = Vector{Vector{Region}}(ndebates)
+    debateinfos = Vector{Tuple{DebateRegionClass, Vector{Region}}}(ndebates)
     for (i, debate) in enumerate(roundinfo.debates)
-        teamregions[i] = Region[t.region for t in debate]
+        teamregions = Region[t.region for t in debate.teams]
+        debateinfos[i] = debateregionclass(teamregions)
     end
 
-    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
-    for (i, panel) in enumerate(feasiblepanels)
-        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
+    Πα = Matrix{Float64}(ndebates, npanels)
+    @time for (p, panel) in enumerate(feasiblepanels), (d, dinfo) in enumerate(debateinfos)
+        Πα[d,p] = panelregionalrepresentationscore(dinfo..., panel)
     end
-
-    βr = Matrix{Float64}(ndebates, npanels)
-    @time for (p, (nadjs, adjregions)) in enumerate(panelinfos), (d, tr) in enumerate(teamregions)
-        βr[d,p] = panelregionalrepresentationscore(tr, adjregions, nadjs)
-    end
-    return βr
+    return Πα
 end
 
 function regionalrepresentationmatrix_dist(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
 
-    teamregions = Vector{Vector{Region}}(ndebates)
+    debateinfos = Vector{Tuple{DebateRegionClass, Vector{Region}}}(ndebates)
     for (i, debate) in enumerate(roundinfo.debates)
-        teamregions[i] = Region[t.region for t in debate]
-    end
-
-    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
-    for (i, panel) in enumerate(feasiblepanels)
-        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
+        teamregions = Region[t.region for t in debate.teams]
+        debateinfos[i] = debateregionclass(teamregions)
     end
 
     # Parallelize this part, it's heavy
-    βr = SharedArray(Float64, (ndebates, npanels))
-    @time @sync @parallel for p in 1:length(panelinfos)
-        nadjs, adjregions = panelinfos[p]
-        for (d, tr) in enumerate(teamregions)
-            βr[d,p] = panelregionalrepresentationscore(tr, adjregions, nadjs)
-        end
+    Πα = SharedArray(Float64, (ndebates, npanels))
+    @time @sync @parallel for (p, panel) in enumerate(feasiblepanels), (d, dinfo) in enumerate(debateinfos)
+        Πα[d,p] = panelregionalrepresentationscore(dinfo..., panel)
     end
-    return βr
+    return Πα
 end
 
 argsettings = ArgParseSettings()
