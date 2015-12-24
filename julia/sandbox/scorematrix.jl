@@ -87,10 +87,10 @@ smallfeasiblepanels = generatefeasiblepanels(smallroundinfo)
 scorematrix1(roundinfo, feasiblepanels)
 scorematrix2(roundinfo, feasiblepanels)
 
-println("serial:")
-@time A = scorematrix1
 println("parallel:")
-@time B = scorematrix2
+@time B = scorematrix2(roundinfo, feasiblepanels)
+println("serial:")
+@time A = scorematrix1(roundinfo, feasiblepanels)
 @show size(A)
 @show size(B)
 @show sumabs(A-B)
