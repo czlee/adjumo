@@ -17,19 +17,20 @@ router.post('/allocation-configs/', function(req, res) {
     console.log('Allocation config file saved!');
   })
 
-  // The pass directly to Juila option
-  julia.exec('include','../julia/test.jl');
-  var dummyvalue = julia.exec('pretendAllocation',
-    parseInt(req.body.teamhistory),
-    parseInt(req.body.adjhistory),
-    parseInt(req.body.teamconflict),
-    parseInt(req.body.adjconflict),
-    parseInt(req.body.quality),
-    parseInt(req.body.regional),
-    parseInt(req.body.language),
-    parseInt(req.body.gender)
-  );
-  console.log('dummyvalue=' + dummyvalue);
+  // // The pass directly to Juila option
+  // julia.exec('include','../julia/test.jl');
+  // var dummyvalue = julia.exec('pretendAllocation',
+  //   parseInt(req.body.teamhistory),
+  //   parseInt(req.body.adjhistory),
+  //   parseInt(req.body.teamconflict),
+  //   parseInt(req.body.adjconflict),
+  //   parseInt(req.body.quality),
+  //   parseInt(req.body.regional),
+  //   parseInt(req.body.language),
+  //   parseInt(req.body.gender)
+  //   parseInt(req.body.alpha)
+  // );
+  // console.log('dummyvalue=' + dummyvalue);
 
   res.send("ok");
   res.end();

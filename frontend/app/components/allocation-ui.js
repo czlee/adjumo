@@ -57,25 +57,27 @@ export default Ember.Component.extend({
     },
 
     checkWhetherToAddNewGroups: function() {
-      var fullGroups = 0;
-      var numberOfCurrentGroups = this.get('groups').length;
+
       var store = this.get('store'); // Reference the service injection at the top
 
-      this.get('groups').forEach(function(group) {
-        if (group.get('groupAdjudicators').get('content').length >= 2) {
-          fullGroups+= 1;
+      store.findAll('group').then((groups) => {
+        var fullGroups = 0;
+        var numberOfCurrentGroups = groups.get('length');
+
+        groups.forEach(function(group) {
+          if (group.get('groupAdjudicators').get('content').length > 1) {
+            fullGroups+= 1;
+          }
+        });
+
+        if (fullGroups === numberOfCurrentGroups) {
+          // If full we push two new rows to the table to be filled
+          store.createRecord('group', { id: numberOfCurrentGroups + 1 });
+          store.createRecord('group', { id: numberOfCurrentGroups + 2 });
         }
+
       });
-      if (fullGroups === numberOfCurrentGroups) {
-        console.log('all full');
-        // If full we push two new rows to the table to be filled
-        this.get('groups').pushObject(store.createRecord('group', {
-          id: numberOfCurrentGroups + 1
-        }));
-        this.get('groups').pushObject(store.createRecord('group', {
-          id: numberOfCurrentGroups + 2
-        }));
-      }
+
     },
 
   },

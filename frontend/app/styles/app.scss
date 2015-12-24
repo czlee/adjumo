@@ -263,20 +263,13 @@ td.head-panel {
 #allocation {
   margin-bottom: 125px; /* So you can scroll past the unused table */
 }
-#allAdjs {
-  height: 100px;
-}
-#unusedAdjs {
-  height: 51px;
-}
 
 .adj-bottom-panel {
   overflow: auto;
   padding: 4px 5px 5px 5px;
   border-top: 2px solid rgb(200, 200, 200);
-  overflow: hidden;
-}
-.all-adjs-panel {
+  overflow-y: scroll;
+  max-height: 600px;
   height: 100px; // Otherwise it becomes huge loading all the adjs
 }
 .resize-holder {

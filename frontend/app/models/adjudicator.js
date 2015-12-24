@@ -106,8 +106,12 @@ export default DS.Model.extend(DebateableMixin, {
 
   short_name: Ember.computed('name', function() {
     var words = this.get('name').split(" ");
-    var short_name = words[0] + " " + words[1][0];
-    return short_name;
+    if (words[1] !== undefined) {
+      return words[0] + " " + words[1][0]; // If they only have a first name in the system
+    } else {
+      return words[0];
+    }
+
   }),
 
   genderName: Ember.computed('gender', function() {

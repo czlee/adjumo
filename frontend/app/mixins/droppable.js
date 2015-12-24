@@ -13,7 +13,6 @@ export default Ember.Mixin.create({
 
     this.$().addClass('dragging-over');
     this.dragCounter++;
-    console.log('drag enter' + this.dragCounter);
 
     return false;
   },
@@ -25,7 +24,6 @@ export default Ember.Mixin.create({
     if (this.dragCounter === 0) {
       this.$().removeClass('dragging-over');
     }
-    console.log('drag leave, count is ' + this.dragCounter);
 
     return false;
   },

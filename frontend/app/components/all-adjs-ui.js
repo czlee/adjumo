@@ -7,7 +7,7 @@ export default Ember.Component.extend(AdjHolderMixing, {
 
   typeClass: '.all-adjs-panel', // For resizing
   minHeight: 45,
-  maxHeight: 400,
+  maxHeight: 1400,
 
   drop: function(event){
 
