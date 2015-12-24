@@ -42,7 +42,7 @@ argsettings = ArgParseSettings()
     "-t", "--threads"
         help = "Number of threads to use for solver"
         arg_type = Int
-        default = 8
+        default = CPU_CORES
     "-l", "--limitpanels"
         help = "Limit how many panels it samples"
         arg_type = Int

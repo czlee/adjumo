@@ -115,6 +115,7 @@ adjudicator at index `a`.
 """
 qualityvector(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo) = qualityvector(feasiblepanels)
 qualityvector(feasiblepanels::Vector{AdjudicatorPanel}) = Float64[panelquality(panel) for panel in feasiblepanels]
+panelquality(adjs::Vector{Adjudicator}) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in adjs])
 panelquality(panel::AdjudicatorPanel) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in adjlist(panel)])
 
 const JUDGE_SCORES = Float64[
