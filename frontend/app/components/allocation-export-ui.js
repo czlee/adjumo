@@ -45,11 +45,6 @@ export default Ember.Component.extend({
         console.log('exporting: ');
         console.log(JSON.stringify(exportData));
 
-        // var posting = $.post('/tabbie2-test', exportData);
-        // posting.done(function() { // ASYNC: waiting for file write
-        //   console.log('ALLOCATION EXPORT: saved blocks data to file');
-        // });
-
         $.ajax({
             type: "POST",
             url: "/tabbie2-test",
@@ -60,7 +55,6 @@ export default Ember.Component.extend({
               console.log('ALLOCATION EXPORT: saved blocks data to file');
             }
         });
-
 
       } else {
           console.log('ALLOCATION EXPORT: no data');

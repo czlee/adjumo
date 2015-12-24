@@ -10,6 +10,9 @@ export default DS.Model.extend({
   debate: DS.belongsTo('debate'),
 
   allocation: DS.belongsTo('allocation-iteration'),
+  allocationID: DS.attr('number'),
+
+  score: DS.attr('number'),
 
   // Change these to a single all adjs property
   conflicts: Ember.computed('chair', 'panellists', 'trainees', function() {
