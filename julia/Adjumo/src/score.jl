@@ -64,14 +64,15 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     componentweights = roundinfo.componentweights
     debateweights = getdebateweights(roundinfo)
-    Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
-    Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += componentweights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += componentweights.teamhistory  * teamadjhistorymatrix(feasiblepanels, roundinfo)
-    Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
-    Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
-    Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
+    println("score matrix components:")
+    @time Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
+    @time Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
+    @time Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
+    @time Σ += componentweights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
+    @time Σ += componentweights.teamhistory  * teamadjhistorymatrix(feasiblepanels, roundinfo)
+    @time Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
+    @time Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
+    @time Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
     Σ = weightedαfairness(debateweights, Σ, componentweights.α)
     return Σ
 end
@@ -173,11 +174,6 @@ function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, 
         teamregions = Region[t.region for t in debate.teams]
         debateinfos[i] = debateregionclass(teamregions)
     end
-
-    # panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
-    # for (i, panel) in enumerate(feasiblepanels)
-    #     panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
-    # end
 
     Πα = Matrix{Float64}(ndebates, npanels)
     for (p, panel) in enumerate(feasiblepanels), (d, dinfo) in enumerate(debateinfos)
