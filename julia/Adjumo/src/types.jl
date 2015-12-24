@@ -187,6 +187,10 @@ type AdjumoComponentWeights
     teamconflict::Float64
     adjconflict::Float64
     α::Float64
+    qualitydeficit::Float64
+    regionaldeficit::Float64
+    languagedeficit::Float64
+    genderdeficit::Float64
 end
 
 AdjumoComponentWeights(v::Vector) = AdjumoComponentWeights(v...)
