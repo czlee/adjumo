@@ -5,7 +5,7 @@ export default Ember.Component.extend({
   showingGender: false,
   showingRegion: false,
   showingLanguage: false,
-  showingRanking: true,
+  showingRanking: false,
 
   genderOn: function() {
     this.set('showingGender', true);

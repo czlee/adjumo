@@ -7,7 +7,7 @@ export default Ember.Component.extend(DraggableMixin, {
   tagName: 'button',
   draggable: 'true',
 
-  classNames: ['btn', 'adjudicator-ui', 'ranking-display', 'js-drag-handle', 'popover-trigger'],
+  classNames: ['btn', 'adjudicator-ui', 'js-drag-handle', 'popover-trigger'],
   classNameBindings: ['ranking', 'locked'],
 
   adjorTeam: Ember.computed('adj', function() {
