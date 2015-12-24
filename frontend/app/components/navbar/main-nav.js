@@ -13,8 +13,8 @@ export default Ember.Component.extend({
       $(".preallocation").toggleClass("hidden");
       $(".allocation").toggleClass("hidden");
       // Adj Area
-      $("#allAdjs").toggleClass("hidden");
-      $("#unusedAdjs").toggleClass("hidden");
+      $(".all-adjs-panel").toggleClass("hidden");
+      $(".unused-adjs-panel").toggleClass("hidden");
     },
 
     startNewAllocation: function() {
@@ -25,9 +25,10 @@ export default Ember.Component.extend({
       $(".preallocation").addClass("hidden");
       $(".allocation").removeClass("hidden");
       // Do this after the UI stuff as the new UI allocation has active on
+
       // Adj Area
-      $("#allAdjs").addClass("hidden");
-      $("#unusedAdjs").removeClass("hidden");
+      $(".all-adjs-panel").addClass("hidden");
+      $(".unused-adjs-panel").removeClass("hidden");
 
       this.sendAction('startNewAllocation'); // Calls up to index.js' createAllocation
 
