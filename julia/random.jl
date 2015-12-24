@@ -51,7 +51,7 @@ function randpair(v::Vector)
 end
 
 function randomroundinfo(ndebates::Int, currentround::Int)
-    nadjs = 3ndebates
+    nadjs = Integer(3.5ndebates)
     nteams = 4ndebates
     ninstitutions = 2ndebates
 
