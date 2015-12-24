@@ -81,8 +81,10 @@ end
 feasiblepanels = generatefeasiblepanels(roundinfo)
 
 # once first to compile
-regionalrepresentationmatrix(feasiblepanels, roundinfo)
-regionalrepresentationmatrix_dist(feasiblepanels, roundinfo)
+smallroundinfo = randomroundinfo(5, 2)
+smallfeasiblepanels = generatefeasiblepanels(smallroundinfo)
+regionalrepresentationmatrix(smallfeasiblepanels, smallroundinfo)
+regionalrepresentationmatrix_dist(smallfeasiblepanels, smallroundinfo)
 
 println("serial:")
 @time A = regionalrepresentationmatrix(feasiblepanels, roundinfo)
