@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import DraggableMixin from '../mixins/draggable'; // Draggable inherits from adjOrTeam
+import DraggableMixin from '../../mixins/draggable'; // Draggable inherits from adjOrTeam
 
 export default Ember.Component.extend(DraggableMixin, {
 
@@ -60,6 +60,8 @@ export default Ember.Component.extend(DraggableMixin, {
     } else if (containerElement.hasClass("trainee")) {
       dataTransfer.setData('fromType', 'trainees');
       dataTransfer.setData('PanelID', this.get('adj').get('panel').get('id'));
+    } else if (containerElement.hasClass("adj-group")) {
+      dataTransfer.setData('fromType', 'group');
     }
 
     return this._super(event);

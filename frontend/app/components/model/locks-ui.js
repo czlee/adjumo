@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import DroppableMixin from '../mixins/droppable';
+import DroppableMixin from '../../mixins/droppable';
 
 // This is a copy of bans-ui. TODO: refactor/abstract
 

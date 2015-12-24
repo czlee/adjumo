@@ -24,39 +24,35 @@
             <li class="list-group-item btn-toolbar-holder">
                 <div class="btn-toolbar">
                     <div class="btn-group" role="group">
-                        <div class="btn btn-default btn-sm">
-                            <span class="text-danger glyphicon glyphicon-remove"></span>
-                        </div>
                         {{#if team.adjConflicts }}
                             {{#each team.adjConflicts as |conflict| }}
                                 {{#if conflict.active }}
-                                    <div class="btn btn-default btn-sm panel-adj-conflict">{{conflict.adjudicator.name}}</div>
-                                {{else}}
-                                    <div class="btn btn-default btn-sm">{{conflict.adjudicator.name}}</div>
+                                    <div class="btn btn-default btn-sm">
+                                        <span class="text-danger glyphicon glyphicon-remove"></span>
+                                    </div>
+                                    <div class="btn btn-sm panel-adj-conflict">{{conflict.adjudicator.name}}</div>
                                 {{/if}}
                             {{/each}}
                         {{else}}
                             <div class="btn btn-default btn-sm">None</div>
                         {{/if}}
                     </div>
-                    {{#if team.adjHistory }}
-                        {{#each team.adjHistoryLinear as |history| }}
-                        <div class="btn-group" role="group">
-                            <div class="btn btn-default btn-sm">
-                                <span class="text-primary"><span class=" glyphicon glyphicon-time"></span> {{history.round }}</span>
-                            </div>
-                            {{#each history.teamHistories as |teamHistory| }}
-                                {{#if teamHistory.active }}
-                                    <div class="btn btn-default panel-history-conflict btn-sm">{{teamHistory.adjudicator.short_name }}</div>
-                                {{else}}
-                                    <div class="btn btn-default btn-sm">{{teamHistory.adjudicator.short_name }}</div>
-                                {{/if}}
+                    <div class="btn-group" role="group">
+                        {{#if team.adjHistory }}
+                            {{#each team.adjHistoryLinear as |history| }}
+                                {{#each history.teamHistories as |teamHistory| }}
+                                    {{#if teamHistory.active }}
+                                        <div class="btn btn-default btn-sm">
+                                            <span class="text-primary"><span class=" glyphicon glyphicon-time"></span> {{history.round }}</span>
+                                        </div>
+                                        <div class="btn  btn-sm panel-history-conflict">{{teamHistory.adjudicator.short_name }}</div>
+                                    {{/if}}
+                                {{/each}}
                             {{/each}}
-                        </div>
-                        {{/each}}
-                    {{else}}
-                        <div class="btn btn-default btn-sm">None</div>
-                    {{/if}}
+                        {{else}}
+                            <div class="btn btn-default btn-sm">None</div>
+                        {{/if}}
+                    </div>
                 </div>
             </li>
         </ul>

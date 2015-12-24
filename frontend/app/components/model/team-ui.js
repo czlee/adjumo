@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import AdjorTeam from '../mixins/adjorteam';
+import AdjorTeam from '../../mixins/adjorteam';
 
 export default Ember.Component.extend(AdjorTeam, {
 

@@ -5,27 +5,25 @@
       Set Parameters
     </button>
     <button type="submit" class="btn btn-default" {{action "startNewAllocation"}}>
-      Create Allocation
+      Load Allocation
     </button>
   </div>
 
   <div class="form-inline pull-left navbar-form">
     {{#if showingLockBans }}
-      <button class="active btn btn-default lock-ban-nav btn-sm" {{action "showLockAndBans" }}>
-        <span class="glyphicon glyphicon-eye-close"></span>
-         Locks/Bans/Groups
+      <button class="active btn btn-default lock-ban-nav btn-sm" {{action "toggleLockAndBans" }}>
+        <span class="glyphicon glyphicon-eye-close"></span> Locks/Bans/Groups
       </button>
     {{else}}
-      <button class="btn btn-default lock-ban-nav btn-sm" {{action "showLockAndBans" }}>
-        <span class="glyphicon glyphicon-eye-open"></span>
-         Locks/Bans/Groups
+      <button class="btn btn-default lock-ban-nav btn-sm" {{action "toggleLockAndBans" }}>
+        <span class="glyphicon glyphicon-eye-open"></span> Locks/Bans/Groups
       </button>
     {{/if}}
+  </div>
+
+  <div class="form-inline pull-left navbar-form">
     {{#each allocations as |allocation| }}
-      <button class="btn btn-default active btn-sm allocation-nav allocation-nav-{{allocation.id}}" {{action "showAllocation" allocation.id }}>
-        <span class="glyphicon glyphicon-eye-close"></span><span class="glyphicon glyphicon-eye-open hidden"></span>
-          Allocation {{ allocation.id }}
-      </button>
+      {{allocation-toggle-ui allocation=allocation}}
     {{/each}}
   </div>
 
@@ -37,6 +35,6 @@
 
 </nav>
 
-{{export-ui allocations=allocations}}
+{{navbar/export-ui allocations=allocations}}
 
-{{parameters-ui config=config}}
+{{navbar/parameters-ui config=config}}

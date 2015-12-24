@@ -9,12 +9,12 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/allocation-configs/', function(req, res) {
-  console.log('posting an allocation config'); // populated!
+  //console.log('posting an allocation config');
 
   // THE JSON file-write option
-  fs.writeFile('data/allocation-config.json', JSON.stringify(req.body, null, 4), function(err){
+  fs.writeFile('data/allocation-config.json', JSON.stringify(req.body, null, 2), function(err){
     if (err) throw err;
-    console.log('File saved!');
+    console.log('Allocation config file saved!');
   })
 
   // The pass directly to Juila option
@@ -36,12 +36,60 @@ router.post('/allocation-configs/', function(req, res) {
 
 })
 
-router.post('/debate-importances/', function(req, res) {
-  console.log('posting debate importances'); // populated!
-  console.log(req.body); // populated!
-  fs.writeFile('data/debate-importances.json', JSON.stringify(req.body, null, 4), function(err){
+router.post('/groups/', function(req, res) {
+  console.log('posted groups:');
+  console.log(req.body);
+  fs.writeFile('data/grouped-adjs.json', JSON.stringify(req.body, null, 2), function(err){
     if (err) throw err;
-    console.log('File saved!');
+    console.log('Grouped adjs file saved!');
+  })
+  res.send("ok");
+  res.end();
+})
+
+
+router.post('/blocks/', function(req, res) {
+  console.log('posted blocks:');
+  console.log(req.body);
+  fs.writeFile('data/blockedadjs.json', JSON.stringify(req.body, null, 2), function(err){
+    if (err) throw err;
+    console.log('Blocked adjs file saved!');
+  })
+  res.send("ok");
+  res.end();
+})
+
+
+router.post('/locks/', function(req, res) {
+  console.log('posted locks:');
+  console.log(req.body);
+  fs.writeFile('data/lockedadjs.json', JSON.stringify(req.body, null, 2), function(err){
+    if (err) throw err;
+    console.log('Locked adjs file saved!');
+  })
+  res.send("ok");
+  res.end();
+})
+
+
+router.post('/debate-importances/', function(req, res) {
+  // console.log('posting debate importances'); // populated!
+  // console.log(req.body); // populated!
+  fs.writeFile('data/debate-importances.json', JSON.stringify(req.body, null, 2), function(err){
+    if (err) throw err;
+    console.log('Debate importances file saved!');
+  })
+  res.send("ok");
+  res.end();
+})
+
+
+
+router.post('/tabbie2-test/', function(req, res) {
+  // console.log(req.body);
+  fs.writeFile('data/tabbie2-test.json', JSON.stringify(req.body.exportData, null, 2), function(err){
+    if (err) throw err;
+    console.log('Tabbie 2 export file saved!');
   })
   res.send("ok");
   res.end();

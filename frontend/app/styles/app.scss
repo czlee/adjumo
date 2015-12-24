@@ -165,6 +165,9 @@ input[type=range]:hover {
   flex-basis: 60px;
 }
 
+.table>tbody>tr>td.debate-panel-holder {
+  padding: 0px;
+}
 .debate-panel {
   padding: 3px !important;
   .panel-stats {
@@ -173,6 +176,7 @@ input[type=range]:hover {
 }
 
 /* Panel Component */
+
 .panel-ui {
   overflow: auto;
   display: flex;
@@ -249,6 +253,13 @@ td.head-panel {
   background: #00FF50;
 }
 
+.adj-group {
+  min-height: 43px;
+  width: 50%;
+  float: left;
+  border: 1px solid #ddd;
+}
+
 #allocation {
   margin-bottom: 125px; /* So you can scroll past the unused table */
 }
@@ -264,6 +275,9 @@ td.head-panel {
   padding: 4px 5px 5px 5px;
   border-top: 2px solid rgb(200, 200, 200);
   overflow: hidden;
+}
+.all-adjs-panel {
+  height: 100px; // Otherwise it becomes huge loading all the adjs
 }
 .resize-holder {
   width: 30px;

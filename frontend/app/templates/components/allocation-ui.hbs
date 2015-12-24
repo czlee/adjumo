@@ -1,44 +1,31 @@
 <div id="main" class="container-fluid">
 
-
   <div class="row">
     <div class="col-sm-12">
-
-    {{representations-ui config=config}}
-
+      {{navbar/representations-ui config=config}}
     </div>
   </div>
 
-
   <div class="row preallocation">
 
-    <table id="groupings" class="table table-bordered" cellpadding="0" cellspacing="0">
+    <table id="grouping" class="table" cellpadding="0" cellspacing="0">
       <thead>
-        <tr>
-          <th class="head-panel">
-            <div class="flex-1 ">
-              Chair
-            </div>
-            <div class="flex-2 ">
-              Panel
-            </div>
-            <div class="flex-1">
-              Trainees
-            </div>
-          </th>
-        </tr>
-      </thead>
+          <tr>
+            <th class="text-center">
+              Groups
+            </th>
+          </tr>
+        </thead>
       <tbody>
         <tr>
-          <td class="debate-panel allocation">
-            {{panel-ui panel=panel adjudicators=''}}
-          </td>
+          {{#each groups as |group|}}
+            {{model/group-ui group=group adjudicators=adjudicators checkWhetherToAddNewGroups='checkWhetherToAddNewGroups'}}
+          {{/each}}
         </tr>
       </tbody>
     </table>
 
   </div>
-
 
   <div class="row">
 
@@ -131,7 +118,7 @@
         <tbody>
 
         {{#each filteredDebates as |debate-instance|}}
-            {{debate-ui debate=debate-instance adjudicators=adjudicators allocations=allocations}}
+            {{model/debate-ui debate=debate-instance adjudicators=adjudicators allocations=allocations}}
         {{/each}}
 
         <!-- ticker for input ranges -->

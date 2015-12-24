@@ -19,7 +19,7 @@ export default Ember.Mixin.create(DroppableMixin, {
   }),
 
   drop: function(event){
-    console.log('unused UI had a drop');
+    // console.log('unused UI had a drop');
 
     var droppedAdjID = event.originalEvent.dataTransfer.getData('AdjID');
     var droppedAdj = this.get('adjudicators').findBy('id', droppedAdjID);

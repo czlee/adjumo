@@ -48,8 +48,6 @@
                             {{#each adj.teamConflicts as |conflict| }}
                                 {{#if conflict.active }}
                                     <div class="btn btn-default btn-sm panel-team-conflict">{{conflict.team.name}}</div>
-                                 {{else}}
-                                    <div class="btn btn-default btn-sm">{{conflict.team.name}}</div>
                                 {{/if}}
                             {{/each}}
                         {{else}}
@@ -64,60 +62,41 @@
                             {{#each adj.adjConflictsWithOutSelf as |conflict| }}
                                 {{#if conflict.active }}
                                     <div class="btn btn-default panel-adj-conflict btn-sm">{{conflict.name}}</div>
-                                {{else}}
-                                    <div class="btn btn-default btn-sm">{{conflict.name}}</div>
                                 {{/if}}
                             {{/each}}
                         {{else}}
                             <div class="btn btn-default btn-sm">None</div>
                         {{/if}}
                     </div>
-
-                    {{#if adj.teamHistory }}
-                        {{#each adj.teamHistoryLinear as |history| }}
-                            <div class="btn-group" role="group">
-                                <div class="btn btn-default btn-sm">
-                                    <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.round}}</span>
-                                </div>
+                    <div class="btn-group" role="group">
+                        {{#if adj.teamHistory }}
+                            {{#each adj.teamHistoryLinear as |history| }}
                                 {{#each history.teamHistories as |teamHistory| }}
                                     {{#if teamHistory.active }}
-                                        <div class="btn btn-default panel-history-conflict btn-sm">{{teamHistory.team.name }}</div>
-                                    {{else}}
-                                        <div class="btn btn-default btn-sm">{{teamHistory.team.name }}</div>
+                                        <div class="btn btn-default btn-sm">
+                                            <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.round}}</span>
+                                        </div>
+                                        <div class="btn btn-primary panel-history-conflict btn-sm">{{teamHistory.team.name }}</div>
                                     {{/if}}
                                 {{/each}}
-                            </div>
-                        {{/each}}
-                    {{else}}
-                        <div class="btn btn-default btn-sm">None</div>
-                    {{/if}}
-
-
-                </div>
-
-            {{#if adj.adjHistory }}
-                <li class="list-group-item btn-toolbar-holder">
-                    {{#if adj.adjHistory }}
-                    <div class="btn-group" role="group">
-                        {{#each adj.adjHistoryLinear as |history| }}
-                            <div class="btn-group" role="group">
-                                <div class="btn btn-default btn-sm">
-                                    <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.round}}</span>
-                                </div>
+                            {{/each}}
+                        {{else}}
+                            <div class="btn btn-default btn-sm">None</div>
+                        {{/if}}
+                        {{#if adj.adjHistory }}
+                            {{#each adj.adjHistoryLinear as |history| }}
                                 {{#each history.historyWrapper as |historyWrap| }}
                                     {{#if historyWrap.active }}
-                                        <div class="btn btn-default panel-history-conflict btn-sm">{{ historyWrap.conflictingAdj.short_name }}</div>
-                                    {{else}}
-                                        <div class="btn btn-default btn-sm">{{ historyWrap.conflictingAdj.short_name }}</div>
+                                        <div class="btn btn-default btn-sm">
+                                            <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.round}}</span>
+                                        </div>
+                                        <div class="btn btn-primary panel-history-conflict btn-sm">{{ historyWrap.conflictingAdj.short_name }}</div>
                                     {{/if}}
                                 {{/each}}
-                            </div>
-                        {{/each}}
+                            {{/each}}
+                        {{/if}}
                     </div>
-                    {{/if}}
-                </li>
-            {{/if}}
-
+                </div>
             </li>
         </ul>
 

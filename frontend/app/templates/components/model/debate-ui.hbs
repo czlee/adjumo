@@ -16,16 +16,20 @@
 <td class="debate-importance-edit preallocation">
     {{input type="range" min="1" list="debate-ticks" max="10" step="1" value=debate.importance class="" }}
 </td>
-{{team-ui team=debate.og}}
-{{team-ui team=debate.oo}}
-{{team-ui team=debate.cg}}
-{{team-ui team=debate.co}}
-{{bans-ui debate=debate adjudicators=adjudicators}}
-{{locks-ui debate=debate adjudicators=adjudicators}}
+{{model/team-ui team=debate.og}}
+{{model/team-ui team=debate.oo}}
+{{model/team-ui team=debate.cg}}
+{{model/team-ui team=debate.co}}
+{{model/bans-ui debate=debate adjudicators=adjudicators}}
+{{model/locks-ui debate=debate adjudicators=adjudicators}}
 {{#if debate.panels }}
-    {{#each debate.panels as |panel|}}
-        {{panel-ui panel=panel adjudicators=adjudicators}}
-    {{/each}}
+    <td class="debate-panel-holder">
+        {{#each debate.panels as |panel|}}
+            {{#if panel.allocation.active }}
+                {{panel-ui panel=panel adjudicators=adjudicators}}
+            {{/if}}
+        {{/each}}
+    </td>
 {{else}}
     <td class="debate-panel allocation hidden"></td>
 {{/if}}

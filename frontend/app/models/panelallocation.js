@@ -1,4 +1,5 @@
 import DS from 'ember-data';
+import Ember from 'ember';
 
 export default DS.Model.extend({
 
@@ -9,6 +10,9 @@ export default DS.Model.extend({
   debate: DS.belongsTo('debate'),
 
   allocation: DS.belongsTo('allocation-iteration'),
+  allocationID: DS.attr('number'),
+
+  score: DS.attr('number'),
 
   // Change these to a single all adjs property
   conflicts: Ember.computed('chair', 'panellists', 'trainees', function() {
@@ -45,7 +49,7 @@ export default DS.Model.extend({
         teamConflict.set('active', false);
         // Get the team object each conflict linkts to
         debateTeams.forEach(function(debateTeam) {
-          console.log('checking ' + teamConflict.get('team'));
+          //console.log('checking ' + teamConflict.get('team'));
           // Check if the conflicted team is in the debate - have to match by ID as object matching not working
           if (debateTeam.get('id') === teamConflict.get('team').get('id')) {
             debateAdj.set('activePanelTeamConflict', true);
@@ -77,7 +81,6 @@ export default DS.Model.extend({
       debateAdj.get('teamHistory').forEach(function(historyItem) {
         historyItem.set('active', false);
         // Get the histories of each adjudicator
-        var seenTeamID = historyItem.get('team').get('id');
         //console.log('checking history for ' + debateAdj.get('name') + 'in round ' + round.round);
         //console.log('seen ' + seenTeamsIDs);
         // Check if the each team in the debate has been seen

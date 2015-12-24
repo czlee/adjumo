@@ -100,7 +100,6 @@ export default Ember.Mixin.create({
       });
       this.get('adjorTeam').set('activeHoveringHistoryConflict', false); // Dont highlight the current adj
 
-
     } else {
 
       this.get('adjorTeam').get('adjConflicts').forEach(function(teamConflict) {
