@@ -472,15 +472,12 @@ function debategenderclassweight(debate::Debate)
 end
 
 """
-Returns part 1 of the panel language score for the panel.
-Here's the table:
-Number of EPL judges 0   1 2 3 4
-               Score 3 2.5 2 1 0
+Returns the gender score for the panel.
 """
 function panelgenderscore(panel::AdjudicatorPanel)
     nfemale = count(a -> a.gender == PersonFemale, adjlist(panel))
     proportion = nfemale / numadjs(panel)
-    return nfemale - 0.5
+    return proportion - 0.5
 end
 
 # ==============================================================================
