@@ -165,6 +165,9 @@ input[type=range]:hover {
   flex-basis: 60px;
 }
 
+.table>tbody>tr>td.debate-panel-holder {
+  padding: 0px;
+}
 .debate-panel {
   padding: 3px !important;
   .panel-stats {

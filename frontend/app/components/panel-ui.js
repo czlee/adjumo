@@ -3,7 +3,7 @@ import DroppableMixin from '../mixins/droppable';
 
 export default Ember.Component.extend(DroppableMixin, {
 
-  tagName: 'td',
+  tagName: 'div',
   classNames: ['allocation', 'debate-panel'],
 
 });

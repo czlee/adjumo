@@ -23,9 +23,11 @@
 {{model/bans-ui debate=debate adjudicators=adjudicators}}
 {{model/locks-ui debate=debate adjudicators=adjudicators}}
 {{#if debate.panels }}
-    {{#each debate.panels as |panel|}}
-        {{panel-ui panel=panel adjudicators=adjudicators}}
-    {{/each}}
+    <td class="debate-panel-holder">
+        {{#each debate.panels as |panel|}}
+            {{panel-ui panel=panel adjudicators=adjudicators}}
+        {{/each}}
+    </td>
 {{else}}
     <td class="debate-panel allocation hidden"></td>
 {{/if}}

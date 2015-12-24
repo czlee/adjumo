@@ -25,7 +25,7 @@ export default Ember.Route.extend({
           adjudicators:           this.store.findAll('adjudicator'),
           teams:                  this.store.findAll('team'),
           debates:                this.store.findAll('debate'),
-          allocations:            [],
+          allocations:            this.store.findAll('allocation-iteration'),
 
           groups:                 [this.store.createRecord('group', { id: 1 }), this.store.createRecord('group', { id: 2 })],
 
@@ -97,37 +97,28 @@ export default Ember.Route.extend({
         });
 
         if (currentAllocationIteration !== 1) {
-          console.log('   not on first iteration');
 
           // Get all the existing panels and clone them if they are from the previous iteration
           this.store.peekAll('panelallocation').forEach(function(panel) {
-
             // Find and clone the records that were created by the previous allocation
             if (panel.get('allocationID') === currentAllocationIteration - 1) {
-
               var newID = Number(panel.get('id')) + (1000 * (currentAllocationIteration - 1));
-              console.log('    cloned - ' + panel.get('id') + 'into' + newID);
               var newPanel = store.createRecord('panelallocation', {
                 id: newID,
                 chair: panel.get('chair'),
                 panellists: panel.get('panellists'),
                 trainees: panel.get('trainees'),
+                debate: panel.get('debate'),
                 score: panel.get('score'),
                 allocationID: 99,
+                allocation: panel.get('allocation'),
               });
-            } else {
-              console.log('    didnt clone - ' + panel.get('id'));
             }
 
           });
 
-        } else {
-
-          console.log('    on first iteration');
-
         }
 
-        console.log('creating new allocatin iteration with')
         // Create the new allocation object
         var newAllocation = this.store.createRecord('allocation-iteration', {
           id: currentAllocationIteration, // Need to increment as allocation ierations start at zero
@@ -140,19 +131,17 @@ export default Ember.Route.extend({
           panels.forEach(function(panel){
 
             console.log('        checking panelID=' + panel.get('id') + ' allocationID=' + panel.get('allocationID'));
-            if (panel.get('allocationID') === undefined) {
+            if ((panel.get('allocationID') === undefined) || (panel.get('allocationID') === currentAllocationIteration - 1)) {
               console.log('            setting panelID=' + panel.get('id') + ' to=' + currentAllocationIteration);
-              // For the first run through where the 1-10s are loaded without allocations
+              // For the first run through where the 1-10s are loaded without allocations OR
+              // the new elements that were cloned but with the previous rounds iteration
+              console.log('            setting to=' + currentAllocationIteration);
               panel.set('allocationID', currentAllocationIteration);
               panel.set('allocation', newAllocation);
             } else if (panel.get('allocationID') === 99) {
               // For the second run through, these are the cloned elements. They should be set to be the previous iteration
               console.log('            setting to=' + (currentAllocationIteration - 1));
               panel.set('allocationID', currentAllocationIteration - 1);
-            } else if (panel.get('allocationID') === currentAllocationIteration - 1) {
-              // These are the new elements that were cloned but with the previous rounds iteration
-              console.log('            setting to=' + currentAllocationIteration);
-              panel.set('allocationID', currentAllocationIteration);
             }
 
           });
@@ -163,21 +152,7 @@ export default Ember.Route.extend({
         this.currentAllocationIteration = currentAllocationIteration;
         console.log('finished importing, setting currentAllocation to ' + this.currentAllocationIteration);
 
-
-        // this.store.findAll('panelallocation').then((panels) => {
-
-        //   panels.forEach(function(item) {
-        //     if (item.get('allocation')) {
-        //       item.set('allocation', newAllocation);
-        //     }
-        //   });
-
-        // });
-
       });
-
-
-
 
       // Export blocks
       this.store.findAll('debate').then((debate) => {
