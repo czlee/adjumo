@@ -183,7 +183,7 @@ function gettabbie1roundinfo(dbconnection, currentround)
         teamids = map(Int, row[2:5])
         teams = [getobjectwithid(rinfo.teams, tid) for tid in teamids]
         # stopgap: weight by number of points
-        weight = max([team.points for team in teams])
+        weight = maximum([team.points for team in teams])
         adddebate!(rinfo, id, weight, teams)
     end
 

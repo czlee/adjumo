@@ -29,6 +29,7 @@
 
 
 push!(LOAD_PATH, Base.source_dir())
+using Adjumo
 using AdjumoDataTools
 using ArgParse
 using DBI
@@ -56,6 +57,9 @@ argsettings = ArgParseSettings()
         help = "Port number of PostgreSQL server (default 5432)"
         arg_type = Int
         default = 5432
+    "--dir"
+        help = "Output directory"
+        default = "tabbie1data"
 end
 args = parse_args(ARGS, argsettings)
 
@@ -67,3 +71,4 @@ dbconnection = connect(Postgres, host, args["username"], args["password"], dbnam
 rinfo = gettabbie1roundinfo(dbconnection, 9)
 showteams(rinfo)
 showadjudicators(rinfo)
+exportroundinfo(rinfo, args["dir"])

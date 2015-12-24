@@ -12,9 +12,13 @@ argsettings = ArgParseSettings()
     "filename"
         help = "File name"
         required = true
+    "--dir"
+        help = "Output directory"
+        default = "tabbie2data"
 end
 args = parse_args(ARGS, argsettings)
 f = open(args["filename"])
 rinfo = importtabbiejson(f)
 showteams(rinfo)
 showadjudicators(rinfo)
+exportroundinfo(rinfo, args["dir"])
