@@ -10,6 +10,7 @@
 # You can also include("random.jl") this file rather than use the
 # AdjumoDataTools module, if you prefer.
 
+using Iterators
 include("randomdata.jl")
 
 function addrandomregions!(adj::Adjudicator)
@@ -91,16 +92,17 @@ function randomroundinfo(ndebates::Int, currentround::Int)
         adddebate!(roundinfo, rand(1:100000), 10rand(), teams_shuffled[:,i])
     end
 
-    # for i in 1:nadjs÷4
-    #     addadjadjconflict!(roundinfo, randpair(adjudicators)...)
-    #     addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
-    # end
+    for i in 1:nadjs÷4
+        addadjadjconflict!(roundinfo, randpair(adjudicators)...)
+        addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
+    end
 
     for r in 1:currentround-1
-        teams_shuffled = reshape(shuffle(teams), (4, ndebates))
-        debates = [teams_shuffled[:,i] for i in 1:ndebates]
-        adjs_shuffled = reshape(shuffle(adjudicators), (3, ndebates))
-        panels = [adjs_shuffled[:,i] for i in 1:ndebates]
+        debates = partition(shuffle(teams), 4)
+        panels = map(collect, collect(partition(shuffle(adjudicators[1:3ndebates]), 3)))
+        for (panel, leftoveradj) in zip(panels, adjudicators[3ndebates+1:end])
+            push!(panel, leftoveradj)
+        end
         for panel in panels
             for (adj1, adj2) in combinations(panel, 2)
                 addadjadjhistory!(roundinfo, adj1, adj2, r)
