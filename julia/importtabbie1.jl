@@ -176,7 +176,7 @@ function gettabbie1roundinfo(dbconnection, currentround)
 
     # Current round
     println("gettabbie1roundinfo: Importing draw from round $currentround...")
-    stmt = prepare(dbconnection, "SELECT debate_id, oo, oo, cg, co FROM draw_round_$currentround")
+    stmt = prepare(dbconnection, "SELECT debate_id, og, oo, cg, co FROM draw_round_$currentround")
     result = execute(stmt)
     for row in result
         id = Int(row[1])
