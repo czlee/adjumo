@@ -25,7 +25,9 @@
 {{#if debate.panels }}
     <td class="debate-panel-holder">
         {{#each debate.panels as |panel|}}
-            {{panel-ui panel=panel adjudicators=adjudicators}}
+            {{#if panel.allocation.active }}
+                {{panel-ui panel=panel adjudicators=adjudicators}}
+            {{/if}}
         {{/each}}
     </td>
 {{else}}

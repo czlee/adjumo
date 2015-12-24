@@ -6,45 +6,20 @@ export default Ember.Component.extend({
 
   actions: {
 
-    showLockAndBans: function() {
+    toggleLockAndBans: function() {
       // Navbar UI Elements
-      this.set('showingLockBans', true);
-      $(".allocation-nav.active").removeClass("active");
-      $(".allocation-nav .glyphicon-eye-close").addClass("hidden");
-      $(".allocation-nav .glyphicon-eye-open").removeClass("hidden");
+      this.set('showingLockBans', !this.get('showingLockBans'));
       // Table UI elements
-      $(".preallocation").removeClass("hidden");
-      $(".allocation").addClass("hidden");
+      $(".preallocation").toggleClass("hidden");
+      $(".allocation").toggleClass("hidden");
       // Adj Area
-      $("#allAdjs").removeClass("hidden");
-      $("#unusedAdjs").addClass("hidden");
-    },
-
-    showAllocation: function(allocationID) {
-      // Navbar UI Elements
-      this.set('showingLockBans', false);
-      $(".allocation-nav.active").removeClass("active");
-      $(".allocation-nav .glyphicon-eye-close").addClass("hidden");
-      $(".allocation-nav .glyphicon-eye-open").removeClass("hidden");
-
-      var clickedAllocationClass = ".allocation-nav-" + allocationID;
-      $(clickedAllocationClass).addClass("active");
-      $(clickedAllocationClass).children(".glyphicon-eye-open").addClass("hidden");
-      $(clickedAllocationClass).children(".glyphicon-eye-close").removeClass("hidden");
-      // Table UI elements
-      $(".preallocation").addClass("hidden");
-      $(".allocation").removeClass("hidden");
-      // Adj Area
-      $("#allAdjs").addClass("hidden");
-      $("#unusedAdjs").removeClass("hidden");
+      $("#allAdjs").toggleClass("hidden");
+      $("#unusedAdjs").toggleClass("hidden");
     },
 
     startNewAllocation: function() {
       // Navbar UI Elements
       this.set('showingLockBans', false);
-      $(".allocation-nav.active").removeClass("active");
-      $(".allocation-nav .glyphicon-eye-close").addClass("hidden");
-      $(".allocation-nav .glyphicon-eye-open").removeClass("hidden");
 
       // Table UI elements
       $(".preallocation").addClass("hidden");
@@ -56,7 +31,6 @@ export default Ember.Component.extend({
 
       this.sendAction('startNewAllocation'); // Calls up to index.js' createAllocation
 
-      // Test POST
     },
 
     startNewConfig: function() {

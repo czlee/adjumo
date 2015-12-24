@@ -122,6 +122,7 @@ export default Ember.Route.extend({
         // Create the new allocation object
         var newAllocation = this.store.createRecord('allocation-iteration', {
           id: currentAllocationIteration, // Need to increment as allocation ierations start at zero
+          active: true,
         });
 
         console.log('    loading in data');
