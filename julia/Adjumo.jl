@@ -35,21 +35,26 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
 
     println("feasible panels:")
     @time feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=limitpanels)
+
     println("score matrix:")
     @time Σ = scorematrix(roundinfo, feasiblepanels; α=α)
+
     println("panel membership matrix:")
     @time Q = panelmembershipmatrix(roundinfo, feasiblepanels)
+
     println("trainee indicators:")
     @time istrainee = [adj.ranking <= TraineePlus for adj in roundinfo.adjudicators]
 
     println("locked adjudicator constraint conversion:")
     @time lockedadjs = convertconstraints(roundinfo, roundinfo.lockedadjs)
+
     println("blocked adjudicator constraint conversion:")
     @time blockedadjs = convertconstraints(roundinfo, roundinfo.blockedadjs)
 
     if enforceteamconflicts
         println("team-adjudicator conflict conversion:")
         @time teamadjconflicts = convertteamadjconflicts(roundinfo)
+
         println("team-adjudicator conflict conversion (append):")
         @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
     end
@@ -64,7 +69,10 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
     println("conversion:")
     @time allocations = convertallocations(roundinfo.debates, feasiblepanels, debateindices, panelindices, scores)
 
-    rmprocs(procsadded)
+    if procstoadd > 0
+        rmprocs(procsadded)
+    end
+
     return allocations
 end
 
@@ -148,12 +156,12 @@ adjudicator. `Q[p,a]` is 1 if adjudicator `a` is in panel `p`, 0 otherwise.
 function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
     nadjs = numadjs(roundinfo)
-    Q = spzeros(npanels, nadjs)
+    Q = zeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
         indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
         Q[p, indices] = 1.0
     end
-    return Q
+    return sparse(Q)
 end
 
 """

@@ -1,7 +1,7 @@
 # Performance profiling of panel membership matrix function
-# panelmembershipmatrix2 requires an "index" member of Adjudicator to exist and
-# be populated such that roundinfo.adjudicators[adj.index] == adj
-
+# panelmembershipmatrix2 and 4 require an "index" member of Adjudicator to exist
+# and be populated such that roundinfo.adjudicators[adj.index] == adj
+#
 push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
@@ -10,7 +10,7 @@ using AdjumoDataTools
 function panelmembershipmatrix1(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
     nadjs = numadjs(roundinfo)
-    Q = zeros(Bool, npanels, nadjs)
+    Q = zeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
         indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
         Q[p, indices] = true
@@ -21,10 +21,10 @@ end
 function panelmembershipmatrix2(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
     nadjs = numadjs(roundinfo)
-    Q = zeros(Bool, npanels, nadjs)
+    Q = zeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
         indices = Int64[adj.index for adj in panel.adjs]
-        Q[p, indices] = true
+        Q[p, indices] = 1.0
     end
     return Q
 end
@@ -32,10 +32,10 @@ end
 function panelmembershipmatrix3(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
     nadjs = numadjs(roundinfo)
-    Q = spzeros(Bool, npanels, nadjs)
+    Q = spzeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
         indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
-        Q[p, indices] = true
+        Q[p, indices] = 1.0
     end
     return Q
 end
@@ -43,12 +43,47 @@ end
 function panelmembershipmatrix4(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     npanels = length(feasiblepanels)
     nadjs = numadjs(roundinfo)
-    Q = spzeros(Bool, npanels, nadjs)
+    Q = spzeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
         indices = Int64[adj.index for adj in panel.adjs]
-        Q[p, indices] = true
+        Q[p, indices] = 1.0
     end
     return Q
+end
+
+function panelmembershipmatrix5(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
+    npanels = length(feasiblepanels)
+    nadjs = numadjs(roundinfo)
+    Q = zeros(npanels, nadjs)
+    for (p, panel) in enumerate(feasiblepanels)
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        Q[p, indices] = 1.0
+    end
+    return sparse(Q)
+end
+
+function panelmembershipmatrix6(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
+    npanels = length(feasiblepanels)
+    nadjs = numadjs(roundinfo)
+    Q = spzeros(npanels, nadjs)
+    for (p, panel) in enumerate(feasiblepanels)
+        for index in Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+            Q[p, index] = 1.0
+        end
+    end
+    return Q
+end
+
+function panelmembershipmatrix7(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
+    npanels = length(feasiblepanels)
+    nadjs = numadjs(roundinfo)
+    Q = zeros(npanels, nadjs)
+    for (p, panel) in enumerate(feasiblepanels)
+        for index in Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+            Q[p, index] = 1.0
+        end
+    end
+    return sparse(Q)
 end
 
 argsettings = ArgParseSettings()
@@ -70,10 +105,13 @@ roundinfo = randomroundinfo(ndebates, currentround)
 feasiblepanels = generatefeasiblepanels(roundinfo)
 
 funcs = [
-    panelmembershipmatrix1,
-    panelmembershipmatrix2,
-    panelmembershipmatrix3,
-    panelmembershipmatrix4
+    panelmembershipmatrix1, # returns full matrix
+    # panelmembershipmatrix2,
+    # panelmembershipmatrix3, # really slow
+    # panelmembershipmatrix4,
+    panelmembershipmatrix5,
+    # panelmembershipmatrix6, # slow
+    panelmembershipmatrix7,
 ]
 
 # panelmembershipmatrix1(roundinfo, feasiblepanels)
