@@ -20,10 +20,10 @@
         <ul class="list-group">
             <li class="list-group-item">
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <strong>{{ adj.name }}</strong> of <strong>{{ adj.institution.name }}</strong>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <span class="glyphicon glyphicon-globe text-muted"></span> {{ adj.regionName }}
                     </div>
                     <div class="col-md-2">
@@ -41,31 +41,27 @@
             <li class="list-group-item btn-toolbar-holder">
                 <div class="btn-toolbar">
                     <div class="btn-group" role="group">
-                        <div class="btn btn-default btn-sm">
-                            <span class="text-danger glyphicon glyphicon-remove"></span>
-                        </div>
                         {{#if adj.teamConflicts }}
                             {{#each adj.teamConflicts as |conflict| }}
                                 {{#if conflict.active }}
+                                    <div class="btn btn-default btn-sm">
+                                        <span class="text-danger glyphicon glyphicon-remove"></span>
+                                    </div>
                                     <div class="btn btn-default btn-sm panel-team-conflict">{{conflict.team.name}}</div>
                                 {{/if}}
                             {{/each}}
-                        {{else}}
-                            <div class="btn btn-default btn-sm">None</div>
                         {{/if}}
                     </div>
                     <div class="btn-group" role="group">
-                        <div class="btn btn-default btn-sm">
-                            <span class="text-danger glyphicon glyphicon-remove"></span>
-                        </div>
                         {{#if adj.adjConflicts }}
                             {{#each adj.adjConflictsWithOutSelf as |conflict| }}
                                 {{#if conflict.active }}
+                                    <div class="btn btn-default btn-sm">
+                                        <span class="text-danger glyphicon glyphicon-remove"></span>
+                                    </div>
                                     <div class="btn btn-default panel-adj-conflict btn-sm">{{conflict.name}}</div>
                                 {{/if}}
                             {{/each}}
-                        {{else}}
-                            <div class="btn btn-default btn-sm">None</div>
                         {{/if}}
                     </div>
                     <div class="btn-group" role="group">

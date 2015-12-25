@@ -34,11 +34,6 @@ export default Ember.Component.extend({
 
     },
 
-    startNewConfig: function() {
-      $('#setAllocationParameters').modal('hide');
-      this.sendAction('finishSaveConfig');
-    }
-
   }
 
 });

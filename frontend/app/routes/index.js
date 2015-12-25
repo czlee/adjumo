@@ -66,7 +66,8 @@ export default Ember.Route.extend({
     regional: 5,
     language: 5,
     gender: 5,
-    fairness: 5,
+    α: 5,
+
   },
 
   actions: {
@@ -246,27 +247,6 @@ export default Ember.Route.extend({
 
 
     },
-
-    finishSaveConfig: function() {
-
-      console.log('creating config');
-
-      var data = {
-        quality: this.defaultConfig.quality,
-        regional: this.defaultConfig.regional,
-        language: this.defaultConfig.language,
-        gender: this.defaultConfig.gender,
-        teamhistory: this.defaultConfig.teamhistory,
-        adjhistory: this.defaultConfig.adjhistory,
-        teamconflict: this.defaultConfig.teamconflict,
-        adjconflict: this.defaultConfig.adjconflict,
-      };
-      var posting = $.post( '/allocation-configs', data);
-      posting.done(function() {
-        console.log('saved allocation to file');
-      });
-
-    }
   }
 
 });
