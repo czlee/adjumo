@@ -89,6 +89,24 @@ export default Ember.Component.extend(DroppableMixin, {
 
     droppedAdj.set('panel', this.get('panel'));
 
+
+    // Remove hover conflicts when dropped
+
+    droppedAdj.get('teamAdjHistories').forEach(function(history) {
+      history.set('hoverActive', false);
+    });
+    droppedAdj.get('teamAdjConflicts').forEach(function(conflict) {
+      conflict.set('hoverActive', false);
+    });
+    droppedAdj.get('adjAdjConflicts').forEach(function(conflict) {
+      conflict.set('hoverActive', false);
+    });
+    droppedAdj.get('adjAdjHistories').forEach(function(history) {
+      history.set('hoverActive', false);
+    });
+    $(".hover-key").show();
+
+
     return this._super(event);
   }
 

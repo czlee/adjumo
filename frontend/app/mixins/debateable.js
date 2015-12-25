@@ -15,7 +15,7 @@ export default Ember.Mixin.create({
   }),
 
   // Both adjs and teams have conflicts/histories with each other
-  teamHistories: DS.hasMany('teamadjhistory', { async: true }),
+  teamAdjHistories: DS.hasMany('teamadjhistory', { async: true }),
   teamAdjConflicts: DS.hasMany('teamadjudicator', {async: true}),
 
   regionName: Ember.computed('institution', function() {

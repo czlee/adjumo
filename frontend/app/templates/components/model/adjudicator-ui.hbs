@@ -58,8 +58,8 @@
                         {{/if}}
                     </div>
                     <div class="btn-group" role="group">
-                        {{#if adj.adjConflicts }}
-                            {{#each adj.adjConflicts as |conflict| }}
+                        {{#if adj.adjAdjConflicts }}
+                            {{#each adj.adjAdjConflicts as |conflict| }}
                                 {{#if conflict.panelActive }}
                                     <div class="btn btn-default btn-sm">
                                         <span class="text-danger glyphicon glyphicon-remove"></span>
@@ -75,8 +75,8 @@
                         {{/if}}
                     </div>
                     <div class="btn-group" role="group">
-                        {{#if adj.teamHistory }}
-                            {{#each adj.teamHistory as |history| }}
+                        {{#if adj.teamAdjHistories }}
+                            {{#each adj.teamAdjHistories as |history| }}
                                 {{#if teamHistory.panelActive }}
                                     <div class="btn btn-default btn-sm">
                                         <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.rounds}}</span>
@@ -92,8 +92,8 @@
                         {{else}}
                             <div class="btn btn-default btn-sm">None</div>
                         {{/if}}
-                        {{#if adj.adjHistory }}
-                            {{#each adj.adjHistory as |history| }}
+                        {{#if adj.adjAdjHistory }}
+                            {{#each adj.adjAdjHistory as |history| }}
                                 {{#if historyWrap.panelActive }}
                                     <div class="btn btn-default btn-sm">
                                         <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.round}}</span>

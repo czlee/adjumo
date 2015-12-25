@@ -43,8 +43,8 @@
                         {{/if}}
                     </div>
                     <div class="btn-group" role="group">
-                        {{#if team.teamHistory }}
-                            {{#each team.teamHistory as |history| }}
+                        {{#if team.teamAdjHistories }}
+                            {{#each team.teamAdjHistories as |history| }}
                                 {{#if history.panelActive }}
                                     <div class="btn btn-default btn-sm">
                                         <span class="text-primary"><span class=" glyphicon glyphicon-time"></span> {{history.rounds }}</span>
