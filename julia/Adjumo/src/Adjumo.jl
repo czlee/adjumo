@@ -15,7 +15,7 @@ typealias JsonDict Dict{AbstractString,Any}
 
 SUPPORTED_SOLVERS = [
     ("gurobi", :Gurobi, :GurobiSolver,
-            (:MIPGap=>:gap, :Threads=>:threads, :LogToConsole=>1, :MIPFocus=>1, :TimeLimit=>600)),
+            (:MIPGap=>:gap, :Threads=>:threads, :LogToConsole=>1, :MIPFocus=>1, :TimeLimit=>:timelimit)),
     ("cbc", :Cbc, :CbcSolver,
             (:ratioGap=>:gap, :threads=>:threads, :logLevel=>1, :SolveType=>1)),
     ("glpk", :GLPKMathProgInterface, :GLPKSolverMIP,
@@ -33,7 +33,7 @@ include("deficit.jl")
 export allocateadjudicators, generatefeasiblepanels
 
 "Top-level adjudicator allocation function."
-function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int))
+function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int), timelimit=300)
     println("feasible panels:")
     @time feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=limitpanels)
     return allocateadjudicators(roundinfo, feasiblepanels; solver=solver, enforceteamconflicts=enforceteamconflicts, gap=gap, threads=threads)
@@ -41,7 +41,7 @@ end
 
 "Top-level adjudicator allocation function, but takes in a pre-generated set of
 feasible panels."
-function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1)
+function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, timelimit=300)
 
     procstoadd = threads - nprocs()
     if procstoadd > 0
@@ -74,7 +74,7 @@ function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{Adjud
 
     @time status, debateindices, panelindices, scores = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver, gap=gap, threads=threads)
 
-    if status != :Optimal
+    if status == :Infeasible
         println("Error: Problem was not solved to optimality. Status was: $status")
         checkincompatibleconstraints(roundinfo)
     end
@@ -233,7 +233,7 @@ end
 
 "Given a user option, returns a solver for use in solving the optimization problem."
 function choosesolver(solver::AbstractString; kwargs...)
-    defaults = Dict(:gap=>1e-2, :threads=>1)
+    defaults = Dict(:gap=>1e-2, :threads=>1, :timelimit=300)
     resolvedkwargs = merge(defaults, Dict(kwargs))
     for (solvername, solvermod, solversym, options) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
