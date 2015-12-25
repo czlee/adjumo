@@ -313,7 +313,7 @@ function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
     @time status = solve(m)
     println("Solver done at $(now())")
 
-    if status == :Optimal
+    if status != :Infeasible
         println("Objective value: ", getObjectiveValue(m))
         Xval = Array{Bool}(getValue(X))
         debates, panels = findn(Xval)
