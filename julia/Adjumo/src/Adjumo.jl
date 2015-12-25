@@ -14,9 +14,12 @@ using StatsBase
 typealias JsonDict Dict{AbstractString,Any}
 
 SUPPORTED_SOLVERS = [
-    ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap,   :Threads, :LogToConsole, 1),
-    ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap, :threads, :logLevel,     1),
-    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj,  :threads, :msg_lev,      3),
+    ("gurobi", :Gurobi, :GurobiSolver,
+            (:MIPGap=>:gap, :Threads=>:threads, :LogToConsole=>1, :MIPFocus=>1, :TimeLimit=>600)),
+    ("cbc", :Cbc, :CbcSolver,
+            (:ratioGap=>:gap, :threads=>:threads, :logLevel=>1, :SolveType=>1)),
+    ("glpk", :GLPKMathProgInterface, :GLPKSolverMIP,
+            (:tol_obj=>:gap, :msg_lev=>3)),
 ]
 
 include("types.jl")
@@ -229,8 +232,10 @@ function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorP
 end
 
 "Given a user option, returns a solver for use in solving the optimization problem."
-function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
-    for (solvername, solvermod, solversym, gapsym, threadssym, logsym, logval) in SUPPORTED_SOLVERS
+function choosesolver(solver::AbstractString; kwargs...)
+    defaults = Dict(:gap=>1e-2, :threads=>1)
+    resolvedkwargs = merge(defaults, Dict(kwargs))
+    for (solvername, solvermod, solversym, options) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
             try
                 @eval using $solvermod
@@ -241,14 +246,13 @@ function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
                 else
                     continue
                 end
-
             end
             println("Using solver: $solversym")
-            kwargs = Dict(gapsym=>gap, logsym=>logval)
-            if solversym == :GurobiSolver
-                kwargs[threadssym] = threads
+            solverargs = Tuple{Symbol,Any}[]
+            for (name, value) in options
+                push!(solverargs, (name, isa(value, Symbol) ? resolvedkwargs[value] : value))
             end
-            return solversym, eval(solversym)(;kwargs...)
+            return solversym, eval(solversym)(;solverargs...)
         end
     end
     if solver == "default"
