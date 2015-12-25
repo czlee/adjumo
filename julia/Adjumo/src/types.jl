@@ -49,12 +49,17 @@ type Team
     gender::TeamGender
     language::LanguageStatus
     points::Int
+    qualitydeficit::Float64
+    regionaldeficit::Float64
+    genderdeficit::Float64
+    languagedeficit::Float64
 end
 
 Team(id::Int, name::UTF8String, institution::Institution) = Team(id, name, institution, institution.region, TeamNoGender, NoLanguage, 0)
 Team(id::Int, name::AbstractString, institution::Institution) = Team(id, UTF8String(name), institution, institution.region, TeamNoGender, NoLanguage, 0)
 Team(id::Int, name::UTF8String, institution::Institution, region::Region) = Team(id, name, institution, region, TeamNoGender, NoLanguage, 0)
 Team(id::Int, name::AbstractString, institution::Institution, region::Region) = Team(id, UTF8String(name), institution, region, TeamNoGender, NoLanguage, 0)
+Team(id::Int, name::UTF8String, institution::Institution, region::Region, gender::TeamGender, language::LanguageStatus, points::Int) = Team(id, name, institution, region, gender, language, points, 0, 0, 0, 0)
 show(io::Base.IO, team::Team) = print(io, "Team($(team.id), \"$(team.name)\")")
 
 type Adjudicator
