@@ -14,9 +14,9 @@ using StatsBase
 typealias JsonDict Dict{AbstractString,Any}
 
 SUPPORTED_SOLVERS = [
-    ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap,   :Threads),
-    ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap, :threads),
-    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj,  :threads),
+    ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap,   :Threads, :LogToConsole, 1),
+    ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap, :threads, :logLevel,     1),
+    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj,  :threads, :msg_lev,      3),
 ]
 
 include("types.jl")
@@ -230,7 +230,7 @@ end
 
 "Given a user option, returns a solver for use in solving the optimization problem."
 function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
-    for (solvername, solvermod, solversym, gapsym, threadssym) in SUPPORTED_SOLVERS
+    for (solvername, solvermod, solversym, gapsym, threadssym, logsym, logval) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
             try
                 @eval using $solvermod
@@ -244,7 +244,11 @@ function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
 
             end
             println("Using solver: $solversym")
-            return solversym, eval(solversym)(;gapsym=>gap, threadssym=>threads)
+            kwargs = Dict(gapsym=>gap, logsym=>logval)
+            if solversym == :GurobiSolver
+                kwargs[threadssym] = threads
+            end
+            return solversym, eval(solversym)(;kwargs...)
         end
     end
     if solver == "default"
@@ -252,13 +256,6 @@ function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
     else
         error("Solver must be \"gurobi\", \"cbc\" or \"glpk\" (or \"default\").")
     end
-end
-
-function infocallback(cb)
-    obj       = MathProgBase.cbgetobj(cb)
-    bestbound = MathProgBase.cbgetbestbound(cb)
-    relgap    = (bestbound - obj) / bestbound * 100
-    println("$(now()): Best value $obj, best bound $bestbound, relative gap $relgap%")
 end
 
 """
@@ -306,10 +303,6 @@ function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
     println("blocked adjudicators ($(length(blockedadjs))):")
     @time for (a, d) in blockedadjs
         @addConstraint(m, X[d,:]*Q[:,a] .== 0)
-    end
-
-    if modeltype == :GLPKSolverMIP
-        addInfoCallback(m, infocallback)
     end
 
     println("Starting solver at $(now())")

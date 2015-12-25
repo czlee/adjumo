@@ -29,7 +29,6 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     componentweights = roundinfo.componentweights
     debateweights = getdebateweights(roundinfo)
-    println("score matrix components:")
     @time Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
     @time Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
     @time Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)

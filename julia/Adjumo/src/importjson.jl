@@ -1,7 +1,8 @@
 # Functions to import from the Node.js part.
 # This file is part of the Adjumo module.
 
-export importcomponentweightsjsonintoroundinfo!, importcomponentweightsjson
+export importcomponentweightsjsonintoroundinfo!, importcomponentweightsjson,
+    importfeasiblepanels
 
 function importcomponentweightsjsonintoroundinfo!(rinfo::RoundInfo, io::IO)
     weights = importcomponentweightsjson(io)
