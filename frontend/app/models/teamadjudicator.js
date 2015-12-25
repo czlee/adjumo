@@ -5,6 +5,7 @@ export default DS.Model.extend({
   team: DS.belongsTo('team', {async: true}),
   adjudicator: DS.belongsTo('adjudicator', {async: true}),
 
-  active: DS.attr('bool', { default: false }) // If the conflict is active when panel hovering
+  hoverActive: DS.attr('bool', { default: false }), // If the conflict is active when panel hovering
+  panelActive: DS.attr('bool', { default: false }) // If the conflict is active when panel hovering
 
 });

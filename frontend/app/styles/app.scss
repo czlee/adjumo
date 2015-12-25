@@ -453,15 +453,18 @@ td.head-panel {
   color: #fff;
 }
 
+// HISTORY CONFLICTS
 .ember-view.panel-history-conflict {      // An in-situ conflict; lighten so hovers are more obvious
   @include conflict-bg(#37a5c8, #2d86a3, 0.5);
 }
-.ember-view.hover-history-conflict,       // An overed conflict; darker so hovers are more obvious
+.ember-view.hover-team-history-conflict,       // An overed conflict; darker so hovers are more obvious
 .history-conflict-key,                    // The legend for this conflict type
-.btn-group .btn.panel-history-conflict {  // The highlighted conflict in the hovering area up top
+.btn-group .btn.hover-team-history-conflict {  // The highlighted conflict in the hovering area up top
   @include conflict-bg(#37a5c8, #2d86a3, 1);
 }
 
+
+// INSTITUTION CONFLICTS
 .ember-view.panel-institution-conflict {
   @include conflict-bg(#da1ac1, #ae319e, 0.5);
 }
@@ -470,11 +473,12 @@ td.head-panel {
   @include conflict-bg(#da1ac1, #ae319e, 1);
 }
 
+// PERSONAL CONFLICTS
 .ember-view.panel-team-conflict,
 .ember-view.panel-adj-conflict {
   @include conflict-bg(#ff0000, #cf0000, 0.5);
 }
-.ember-view.hover-team-conflict,
+.ember-view.hover-team-adj-conflict,
 .ember-view.hover-adj-conflict,
 .team-conflict-key,
 .btn-group .btn.panel-adj-conflict,

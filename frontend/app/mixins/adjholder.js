@@ -36,27 +36,27 @@ export default Ember.Mixin.create(DroppableMixin, {
     }
 
     // Remove all conflicts
-    droppedAdj.get('teamConflicts').then((conflicts) => {
-      if (conflicts !== undefined) {
-        conflicts.forEach( function(conflict) {
-          conflict.set('active', false);
-        });
-      }
-    });
-    droppedAdj.get('adjConflicts').then((conflicts) => {
-      if (conflicts !== undefined) {
-        conflicts.forEach( function(conflict) {
-          conflict.set('active', false);
-        });
-      }
-    });
-    droppedAdj.get('adjHistory').then((conflicts) => {
-      if (conflicts !== undefined) {
-        conflicts.forEach( function(conflict) {
-          conflict.set('active', false);
-        });
-      }
-    });
+    // droppedAdj.get('teamConflicts').then((conflicts) => {
+    //   if (conflicts !== undefined) {
+    //     conflicts.forEach( function(conflict) {
+    //       conflict.set('active', false);
+    //     });
+    //   }
+    // });
+    // droppedAdj.get('adjConflicts').then((conflicts) => {
+    //   if (conflicts !== undefined) {
+    //     conflicts.forEach( function(conflict) {
+    //       conflict.set('active', false);
+    //     });
+    //   }
+    // });
+    // droppedAdj.get('adjHistory').then((conflicts) => {
+    //   if (conflicts !== undefined) {
+    //     conflicts.forEach( function(conflict) {
+    //       conflict.set('active', false);
+    //     });
+    //   }
+    // });
 
     return this._super(event);
 

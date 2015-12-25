@@ -3,9 +3,6 @@ import Ember from 'ember';
 
 export default Ember.Mixin.create({
 
-  // TODO: implement region / institution / languae attributes here
-  // AS well as methods that print their nice names
-
   name: DS.attr('string'),
   gender: DS.attr('number'),
   language: DS.attr('number'),
@@ -17,17 +14,9 @@ export default Ember.Mixin.create({
     }
   }),
 
-  activeHoveringInstitutionConflict: DS.attr('bool', { default: false }),
-  activePanelInstitutionConflict: DS.attr('bool', { default: false }),
-
-  activeHoveringTeamConflict: DS.attr('bool', { default: false }),
-  activePanelTeamConflict: DS.attr('bool', { default: false }),
-
-  activeHoveringAdjConflict: DS.attr('bool', { default: false }),
-  activePanelAdjConflict: DS.attr('bool', { default: false }),
-
-  activeHoveringHistoryConflict: DS.attr('bool', { default: false }),
-  activePanelHistoryConflict: DS.attr('bool', { default: false }),
+  // Both adjs and teams have conflicts/histories with each other
+  teamHistories: DS.hasMany('teamadjhistory', { async: true }),
+  teamAdjConflicts: DS.hasMany('teamadjudicator', {async: true}),
 
   regionName: Ember.computed('institution', function() {
 

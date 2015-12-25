@@ -22,6 +22,7 @@ export default Ember.Component.extend(DroppableMixin, {
         // If the dropped adj was previously in the chairing position
         if (currentAdj) {
           droppedAdjOldPanel.set('chair', currentAdj); // Set the previous chair position as the adj dropped upon
+          currentAdj.set('panel', droppedAdjOldPanel);
         }
       } else if (droppedAdjOldPanel.get('panellists').contains(droppedAdj)) {
         // If the dropped adj was previously a panellist
@@ -85,6 +86,8 @@ export default Ember.Component.extend(DroppableMixin, {
         this.get('panel').set('chair', droppedAdj);
         break;
     }
+
+    droppedAdj.set('panel', this.get('panel'));
 
     return this._super(event);
   }
