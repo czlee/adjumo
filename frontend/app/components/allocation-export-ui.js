@@ -14,12 +14,12 @@ export default Ember.Component.extend({
 
       allocation.get('panels').forEach(function(panel) {
 
-        var panellistIDs = []
+        var panellistIDs = [];
         panel.get('panellists').forEach(function(adj) {
           panellistIDs.push(adj.get('id'));
         });
 
-        var traineeIDs = []
+        var traineeIDs = [];
         panel.get('panellists').forEach(function(adj) {
           traineeIDs.push(adj.get('id'));
         });

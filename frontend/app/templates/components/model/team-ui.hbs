@@ -11,13 +11,13 @@
                         <strong>{{ team.name }}</strong> of <strong>{{ team.institution.name }}</strong>
                     </div>
                     <div class="col-md-3">
-                        <span class="glyphicon glyphicon-globe text-muted"></span> {{ team.regionName }}
+                        <span class="glyphicon glyphicon-globe text-muted"> </span> {{ team.regionName }}
                     </div>
                     <div class="col-md-2">
-                        <span class="glyphicon glyphicon-queen text-muted"></span> {{ team.genderName }}
+                        <span class="glyphicon glyphicon-queen text-muted"> </span> {{ team.genderName }}
                     </div>
                     <div class="col-md-2">
-                        <span class="glyphicon glyphicon-comment text-muted"></span> {{ team.languageName }}
+                        <span class="glyphicon glyphicon-comment text-muted"> </span> {{ team.languageName }}
                     </div>
                 </div>
             </li>
@@ -28,12 +28,12 @@
                             {{#each team.teamAdjConflicts as |conflict| }}
                                 {{#if conflict.panelActive }}
                                     <div class="btn btn-default btn-sm">
-                                        <span class="text-danger glyphicon glyphicon-remove"></span>
+                                        <span class="text-danger glyphicon glyphicon-remove"> </span>
                                     </div>
                                     <div class="btn btn-sm panel-adj-conflict">{{conflict.adjudicator.name}}</div>
                                 {{else}}
                                     <div class="btn btn-default btn-sm">
-                                        <span class="text-danger glyphicon glyphicon-remove"></span>
+                                        <span class="text-danger glyphicon glyphicon-remove"> </span>
                                     </div>
                                     <div class="btn btn-sm">{{conflict.adjudicator.name}}</div>
                                 {{/if}}
@@ -47,12 +47,16 @@
                             {{#each team.teamAdjHistories as |history| }}
                                 {{#if history.panelActive }}
                                     <div class="btn btn-default btn-sm">
-                                        <span class="text-primary"><span class=" glyphicon glyphicon-time"></span> {{history.rounds }}</span>
+                                        <span class="text-primary">
+                                            <span class=" glyphicon glyphicon-time"></span> {{history.rounds }}
+                                        </span>
                                     </div>
                                     <div class="btn btn-sm panel-history-conflict">{{history.adjudicator.short_name }}</div>
                                 {{else}}
                                     <div class="btn btn-default btn-sm">
-                                        <span class="text-primary"><span class=" glyphicon glyphicon-time"></span> {{history.rounds }}</span>
+                                        <span class="text-primary">
+                                            <span class=" glyphicon glyphicon-time"></span> {{history.rounds }}
+                                        </span>
                                     </div>
                                     <div class="btn btn-sm">{{history.adjudicator.short_name }}</div>
                                 {{/if}}

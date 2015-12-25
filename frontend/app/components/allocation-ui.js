@@ -32,7 +32,7 @@ export default Ember.Component.extend({
 
   filteredDebates: (function() {
     return this.get("sortedDebates").filter((function(_this) {
-      return function(theObject, index, enumerable) {
+      return function(theObject) {
         if (_this.get("theFilter")) {
           // if a filter has been set see if this matches
           return _this.checkFilterMatch(theObject, _this.get("theFilter"));

@@ -1,31 +1,32 @@
-/* Overwrite Font Locations */
+// Overwrite Font Locations
 
-@font-face{
-  font-family:'Glyphicons Halflings';
-  src:url(/assets/fonts/glyphicons-halflings-regular.eot);
-  src:url(/assets/fonts/glyphicons-halflings-regular.eot?#iefix) format('embedded-opentype'),
-    url(/assets/fonts/glyphicons-halflings-regular.woff2) format('woff2'),
-    url(/assets/fonts/glyphicons-halflings-regular.woff) format('woff'),
-    url(/assets/fonts/glyphicons-halflings-regular.ttf) format('truetype'),
-    url(/assets/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular) format('svg')
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url(/assets/fonts/glyphicons-halflings-regular.eot);
+  src: url(/assets/fonts/glyphicons-halflings-regular.eot?#iefix) format("embedded-opentype"), url(/assets/fonts/glyphicons-halflings-regular.woff2) format("woff2"), url(/assets/fonts/glyphicons-halflings-regular.woff) format("woff"), url(/assets/fonts/glyphicons-halflings-regular.ttf) format("truetype"), url(/assets/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular) format("svg");
 }
+
 .uppercase {
   text-transform: uppercase;
-  }
+}
 
 /* Nav */
 
-.btn-group-sm>.btn, .btn-sm {
-  padding: 5px 7px; // free up space with the hover keys
+.btn-group-sm > .btn,
+.btn-sm {
+  padding: 5px 7px;
+
+  // free up space with the hover keys
 }
+
 .navbar {
   margin-bottom: 10px;
 }
+
 .debate-search-form {
   width: 170px;
   margin-left: 5px;
 }
-
 
 /* Table Widths */
 
@@ -34,9 +35,11 @@ table {
   width: 100%;
   white-space: nowrap;
 }
-.table>thead>tr>th .glyphicon-chevron-down, .table>thead>tr>th .glyphicon-chevron-up {
+
+.table > thead > tr > th .glyphicon-chevron-down, .table > thead > tr > th .glyphicon-chevron-up {
   display: block;
 }
+
 td {
   text-overflow: normal !important;
   white-space: normal !important;
@@ -45,15 +48,19 @@ td {
 .head-venue {
   width: 3.5%;
 }
+
 .head-points {
   width: 3.5%;
 }
+
 .head-weight {
   width: 3.5%;
 }
+
 .head-importance {
   width: 3.5%;
 }
+
 .head-importance-edit {
   width: 16%;
 }
@@ -61,62 +68,87 @@ td {
 .head-og {
   width: 8.5%;
 }
+
 .head-oo {
   width: 8.5%;
 }
+
 .head-cg {
   width: 8.5%;
 }
+
 .head-co {
   width: 8.5%;
 }
+
 .head-bans {
   width: 26%;
 }
+
 .head-locks {
   width: 26%;
 }
+
 .debate-panel {
   width: auto;
 }
 
 /* Sorting Icons */
 
-.table>thead>tr>th {
+.table > thead > tr > th {
   line-height: 28px;
 }
-.table>thead>tr>th.head-sortable {
+
+.table > thead > tr > th.head-sortable {
   cursor: pointer;
   line-height: 14px;
 }
+
 .head-sortable .glyphicon-chevron-down, .head-sortable .glyphicon-chevron-down {
   margin-left: 2px;
 }
+
 span[active="false"].glyphicon {
   opacity: 0.25;
 }
 
 /* Table Cells */
 
-.table>tbody>tr>td {
+.table > tbody > tr > td {
   line-height: 30px;
 }
-.table>tbody>tr>td.team-ui {
+
+.table > tbody > tr > td.team-ui {
   line-height: 1.1;
   border: 1px solid #c8c8c8;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
-.table>tbody>tr>td.team-ui:hover {
-  background: #000 !important; // Override conflicts
-  color: #fff !important; // Override conflicts
+
+.table > tbody > tr > td.team-ui:hover {
+  background: #000 !important;
+
+  // Override conflicts
+  color: #fff !important;
+
+  // Override conflicts
+  cursor: default;
 }
+
 .debate-importance input {
   max-width: 100%;
   font-size: 26px;
   text-align: center;
 }
+
 input[type=range] {
   height: 30px;
 }
+
 input[type=range]:hover {
   cursor: col-resize;
 }
@@ -128,14 +160,17 @@ input[type=range]:hover {
   width: 30px;
   text-align: center;
 }
+
 .panel-stats {
   float: left;
 }
+
 .panel-ui {
   padding: 0px !important;
   line-height: 40px;
   height: 100%;
   overflow: hidden;
+
   .chair {
     flex-grow: 1;
     flex-basis: 10px;
@@ -143,12 +178,14 @@ input[type=range]:hover {
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
   }
+
   .panellists {
     flex-grow: 2;
     flex-basis: 10px;
     border-top: 2px solid rgb(200, 200, 200);
     border-bottom: 2px solid rgb(200, 200, 200);
   }
+
   .trainees {
     flex-grow: 1;
     flex-basis: 10px;
@@ -157,22 +194,29 @@ input[type=range]:hover {
     border-bottom-right-radius: 6px;
   }
 }
+
 .flex-1 {
   flex-grow: 2;
   flex-basis: 60px;
 }
+
 .flex-2 {
   flex-grow: 7;
   flex-basis: 60px;
 }
 
-.table>tbody>tr>td.debate-panel-holder {
+.table > tbody > tr > td.debate-panel-holder {
   padding: 0px;
 }
+
 .debate-panel {
   padding: 3px !important;
+
   .panel-stats {
-    line-height: 44px; // Vertically align with the adj elements
+    line-height: 44px;
+
+    // Vertically align with the adj elements
+
   }
 }
 
@@ -183,20 +227,24 @@ input[type=range]:hover {
   display: flex;
   min-height: 40px;
 }
-.table>thead>tr>th.head-panel {
+
+.table > thead > tr > th.head-panel {
   display: flex;
   padding-right: 0px;
   padding-left: 0px;
 }
+
 td.head-panel {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
+
 .position-holder .droppable-area {
   min-height: 40px;
   float: left;
   width: 100%;
 }
+
 .js-drag-handle:hover {
   cursor: move;
 }
@@ -213,17 +261,25 @@ td.head-panel {
   display: flex;
   float: left;
 }
+
 .adjudicator-ui:hover {
-  background: #000 !important; // Override conflicts
-  color: #fff !important; // Override conflicts
+  background: #000 !important;
+
+  // Override conflicts
+  color: #fff !important;
+
+  // Override conflicts
 }
+
 .adjudicator-ui.locked-true {
   border: 2px solid rgb(0, 0, 255);
 }
+
 .adjudicator-ui .flex-icon span,
 .adjudicator-ui .flex-icon span.glyphicon {
   line-height: 32px;
 }
+
 .adj-name {
   line-height: 1;
   display: block;
@@ -231,14 +287,17 @@ td.head-panel {
   margin-bottom: -6px;
   font-weight: bold;
 }
+
 .adj-institution {
-  line-height: 1;
   font-size: 75%;
+  line-height: 1;
 }
+
 .adj-lock {
   flex: none;
   width: 26px;
 }
+
 .adj-name {
   flex-grow: 1;
 }
@@ -247,37 +306,44 @@ td.head-panel {
 
 .droppable-area {
   background: rgb(240, 240, 240);
-}
-.droppable-area.dragging-active {
-  background: rgb(240, 255, 240);
-}
-.droppable-area.dragging-over {
-  background: #00FF50;
+
+  &.dragging-active {
+    background: rgb(240, 255, 240);
+  }
+
+  &.dragging-over {
+    background: #00FF50;
+  }
 }
 
 .adj-group {
-  min-height: 43px;
-  width: 50%;
   float: left;
   border: 1px solid #ddd;
+  min-height: 43px;
+  width: 50%;
 }
 
 #allocation {
-  margin-bottom: 125px; /* So you can scroll past the unused table */
+  margin-bottom: 125px;
+
+  /* So you can scroll past the unused table */
 }
 
 .adj-bottom-panel {
-  overflow: auto;
-  padding: 4px 5px 5px 5px;
   border-top: 2px solid rgb(200, 200, 200);
-  overflow-y: scroll;
+  padding: 4px 5px 5px 5px;
   max-height: 600px;
+  overflow-y: scroll;
 }
+
 .all-adjs-panel {
   height: 100px;
 }
+
 .unused-adjs-panel {
-  height: 50px; // Starts of smaller because its typically empty and just a drop box
+  height: 50px;
+
+  // Starts of smaller because its typically empty and just a drop box
 }
 
 .resize-holder {
@@ -287,17 +353,16 @@ td.head-panel {
   float: right;
   color: #666;
 }
+
 .resize-holder:hover {
   cursor: row-resize;
   color: #000;
 }
 
-
-
-
 .adj-bottom-panel .adjudicator-ui {
   padding-left: 5px;
 }
+
 .adj-bottom-panel .adj-lock {
   display: none;
 }
@@ -315,135 +380,191 @@ td.head-panel {
   .arrow {
     display: none;
   }
+
   .ranking-display .panel-title {
-    color: #000; // white doesnt work with rank bg
+    color: #000;
+
+    // white doesnt work with rank bg
+
   }
+
   .popover-content {
     padding: 0;
   }
+
   .list-group-item {
     padding: 4px 8px;
   }
+
   .btn-group {
     margin-bottom: 5px;
   }
+
   .list-group-item.btn-toolbar-holder {
     padding-bottom: 0px;
   }
 }
+
 .popover, .popover .panel {
   border: none;
   margin-bottom: 0px;
 }
 
 .gender-display {
-
   &.gender-0 {
     background: #CCC;
   }
-  &.gender-2 {  /* F */
+
+  &.gender-2 {
+    /* F */
     background: #fd64ff;
     color: #fff;
   }
-  &.gender-3 {  /* Only show this for teams as for them it represnts M+F*/
+
+  &.gender-3 {
+    /* Only show this for teams as for them it represnts M+F*/
     background: #fedbff;
   }
-
 }
 
 .language-display {
-
   &.language-2 {
     background: #ec91af;
     color: #fff;
   }
+
   &.language-3 {
     background: #91ece9;
   }
 }
 
 .region-display {
-
   &.region-display.region-9 {
-    background: lighten(#330831, 6%); /* Europe */
+    background: lighten(#330831, 6%);
+
+    /* Europe */
     color: #fff;
   }
+
   &.region-display.region-10 {
-    background: lighten(#180833, 6%); /* IONA */
+    background: lighten(#180833, 6%);
+
+    /* IONA */
     color: #fff;
   }
+
   &.region-display.region-6 {
-    background: lighten(#002339, 6%); /* ANZ */
+    background: lighten(#002339, 6%);
+
+    /* ANZ */
     color: #fff;
   }
+
   &.region-display.region-7 {
-    background: lighten(#003937, 6%); /* North America */
+    background: lighten(#003937, 6%);
+
+    /* North America */
     color: #fff;
   }
+
   &.region-display.region-1 {
-    background: #57f8fa; /* North Asia */
+    background: #57f8fa;
+
+    /* North Asia */
   }
+
   &.region-display.region-2 {
-    background: #eaff00; /* SE Asia */
+    background: #eaff00;
+
+    /* SE Asia */
   }
+
   &.region-display.region-4 {
-    background: #40ff71; /* S Asia */
+    background: #40ff71;
+
+    /* S Asia */
   }
+
   &.region-display.region-8 {
-    background: lighten(#c0e7ff, 8%); /* Latin America */
+    background: lighten(#c0e7ff, 8%);
+
+    /* Latin America */
   }
+
   &.region-display.region-3 {
-    background: lighten(#ffc0f1, 8%); /* Middle East */
+    background: lighten(#ffc0f1, 8%);
+
+    /* Middle East */
   }
+
   &.region-display.region-5 {
-    background: lighten(#c7ffc0, 8%); /* Africa */
+    background: lighten(#c7ffc0, 8%);
+
+    /* Africa */
   }
+
   &.region-display.multiple-regions {
     background: #fff;
-    color: #000
+    color: #000;
   }
-
 }
 
 .ranking-display {
+  &.ranking-0 {
+    background: #bdac7c;
 
-    &.ranking-0 {
-    background: #bdac7c; // T-
+    // T-
+
   }
-    &.ranking-1 {
+
+  &.ranking-1 {
     background: #e9b771;
   }
-    &.ranking-2 {
+
+  &.ranking-2 {
     background: #ffbe63;
   }
+
   &.ranking-3 {
     background: #ffdf53;
     color: #000;
   }
+
   &.ranking-4 {
     background: #fcff41;
     color: #000;
   }
+
   &.ranking-5 {
     background: #b6ff2f;
     color: #000;
   }
+
   &.ranking-6 {
     background: #58ff1f;
   }
+
   &.ranking-7 {
     background: #19e910;
   }
+
   &.ranking-8 {
     background: #1aa71c;
   }
+
   &.ranking-9 {
-    background: #0b880d; // C+
-  }
-  &.ranking-10 {
-    background: #007102; // C+
+    background: #0b880d;
+
+    // C+
+
   }
 
+  &.ranking-10 {
+    background: #007102;
+
+    // C+
+
+  }
 }
 
 /* Conflicts */
@@ -451,35 +572,31 @@ td.head-panel {
 
 @mixin conflict-bg($color1, $color2, $opacity) {
   background-color: #fff;
-  background-image: repeating-linear-gradient(
-      45deg,
-      rgba($color1, $opacity),
-      rgba($color1, $opacity) 3px,
-      rgba($color2, $opacity) 6px,
-      rgba($color2, $opacity) 6px
-  );
+  background-image: repeating-linear-gradient(45deg, rgba($color1, $opacity), rgba($color1, $opacity) 3px, rgba($color2, $opacity) 6px, rgba($color2, $opacity) 6px);
   color: #fff;
 }
 
 // HISTORY CONFLICTS
-.ember-view.panel-team-adj-history,        // An in-situ conflict; lighten so hovers are more obvious
+.ember-view.panel-team-adj-history,
 .ember-view.panel-adj-adj-history {
   @include conflict-bg(#37a5c8, #2d86a3, 0.5);
 }
-.ember-view.hover-team-adj-history,       // An overed conflict; darker so hovers are more obvious
+
+.ember-view.hover-team-adj-history,
 .ember-view.hover-adj-adj-history,
-.history-conflict-key,                    // The legend for this conflict type
-.btn-group .btn.hover-team-history-conflict {  // The highlighted conflict in the hovering area up top
+.history-conflict-key,
+.btn-group .btn.hover-team-history-conflict {
+  // The highlighted conflict in the hovering area up top
   @include conflict-bg(#37a5c8, #2d86a3, 1);
 }
-
 
 // INSTITUTION CONFLICTS
 .ember-view.panel-institution-conflict {
   @include conflict-bg(#da1ac1, #ae319e, 0.5);
 }
+
 .ember-view.hover-institution-conflict,
-.institution-conflict-key,  .btn-group .btn.panel-institution-conflict {
+.institution-conflict-key, .btn-group .btn.panel-institution-conflict {
   @include conflict-bg(#da1ac1, #ae319e, 1);
 }
 
@@ -488,6 +605,7 @@ td.head-panel {
 .ember-view.panel-adj-adj-conflict {
   @include conflict-bg(#ff0000, #cf0000, 0.5);
 }
+
 .ember-view.hover-team-adj-conflict,
 .ember-view.hover-adj-adj-conflict,
 .team-conflict-key,
@@ -500,13 +618,13 @@ td.head-panel {
 // .ember-view.hover-institution-conflict,
 // .ember-view.hover-institution-conflict.history-conflict, // Institution takes precedent
 // .institution-conflict-key {
-//   //background: #b0207b !important; /* Important to overrule highlights */
+//   //background: #b0207b !important; /* Important to overrule highlights
 //   background-image: repeating-linear-gradient(
 //       45deg,
 //       #da1ac1,
 //       #da1ac1 3px,
-//       #ae319e 6px, /* purple */
-//       #ae319e 6px /* purple */
+//       #ae319e 6px, /* purple
+//       #ae319e 6px /* purple
 //   );
 //   color: #fff;
 // }

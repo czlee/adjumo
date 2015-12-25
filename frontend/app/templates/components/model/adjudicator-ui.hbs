@@ -79,12 +79,16 @@
                             {{#each adj.teamAdjHistories as |history| }}
                                 {{#if teamHistory.panelActive }}
                                     <div class="btn btn-default btn-sm">
-                                        <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.rounds}}</span>
+                                        <span class="text-primary">
+                                            <span class="glyphicon glyphicon-time"></span> {{history.rounds}}
+                                        </span>
                                     </div>
                                     <div class="btn btn-default panel-history-conflict btn-sm">{{history.team.name }}</div>
                                 {{else}}
                                     <div class="btn btn-default btn-sm">
-                                        <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.rounds}}</span>
+                                        <span class="text-primary">
+                                            <span class="glyphicon glyphicon-time"></span> {{history.rounds}}
+                                        </span>
                                     </div>
                                     <div class="btn btn-default btn-sm">{{history.team.name }}</div>
                                 {{/if}}
@@ -96,12 +100,16 @@
                             {{#each adj.adjAdjHistory as |history| }}
                                 {{#if historyWrap.panelActive }}
                                     <div class="btn btn-default btn-sm">
-                                        <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.round}}</span>
+                                        <span class="text-primary">
+                                            <span class="glyphicon glyphicon-time"></span> {{history.round}}
+                                        </span>
                                     </div>
                                     <div class="btn btn-default panel-history-conflict btn-sm">{{ history.adj1.short_name }} {{ history.adj2.short_name }}</div>
                                 {{else}}
                                     <div class="btn btn-default btn-sm">
-                                        <span class="text-primary"><span class="glyphicon glyphicon-time"></span> {{history.round}}</span>
+                                        <span class="text-primary">
+                                            <span class="glyphicon glyphicon-time"></span> {{history.round}}
+                                        </span>
                                     </div>
                                     <div class="btn btn-default btn-sm">{{ history.adj1.short_name }} {{ history.adj2.short_name }}</div>
                                 {{/if}}
