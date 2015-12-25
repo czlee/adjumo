@@ -164,15 +164,19 @@ export default DS.Model.extend({
   ranking: function() {
     var rankings = [];
 
-    rankings.push(this.get('chair').get('ranking'));
-
-    this.get('panellists').get('content').forEach(function(adj) {
-      rankings.push(adj.get('ranking'));
-    });
-
-    this.get('trainees').get('content').forEach(function(adj) {
-      rankings.push(adj.get('ranking'));
-    });
+    if (this.get('chair').get('ranking') !== undefined) {
+        rankings.push(this.get('chair').get('ranking'));
+    }
+    if (this.get('panellists').get('length') > 0) {
+        this.get('panellists').forEach(function(adj) {
+          rankings.push(adj.get('ranking'));
+        });
+    }
+    if (this.get('trainees').get('length') > 0) {
+        this.get('trainees').forEach(function(adj) {
+          rankings.push(adj.get('ranking'));
+        });
+    }
 
     var sum = 0;
     for( var i = 0; i < rankings.length; i++ ){

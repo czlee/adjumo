@@ -12,7 +12,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Quality</label>
             <div class="col-sm-8">
-              {{input type="range" min="0" max="10" step="1" list="debate-ticks" value=config.quality  }}
+              {{input type="range" min="0" max="10" step="1" list="parameter-ticks" value=config.quality  }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control"                  value=config.quality}}
@@ -21,7 +21,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Regional</label>
             <div class="col-sm-8">
-              {{input type="range" min="0" max="10" step="1" list="debate-ticks" value=config.regional  }}
+              {{input type="range" min="0" max="10" step="1" list="parameter-ticks" value=config.regional  }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control"                  value=config.regional}}
@@ -30,7 +30,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Language</label>
             <div class="col-sm-8">
-              {{input type="range" min="0" max="10" step="1" list="debate-ticks" value=config.language }}
+              {{input type="range" min="0" max="10" step="1" list="parameter-ticks" value=config.language }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control"                  value=config.language}}
@@ -39,7 +39,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Gender</label>
             <div class="col-sm-8">
-              {{input type="range" min="0" max="10" step="1" list="debate-ticks" value=config.gender }}
+              {{input type="range" min="0" max="10" step="1" list="parameter-ticks" value=config.gender }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control"                  value=config.gender}}
@@ -48,7 +48,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Team History</label>
             <div class="col-sm-8">
-              {{input type="range" min="0" max="10" step="1" list="debate-ticks" value=config.teamhistory }}
+              {{input type="range" min="0" max="10" step="1" list="parameter-ticks" value=config.teamhistory }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control" value=config.teamhistory}}
@@ -57,7 +57,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Adj History</label>
             <div class="col-sm-8">
-              {{input type="range" min="0" max="10" step="1" list="debate-ticks" value=config.adjhistory }}
+              {{input type="range" min="0" max="10" step="1" list="parameter-ticks" value=config.adjhistory }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control" value=config.adjhistory}}
@@ -66,7 +66,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Team Conflict</label>
             <div class="col-sm-8">
-              {{input type="range" min="0" max="10" step="1" list="debate-ticks" value=config.teamconflict }}
+              {{input type="range" min="0" max="10" step="1" list="parameter-ticks" value=config.teamconflict }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control" value=config.teamconflict}}
@@ -75,7 +75,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">Adj Conflict</label>
             <div class="col-sm-8">
-              {{input type="range" min="0" max="10" step="1" list="debate-ticks" value=config.adjconflict }}
+              {{input type="range" min="0" max="10" step="1" list="parameter-ticks" value=config.adjconflict }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control" value=config.adjconflict}}
@@ -84,7 +84,7 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">α-Fairness</label>
             <div class="col-sm-8">
-              {{input type="range" min="0" max="10" step="1" list="debate-ticks" value=config.α }}
+              {{input type="range" min="0" max="10" step="1" list="parameter-ticks" value=config.α }}
             </div>
             <div class="col-sm-1">
                 {{input class="form-control" value=config.α}}
@@ -97,6 +97,19 @@
                 Save Configuration
               </button>
             </div>
+            <datalist id="parameter-ticks">
+                <option>0</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+                <option>10</option>
+            </datalist>
           </fieldset>
         </form>
       </div>

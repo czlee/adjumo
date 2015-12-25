@@ -106,7 +106,8 @@ span[active="false"].glyphicon {
   border: 1px solid #c8c8c8;
 }
 .table>tbody>tr>td.team-ui:hover {
-  cursor: help;
+  background: #000 !important; // Override conflicts
+  color: #fff !important; // Override conflicts
 }
 .debate-importance input {
   max-width: 100%;
@@ -213,7 +214,8 @@ td.head-panel {
   float: left;
 }
 .adjudicator-ui:hover {
-  border-color: #0980bd;
+  background: #000 !important; // Override conflicts
+  color: #fff !important; // Override conflicts
 }
 .adjudicator-ui.locked-true {
   border: 2px solid rgb(0, 0, 255);
