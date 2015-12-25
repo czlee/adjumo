@@ -29,6 +29,11 @@ export default Ember.Mixin.create({
     if (activeConflicts > 0) { return true; } else { return false; }
   }), // Works
 
+  hasActiveHoverTeamHistoryConflicts: Ember.computed('adjorTeam.teamAdjHistories.content.@each.hoverActive', function() {
+    var activeConflicts = this.get('adjorTeam').get('teamAdjHistories').filterBy('hoverActive', true).get('length');
+    if (activeConflicts > 0) { return true; } else { return false; }
+  }), // Works
+
   // Observers for TEAM TO ADJ CONFLICTS
   hasActiveHoverTeamAdjConflicts: Ember.computed('adjorTeam.teamAdjConflicts.content.@each.hoverActive', function() {
     var activeConflicts = this.get('adjorTeam').get('teamAdjConflicts').filterBy('hoverActive', true).get('length');
@@ -36,10 +41,9 @@ export default Ember.Mixin.create({
   }), // Works
 
   // Observers for ALL INSTITUTIONAL CONFLICTS
-
-  hasActiveHoverInstitutionConflict: function() {
+  hasActiveHoverInstitutionConflict: Ember.computed('adjorTeam.institution.hoverActive', function() {
     return this.get('adjorTeam').get('institution').get('hoverActive');
-  }.property('adjorTeam.institution.hoverActive'),
+  }),
 
   // hasActivePanelTeamAdjConflicts: Ember.computed('adjorTeam.teamAdjConflicts.content.@each.panelActive', function() {
   //   var activeConflicts = this.get('adjorTeam').get('teamAdjConflicts').filterBy('panelActive', true).get('length');

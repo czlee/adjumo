@@ -12,19 +12,19 @@ export default Ember.Component.extend({
   checkFilterMatch: function(theObject, searchString) {
     var match = false;
     searchString = searchString.toLowerCase();
-    if (theObject.get('venue').toString().toLowerCase().slice(0, searchString.length) === searchString) {
+    if (theObject.get('venue') !== undefined && theObject.get('venue').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
-    } else if (theObject.get('points').toString().toLowerCase().slice(0, searchString.length) === searchString) {
+    } else if (theObject.get('points') !== undefined && theObject.get('points').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
     } else if (theObject.get('importance').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
-    } else if (theObject.get('og').get('content').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
+    } else if (theObject.get('og').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
-    } else if (theObject.get('oo').get('content').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
+    } else if (theObject.get('oo').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
-    } else if (theObject.get('cg').get('content').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
+    } else if (theObject.get('cg').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
-    } else if (theObject.get('co').get('content').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
+    } else if (theObject.get('co').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
     }
     return match;
@@ -45,7 +45,6 @@ export default Ember.Component.extend({
   }).property("theFilter", "sortProperties"),
 
   actions: {
-
 
     sortBy: function(property) {
       this.toggleProperty('sortAscending');
