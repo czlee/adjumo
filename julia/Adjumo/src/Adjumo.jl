@@ -8,7 +8,10 @@ module Adjumo
 
 using JuMP
 using MathProgBase
+using JSON
 using StatsBase
+
+typealias JsonDict Dict{AbstractString,Any}
 
 SUPPORTED_SOLVERS = [
     ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap,   :Threads),
@@ -18,32 +21,50 @@ SUPPORTED_SOLVERS = [
 
 include("types.jl")
 include("score.jl")
-include("importtabbie2.jl")
+include("importjson.jl")
 include("exportjson.jl")
+include("importtabbie2.jl")
 include("exporttabbie2.jl")
+include("deficit.jl")
 
 export allocateadjudicators, generatefeasiblepanels
 
 "Top-level adjudicator allocation function."
-function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int), α=1.0)
-
+function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int))
     println("feasible panels:")
     @time feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=limitpanels)
+    return allocateadjudicators(roundinfo, feasiblepanels; solver=solver, enforceteamconflicts=enforceteamconflicts, gap=gap, threads=threads)
+end
+
+"Top-level adjudicator allocation function, but takes in a pre-generated set of
+feasible panels."
+function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1)
+
+    procstoadd = threads - nprocs()
+    if procstoadd > 0
+        println("Adding $procstoadd processes to make $threads processes in total")
+        procsadded = addprocs(procstoadd)
+    end
+
     println("score matrix:")
-    @time Σ = scorematrix(roundinfo, feasiblepanels; α=α)
+    @time Σ = scorematrix(roundinfo, feasiblepanels)
+
     println("panel membership matrix:")
     @time Q = panelmembershipmatrix(roundinfo, feasiblepanels)
+
     println("trainee indicators:")
     @time istrainee = [adj.ranking <= TraineePlus for adj in roundinfo.adjudicators]
 
     println("locked adjudicator constraint conversion:")
     @time lockedadjs = convertconstraints(roundinfo, roundinfo.lockedadjs)
+
     println("blocked adjudicator constraint conversion:")
     @time blockedadjs = convertconstraints(roundinfo, roundinfo.blockedadjs)
 
     if enforceteamconflicts
         println("team-adjudicator conflict conversion:")
         @time teamadjconflicts = convertteamadjconflicts(roundinfo)
+
         println("team-adjudicator conflict conversion (append):")
         @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
     end
@@ -57,6 +78,11 @@ function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforcetea
 
     println("conversion:")
     @time allocations = convertallocations(roundinfo.debates, feasiblepanels, debateindices, panelindices, scores)
+
+    if procstoadd > 0
+        rmprocs(procsadded)
+    end
+
     return allocations
 end
 
@@ -80,26 +106,46 @@ Generates a list of feasible panels using the information about the round.
 Returns a list of AdjudicatorPanel instances.
 """
 function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(Int))
-    nchairs = numdebates(roundinfo)
-
     adjssorted = sort(roundinfo.adjudicators, by=adj->adj.ranking, rev=true)
-    chairs = adjssorted[1:nchairs]
-    panellists = adjssorted[nchairs+1:end]
-    panellistcombs = combinations(panellists, 2)
-    panels = AdjudicatorPanel[AdjudicatorPanel(c, [p...]) for c in chairs, p in panellistcombs][:]
+    averagepanelsize = count(x -> x.ranking >= PanellistMinus, roundinfo.adjudicators) / numdebates(roundinfo)
+    panels = AdjudicatorPanel[]
 
-    # accreditedadjs = filter(x -> x.ranking >= PanellistMinus, adjssorted)
-    # chairs = accreditedadjs[1:nchairs]
-    # panellists = accreditedadjs[nchairs+1:end]
-    # accreditedpairs = AdjudicatorPanel[AdjudicatorPanel(c, [p]) for c in chairs, p in panellists][:]
-    # append!(panels, accreditedpairs)
+    if isinteger(averagepanelsize)
+        panelsizes = Int[averagepanelsize]
+    else
+        panelsizes = Int[floor(averagepanelsize), ceil(averagepanelsize)]
+    end
 
-    # panels with judges that conflict with each other are not feasible
-    panels = filter(panel -> !hasconflict(roundinfo, panel), panels) # remove panels with adj-adj conflicts
+    function feasible(adjs)
+        if panelquality(adjs) <= -20
+            return false
+        end
+        if hasconflict(roundinfo, adjs)
+            return false
+        end
+        for groupedadjs in roundinfo.groupedadjs
+            overlap = length(adjs ∩ groupedadjs)
+            if overlap != 0 && overlap != length(groupedadjs)
+                return false
+            end
+        end
+        return true
+    end
 
-    # panels with some but not all of a list of judges that must judge together are not feasible
-    for adjs in roundinfo.groupedadjs
-        filter!(panel -> count(a -> a ∈ adjlist(panel), adjs) ∈ [0, length(adjs)], panels)
+    # Take a very brute force approach
+    panels = AdjudicatorPanel[]
+    for panelsize in panelsizes
+        for adjs in combinations(adjssorted, panelsize)
+            if !feasible(adjs)
+                continue
+            end
+            possiblechairindices = find(adj -> adj.ranking == adjs[1].ranking, adjs)
+            chairindex = rand(possiblechairindices)
+            chair = adjs[chairindex]
+            deleteat!(adjs, chairindex)
+            panel = AdjudicatorPanel(chair, adjs)
+            push!(panels, panel)
+        end
     end
 
     if length(panels) > limitpanels
@@ -125,7 +171,7 @@ function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{Adju
         indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
         Q[p, indices] = 1.0
     end
-    return Q
+    return sparse(Q)
 end
 
 """

@@ -1,13 +1,16 @@
+# Functions to export to JSON for the Node.js part to work with.
+# This file is part of the Adjumo module.
+
 using JsonAPI
 
-export exportjson, json
-export exportjsoninstitutions, exportjsonteams, exportjsonadjudicators, exportjsondebates,
-    jsoninstitutions, jsonteams, jsonadjudicators, jsondebates
-export exportjsonadjadjhistory, exportjsonteamadjhistory, exportjsongroupedadjs
-export exportroundinfo, exportallocations
+# export exportjsonapi, jsonapi
+# export exportjsoninstitutions, exportjsonteams, exportjsonadjudicators, exportjsondebates,
+#     jsoninstitutions, jsonteams, jsonadjudicators, jsondebates
+# export exportjsonadjadjhistory, exportjsonteamadjhistory, exportjsongroupedadjs
+export exportroundinfo, exportallocations, exportfeasiblepanels
 
-exportjson(io::IO, ri::RoundInfo, field::Symbol) = printjsonapi(io, getfield(ri, field))
-json(ri::RoundInfo, field::Symbol) = jsonapi(getfield(ri, field))
+exportjsonapi(io::IO, ri::RoundInfo, field::Symbol) = printjsonapi(io, getfield(ri, field))
+jsonapi(ri::RoundInfo, field::Symbol) = jsonapi(getfield(ri, field))
 
 exportjsoninstitutions(io::IO, ri::RoundInfo) = printjsonapi(io, ri.institutions)
 exportjsonteams(io::IO, ri::RoundInfo) = printjsonapi(io, ri.teams)
@@ -67,7 +70,7 @@ function exportroundinfo(ri::RoundInfo, directory::AbstractString)
         filename = joinpath(directory, string(field)*".json")
         println("Writing $filename")
         f = open(filename, "w")
-        exportjson(f, ri, field)
+        exportjsonapi(f, ri, field)
         close(f)
     end
 
@@ -94,4 +97,15 @@ function exportallocations(allocations::Vector{PanelAllocation}, directory::Abst
     f = open(filename, "w")
     printjsonapi(f, allocations)
     close(f)
+end
+
+function exportfeasiblepanels(io::IO, feasiblepanels::Vector{AdjudicatorPanel})
+    panelsjson = Array{JsonDict}(length(feasiblepanels))
+    for (i, panel) in enumerate(feasiblepanels)
+        panelsjson[i] = JsonDict(
+            "adjs" => [adj.id for adj in panel.adjs],
+            "np" => panel.np
+        )
+    end
+    JSON.print(io, panelsjson)
 end

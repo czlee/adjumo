@@ -17,6 +17,60 @@ export scorematrix, score, panelquality,
 # ==============================================================================
 
 """
+Returns the score matrix using the round information.
+
+The score matrix (denoted `Σ`) will be an `ndebates`-by-`npanels` matrix, where
+`ndebates` is the number of debates in the round and `npanels` is the number of
+feasible panels. The element `Σ[d,p]` is the score of allocating debate of index
+`d` to the panel `feasiblepanels[p]`.
+- `feasiblepanels` is a list of AdjudicatorPanel instances.
+`roundinfo` is a RoundInfo instance.
+"""
+function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
+    componentweights = roundinfo.componentweights
+    debateweights = getdebateweights(roundinfo)
+    println("score matrix components:")
+    @time Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
+    @time Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
+    @time Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
+    @time Σ += componentweights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
+    @time Σ += componentweights.teamhistory  * teamadjhistorymatrix(feasiblepanels, roundinfo)
+    @time Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
+    @time Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
+    @time Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
+    return weightedαfairness(debateweights, Σ, componentweights.α)
+    return Σ
+end
+
+function matrixfromvector(f::Function, feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
+    v = f(feasiblepanels, roundinfo).'
+    ndebates = numdebates(roundinfo)
+    return repmat(v, ndebates, 1)
+end
+
+"""
+Returns the score for the given panel and debate, using the round information.
+This score does *not* account for the weight of the debate, nor does it account
+for weighted α-fairness.
+"""
+function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
+    componentweights = roundinfo.componentweights
+    σ  = componentweights.quality      * panelquality(panel)
+    σ += componentweights.regional     * panelregionalrepresentationscore(debate, panel)
+    σ += componentweights.language     * panellanguagerepresentationscore(debate, panel)
+    σ += componentweights.gender       * panelgenderrepresentationscore(debate, panel)
+    σ += componentweights.teamhistory  * teamadjhistoryscore(roundinfo, debate, panel)
+    σ += componentweights.adjhistory   * adjadjhistoryscore(roundinfo, panel)
+    σ += componentweights.teamconflict * teamadjconflictsscore(roundinfo, debate, panel)
+    σ += componentweights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
+    return σ
+end
+
+# ==============================================================================
+# Weighted α-fairness
+# ==============================================================================
+
+"""
 Returns the weighted α-fairness value for the given weight w, score σ and α.
 This will return -Inf if σ is 0 or negative.
 """
@@ -51,54 +105,6 @@ function weightedαfairness(w::Vector{Float64}, Σ::Matrix{Float64}, α::Float64
     end
 end
 
-"""
-Returns the score matrix using the round information.
-
-The score matrix (denoted `Σ`) will be an `ndebates`-by-`npanels` matrix, where
-`ndebates` is the number of debates in the round and `npanels` is the number of
-feasible panels. The element `Σ[d,p]` is the score of allocating debate of index
-`d` to the panel `feasiblepanels[p]`.
-- `feasiblepanels` is a list of AdjudicatorPanel instances.
-`roundinfo` is a RoundInfo instance.
-"""
-function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; α::Float64=1.0)
-    componentweights = roundinfo.componentweights
-    debateweights = getdebateweights(roundinfo)
-    Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
-    Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += componentweights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
-    Σ += componentweights.teamhistory  * teamadjhistorymatrix(feasiblepanels, roundinfo)
-    Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
-    Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
-    Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
-    Σ = weightedαfairness(debateweights, Σ, α)
-    return Σ
-end
-
-function matrixfromvector(f::Function, feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
-    v = f(feasiblepanels, roundinfo).'
-    ndebates = numdebates(roundinfo)
-    return repmat(v, ndebates, 1)
-end
-
-"""
-Returns the score for the given panel and debate, using the round information.
-This score does *not* account for the weight of the debate.
-"""
-function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
-    componentweights = roundinfo.componentweights
-    σ  = componentweights.quality      * panelquality(panel)
-    σ += componentweights.regional     * panelregionalrepresentationscore(debate, panel)
-    σ += componentweights.language     * panellanguagerepresentationscore(debate, panel)
-    σ += componentweights.gender       * panelgenderrepresentationscore(debate, panel)
-    σ += componentweights.teamhistory  * teamadjhistoryscore(roundinfo, debate, panel)
-    σ += componentweights.adjhistory   * adjadjhistoryscore(roundinfo, panel)
-    σ += componentweights.teamconflict * teamadjconflictsscore(roundinfo, debate, panel)
-    σ += componentweights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
-    return σ
-end
-
 # ==============================================================================
 # Quality
 # ==============================================================================
@@ -115,6 +121,7 @@ adjudicator at index `a`.
 """
 qualityvector(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo) = qualityvector(feasiblepanels)
 qualityvector(feasiblepanels::Vector{AdjudicatorPanel}) = Float64[panelquality(panel) for panel in feasiblepanels]
+panelquality(adjs::Vector{Adjudicator}) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in adjs])
 panelquality(panel::AdjudicatorPanel) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in adjlist(panel)])
 
 const JUDGE_SCORES = Float64[
@@ -171,11 +178,6 @@ function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, 
         teamregions = Region[t.region for t in debate.teams]
         debateinfos[i] = debateregionclass(teamregions)
     end
-
-    # panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
-    # for (i, panel) in enumerate(feasiblepanels)
-    #     panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
-    # end
 
     Πα = Matrix{Float64}(ndebates, npanels)
     for (p, panel) in enumerate(feasiblepanels), (d, dinfo) in enumerate(debateinfos)
@@ -471,15 +473,12 @@ function debategenderclassweight(debate::Debate)
 end
 
 """
-Returns part 1 of the panel language score for the panel.
-Here's the table:
-Number of EPL judges 0   1 2 3 4
-               Score 3 2.5 2 1 0
+Returns the gender score for the panel.
 """
 function panelgenderscore(panel::AdjudicatorPanel)
     nfemale = count(a -> a.gender == PersonFemale, adjlist(panel))
     proportion = nfemale / numadjs(panel)
-    return nfemale - 0.5
+    return proportion - 0.5
 end
 
 # ==============================================================================

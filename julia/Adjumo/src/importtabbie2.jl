@@ -1,4 +1,5 @@
 # Function that imports a JSON file output by the Tabbie2 system.
+# This file is part of the Adjumo module.
 #
 # This code is specialized to extract just the info it requires from Tabbie2's
 # output. The interface between Tabbie2 and Adjumo is designed more to make
@@ -7,10 +8,6 @@
 #
 # This code also isn't very robust: if there are any errors in the file, it
 # will crash.
-
-using JSON
-
-typealias JsonDict Dict{AbstractString,Any}
 
 export importtabbiejson, converttabbiedicttoroundinfo
 

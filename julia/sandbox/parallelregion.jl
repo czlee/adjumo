@@ -3,53 +3,45 @@
 push!(LOAD_PATH, joinpath(Base.source_dir(), ".."))
 using ArgParse
 using Adjumo
-import Adjumo: panelregionalrepresentationscore
+import Adjumo: debateregionclass, DebateRegionClass, panelregionalrepresentationscore
 using AdjumoDataTools
 
 function regionalrepresentationmatrix(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
 
-    teamregions = Vector{Vector{Region}}(ndebates)
+    debateinfos = Vector{Tuple{DebateRegionClass, Vector{Region}}}(ndebates)
     for (i, debate) in enumerate(roundinfo.debates)
-        teamregions[i] = Region[t.region for t in debate]
+        teamregions = Region[t.region for t in debate.teams]
+        debateinfos[i] = debateregionclass(teamregions)
     end
 
-    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
-    for (i, panel) in enumerate(feasiblepanels)
-        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
+    Πα = Matrix{Float64}(ndebates, npanels)
+    for (p, panel) in enumerate(feasiblepanels), (d, dinfo) in enumerate(debateinfos)
+        Πα[d,p] = panelregionalrepresentationscore(dinfo..., panel)
     end
-
-    βr = Matrix{Float64}(ndebates, npanels)
-    @time for (p, (nadjs, adjregions)) in enumerate(panelinfos), (d, tr) in enumerate(teamregions)
-        βr[d,p] = panelregionalrepresentationscore(tr, adjregions, nadjs)
-    end
-    return βr
+    return Πα
 end
 
 function regionalrepresentationmatrix_dist(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
     ndebates = numdebates(roundinfo)
     npanels = length(feasiblepanels)
 
-    teamregions = Vector{Vector{Region}}(ndebates)
+    debateinfos = Vector{Tuple{DebateRegionClass, Vector{Region}}}(ndebates)
     for (i, debate) in enumerate(roundinfo.debates)
-        teamregions[i] = Region[t.region for t in debate]
-    end
-
-    panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
-    for (i, panel) in enumerate(feasiblepanels)
-        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
+        teamregions = Region[t.region for t in debate.teams]
+        debateinfos[i] = debateregionclass(teamregions)
     end
 
     # Parallelize this part, it's heavy
-    βr = SharedArray(Float64, (ndebates, npanels))
-    @time @sync @parallel for p in 1:length(panelinfos)
-        nadjs, adjregions = panelinfos[p]
-        for (d, tr) in enumerate(teamregions)
-            βr[d,p] = panelregionalrepresentationscore(tr, adjregions, nadjs)
+    Πα = SharedArray(Float64, (ndebates, npanels))
+    @sync @parallel for p in 1:length(feasiblepanels)
+        panel = feasiblepanels[p]
+        for (d, dinfo) in enumerate(debateinfos)
+            Πα[d,p] = panelregionalrepresentationscore(dinfo..., panel)
         end
     end
-    return βr
+    return Πα
 end
 
 argsettings = ArgParseSettings()
@@ -62,17 +54,38 @@ argsettings = ArgParseSettings()
         help = "Current round number"
         arg_type = Int
         default = 5
+    "--tabbie1"
+        help = "Import a Tabbie1 database: <username> <password> <database>"
+        metavar = "ARG"
+        nargs = 3
+    "--tabbie2"
+        help = "Import a Tabbie2 export file"
+        metavar = "JSONFILE"
+        default = ""
 end
 args = parse_args(ARGS, argsettings)
 
 ndebates = args["ndebates"]
 currentround = args["currentround"]
-roundinfo = randomroundinfo(ndebates, currentround)
+if length(args["tabbie2"]) > 0
+    tabbie2file = open(args["tabbie2"])
+    roundinfo = importtabbiejson(tabbie2file)
+elseif length(args["tabbie1"]) > 0
+    using DBI
+    using PostgreSQL
+    username, password, database = args["tabbie1"]
+    dbconnection = connect(Postgres, "localhost", username, password, database, 5432)
+    roundinfo = gettabbie1roundinfo(dbconnection, currentround)
+else
+    roundinfo = randomroundinfo(ndebates, currentround)
+end
 feasiblepanels = generatefeasiblepanels(roundinfo)
 
 # once first to compile
-regionalrepresentationmatrix(feasiblepanels, roundinfo)
-regionalrepresentationmatrix_dist(feasiblepanels, roundinfo)
+smallroundinfo = randomroundinfo(5, 2)
+smallfeasiblepanels = generatefeasiblepanels(smallroundinfo)
+regionalrepresentationmatrix(smallfeasiblepanels, smallroundinfo)
+regionalrepresentationmatrix_dist(smallfeasiblepanels, smallroundinfo)
 
 println("serial:")
 @time A = regionalrepresentationmatrix(feasiblepanels, roundinfo)

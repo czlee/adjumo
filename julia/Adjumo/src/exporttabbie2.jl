@@ -1,4 +1,5 @@
 # Function that exports a file to be used by the Tabbie2 system.
+# This file is part of the Adjumo module.
 
 using JSON
 
