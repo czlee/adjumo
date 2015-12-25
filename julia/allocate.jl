@@ -80,15 +80,17 @@ println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) ad
 
 kwargs = Dict(:solver=>args["solver"],
         :enforceteamconflicts=>args["enforce-team-conflicts"],
-        :gap=>args["gap"], :threads=>args["threads"], :limitpanels=>args["limitpanels"])
+        :gap=>args["gap"], :threads=>args["threads"])
 
 if length(args["feasible-panels"]) > 0
     f = open(args["feasible-panels"])
-    feasiblepanels = importfeasiblepanels(f)
+    feasiblepanels = importfeasiblepanels(f, roundinfo)
     close(f)
-    allocations = allocateadjudicators(roundinfo, feasiblepanels, kwargs...)
+    feasiblepanels = feasiblepanels[1:5:end]
+    println("Imported $(length(feasiblepanels)) feasible panels")
+    allocations = allocateadjudicators(roundinfo, feasiblepanels; kwargs...)
 else
-    allocations = allocateadjudicators(roundinfo; kwargs...)
+    allocations = allocateadjudicators(roundinfo; limitpanels=args["limitpanels"], kwargs...)
 end
 
 println("Writing JSON files...")
