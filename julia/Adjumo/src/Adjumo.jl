@@ -233,7 +233,7 @@ end
 
 "Given a user option, returns a solver for use in solving the optimization problem."
 function choosesolver(solver::AbstractString; kwargs...)
-    defaults = Dict(:gap=>1e-2, :threads=>1, :timelimit=300)
+    defaults = Dict(:gap=>1e-2, :threads=>1, :timelimit=>300)
     resolvedkwargs = merge(defaults, Dict(kwargs))
     for (solvername, solvermod, solversym, options) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
