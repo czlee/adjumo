@@ -84,16 +84,16 @@
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2">α-Fairness</label>
             <div class="col-sm-8">
-              {{input type="range" min="0" max="10" step="1" list="debate-ticks" value=config.fairness }}
+              {{input type="range" min="0" max="10" step="1" list="debate-ticks" value=config.α }}
             </div>
             <div class="col-sm-1">
-                {{input class="form-control" value=config.fairness}}
+                {{input class="form-control" value=config.α}}
             </div>
           </fieldset>
           <fieldset class="form-group row">
             <label for="adjconflict_fader" class="col-sm-2"></label>
             <div class="col-sm-8">
-              <button type="submit" class="btn btn-success btn-block" {{action "startNewConfig"}}>
+              <button type="submit" class="btn btn-success btn-block" {{action "saveConfig"}}>
                 Save Configuration
               </button>
             </div>
