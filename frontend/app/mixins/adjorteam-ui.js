@@ -3,7 +3,7 @@ import Ember from 'ember';
 export default Ember.Mixin.create({
 
   classNameBindings: [
-    // 'gender', 'region', 'language', 'id', 'institution',
+    'gender', 'region', 'language', 'id', 'institution',
     // 'panelHistoryConflict', 'panelTeamConflict', 'panelAdjConflict', 'panelInstitutionConflict',
     // 'hoverHistoryConflict', 'hoverTeamConflict', 'hoverAdjConflict', 'hoverInstitutionConflict',
 
@@ -12,7 +12,9 @@ export default Ember.Mixin.create({
     // 'activePanelTeamConflict:panelTeamConflict:noPanelTeamConflict',
     // 'activePanelAdjConflict:panelAdjConflict:noPanelAdjConflict'
 
-    // 'hasActivePanelTeamHistoryConflicts:panel-team-adj-history',
+    // 'hasActivePanelTeamHistoryConflicts:panel-team-adj-history',\
+
+    'hasActiveHoverInstitutionConflict:hover-institution-conflict',
 
     'hasActiveHoverTeamHistoryConflicts:hover-team-adj-history',
 
@@ -33,11 +35,17 @@ export default Ember.Mixin.create({
     if (activeConflicts > 0) { return true; } else { return false; }
   }), // Works
 
-  hasActivePanelTeamAdjConflicts: Ember.computed('adjorTeam.teamAdjConflicts.content.@each.panelActive', function() {
-    var activeConflicts = this.get('adjorTeam').get('teamAdjConflicts').filterBy('panelActive', true).get('length');
-    console.log('observed team adj conflict for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
-    if (activeConflicts > 0) { return true; } else { return false; }
-  }),
+  // Observers for ALL INSTITUTIONAL CONFLICTS
+
+  hasActiveHoverInstitutionConflict: function() {
+    return this.get('adjorTeam').get('institution').get('hoverActive');
+  }.property('adjorTeam.institution.hoverActive'),
+
+  // hasActivePanelTeamAdjConflicts: Ember.computed('adjorTeam.teamAdjConflicts.content.@each.panelActive', function() {
+  //   var activeConflicts = this.get('adjorTeam').get('teamAdjConflicts').filterBy('panelActive', true).get('length');
+  //   //console.log('observed team adj conflict for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
+  //   if (activeConflicts > 0) { return true; } else { return false; }
+  // }),
 
   // CSS Getters
   gender: function(){
@@ -70,6 +78,7 @@ export default Ember.Mixin.create({
     this.get('adjorTeam').get('teamAdjConflicts').forEach(function(conflict) {
       conflict.set('hoverActive', true);
     });
+    this.get('adjorTeam').get('institution').set('hoverActive', true);
     $(".hover-key").hide();
 
   },
@@ -82,6 +91,7 @@ export default Ember.Mixin.create({
     this.get('adjorTeam').get('teamAdjConflicts').forEach(function(conflict) {
       conflict.set('hoverActive', false);
     });
+    this.get('adjorTeam').get('institution').set('hoverActive', false);
     $(".hover-key").show();
 
   },

@@ -8,4 +8,6 @@ export default DS.Model.extend({
   adjudicators: DS.hasMany('adjudicator'),
   region: DS.belongsTo('region'),
 
+  hoverActive: DS.attr('bool', { default: false }), // If the conflict is active when panel hovering
+
 });
