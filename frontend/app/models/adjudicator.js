@@ -20,42 +20,40 @@ export default DS.Model.extend(DebateableMixin, {
   adjAdjConflicts: DS.hasMany('adjudicatorpair', {async: true, inverse: null }), // Need inverse null as multiple possible reversals
   adjAdjHistories: DS.hasMany('adjadjhistory', {async: true, inverse: null }), // Need inverse null as multiple possible reversals
 
-  partOfTeamAdjConflictsChanged: Ember.observer('panel.chair', 'panel.trainees', 'panel.panellists', function() {
-    Ember.run.once(this, 'checkTeamAdjConflicts');
-  }),
+  // partOfTeamAdjConflictsChanged: Ember.observer('panel.chair', 'panel.trainees', 'panel.panellists', function() {
+  //   Ember.run.once(this, 'checkTeamAdjConflicts');
+  // }),
 
-  checkTeamAdjConflicts: Ember.observer('panel.chair', 'panel.trainees', 'panel.panellists', function() {
-    var debateTeams = this.get('panel').get('allTeams');
-    var theAdj = this;
+  // checkTeamAdjConflicts: Ember.observer('panel.chair', 'panel.trainees', 'panel.panellists', function() {
+  //   var debateTeams = this.get('panel').get('allTeams');
+  //   var theAdj = this;
 
-    if (debateTeams !== undefined) {
-      // Not being droped to unused
-      // console.log('    checking team adj conflict for ' + this.get('name'));
-      this.get('teamAdjConflicts').forEach(function(adjConflict) {
-        // console.log('    option 1 ' + adjConflict.get('adj1').get('name'));
-        // console.log('    option 2 ' + adjConflict.get('adj2').get('name'));
-        // Loop through all their conflicts
-        debateTeams.forEach(function(debateTeam) {
-          //console.log('   checking for conflicting adj vs' + debateAdj.get('name'));
-          // Loop through all their fellow panellists and check if they match
-          if (debateTeam.get('id') === adjConflict.get('team').get('id')) {
-            console.log('      setting active conflict ' + theAdj.get('name') + ' vs ' + adjConflict.get('team').get('name'));
-            adjConflict.set('panelActive', true);
-          } else {
-            //console.log('      setting inactive conflict vs ' + conflictingAdj.get('name'));
-            adjConflict.set('panelActive', false);
-          }
-        });
-      });
-    } else {
-      this.get('adjAdjConflicts').forEach(function(adjConflict) {
-        // Being dropped to the unused area
-        adjConflict.set('panelActive', false);
-      });
-    }
-  }),
-
-
+  //   if (debateTeams !== undefined) {
+  //     // Not being droped to unused
+  //     // console.log('    checking team adj conflict for ' + this.get('name'));
+  //     this.get('teamAdjConflicts').forEach(function(adjConflict) {
+  //       // console.log('    option 1 ' + adjConflict.get('adj1').get('name'));
+  //       // console.log('    option 2 ' + adjConflict.get('adj2').get('name'));
+  //       // Loop through all their conflicts
+  //       debateTeams.forEach(function(debateTeam) {
+  //         //console.log('   checking for conflicting adj vs' + debateAdj.get('name'));
+  //         // Loop through all their fellow panellists and check if they match
+  //         if (debateTeam.get('id') === adjConflict.get('team').get('id')) {
+  //           console.log('      setting active conflict ' + theAdj.get('name') + ' vs ' + adjConflict.get('team').get('name'));
+  //           adjConflict.set('panelActive', true);
+  //         } else {
+  //           //console.log('      setting inactive conflict vs ' + conflictingAdj.get('name'));
+  //           adjConflict.set('panelActive', false);
+  //         }
+  //       });
+  //     });
+  //   } else {
+  //     this.get('adjAdjConflicts').forEach(function(adjConflict) {
+  //       // Being dropped to the unused area
+  //       adjConflict.set('panelActive', false);
+  //     });
+  //   }
+  // }),
 
   // checkAdjAdjConflicts: Ember.observer('panel', function() {
   //   var thisAdjudicator = this;

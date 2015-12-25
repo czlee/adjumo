@@ -272,8 +272,14 @@ td.head-panel {
   border-top: 2px solid rgb(200, 200, 200);
   overflow-y: scroll;
   max-height: 600px;
-  height: 100px; // Otherwise it becomes huge loading all the adjs
 }
+.all-adjs-panel {
+  height: 100px;
+}
+.unused-adjs-panel {
+  height: 50px; // Starts of smaller because its typically empty and just a drop box
+}
+
 .resize-holder {
   width: 30px;
   min-height: 40px;

@@ -104,6 +104,7 @@ export default Ember.Component.extend(DroppableMixin, {
     droppedAdj.get('adjAdjHistories').forEach(function(history) {
       history.set('hoverActive', false);
     });
+    droppedAdj.get('institution').set('hoverActive', false);
     $(".hover-key").show();
 
 

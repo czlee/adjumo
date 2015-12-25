@@ -12,44 +12,43 @@ export default Ember.Mixin.create({
     // 'activePanelTeamConflict:panelTeamConflict:noPanelTeamConflict',
     // 'activePanelAdjConflict:panelAdjConflict:noPanelAdjConflict'
 
-    // 'hasActivePanelTeamHistoryConflicts:panel-team-adj-history',\
 
     'hasActiveHoverInstitutionConflict:hover-institution-conflict',
-
-    'hasActiveHoverTeamHistoryConflicts:hover-team-adj-history',
-
+    'hasActiveHoverTeamAdjHistories:hover-team-adj-history',
     'hasActiveHoverTeamAdjConflicts:hover-team-adj-conflict',
+
+    'hasActivePanelTeamAdjHistories:panel-team-adj-history',
     'hasActivePanelTeamAdjConflicts:panel-team-adj-conflict',
 
   ],
 
-  // These observes changes in the conflict objects that are trigger by the mouseover/mouseleaves
-  hasActiveHoverTeamHistoryConflicts: Ember.computed('adjorTeam.teamAdjHistories.content.@each.hoverActive', function() {
-    var activeConflicts = this.get('adjorTeam').get('teamAdjHistories').filterBy('hoverActive', true).get('length');
-    if (activeConflicts > 0) { return true; } else { return false; }
-  }), // Works
-
-  hasActiveHoverTeamHistoryConflicts: Ember.computed('adjorTeam.teamAdjHistories.content.@each.hoverActive', function() {
-    var activeConflicts = this.get('adjorTeam').get('teamAdjHistories').filterBy('hoverActive', true).get('length');
-    if (activeConflicts > 0) { return true; } else { return false; }
-  }), // Works
-
-  // Observers for TEAM TO ADJ CONFLICTS
-  hasActiveHoverTeamAdjConflicts: Ember.computed('adjorTeam.teamAdjConflicts.content.@each.hoverActive', function() {
-    var activeConflicts = this.get('adjorTeam').get('teamAdjConflicts').filterBy('hoverActive', true).get('length');
-    if (activeConflicts > 0) { return true; } else { return false; }
-  }), // Works
-
-  // Observers for ALL INSTITUTIONAL CONFLICTS
+  // HOVERS
   hasActiveHoverInstitutionConflict: Ember.computed('adjorTeam.institution.hoverActive', function() {
     return this.get('adjorTeam').get('institution').get('hoverActive');
   }),
 
-  // hasActivePanelTeamAdjConflicts: Ember.computed('adjorTeam.teamAdjConflicts.content.@each.panelActive', function() {
-  //   var activeConflicts = this.get('adjorTeam').get('teamAdjConflicts').filterBy('panelActive', true).get('length');
-  //   //console.log('observed team adj conflict for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
-  //   if (activeConflicts > 0) { return true; } else { return false; }
-  // }),
+  hasActiveHoverTeamAdjHistories: Ember.computed('adjorTeam.teamAdjHistories.content.@each.hoverActive', function() {
+    var activeConflicts = this.get('adjorTeam').get('teamAdjHistories').filterBy('hoverActive', true).get('length');
+    if (activeConflicts > 0) { return true; } else { return false; }
+  }),
+
+  hasActiveHoverTeamAdjConflicts: Ember.computed('adjorTeam.teamAdjConflicts.content.@each.hoverActive', function() {
+    var activeConflicts = this.get('adjorTeam').get('teamAdjConflicts').filterBy('hoverActive', true).get('length');
+    if (activeConflicts > 0) { return true; } else { return false; }
+  }),
+
+  // IN PANELS
+  hasActivePanelTeamAdjHistories: Ember.computed('adjorTeam.teamAdjHistories.content.@each.panelActive', function() {
+    var activeConflicts = this.get('adjorTeam').get('teamAdjHistories').filterBy('panelActive', true).get('length');
+    //console.log('computed change in hasActivePanelTeamAdjHistories for ' + this.get('adjorTeam').get('name') + 'set to ' + activeConflicts);
+    if (activeConflicts > 0) { return true; } else { return false; }
+  }), // Works
+
+  hasActivePanelTeamAdjConflicts: Ember.computed('adjorTeam.teamAdjConflicts.content.@each.panelActive', function() {
+    var activeConflicts = this.get('adjorTeam').get('teamAdjConflicts').filterBy('panelActive', true).get('length');
+    //console.log('computed change in hasActivePanelTeamAdjConflicts for ' + this.get('adjorTeam').get('name') + 'set to ' + activeConflicts);
+    if (activeConflicts > 0) { return true; } else { return false; }
+  }),
 
   // CSS Getters
   gender: function(){
