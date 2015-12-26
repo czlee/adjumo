@@ -52,18 +52,19 @@ router.post('/debate-scores/', function(req, res) {
 
   // Call into the julia script
   var parameters = 10;
+  var teams = 10;
+  var adjs = 10;
 
-  julia.exec('calculateDebateScores', parameters, function(err,outcome) {
+  julia.exec('calculateDebateScores', parameters, teams, adjs, function(err,regional,gender,language) {
     if(err) {
       console.log("error in computation ",err);
     } else {
-      console.log("calculated: ", outcome);
-
       var fakeScores = {
-        regionalRepresentation: outcome[0],
-        genderRepresentation: outcome[1],
-        languageRepresentation: outcome[2],
+        regionalRepresentation: regional,
+        genderRepresentation: gender,
+        languageRepresentation: language,
       }
+      console.log(fakeScores);
       res.setHeader('Content-Type', 'application/json');
       res.send(JSON.stringify(fakeScores));
 

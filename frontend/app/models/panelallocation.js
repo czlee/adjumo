@@ -152,76 +152,80 @@ export default DS.Model.extend({
 
 
   calculateDebateScores: Ember.observer('chair', 'panellists.[]', 'trainees.[]', function() {
-    console.log('calculating calculateDebateScores');
 
     var thisPanel = this;
-    var debateData = {
-      adjudicators: [],
-      teams: [],
-    };
 
-    function createAdjJSON(adjudicator) {
-      var adjJSON = {
-        ranking: adjudicator.get('ranking'),
-        region: adjudicator.get('regions')[0],
-        language: adjudicator.get('language'),
-        gender: adjudicator.get('gender'),
-      };
-      return adjJSON;
-    }
-    function createTeamJSON(team) {
-      var teamJSON = {
-        region: team.get('region'),
-        language: team.get('language'),
-        gender: team.get('gender'),
-      };
-      return teamJSON;
-    }
+    if (this.get('debate').get('teams') !== undefined ) { // Prevent running during initial data load
 
-    if (this.get('chair').get('content') !== null ) {
-      debateData.adjudicators.push(createAdjJSON(this.get('chair')));
-    }
-    if (this.get('panellists').get('length') > 0 ) {
-      this.get('panellists').forEach(function(adj) {
-        debateData.adjudicators.push(createAdjJSON(adj));
-      });
-    }
-    if (this.get('trainees').get('length') > 0 ) {
-      this.get('trainees').forEach(function(adj) {
-        debateData.adjudicators.push(createAdjJSON(adj));
-      });
-    }
-    if (this.get('debate').get('teams') !== undefined ) {
-      this.get('debate').get('teams').forEach(function(team) {
+      console.log('calculating calculateDebateScores');
+
+      var debateData = {
+        adjudicators: [],
+        teams: [],
+      };
+
+      function createAdjJSON(adjudicator) {
+        var adjJSON = {
+          ranking: adjudicator.get('ranking'),
+          region: adjudicator.get('regions')[0],
+          language: adjudicator.get('language'),
+          gender: adjudicator.get('gender'),
+        };
+        return adjJSON;
+      }
+      function createTeamJSON(team) {
+        var teamJSON = {
+          region: team.get('region'),
+          language: team.get('language'),
+          gender: team.get('gender'),
+        };
+        return teamJSON;
+      }
+
+      if (thisPanel.get('chair').get('content') !== null ) {
+        debateData.adjudicators.push(createAdjJSON(thisPanel.get('chair')));
+      }
+      if (thisPanel.get('panellists').get('length') > 0 ) {
+        this.get('panellists').forEach(function(adj) {
+          debateData.adjudicators.push(createAdjJSON(adj));
+        });
+      }
+      if (thisPanel.get('trainees').get('length') > 0 ) {
+        thisPanel.get('trainees').forEach(function(adj) {
+          debateData.adjudicators.push(createAdjJSON(adj));
+        });
+      }
+      thisPanel.get('debate').get('teams').forEach(function(team) {
         debateData.teams.push(createTeamJSON(team));
       });
-    }
 
-    var request = new Ember.RSVP.Promise(function(resolve, reject) {
-      Ember.$.ajax({
-        url: '/debate-scores',
-        data: JSON.stringify(debateData),
-        dataType: "json",
-        type: "POST",
-        contentType: 'application/json;charset=utf-8',
-        success: function(response) {
-          resolve(response);
-        },
-        error: function(reason) {
-          reject(reason);
-        }
+      var request = new Ember.RSVP.Promise(function(resolve, reject) {
+        Ember.$.ajax({
+          url: '/debate-scores',
+          data: JSON.stringify(debateData),
+          dataType: "json",
+          type: "POST",
+          contentType: 'application/json;charset=utf-8',
+          success: function(response) {
+            resolve(response);
+          },
+          error: function(reason) {
+            reject(reason);
+          }
+        });
       });
-    });
 
-    request.then(function(response) {
-      console.log('request success');
-      thisPanel.set('regionalRepresentation', response.regionalRepresentation);
-      thisPanel.set('genderRepresentation', response.genderRepresentation);
-      thisPanel.set('languageRepresentation', response.languageRepresentation);
-    }, function(error) {
-      console.log('request had error');
-      console.log(error);
-    });
+      request.then(function(response) {
+        console.log('request success');
+        thisPanel.set('regionalRepresentation', response.regionalRepresentation);
+        thisPanel.set('genderRepresentation', response.genderRepresentation);
+        thisPanel.set('languageRepresentation', response.languageRepresentation);
+      }, function(error) {
+        console.log('request had error');
+        console.log(error);
+      });
+
+    }
   }),
 
   ranking: function() {
