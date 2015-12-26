@@ -569,7 +569,7 @@ td.head-panel {
 // HISTORY CONFLICTS
 .team-ui.panel-team-adj-history, .adjudicator-ui.panel-team-adj-history,
 .team-ui.panel-adj-adj-history, .adjudicator-ui.panel-adj-adj-history {
-  @include conflict-bg(#37a5c8, #2d86a3, 0.5);
+  @include conflict-bg(#37a5c8, #2d86a3, 0.66);
   border-color: #37a5c8;
 }
 .history-conflict-key,
@@ -584,7 +584,7 @@ td.head-panel {
 
 // INSTITUTION CONFLICTS
 .team-ui.panel-institution-conflict, .adjudicator-ui.panel-institution-conflict {
-  @include conflict-bg(#da1ac1, #ae319e, 0.5);
+  @include conflict-bg(#da1ac1, #ae319e, 0.66);
   border-color: #da1ac1;
 }
 .institution-conflict-key,
@@ -596,7 +596,7 @@ td.head-panel {
 // PERSONAL CONFLICTS
 .team-ui.panel-team-adj-conflict, .adjudicator-ui.panel-team-adj-conflict,
 .team-ui.panel-adj-adj-conflict, .adjudicator-ui.panel-adj-adj-conflict, {
-  @include conflict-bg(#ff0000, #cf0000, 0.5);
+  @include conflict-bg(#ff0000, #cf0000, 0.66);
   border-color: #ff0000;
 }
 .team-conflict-key,
