@@ -18,8 +18,13 @@ export default DS.Model.extend({
   genderRepresentation: DS.attr('number'),
   languageRepresentation: DS.attr('number'),
 
-  calculateDebateScores: Ember.observer('chair', 'panellists.[]', 'trainees.[]', function() {
+  watchDebateScores: Ember.observer('chair', 'panellists.[]', 'trainees.[]', function() {
+    Ember.run.once(this, 'calculateDebateScores'); // Delays checking to the next run loop; prevents doubling up of checks with set/unsetting
+  }),
 
+  calculateDebateScores: function() {
+
+    console.log('calcing scores');
     var thisPanel = this;
 
     if (this.get('debate').get('teams') !== undefined ) { // Prevent running during initial data load
@@ -91,7 +96,7 @@ export default DS.Model.extend({
       });
 
     }
-  }),
+  },
 
   ranking: function() {
     var rankings = [];
