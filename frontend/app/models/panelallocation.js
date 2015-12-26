@@ -18,6 +18,14 @@ export default DS.Model.extend({
   genderRepresentation: DS.attr('number'),
   languageRepresentation: DS.attr('number'),
 
+  init() {
+    console.log('panel allocation created');
+  },
+
+  // test1: Ember.observer('chair', 'panellists.[]', 'trainees.[]', function() {
+  //   console.log('test2 observered chairs etc');
+  // }),
+
   calculateConflicts: Ember.observer('chair', 'panellists.[]', 'trainees.[]', function() {
 
     if (this.get('debate').get('teams') !== undefined) {
@@ -157,8 +165,6 @@ export default DS.Model.extend({
 
     if (this.get('debate').get('teams') !== undefined ) { // Prevent running during initial data load
 
-      console.log('calculating calculateDebateScores');
-
       var debateData = {
         adjudicators: [],
         teams: [],
@@ -216,7 +222,7 @@ export default DS.Model.extend({
       });
 
       request.then(function(response) {
-        console.log('request success');
+        //console.log('request success');
         thisPanel.set('regionalRepresentation', response.regionalRepresentation);
         thisPanel.set('genderRepresentation', response.genderRepresentation);
         thisPanel.set('languageRepresentation', response.languageRepresentation);

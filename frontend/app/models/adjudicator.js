@@ -20,6 +20,16 @@ export default DS.Model.extend(DebateableMixin, {
   adjAdjConflicts: DS.hasMany('adjudicatorpair', {async: true, inverse: null }), // Need inverse null as multiple possible reversals
   adjAdjHistories: DS.hasMany('adjadjhistory', {async: true, inverse: null }), // Need inverse null as multiple possible reversals
 
+
+  test2: Ember.computed('panel', function() {
+    console.log('adjudicator.js computed panel');
+  }),
+
+  test1: Ember.observer('panel', function() {
+    console.log('adjudicator.js observered panel'); // Fires on load and change
+  }),
+
+
   // partOfTeamAdjConflictsChanged: Ember.observer('panel.chair', 'panel.trainees', 'panel.panellists', function() {
   //   Ember.run.once(this, 'checkTeamAdjConflicts');
   // }),
