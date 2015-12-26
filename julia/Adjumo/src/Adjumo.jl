@@ -14,9 +14,12 @@ using StatsBase
 typealias JsonDict Dict{AbstractString,Any}
 
 SUPPORTED_SOLVERS = [
-    ("gurobi", :Gurobi,                :GurobiSolver,  :MIPGap,   :Threads, :LogToConsole, 1),
-    ("cbc",    :Cbc,                   :CbcSolver,     :ratioGap, :threads, :logLevel,     1),
-    ("glpk",   :GLPKMathProgInterface, :GLPKSolverMIP, :tol_obj,  :threads, :msg_lev,      3),
+    ("gurobi", :Gurobi, :GurobiSolver,
+            (:MIPGap=>:gap, :Threads=>:threads, :LogToConsole=>1, :MIPFocus=>1, :TimeLimit=>:timelimit)),
+    ("cbc", :Cbc, :CbcSolver,
+            (:ratioGap=>:gap, :threads=>:threads, :logLevel=>1, :SolveType=>1)),
+    ("glpk", :GLPKMathProgInterface, :GLPKSolverMIP,
+            (:tol_obj=>:gap, :msg_lev=>3)),
 ]
 
 include("types.jl")
@@ -30,7 +33,7 @@ include("deficit.jl")
 export allocateadjudicators, generatefeasiblepanels
 
 "Top-level adjudicator allocation function."
-function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int))
+function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int), timelimit=300)
     println("feasible panels:")
     @time feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=limitpanels)
     return allocateadjudicators(roundinfo, feasiblepanels; solver=solver, enforceteamconflicts=enforceteamconflicts, gap=gap, threads=threads)
@@ -38,7 +41,7 @@ end
 
 "Top-level adjudicator allocation function, but takes in a pre-generated set of
 feasible panels."
-function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1)
+function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, timelimit=300)
 
     procstoadd = threads - nprocs()
     if procstoadd > 0
@@ -71,7 +74,7 @@ function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{Adjud
 
     @time status, debateindices, panelindices, scores = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver, gap=gap, threads=threads)
 
-    if status != :Optimal
+    if status == :Infeasible
         println("Error: Problem was not solved to optimality. Status was: $status")
         checkincompatibleconstraints(roundinfo)
     end
@@ -229,8 +232,10 @@ function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorP
 end
 
 "Given a user option, returns a solver for use in solving the optimization problem."
-function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
-    for (solvername, solvermod, solversym, gapsym, threadssym, logsym, logval) in SUPPORTED_SOLVERS
+function choosesolver(solver::AbstractString; kwargs...)
+    defaults = Dict(:gap=>1e-2, :threads=>1, :timelimit=>300)
+    resolvedkwargs = merge(defaults, Dict(kwargs))
+    for (solvername, solvermod, solversym, options) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
             try
                 @eval using $solvermod
@@ -241,14 +246,13 @@ function choosesolver(solver::AbstractString; gap=1e-2, threads=1)
                 else
                     continue
                 end
-
             end
             println("Using solver: $solversym")
-            kwargs = Dict(gapsym=>gap, logsym=>logval)
-            if solversym == :GurobiSolver
-                kwargs[threadssym] = threads
+            solverargs = Tuple{Symbol,Any}[]
+            for (name, value) in options
+                push!(solverargs, (name, isa(value, Symbol) ? resolvedkwargs[value] : value))
             end
-            return solversym, eval(solversym)(;kwargs...)
+            return solversym, eval(solversym)(;solverargs...)
         end
     end
     if solver == "default"
@@ -309,7 +313,7 @@ function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
     @time status = solve(m)
     println("Solver done at $(now())")
 
-    if status == :Optimal
+    if status != :Infeasible
         println("Objective value: ", getObjectiveValue(m))
         Xval = Array{Bool}(getValue(X))
         debates, panels = findn(Xval)

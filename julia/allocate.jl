@@ -53,6 +53,9 @@ argsettings = ArgParseSettings()
     "-f", "--feasible-panels"
         help = "Feasible panels file"
         default = ""
+    "--timelimit"
+        help = "Time limit for Gurobi solver"
+        default = 300
 end
 args = parse_args(ARGS, argsettings)
 
@@ -80,7 +83,7 @@ println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) ad
 
 kwargs = Dict(:solver=>args["solver"],
         :enforceteamconflicts=>args["enforce-team-conflicts"],
-        :gap=>args["gap"], :threads=>args["threads"])
+        :gap=>args["gap"], :threads=>args["threads"], :timelimit=>args["timelimit"])
 
 if length(args["feasible-panels"]) > 0
     f = open(args["feasible-panels"])

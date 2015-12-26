@@ -68,7 +68,7 @@ dbname = args["database"]
 println("Connecting to database $dbname on server $host...")
 dbconnection = connect(Postgres, host, args["username"], args["password"], dbname, args["port"])
 
-rinfo = gettabbie1roundinfo(dbconnection, 9)
+rinfo = gettabbie1roundinfo(dbconnection, args["currentround"])
 showteams(rinfo)
 showadjudicators(rinfo)
 exportroundinfo(rinfo, args["dir"])
