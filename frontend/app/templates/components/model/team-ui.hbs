@@ -9,6 +9,11 @@
                 <div class="row">
                     <div class="col-md-5">
                         <strong>{{ team.name }}</strong> of <strong>{{ team.institution.name }}</strong>
+                        Points {{ team.points }}
+                        deficit: {{ team.genderdeficit }}
+                        deficit: {{ team.languagedeficit }}
+                        deficit: {{ team.qualitydeficit }}
+                        deficit: {{ team.regionaldeficit }}
                     </div>
                     <div class="col-md-3">
                         <span class="glyphicon glyphicon-globe text-muted"> </span> {{ team.regionName }}

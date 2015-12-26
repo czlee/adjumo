@@ -7,6 +7,13 @@ export default DS.Model.extend(DebateableMixin, {
   // Note: gets its base attributes from the debateable mixin
   region: DS.attr('number'), // Teams have singular, adjs have multiple
 
+  points: DS.attr('number'),
+  genderdeficit: DS.attr('number'),
+  languagedeficit: DS.attr('number'),
+  qualitydeficit: DS.attr('number'),
+  regionaldeficit: DS.attr('number'),
+
+
   // adjHistoryLinear: Ember.computed('adjHistory', function() {
   //   var linearHistory = Array(20); // Hack, should by dynamic
   //   this.get('adjHistory').forEach(function(historyEvent) {

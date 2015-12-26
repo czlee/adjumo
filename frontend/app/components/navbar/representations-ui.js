@@ -33,11 +33,11 @@ export default Ember.Component.extend({
   },
   rankingOn: function() {
     this.set('showingRanking', true);
-    $(".adjudicator-ui, .preallocation.debate-importance, .allocation.debate-importance").addClass("ranking-display");
+    $(".adjudicator-ui, .debate-ui").addClass("ranking-display");
   },
   rankingOff: function() {
     this.set('showingRanking', false);
-    $(".adjudicator-ui, .preallocation.debate-importance, .allocation.debate-importance").removeClass("ranking-display");
+    $(".adjudicator-ui, .debate-ui").removeClass("ranking-display");
   },
 
   actions: {

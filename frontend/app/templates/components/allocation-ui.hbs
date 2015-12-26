@@ -42,24 +42,6 @@
       <table id="allocation" class="table table-bordered" cellpadding="0" cellspacing="0">
         <thead>
           <tr>
-            <th {{action "sortBy" "venue"}} class="head-sortable text-center head-venue preallocation">
-              <span class="glyphicon glyphicon-map-marker" data-toggle="tooltip" data-placement="top" title="Venue">
-              {{#if sortAscending}}
-                <span class="glyphicon glyphicon-chevron-up" active={{sortedByVenue}}></span>
-              {{else}}
-                <span class="glyphicon glyphicon-chevron-down" active={{sortedByVenue}}></span>
-              {{/if}}
-              </span>
-            </th>
-            <th {{action "sortBy" "points"}} class="head-sortable head-points text-center preallocation">
-              <span class="glyphicon glyphicon-home" data-toggle="tooltip" data-placement="top" title="Points">
-              {{#if sortAscending}}
-                <span class="glyphicon glyphicon-chevron-up" active={{sortedByPoints}}></span>
-              {{else}}
-                <span class="glyphicon glyphicon-chevron-down" active={{sortedByPoints}}></span>
-              {{/if}}
-              </span>
-            </th>
             <th {{action "sortBy" "weight"}} class="head-sortable head-weight text-center preallocation" >
               <span class="glyphicon glyphicon glyphicon-fire" data-toggle="tooltip" data-placement="top" title="Weight">
               {{#if sortAscending}}
@@ -133,16 +115,17 @@
 
         <!-- ticker for input ranges -->
         <datalist id="debate-ticks">
+            <option>-5</option>
+            <option>-4</option>
+            <option>-3</option>
+            <option>-2</option>
+            <option>-1</option>
+            <option>0</option>
             <option>1</option>
             <option>2</option>
             <option>3</option>
             <option>4</option>
             <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-            <option>10</option>
         </datalist>
 
         </tbody>

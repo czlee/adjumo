@@ -1,25 +1,18 @@
-<td class="debate-venue preallocation">
-    <small>{{ debate.venue }}</small>
-</td>
-<td class="debate-points text-center preallocation">
-    {{ debate.points }}
-</td>
 <td class="debate-weight text-center preallocation">
     {{ debate.weightRounded }}
 </td>
-<td class="debate-importance text-center preallocation ranking-{{ debate.rankingClass }}">
+<td class="debate-importance text-center preallocation ranking-{{ debate.importanceClass }}">
     {{ debate.importance }}
 </td>
-<td class="debate-importance text-center allocation hidden ranking-{{ debate.rankingClass }}">
+<td class="debate-importance text-center allocation hidden ranking-{{ debate.importanceClass }}">
     {{ debate.importance }}
 </td>
 <td class="debate-importance-edit preallocation">
-    {{input type="range" min="1" list="debate-ticks" max="10" step="1" value=debate.importance class="" }}
+    {{input type="range" min="-5" list="debate-ticks" max="5" step="1" value=debate.importanceModifier class="" }}
 </td>
-{{model/team-ui team=debate.og}}
-{{model/team-ui team=debate.oo}}
-{{model/team-ui team=debate.cg}}
-{{model/team-ui team=debate.co}}
+{{#each debate.teams as |team|}}
+    {{model/team-ui team=team}}
+{{/each}}
 {{model/bans-ui debate=debate adjudicators=adjudicators}}
 {{model/locks-ui debate=debate adjudicators=adjudicators}}
 {{#if debate.panels }}
