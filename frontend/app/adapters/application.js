@@ -3,7 +3,7 @@ import DS from 'ember-data';
 export default DS.JSONAPIAdapter.extend({
 
   suffix: '.json',
-  host: 'http://localhost:4200',
+  host: '',
   namespace: 'data',
 
   pathForType: function(type) {
