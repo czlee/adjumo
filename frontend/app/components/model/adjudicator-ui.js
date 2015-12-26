@@ -17,9 +17,6 @@ export default Ember.Component.extend(DraggableMixin, {
     'hasActiveHoverAdjAdjConflicts:hover-adj-adj-conflict',
     'hasActivePanelAdjAdjConflicts:panel-adj-adj-conflict',
 
-    // 'hasActivePaneljAdjHistories:panel-adj-adj-history',
-    // 'hasActivePanelAdjAdjConflicts:panel-adj-adj-conflict',
-
   ],
 
   // These observes changes in the conflict objects that are trigger by the mouseover/mouseleaves
@@ -29,7 +26,7 @@ export default Ember.Component.extend(DraggableMixin, {
   }),
   hasActivePanelAdjAdjHistories: Ember.computed('adj.adjAdjHistories.content.@each.panelActive', function() {
     var activeConflicts = this.get('adj').get('adjAdjHistories').filterBy('panelActive', true).get('length');
-    console.log('observed histories for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
+    //console.log('observed histories for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
     if (activeConflicts > 0) { return true; } else { return false; }
   }),
 

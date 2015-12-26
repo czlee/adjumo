@@ -18,12 +18,12 @@ export default DS.Model.extend({
   qualitydeficit: DS.attr('number'),
   regionaldeficit: DS.attr('number'),
 
-  // points: Ember.computed('teams', function() {
-  //   var teamPoints = this.get('teams').mapBy('points');
-  //   var sum = teamPoints.reduce(function(a, b) { return a + b; });
-  //   var avg = sum / teamPoints.length;
-  //   return Math.round(avg * 10) / 10; // normalise to 1-9 like adjs
-  // }),
+  points: Ember.computed('teams', function() {
+    var teamPoints = this.get('teams').mapBy('points');
+    var sum = teamPoints.reduce(function(a, b) { return a + b; });
+    var avg = sum / teamPoints.length;
+    return Math.round(avg * 10) / 10; // normalise to 1-9 like adjs
+  }),
 
   importance: Ember.computed('weight', 'importanceModifier', function() {
     var importance = Number(this.get('weight')) + Number(this.get('importanceModifier'));

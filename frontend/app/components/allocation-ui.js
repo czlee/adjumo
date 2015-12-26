@@ -82,7 +82,7 @@ export default Ember.Component.extend({
   },
 
   sortedByPoints: function() {
-    if (this.get('sortProperties') === "points:asc" || this.get('sortProperties') === "points:desc") {
+    if (this.get('sortProperties') == "points:asc" || this.get('sortProperties') == "points:desc") {
       return true;
     } else {
       return false;
