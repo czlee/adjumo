@@ -17,7 +17,7 @@ argsettings = ArgParseSettings()
     "--solver"
         help = "Solver to use ('gurobi', 'cbc' or 'glpk')"
         default = "default"
-        range_tester = x -> x ∈ ["default", "gurobi", "cbc", "glpk"]
+        range_tester = x -> x ∈ ["default", "gurobi", "cbc", "glpk"] || startswith(x, "gurobicloud/")
     "--enforce-team-conflicts"
         help = "Enforce team-adjudicator conflicts (as opposed to just penalize)"
         action = :store_true

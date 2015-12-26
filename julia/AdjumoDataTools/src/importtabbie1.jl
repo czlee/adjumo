@@ -101,7 +101,7 @@ function gettabbie1roundinfo(dbconnection, currentround)
             gender = aggregategender(genders...)
         end
 
-        addteam!(rinfo, id, name, institution, region, gender, language, 0)
+        addteam!(rinfo, id, name, institution, region, language, gender, 0)
     end
 
     # Adjudicators
@@ -132,7 +132,7 @@ function gettabbie1roundinfo(dbconnection, currentround)
             gender = interpretpersongender(csv_genders[csvrow])
             language = interpretlanguage(csv_languages[csvrow])
         end
-        addadjudicator!(rinfo, id, name, institution, ranking, regions, gender, language)
+        addadjudicator!(rinfo, id, name, institution, ranking, regions, language, gender)
     end
 
     # Previous rounds

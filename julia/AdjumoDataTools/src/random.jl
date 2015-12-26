@@ -95,6 +95,7 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     for i in 1:nadjs÷4
         addadjadjconflict!(roundinfo, randpair(adjudicators)...)
         addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
+        addinstadjconflict!(roundinfo, rand(institutions), rand(adjudicators))
     end
 
     for r in 1:currentround-1

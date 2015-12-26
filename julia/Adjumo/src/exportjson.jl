@@ -9,13 +9,13 @@ using JsonAPI
 # export exportjsonadjadjhistory, exportjsonteamadjhistory, exportjsongroupedadjs
 export exportroundinfo, exportallocations, exportfeasiblepanels
 
-exportjsonapi(io::IO, ri::RoundInfo, field::Symbol) = printjsonapi(io, getfield(ri, field))
+exportjsonapi(io::IO, ri::RoundInfo, field::Symbol) = writejsonapi(io, getfield(ri, field))
 jsonapi(ri::RoundInfo, field::Symbol) = jsonapi(getfield(ri, field))
 
-exportjsoninstitutions(io::IO, ri::RoundInfo) = printjsonapi(io, ri.institutions)
-exportjsonteams(io::IO, ri::RoundInfo) = printjsonapi(io, ri.teams)
-exportjsonadjudicators(io::IO, ri::RoundInfo) = printjsonapi(io, ri.adjudicators)
-exportjsondebates(io::IO, ri::RoundInfo) = printjsonapi(io, ri.debates)
+exportjsoninstitutions(io::IO, ri::RoundInfo) = writejsonapi(io, ri.institutions)
+exportjsonteams(io::IO, ri::RoundInfo) = writejsonapi(io, ri.teams)
+exportjsonadjudicators(io::IO, ri::RoundInfo) = writejsonapi(io, ri.adjudicators)
+exportjsondebates(io::IO, ri::RoundInfo) = writejsonapi(io, ri.debates)
 jsoninstitutions(ri::RoundInfo) = jsonapi(ri.institutions)
 jsonteams(ri::RoundInfo) = jsonapi(ri.teams)
 jsonadjudicators(ri::RoundInfo) = jsonapi(ri.adjudicators)
@@ -39,21 +39,23 @@ end
 
 function exportjsonadjadjhistory(io::IO, ri::RoundInfo)
     histories = [AdjAdjHistory(adjs.adj1, adjs.adj2, rounds) for (adjs, rounds) in ri.adjadjhistory]
-    printjsonapi(io, histories)
+    writejsonapi(io, histories)
 end
 
 function exportjsonteamadjhistory(io::IO, ri::RoundInfo)
     histories = [TeamAdjHistory(ta.team, ta.adjudicator, rounds) for (ta, rounds) in ri.teamadjhistory]
-    printjsonapi(io, histories)
+    writejsonapi(io, histories)
 end
 
 function exportjsongroupedadjs(io::IO, ri::RoundInfo)
     groups = [GroupedAdjudicators(adjs) for adjs in ri.groupedadjs]
-    printjsonapi(io, groups)
+    writejsonapi(io, groups)
 end
 
 function exportroundinfo(ri::RoundInfo, directory::AbstractString)
     mkpath(directory)
+
+    # Fields that can be exported directly as JSON API
     fields = [
         :adjudicators,
         :teams,
@@ -61,6 +63,7 @@ function exportroundinfo(ri::RoundInfo, directory::AbstractString)
         :debates,
         :adjadjconflicts,
         :teamadjconflicts,
+        :instadjconflicts,
         :lockedadjs,
         :blockedadjs,
         :componentweights,
@@ -68,12 +71,13 @@ function exportroundinfo(ri::RoundInfo, directory::AbstractString)
 
     for field in fields
         filename = joinpath(directory, string(field)*".json")
-        println("Writing $filename")
+        println("exportroundinfo: Writing $filename")
         f = open(filename, "w")
         exportjsonapi(f, ri, field)
         close(f)
     end
 
+    # Fields that require special functions to convert into a JSON-API-able format
     special_fields = [
         "adjadjhistory",
         "teamadjhistory",
@@ -82,12 +86,21 @@ function exportroundinfo(ri::RoundInfo, directory::AbstractString)
 
     for field in special_fields
         filename = joinpath(directory, field*".json")
-        println("Writing $filename")
+        println("exportroundinfo: Writing $filename")
         f = open(filename, "w")
         func = eval(symbol("exportjson"*field))
         func(f, ri)
         close(f)
     end
+
+    # General fields containing meta-information about the round
+    roundinfodict = JsonDict()
+    roundinfodict["currentround"] = ri.currentround
+    filename = joinpath(directory, "roundinfo.json")
+    println("exportroundinfo: Writing $filename")
+    f = open(filename, "w")
+    JSON.print(f, roundinfodict)
+    close(f)
 end
 
 function exportallocations(allocations::Vector{PanelAllocation}, directory::AbstractString)
@@ -95,7 +108,7 @@ function exportallocations(allocations::Vector{PanelAllocation}, directory::Abst
     filename = joinpath(directory, "panelallocations.json")
     println("Writing $filename")
     f = open(filename, "w")
-    printjsonapi(f, allocations)
+    writejsonapi(f, allocations)
     close(f)
 end
 

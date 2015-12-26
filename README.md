@@ -15,12 +15,13 @@ You then need to install the required packages:
 Pkg.add("JuMP")
 Pkg.add("JSON")
 Pkg.add("StatsBase")
+Pkg.clone("https://github.com/czlee/JsonAPI.jl.git")
 ```
 
 Some functions also require the following:
 ``` julia
 Pkg.add("ArgParse")                                        # required only for command-line scripts
-Pkg.add("Formatting")                                      # required only for command-line scripts
+Pkg.clone("https://github.com/czlee/Formatting.jl.git")    # required only for command-line scripts
 Pkg.add("Iterators")                                       # required only for AdjumoDataTools
 Pkg.clone("https://github.com/JuliaDB/DBI.jl.git")         # required only for Tabbie1 data use
 Pkg.clone("https://github.com/JuliaDB/PostgreSQL.jl.git")  # required only for Tabbie1 data use
@@ -36,6 +37,12 @@ If you can get hold of a Gurobi license:
 Pkg.add("Gurobi")
 ```
 *Note: This will fail if you don't have Gurobi installed.*
+
+If you want to use Gurobi Cloud, you need a fork of this repository, since the
+official one doesn't yet support Gurobi Cloud:
+``` julia
+Pkg.clone("https://github.com/czlee/Gurobi.jl.git")
+```
 
 If you can't get a Gurobi license, then we can use one of the open-source solvers, CBC or GLPK.
 

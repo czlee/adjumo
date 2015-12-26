@@ -29,6 +29,7 @@ include("exportjson.jl")
 include("importtabbie2.jl")
 include("exporttabbie2.jl")
 include("deficit.jl")
+include("frontendinterface.jl")
 
 export allocateadjudicators, generatefeasiblepanels
 
@@ -140,6 +141,7 @@ function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(I
 
     # Take a very brute force approach
     panels = AdjudicatorPanel[]
+    sizehint!(panels, binomial(numadjs(roundinfo), maximum(panelsizes)))
     for panelsize in panelsizes
         for adjs in combinations(adjssorted, panelsize)
             if !feasible(adjs)
@@ -238,6 +240,23 @@ end
 function choosesolver(solver::AbstractString; kwargs...)
     defaults = Dict(:gap=>1e-2, :threads=>1, :timelimit=>300)
     resolvedkwargs = merge(defaults, Dict(kwargs))
+
+    if startswith(solver, "gurobicloud/")
+        solver, host, password = split(solver, "/"; limit=3)
+        options = SUPPORTED_SOLVERS[1][4]
+        try
+            @eval using Gurobi
+        catch
+            error("Gurobi does not appear to be installed.")
+        end
+        println("Using solver: GurobiCloudSolver at $host (password $password)")
+        solverargs = Tuple{Symbol,Any}[]
+        for (name, value) in options
+            push!(solverargs, (name, isa(value, Symbol) ? resolvedkwargs[value] : value))
+        end
+        return :GurobiCloudSolver, GurobiCloudSolver(host, password; solverargs...)
+    end
+
     for (solvername, solvermod, solversym, options) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
             try
@@ -261,7 +280,7 @@ function choosesolver(solver::AbstractString; kwargs...)
     if solver == "default"
         error("None of Gurobi, Cbc and GLPKMathProgInterface appear to be installed.")
     else
-        error("Solver must be \"gurobi\", \"cbc\" or \"glpk\" (or \"default\").")
+        error("Solver must be \"gurobi\", \"gurobicloud/host/password\", \"cbc\" or \"glpk\" (or \"default\").")
     end
 end
 
