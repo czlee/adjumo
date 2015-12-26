@@ -28,48 +28,35 @@
             </li>
             <li class="list-group-item btn-toolbar-holder">
                 <div class="btn-toolbar">
-                    <div class="btn-group" role="group">
-                        {{#if team.teamAdjConflicts }}
+                    {{#if team.teamAdjConflicts }}
+                        <div class="btn-group" role="group">
                             {{#each team.teamAdjConflicts as |conflict| }}
                                 {{#if conflict.panelActive }}
-                                    <div class="btn btn-default btn-sm">
-                                        <span class="text-danger glyphicon glyphicon-remove"> </span>
+                                    <div class="popover-highlight btn btn-default btn-sm panel-team-adj-conflict">
+                                        <span class="glyphicon glyphicon-remove"> </span> {{conflict.adjudicator.name}}
                                     </div>
-                                    <div class="btn btn-sm panel-adj-conflict">{{conflict.adjudicator.name}}</div>
-                                {{else}}
-                                    <div class="btn btn-default btn-sm">
-                                        <span class="text-danger glyphicon glyphicon-remove"> </span>
-                                    </div>
-                                    <div class="btn btn-sm">{{conflict.adjudicator.name}}</div>
                                 {{/if}}
                             {{/each}}
-                        {{else}}
-                            <div class="btn btn-default btn-sm">None</div>
-                        {{/if}}
-                    </div>
-                    <div class="btn-group" role="group">
-                        {{#if team.teamAdjHistories }}
+                        </div>
+                    {{/if}}
+                    {{#if team.hasInstitutionalConflict }}
+                        <div class="btn-group" role="group">
+                            <div class="popover-highlight btn btn-default btn-sm panel-institution-conflict">
+                                <span class="glyphicon glyphicon-remove"></span> {{team.institution.name}}
+                            </div>
+                        </div>
+                    {{/if}}
+                    {{#if team.teamAdjHistories }}
+                        <div class="btn-group" role="group">
                             {{#each team.teamAdjHistories as |history| }}
                                 {{#if history.panelActive }}
-                                    <div class="btn btn-default btn-sm">
-                                        <span class="text-primary">
-                                            <span class=" glyphicon glyphicon-time"></span> {{history.rounds }}
-                                        </span>
+                                    <div class="popover-highlight btn btn-default btn-sm panel-team-adj-history">
+                                        <span class="glyphicon glyphicon-time"></span> {{history.rounds }} {{history.adjudicator.short_name }}
                                     </div>
-                                    <div class="btn btn-sm panel-history-conflict">{{history.adjudicator.short_name }}</div>
-                                {{else}}
-                                    <div class="btn btn-default btn-sm">
-                                        <span class="text-primary">
-                                            <span class=" glyphicon glyphicon-time"></span> {{history.rounds }}
-                                        </span>
-                                    </div>
-                                    <div class="btn btn-sm">{{history.adjudicator.short_name }}</div>
                                 {{/if}}
                             {{/each}}
-                        {{else}}
-                            <div class="btn btn-default btn-sm">None</div>
-                        {{/if}}
-                    </div>
+                        </div>
+                    {{/if}}
                 </div>
             </li>
         </ul>

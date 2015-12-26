@@ -99,7 +99,7 @@ export default DS.Model.extend({
             debateAdjs.forEach(function(debateAdjudicator) {  // Loop through all the teams and check if they match
               if (debateAdjudicator.get('id') === conflictingAdj.get('id')) {
                 hasHistory = true;
-                console.log('      setting active adj adj history ' + adjudicator.get('name') + ' vs ' + conflictingAdj.get('name'));
+                //console.log('      setting active adj adj history ' + adjudicator.get('name') + ' vs ' + conflictingAdj.get('name'));
               }
             });
             history.set('panelActive', hasHistory);
