@@ -35,7 +35,36 @@ router.post('/allocation-configs/', function(req, res) {
   res.send("ok");
   res.end();
 
-})
+}),
+
+
+router.post('/debate-scores/', function(req, res) {
+
+  console.log('posted debate scores got');
+  // console.log(req.body);
+
+  var adjs = req.body.adjudicators;
+  var teams = req.body.teams;
+
+  // Import the relevant script
+  var julia = require('node-julia');
+  julia.exec('include', '../julia/interface.jl');
+
+  // Call into the julia script
+  var parameters = 10;
+  var outcome = julia.exec('calculateDebateScores', parameters);
+  console.log(outcome);
+
+  var fakeScores = {
+    regionalRepresentation: outcome,
+    genderRepresentation: outcome,
+    languageRepresentation: outcome,
+  }
+
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(fakeScores));
+
+}),
 
 router.post('/groups/', function(req, res) {
   console.log('posted groups:');
@@ -46,7 +75,7 @@ router.post('/groups/', function(req, res) {
   })
   res.send("ok");
   res.end();
-})
+}),
 
 
 router.post('/blocks/', function(req, res) {
@@ -58,8 +87,7 @@ router.post('/blocks/', function(req, res) {
   })
   res.send("ok");
   res.end();
-})
-
+}),
 
 router.post('/locks/', function(req, res) {
   console.log('posted locks:');
@@ -70,8 +98,7 @@ router.post('/locks/', function(req, res) {
   })
   res.send("ok");
   res.end();
-})
-
+}),
 
 router.post('/debate-importances/', function(req, res) {
   // console.log('posting debate importances'); // populated!
@@ -82,7 +109,7 @@ router.post('/debate-importances/', function(req, res) {
   })
   res.send("ok");
   res.end();
-})
+}),
 
 
 
