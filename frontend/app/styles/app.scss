@@ -36,13 +36,14 @@ table {
   white-space: nowrap;
 }
 
-.table > thead > tr > th .glyphicon-chevron-down, .table > thead > tr > th .glyphicon-chevron-up {
+.table > thead > tr > th .glyphicon-chevron-down,
+.table > thead > tr > th .glyphicon-chevron-up {
   display: block;
 }
 
-td {
-  text-overflow: normal !important;
-  white-space: normal !important;
+.table > tbody > tr > td {
+  text-overflow: normal;
+  white-space: normal;
 }
 
 // TABLE SIZING

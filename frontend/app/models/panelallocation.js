@@ -21,13 +21,19 @@ export default DS.Model.extend({
 
       var debateTeams = this.get('debate').get('teams');
       var debateAdjs = [];
-      debateAdjs.push(this.get('chair'));
-      this.get('panellists').forEach(function(adj) {
-        debateAdjs.push(adj);
-      });
-      this.get('trainees').forEach(function(adj) {
-        debateAdjs.push(adj);
-      });
+      if (this.get('chair').get('content') !== null ) {
+        debateAdjs.push(this.get('chair'));
+      }
+      if (this.get('panellists').get('length') > 0 ) {
+        this.get('panellists').forEach(function(adj) {
+          debateAdjs.push(adj);
+        });
+      }
+      if (this.get('trainees').get('length') > 0 ) {
+        this.get('trainees').forEach(function(adj) {
+          debateAdjs.push(adj);
+        });
+      }
 
       debateAdjs.forEach(function(adjudicator) {
 
@@ -99,6 +105,40 @@ export default DS.Model.extend({
             history.set('panelActive', hasHistory);
           });
         }
+
+        // DO THIS so each conflict type has a fresh slate
+        debateTeams.forEach(function(debateTeam) {
+          debateTeam.set('hasInstitutionalConflict', false);
+        });
+        adjudicator.set('hasInstitutionalConflict', false);
+
+        // ADJ TEAM INSTITUTIONS
+        debateTeams.forEach(function(debateTeam) {  // Loop through all the teams and check if they match
+          if (debateTeam.get('institution').get('id') === adjudicator.get('institution').get('id')) {
+            if (!adjudicator.get('hasInstitutionalConflict')) {
+              adjudicator.set('hasInstitutionalConflict', true);
+            }
+            if (!debateTeam.get('hasInstitutionalConflict')) {
+              debateTeam.set('hasInstitutionalConflict', true);
+            }
+            //console.log('      setting active instituon team conflict ' + adjudicator.get('name') + ' vs ' + debateTeam.get('name'));
+          }
+        });
+
+        //ADJ ADJ INSTITUTIONS
+        debateAdjs.forEach(function(debateAdjudicator) {  // Loop through all the teams and check if they match
+          if (debateAdjudicator.get('id') !== adjudicator.get('id')) {
+            if (debateAdjudicator.get('institution').get('id') === adjudicator.get('institution').get('id')) {
+              if (!debateAdjudicator.get('hasInstitutionalConflict')) {
+                debateAdjudicator.set('hasInstitutionalConflict', true);
+              }
+              if (!adjudicator.get('hasInstitutionalConflict')) {
+                adjudicator.set('hasInstitutionalConflict', true);
+              }
+              //console.log('      setting active instituon adj conflict ' + adjudicator.get('name') + ' vs ' + debateAdjudicator.get('name'));
+            }
+          }
+        });
 
       });
 

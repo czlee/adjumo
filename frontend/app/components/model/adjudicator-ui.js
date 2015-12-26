@@ -40,6 +40,7 @@ export default Ember.Component.extend(DraggableMixin, {
     if (activeConflicts > 0) { return true; } else { return false; }
   }),
 
+
   adjorTeam: Ember.computed('adj', function() {
     return this.get('adj'); // normalise to 1-9 like adjs
   }),

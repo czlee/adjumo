@@ -18,6 +18,8 @@ export default Ember.Mixin.create({
   teamAdjHistories: DS.hasMany('teamadjhistory', { async: true }),
   teamAdjConflicts: DS.hasMany('teamadjudicator', {async: true}),
 
+  hasInstitutionalConflict: false, // Placeholder for when these are separate properties
+
   regionName: Ember.computed('institution', function() {
 
     function regionMap(regionID) {
