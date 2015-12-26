@@ -69,6 +69,8 @@ Team(id::Int, name::AbstractString, institution::Institution, region::Region, la
         Team(id, UTF8String(name), institution, region, language, gender, 0)
 Team(id::Int, name::UTF8String, institution::Institution, region::Region, language::LanguageStatus, gender::TeamGender, points::Int) =
         Team(id, name, institution, region, language, gender, points, 0, 0, 0, 0)
+Team(id::Int, name::AbstractString, institution::Institution, region::Region, language::LanguageStatus, gender::TeamGender, points::Int) =
+        Team(id, UTF8String(name), institution, region, language, gender, points, 0, 0, 0, 0)
 show(io::Base.IO, team::Team) = print(io, "Team($(team.id), \"$(team.name)\")")
 
 type Adjudicator
