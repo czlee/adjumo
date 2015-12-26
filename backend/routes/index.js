@@ -50,12 +50,14 @@ router.post('/debate-scores/', function(req, res) {
   var julia = require('node-julia');
   julia.exec('include', '../julia/interface.jl');
 
-  // Call into the julia script
-  var parameters = 10;
+  var json = JSON.stringify(req.body); // PIPE this into the proper function
+
+  // Redundant test variables
+  var parameterA = 10;
   var teams = 10;
   var adjs = 10;
 
-  julia.exec('calculateDebateScores', parameters, teams, adjs, function(err,regional,gender,language) {
+  julia.exec('calculateDebateScores', parameterA, teams, adjs, function(err,regional,gender,language) {
     if(err) {
       console.log("error in computation ",err);
     } else {
