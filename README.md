@@ -38,6 +38,12 @@ Pkg.add("Gurobi")
 ```
 *Note: This will fail if you don't have Gurobi installed.*
 
+If you want to use Gurobi Cloud, you need a fork of this repository, since the
+official one doesn't yet support Gurobi Cloud:
+``` julia
+Pkg.clone("https://github.com/czlee/Gurobi.jl.git")
+```
+
 If you can't get a Gurobi license, then we can use one of the open-source solvers, CBC or GLPK.
 
 **Option 2: CBC.** To install CBC:
