@@ -564,6 +564,7 @@ td.head-panel {
 .ember-view.panel-team-adj-history,
 .ember-view.panel-adj-adj-history {
   @include conflict-bg(#37a5c8, #2d86a3, 0.5);
+  border-color: #37a5c8;
 }
 
 .ember-view.hover-team-adj-history,
@@ -577,6 +578,7 @@ td.head-panel {
 // INSTITUTION CONFLICTS
 .ember-view.panel-institution-conflict {
   @include conflict-bg(#da1ac1, #ae319e, 0.5);
+  border-color: #da1ac1;
 }
 
 .ember-view.hover-institution-conflict,
@@ -588,6 +590,7 @@ td.head-panel {
 .ember-view.panel-team-adj-conflict,
 .ember-view.panel-adj-adj-conflict {
   @include conflict-bg(#ff0000, #cf0000, 0.5);
+  border-color: #ff0000;
 }
 
 .ember-view.hover-team-adj-conflict,

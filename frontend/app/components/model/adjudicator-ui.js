@@ -12,13 +12,13 @@ export default Ember.Component.extend(DraggableMixin, {
   classNameBindings: ['ranking', 'hovering:hovering:not-hovering',
 
     'hasActiveHoverAdjAdjHistories:hover-adj-adj-history',
-    'hasActiveHoverAdjAdjConflicts:hover-adj-adj-conflict',
-
     'hasActivePanelAdjAdjHistories:panel-adj-adj-history',
+
+    'hasActiveHoverAdjAdjConflicts:hover-adj-adj-conflict',
     'hasActivePanelAdjAdjConflicts:panel-adj-adj-conflict',
 
-    'hasActivePaneljAdjHistories:panel-adj-adj-history',
-    'hasActivePanelAdjAdjConflicts:panel-adj-adj-conflict',
+    // 'hasActivePaneljAdjHistories:panel-adj-adj-history',
+    // 'hasActivePanelAdjAdjConflicts:panel-adj-adj-conflict',
 
   ],
 
@@ -26,20 +26,20 @@ export default Ember.Component.extend(DraggableMixin, {
   hasActiveHoverAdjAdjHistories: Ember.computed('adj.adjAdjHistories.content.@each.hoverActive', function() {
     var activeConflicts = this.get('adj').get('adjAdjHistories').filterBy('hoverActive', true).get('length');
     if (activeConflicts > 0) { return true; } else { return false; }
-  }), // Works
+  }),
+  hasActivePanelAdjAdjHistories: Ember.computed('adj.adjAdjHistories.content.@each.panelActive', function() {
+    var activeConflicts = this.get('adj').get('adjAdjHistories').filterBy('panelActive', true).get('length');
+    console.log('observed histories for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
+    if (activeConflicts > 0) { return true; } else { return false; }
+  }),
+
   hasActiveHoverAdjAdjConflicts: Ember.computed('adj.adjAdjConflicts.content.@each.hoverActive', function() {
     var activeConflicts = this.get('adj').get('adjAdjConflicts').filterBy('hoverActive', true).get('length');
     if (activeConflicts > 0) { return true; } else { return false; }
-  }), // Works
-
+  }),
   hasActivePanelAdjAdjConflicts: Ember.computed('adj.adjAdjConflicts.content.@each.panelActive', function() {
     var activeConflicts = this.get('adj').get('adjAdjConflicts').filterBy('panelActive', true).get('length');
     //console.log('observed conflict for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
-    if (activeConflicts > 0) { return true; } else { return false; }
-  }),
-  hasActivePanelAdjAdjHistories: Ember.computed('adj.adjAdjConflicts.content.@each.panelActive', function() {
-    var activeConflicts = this.get('adj').get('adjAdjConflicts').filterBy('panelActive', true).get('length');
-    //console.log('observed histories for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
     if (activeConflicts > 0) { return true; } else { return false; }
   }),
 

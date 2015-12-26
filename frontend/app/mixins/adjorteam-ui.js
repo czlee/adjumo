@@ -14,15 +14,15 @@ export default Ember.Mixin.create({
 
 
     'hasActiveHoverInstitutionConflict:hover-institution-conflict',
-    'hasActiveHoverTeamAdjHistories:hover-team-adj-history',
-    'hasActiveHoverTeamAdjConflicts:hover-team-adj-conflict',
 
+    'hasActiveHoverTeamAdjHistories:hover-team-adj-history',
     'hasActivePanelTeamAdjHistories:panel-team-adj-history',
+
+    'hasActiveHoverTeamAdjConflicts:hover-team-adj-conflict',
     'hasActivePanelTeamAdjConflicts:panel-team-adj-conflict',
 
   ],
 
-  // HOVERS
   hasActiveHoverInstitutionConflict: Ember.computed('adjorTeam.institution.hoverActive', function() {
     return this.get('adjorTeam').get('institution').get('hoverActive');
   }),
@@ -31,24 +31,23 @@ export default Ember.Mixin.create({
     var activeConflicts = this.get('adjorTeam').get('teamAdjHistories').filterBy('hoverActive', true).get('length');
     if (activeConflicts > 0) { return true; } else { return false; }
   }),
+  hasActivePanelTeamAdjHistories: Ember.computed('adjorTeam.teamAdjHistories.content.@each.panelActive', function() {
+    var activeConflicts = this.get('adjorTeam').get('teamAdjHistories').filterBy('panelActive', true).get('length');
+    //console.log('computed change in hasActivePanelTeamAdjHistories for ' + this.get('adjorTeam').get('name') + 'set to ' + activeConflicts);
+    if (activeConflicts > 0) { return true; } else { return false; }
+  }),
 
   hasActiveHoverTeamAdjConflicts: Ember.computed('adjorTeam.teamAdjConflicts.content.@each.hoverActive', function() {
     var activeConflicts = this.get('adjorTeam').get('teamAdjConflicts').filterBy('hoverActive', true).get('length');
     if (activeConflicts > 0) { return true; } else { return false; }
   }),
-
-  // IN PANELS
-  hasActivePanelTeamAdjHistories: Ember.computed('adjorTeam.teamAdjHistories.content.@each.panelActive', function() {
-    var activeConflicts = this.get('adjorTeam').get('teamAdjHistories').filterBy('panelActive', true).get('length');
-    //console.log('computed change in hasActivePanelTeamAdjHistories for ' + this.get('adjorTeam').get('name') + 'set to ' + activeConflicts);
-    if (activeConflicts > 0) { return true; } else { return false; }
-  }), // Works
-
   hasActivePanelTeamAdjConflicts: Ember.computed('adjorTeam.teamAdjConflicts.content.@each.panelActive', function() {
     var activeConflicts = this.get('adjorTeam').get('teamAdjConflicts').filterBy('panelActive', true).get('length');
     //console.log('computed change in hasActivePanelTeamAdjConflicts for ' + this.get('adjorTeam').get('name') + 'set to ' + activeConflicts);
     if (activeConflicts > 0) { return true; } else { return false; }
   }),
+
+
 
   // CSS Getters
   gender: function(){

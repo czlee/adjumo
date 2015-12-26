@@ -51,9 +51,9 @@ export default DS.Model.extend({
           adjudicator.get('adjAdjConflicts').forEach(function(conflict) {
             var conflictingAdj;
             if (conflict.get('adj1').get('id') === adjudicator.get('id')) {
-              conflictingAdj = conflict.get('adj2')
+              conflictingAdj = conflict.get('adj2');
             } else {
-              conflictingAdj = conflict.get('adj1')
+              conflictingAdj = conflict.get('adj1');
             }
             var hasConflict = false;
             debateAdjs.forEach(function(debateAdjudicator) {  // Loop through all the teams and check if they match
@@ -85,15 +85,15 @@ export default DS.Model.extend({
           adjudicator.get('adjAdjHistories').forEach(function(history) {
             var conflictingAdj;
             if (history.get('adj1').get('id') === adjudicator.get('id')) {
-              conflictingAdj = history.get('adj2')
+              conflictingAdj = history.get('adj2');
             } else {
-              conflictingAdj = history.get('adj1')
+              conflictingAdj = history.get('adj1');
             }
             var hasHistory = false;
             debateAdjs.forEach(function(debateAdjudicator) {  // Loop through all the teams and check if they match
               if (debateAdjudicator.get('id') === conflictingAdj.get('id')) {
                 hasHistory = true;
-                // /console.log('      setting active adj adj history ' + adjudicator.get('name') + ' vs ' + conflictingAdj.get('name'));
+                console.log('      setting active adj adj history ' + adjudicator.get('name') + ' vs ' + conflictingAdj.get('name'));
               }
             });
             history.set('panelActive', hasHistory);
