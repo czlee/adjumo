@@ -564,48 +564,46 @@ td.head-panel {
   color: #fff;
 }
 
-//
+// NOTE: ORDERS MATTER. NEED HISTORY > INST > PERSONAL otherwise stuff gets hidden
 
 // HISTORY CONFLICTS
 .team-ui.panel-team-adj-history,
-.panel-ui .adjudicator-ui.panel-team-adj-history,
+.adjudicator-ui.panel-team-adj-history,
 .team-ui.panel-adj-adj-history,
-.panel-ui .adjudicator-ui.panel-adj-adj-history {
+.adjudicator-ui.panel-adj-adj-history {
   @include conflict-bg(#37a5c8, #2d86a3, 0.66);
   border-color: #37a5c8;
 }
+// INSTITUTION CONFLICTS
+.team-ui.panel-institution-conflict,
+.adjudicator-ui.panel-institution-conflict {
+  @include conflict-bg(#da1ac1, #ae319e, 0.66);
+  border-color: #da1ac1;
+}
+.team-ui.panel-team-adj-conflict,
+.adjudicator-ui.panel-team-adj-conflict,
+.team-ui.panel-adj-adj-conflict,
+.adjudicator-ui.panel-adj-adj-conflict, {
+  @include conflict-bg(#ff0000, #cf0000, 0.66);
+  border-color: #ff0000;
+}
+
+// ALL HOVERS MUST TAKE PRECEDENCE OVER PANELS; ie be last
+
 .history-conflict-key,
 .team-ui.hover-team-adj-history,
 .adjudicator-ui.hover-team-adj-history,
 .team-ui.hover-adj-adj-history,
 .adjudicator-ui.hover-adj-adj-history,
 .popover-highlight.panel-team-adj-history,
-.popover-highlight.panel-adj-adj-history,
- {
-  // The highlighted conflict in the hovering area up top
+.popover-highlight.panel-adj-adj-history {
   @include conflict-bg(#37a5c8, #2d86a3, 1);
-}
-
-// INSTITUTION CONFLICTS
-.team-ui.panel-institution-conflict,
-.panel-ui .adjudicator-ui.panel-institution-conflict {
-  @include conflict-bg(#da1ac1, #ae319e, 0.66);
-  border-color: #da1ac1;
 }
 .institution-conflict-key,
 .team-ui.hover-institution-conflict,
 .adjudicator-ui.hover-institution-conflict,
 .popover-highlight.panel-institution-conflict {
   @include conflict-bg(#da1ac1, #ae319e, 1);
-}
-
-// PERSONAL CONFLICTS
-.team-ui.panel-team-adj-conflict,
-.panel-ui .adjudicator-ui.panel-team-adj-conflict,
-.team-ui.panel-adj-adj-conflict,
-.panel-ui .adjudicator-ui.panel-adj-adj-conflict, {
-  @include conflict-bg(#ff0000, #cf0000, 0.66);
-  border-color: #ff0000;
 }
 .team-conflict-key,
 .team-ui.hover-team-adj-conflict,
