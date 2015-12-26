@@ -1,13 +1,13 @@
-# This file is part of the Adjumo module.
-
 # Score matrix calculator.
+# This file is part of the Adjumo module.
+#
 # Contains functions that generate the score matrix, using information about the
 # round.
 
 using DataStructures
 import Base.string
 
-export scorematrix, score, panelquality,
+export scorematrix, score, scoresfordisplay, panelquality,
     panelregionalrepresentationscore, panellanguagerepresentationscore,
     panelgenderrepresentationscore, teamadjhistoryscore, adjadjhistoryscore,
     teamadjconflictsscore, adjadjconflictsscore, weightedαfairness
@@ -64,6 +64,11 @@ function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
     σ += componentweights.adjconflict  * adjadjconflictsscore(roundinfo, panel)
     return σ
 end
+
+function scoresfordisplay(debate::Debate, panel::AdjudicatorPanel)
+    return panelquality(panel), panelregionalrepresentationscore(debate, panel),
+            panellanguagerepresentationscore(debate, panel), panelgenderrepresentationscore(debate, panel)
+        end
 
 # ==============================================================================
 # Weighted α-fairness
@@ -299,14 +304,12 @@ function panelregionalrepresentationscore(regionclass::DebateRegionClass, teamre
         elseif numregions < 3
             score -= 1
         end
-    end
 
     # Per internal region absent, applies to classes B, C, D and E
-    if regionclass != RegionClassA
+    else
         numregionsabsent = count(x -> x == 0, internalcounts)
         score += numregionsabsent * -4
 
-    else
         nadjs = numadjs(panel)
         majority = nadjs - (nadjs // 2)
         balancedruleapplies = false
@@ -329,7 +332,7 @@ function panelregionalrepresentationscore(regionclass::DebateRegionClass, teamre
         end
 
         # Balanced, applies to classes B3, C3, D3, E3, D4, E4
-        if balancedruleapplies
+        if balancedruleapplies && maximum(internalcounts) == minimum(internalcounts)
             score += 7
         end
     end

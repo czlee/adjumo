@@ -29,6 +29,7 @@ include("exportjson.jl")
 include("importtabbie2.jl")
 include("exporttabbie2.jl")
 include("deficit.jl")
+include("frontendinterface.jl")
 
 export allocateadjudicators, generatefeasiblepanels
 
@@ -140,6 +141,7 @@ function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(I
 
     # Take a very brute force approach
     panels = AdjudicatorPanel[]
+    sizehint!(panels, binomial(numadjs(roundinfo), maximum(panelsizes)))
     for panelsize in panelsizes
         for adjs in combinations(adjssorted, panelsize)
             if !feasible(adjs)

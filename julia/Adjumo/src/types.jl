@@ -46,20 +46,29 @@ type Team
     name::UTF8String
     institution::Institution
     region::Region
-    gender::TeamGender
     language::LanguageStatus
+    gender::TeamGender
     points::Int
     qualitydeficit::Float64
     regionaldeficit::Float64
-    genderdeficit::Float64
     languagedeficit::Float64
+    genderdeficit::Float64
 end
 
-Team(id::Int, name::UTF8String, institution::Institution) = Team(id, name, institution, institution.region, TeamNoGender, NoLanguage, 0)
-Team(id::Int, name::AbstractString, institution::Institution) = Team(id, UTF8String(name), institution, institution.region, TeamNoGender, NoLanguage, 0)
-Team(id::Int, name::UTF8String, institution::Institution, region::Region) = Team(id, name, institution, region, TeamNoGender, NoLanguage, 0)
-Team(id::Int, name::AbstractString, institution::Institution, region::Region) = Team(id, UTF8String(name), institution, region, TeamNoGender, NoLanguage, 0)
-Team(id::Int, name::UTF8String, institution::Institution, region::Region, gender::TeamGender, language::LanguageStatus, points::Int) = Team(id, name, institution, region, gender, language, points, 0, 0, 0, 0)
+Team(id::Int, name::UTF8String, institution::Institution) =
+        Team(id, name, institution, institution.region, NoLanguage, TeamNoGender, 0)
+Team(id::Int, name::AbstractString, institution::Institution) =
+        Team(id, UTF8String(name), institution, institution.region, NoLanguage, TeamNoGender, 0)
+Team(id::Int, name::UTF8String, institution::Institution, region::Region) =
+        Team(id, name, institution, region, NoLanguage, TeamNoGender, 0)
+Team(id::Int, name::AbstractString, institution::Institution, region::Region) =
+        Team(id, UTF8String(name), institution, region, NoLanguage, TeamNoGender, 0)
+Team(id::Int, name::UTF8String, institution::Institution, region::Region, language::LanguageStatus, gender::TeamGender) =
+        Team(id, name, institution, region, language, gender, 0)
+Team(id::Int, name::AbstractString, institution::Institution, region::Region, language::LanguageStatus, gender::TeamGender) =
+        Team(id, UTF8String(name), institution, region, language, gender, 0)
+Team(id::Int, name::UTF8String, institution::Institution, region::Region, language::LanguageStatus, gender::TeamGender, points::Int) =
+        Team(id, name, institution, region, language, gender, points, 0, 0, 0, 0)
 show(io::Base.IO, team::Team) = print(io, "Team($(team.id), \"$(team.name)\")")
 
 type Adjudicator
@@ -68,15 +77,18 @@ type Adjudicator
     institution::Institution
     ranking::Wudc2015AdjudicatorRank
     regions::Vector{Region}
-    gender::PersonGender
     language::LanguageStatus
+    gender::PersonGender
 end
 
-Adjudicator(id::Int, name::UTF8String, institution::Institution) = Adjudicator(id, name, institution, Panellist, Region[institution.region], PersonNoGender, NoLanguage)
-Adjudicator(id::Int, name::AbstractString, institution::Institution) = Adjudicator(id, UTF8String(name), institution, Panellist, Region[institution.region], PersonNoGender, NoLanguage)
-Adjudicator(id::Int, name::AbstractString, institution::Institution, gender::PersonGender) = Adjudicator(id, UTF8String(name), institution, Panellist, Region[institution.region], gender, NoLanguage)
-Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) = Adjudicator(id, UTF8String(name), institution, ranking, Region[institution.region], PersonNoGender, NoLanguage)
-# Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank, regions::Vector{Region}, gender::PersonGender, language::LanguageStatus) = Adjudicator(id, UTF8String(name), institution, ranking, regions, gender, language)
+Adjudicator(id::Int, name::UTF8String, institution::Institution) =
+        Adjudicator(id, name, institution, Panellist, Region[institution.region], NoLanguage, PersonNoGender)
+Adjudicator(id::Int, name::AbstractString, institution::Institution) =
+        Adjudicator(id, UTF8String(name), institution, Panellist, Region[institution.region], NoLanguage, PersonNoGender)
+Adjudicator(id::Int, name::AbstractString, institution::Institution, gender::PersonGender) =
+        Adjudicator(id, UTF8String(name), institution, Panellist, Region[institution.region], NoLanguage, gender)
+Adjudicator(id::Int, name::AbstractString, institution::Institution, ranking::Wudc2015AdjudicatorRank) =
+        Adjudicator(id, UTF8String(name), institution, ranking, Region[institution.region], NoLanguage, PersonNoGender)
 show(io::Base.IO, adj::Adjudicator) = print(io, "Adjudicator($(adj.id), \"$(adj.name)\", \"$(adj.institution.code)\")")
 
 type Debate
@@ -85,8 +97,8 @@ type Debate
     teams::Vector{Team}
     qualitydeficit::Float64
     regionaldeficit::Float64
-    genderdeficit::Float64
     languagedeficit::Float64
+    genderdeficit::Float64
 end
 
 Debate(id::Int, weight::Real, teams::Vector{Team}) = Debate(id, Float64(weight), teams, 0, 0, 0, 0)

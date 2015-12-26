@@ -108,7 +108,7 @@ function addteam!(ri::RoundInfo, d::JsonDict)
     gender = interpretteamgender(d["speakers"])
     language = interpretlanguage(d["language_status"])
     points = d["points"]
-    addteam!(ri, id, name, institution, institution.region, gender, language, points)
+    addteam!(ri, id, name, institution, institution.region, language, gender, points)
 end
 
 function addinstitution!(ri::RoundInfo, d::JsonDict)
@@ -184,7 +184,7 @@ function addadjudicator!(ri::RoundInfo, d::JsonDict)
     regions = unique(Region[inst.region for inst in [institution; other_institutions]])
     gender = interpretpersongender(d["gender"])
     language = interpretlanguage(d["language_status"])
-    adj = addadjudicator!(ri, id, name, institution, ranking, regions, gender, language)
+    adj = addadjudicator!(ri, id, name, institution, ranking, regions, language, gender)
 
     # Also add team conflicts for every society
     conflictteams = filter(x -> x.institution ∈ other_institutions, ri.teams)

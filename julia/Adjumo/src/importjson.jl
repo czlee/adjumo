@@ -2,7 +2,7 @@
 # This file is part of the Adjumo module.
 
 export importcomponentweightsjsonintoroundinfo!, importcomponentweightsjson,
-    importfeasiblepanels
+    importfeasiblepanels, parsedebatepaneljson
 
 function importcomponentweightsjsonintoroundinfo!(rinfo::RoundInfo, io::IO)
     weights = importcomponentweightsjson(io)
@@ -32,4 +32,36 @@ function importfeasiblepanels(io::IO, roundinfo::RoundInfo)
         feasiblepanels[i] = AdjudicatorPanel(adjs, paneldict["np"])
     end
     return feasiblepanels
+end
+
+"""Parses a JSON string designed to generate quickly quality and representation
+scores. Returns a mock Debate and mock AdjudicatorPanel, which will have the
+correct ranking (for adjudicators), region, langauge and gender, but nothing
+else."""
+function parsedebatepaneljson(s::AbstractString)
+    d = JSON.parse(s)
+    dudinst = Institution(1, "", "", NoRegion)
+
+    teams = Team[]
+    for teamdict in d["teams"]
+        region = Region(teamdict["region"])
+        language = LanguageStatus(teamdict["language"])
+        gender = TeamGender(teamdict["gender"])
+        team = Team(1, "", dudinst, region, language, gender)
+        push!(teams, team)
+    end
+    debate = Debate(1, teams)
+
+    adjs = Adjudicator[]
+    for adjdict in d["adjudicators"]
+        ranking = Wudc2015AdjudicatorRank(adjdict["ranking"])
+        region = [Region(r) for r in adjdict["regions"]]
+        language = LanguageStatus(adjdict["language"])
+        gender = PersonGender(adjdict["gender"])
+        adj = Adjudicator(1, "", dudinst, ranking, region, language, gender)
+        push!(adjs, adj)
+    end
+    panel = AdjudicatorPanel(adjs, length(adjs)-1)
+
+    return (debate, panel)
 end
