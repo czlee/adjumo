@@ -17,8 +17,11 @@ sudo apt-get install git julia gcc g++ make libgmp-dev nodejs postgresql-9.4
 sudo npm install -g bower
 sudo su postgres -c "createuser ubuntu --pwprompt --createdb"
 git clone git@github.com:czlee/adjumo.git
-julia adjumo/julia/installrequirements.jl
+julia adjumo/julia/installrequirements.jl (gurobi | cbc | glpk) [psql]
 ```
+
+In the last line, choose your solver. If it's Gurobi, install Gurobi before
+running the last line.
 
 ## Long method
 ### Install basic tools

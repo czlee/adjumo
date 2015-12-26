@@ -15,12 +15,13 @@ You then need to install the required packages:
 Pkg.add("JuMP")
 Pkg.add("JSON")
 Pkg.add("StatsBase")
+Pkg.clone("https://github.com/czlee/JsonAPI.jl.git")
 ```
 
 Some functions also require the following:
 ``` julia
 Pkg.add("ArgParse")                                        # required only for command-line scripts
-Pkg.add("Formatting")                                      # required only for command-line scripts
+Pkg.clone("https://github.com/czlee/Formatting.jl.git")    # required only for command-line scripts
 Pkg.add("Iterators")                                       # required only for AdjumoDataTools
 Pkg.clone("https://github.com/JuliaDB/DBI.jl.git")         # required only for Tabbie1 data use
 Pkg.clone("https://github.com/JuliaDB/PostgreSQL.jl.git")  # required only for Tabbie1 data use

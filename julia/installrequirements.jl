@@ -5,9 +5,11 @@
 # but not Gurobi or PostgreSQL.
 
 Pkg.add("JuMP")
+Pkg.add("JSON")
+Pkg.add("StatsBase")
+Pkg.clone("https://github.com/czlee/JsonAPI.jl.git")
 Pkg.add("ArgParse")
 Pkg.add("Iterators")
-Pkg.add("StatsBase")
 Pkg.clone("https://github.com/czlee/Formatting.jl.git")
 if "gurobi" ∈ ARGS
     Pkg.add("Gurobi")
