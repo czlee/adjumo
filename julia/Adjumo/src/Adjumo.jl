@@ -74,8 +74,11 @@ function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{Adjud
 
     @time status, debateindices, panelindices, scores = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver, gap=gap, threads=threads)
 
+    if status != :Optimal
+        warn("Problem was not solved to optimality. Status was: $status")
+    end
     if status == :Infeasible
-        println("Error: Problem was not solved to optimality. Status was: $status")
+        println("Checking for incompatible constraints...")
         checkincompatibleconstraints(roundinfo)
     end
 
@@ -313,16 +316,10 @@ function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
     @time status = solve(m)
     println("Solver done at $(now())")
 
-    if status != :Infeasible
-        println("Objective value: ", getObjectiveValue(m))
-        Xval = Array{Bool}(getValue(X))
-        debates, panels = findn(Xval)
-        scores = Σ[Xval]
-    else
-        debates = Int[]
-        panels = Int[]
-        scores = Float64[]
-    end
+    println("Objective value: ", getObjectiveValue(m))
+    Xval = Array{Bool}(getValue(X))
+    debates, panels = findn(Xval)
+    scores = Σ[Xval]
 
     return (status, debates, panels, scores)
 end
