@@ -61,6 +61,7 @@ function exportroundinfo(ri::RoundInfo, directory::AbstractString)
         :debates,
         :adjadjconflicts,
         :teamadjconflicts,
+        :instadjconflicts,
         :lockedadjs,
         :blockedadjs,
         :componentweights,
