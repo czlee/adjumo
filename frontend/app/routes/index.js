@@ -126,7 +126,7 @@ export default Ember.Route.extend({
           active: true,
         });
 
-        console.log('    loading in data');
+        //console.log('    loading in data');
         // Load in the allocation information from Julia
         this.store.findAll('panelallocation').then((panels) => {
           panels.forEach(function(panel){
@@ -229,13 +229,13 @@ export default Ember.Route.extend({
             });
             // Return to all grops
             groupData.data.push(groupJSON);
-            console.log('____pushed a group');
+            //console.log('____pushed a group');
           }
 
         });
 
         if (groupData.data.length > 0) { // Only post is groups exist
-          console.log(groupData);
+          // console.log(groupData);
           var posting = $.post('/groups', groupData);
           posting.done(function(groupData) { // ASYNC: waiting for file write
             console.log('GROUP EXPORT: saved group data to file');

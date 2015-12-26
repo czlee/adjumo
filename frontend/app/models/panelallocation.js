@@ -24,7 +24,7 @@ export default DS.Model.extend({
 
   calculateDebateScores: function() {
 
-    console.log('calcing scores');
+    // console.log('calcing scores');
     var thisPanel = this;
 
     if (this.get('debate').get('teams') !== undefined ) { // Prevent running during initial data load

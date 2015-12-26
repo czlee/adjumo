@@ -87,7 +87,7 @@ Note: the front end requires that there are json files present in ```public/data
 
 ###### Usage
 
-- To start the server: ```ember s```
+- To start the server: ```ember serve --proxy http://0.0.0.0:3000 --environment="production"```
 - Open ```http://localhost:4200```
 
 ## Running

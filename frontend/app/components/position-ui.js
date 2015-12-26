@@ -23,7 +23,7 @@ export default Ember.Component.extend(DroppableMixin, {
         } else if (panelToRemoveFrom.get('panellists').contains(adjToRemove)) {
           panelToRemoveFrom.get('panellists').removeObject(adjToRemove);
         } else if (panelToRemoveFrom.get('chair').get('id') == adjToRemove.get('id')) {
-          console.log('was previously a chair; removing')
+          // console.log('was previously a chair; removing')
           panelToRemoveFrom.set('chair', null);
         }
       }
