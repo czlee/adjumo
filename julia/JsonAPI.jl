@@ -5,7 +5,7 @@ module JsonAPI
 
 using JSON
 
-export jsonapidict, printjsonapi, jsonapi
+export jsonapidict, writejsonapi, jsonapi
 
 typealias JsonDict Dict{AbstractString,Any}
 
@@ -118,7 +118,7 @@ function jsonapidict(a)
     return d
 end
 
-function printjsonapi(io::IO, obj)
+function writejsonapi(io::IO, obj)
     d = jsonapidict(obj)
     JSON.print(io, d)
 end
