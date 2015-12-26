@@ -17,9 +17,11 @@
                         <div class="btn btn-default btn-sm region-display region-{{ team.region }}">
                             {{ team.regionName }}
                         </div>
-                        <div class="btn btn-default btn-sm region-display region-{{ team.region }}">
-                            {{ team.regionaldeficit }}
-                        </div>
+                        {{#if team.regionaldeficit }}
+                            <div class="btn btn-default btn-sm region-display region-{{ team.region }}">
+                                Deficit: {{ team.regionaldeficit }}
+                            </div>
+                        {{/if}}
                     </div>
                     <div class="btn-group" role="group">
                         <div class="btn btn-default btn-sm gender-display gender-{{team.gender}}">
@@ -28,9 +30,11 @@
                         <div class="btn btn-default btn-sm gender-display gender-{{team.gender}}">
                             {{ team.genderName }}
                         </div>
-                        <div class="btn btn-default btn-sm gender-display gender-{{team.gender}}">
-                            {{ team.genderaldeficit }}
-                        </div>
+                        {{#if team.genderaldeficit }}
+                            <div class="btn btn-default btn-sm gender-display gender-{{team.gender}}">
+                                Deficit: {{ team.genderaldeficit }}
+                            </div>
+                        {{/if}}
                     </div>
                     <div class="btn-group" role="group">
                         <div class="btn btn-default btn-sm language-display language-{{team.language}}">
@@ -39,17 +43,21 @@
                         <div class="btn btn-default btn-sm language-display language-{{team.language}}">
                             {{ team.languageName }}
                         </div>
-                        <div class="btn btn-default btn-sm language-display language-{{team.language}}">
-                            {{ team.languagedeficit }}
-                        </div>
+                        {{#if team.languagedeficit }}
+                            <div class="btn btn-default btn-sm language-display language-{{team.language}}">
+                                Deficit: {{ team.languagedeficit }}
+                            </div>
+                        {{/if}}
                     </div>
                     <div class="btn-group" role="group">
                         <div class="btn btn-default btn-sm">
                             <span class="glyphicon glyphicon-stats"></span>
                         </div>
-                        <div class="btn btn-default btn-sm">
-                            {{ team.qualitydeficit }}
-                        </div>
+                        {{#if team.qualitydeficit }}
+                            <div class="btn btn-default btn-sm">
+                                Deficit: {{ team.qualitydeficit }}
+                            </div>
+                        {{/if}}
                     </div>
                     <div class="btn-group" role="group">
                         <div class="btn btn-default btn-sm">
