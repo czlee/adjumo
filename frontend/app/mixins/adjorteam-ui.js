@@ -82,6 +82,7 @@ export default Ember.Mixin.create({
       conflict.set('hoverActive', true);
     });
     this.get('adjorTeam').get('institution').set('hoverActive', true);
+
     $(".hover-key").hide();
 
   },
@@ -95,9 +96,25 @@ export default Ember.Mixin.create({
       conflict.set('hoverActive', false);
     });
     this.get('adjorTeam').get('institution').set('hoverActive', false);
+
     $(".hover-key").show();
 
   },
+
+  dragEnd: function(event) {
+
+    // When dropped stopped displaying conflicts
+    this.get('adjorTeam').get('teamAdjHistories').forEach(function(history) {
+      history.set('hoverActive', false);
+    });
+    this.get('adjorTeam').get('teamAdjConflicts').forEach(function(conflict) {
+      conflict.set('hoverActive', false);
+    });
+    this.get('adjorTeam').get('institution').set('hoverActive', false);
+
+    return this._super(event);
+
+  }
 
 
 });

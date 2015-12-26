@@ -6,9 +6,10 @@ export default Ember.Component.extend(DraggableMixin, {
   attributeBindings: 'draggable',
   tagName: 'button',
   draggable: 'true',
+  hovering: false,
 
-  classNames: ['btn', 'adjudicator-ui', 'js-drag-handle', 'popover-trigger'],
-  classNameBindings: ['ranking', 'locked',
+  classNames: ['btn', 'adjudicator-ui', 'popover-trigger'],
+  classNameBindings: ['ranking', 'hovering:hovering:not-hovering',
 
     'hasActiveHoverAdjAdjHistories:hover-adj-adj-history',
     'hasActiveHoverAdjAdjConflicts:hover-adj-adj-conflict',
@@ -22,27 +23,25 @@ export default Ember.Component.extend(DraggableMixin, {
   ],
 
   // These observes changes in the conflict objects that are trigger by the mouseover/mouseleaves
-  hasActiveHoverAdjAdjHistories: Ember.computed('adjorTeam.adjAdjHistories.content.@each.hoverActive', function() {
-    var activeConflicts = this.get('adjorTeam').get('adjAdjHistories').filterBy('hoverActive', true).get('length');
+  hasActiveHoverAdjAdjHistories: Ember.computed('adj.adjAdjHistories.content.@each.hoverActive', function() {
+    var activeConflicts = this.get('adj').get('adjAdjHistories').filterBy('hoverActive', true).get('length');
     if (activeConflicts > 0) { return true; } else { return false; }
   }), // Works
-  hasActiveHoverAdjAdjConflicts: Ember.computed('adjorTeam.adjAdjConflicts.content.@each.hoverActive', function() {
-    var activeConflicts = this.get('adjorTeam').get('adjAdjConflicts').filterBy('hoverActive', true).get('length');
+  hasActiveHoverAdjAdjConflicts: Ember.computed('adj.adjAdjConflicts.content.@each.hoverActive', function() {
+    var activeConflicts = this.get('adj').get('adjAdjConflicts').filterBy('hoverActive', true).get('length');
     if (activeConflicts > 0) { return true; } else { return false; }
   }), // Works
 
-  hasActivePanelAdjAdjConflicts: Ember.computed('adjorTeam.adjAdjConflicts.content.@each.panelActive', function() {
-    var activeConflicts = this.get('adjorTeam').get('adjAdjConflicts').filterBy('panelActive', true).get('length');
+  hasActivePanelAdjAdjConflicts: Ember.computed('adj.adjAdjConflicts.content.@each.panelActive', function() {
+    var activeConflicts = this.get('adj').get('adjAdjConflicts').filterBy('panelActive', true).get('length');
     //console.log('observed conflict for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
     if (activeConflicts > 0) { return true; } else { return false; }
   }),
-  hasActivePanelAdjAdjHistories: Ember.computed('adjorTeam.adjAdjConflicts.content.@each.panelActive', function() {
-    var activeConflicts = this.get('adjorTeam').get('adjAdjConflicts').filterBy('panelActive', true).get('length');
+  hasActivePanelAdjAdjHistories: Ember.computed('adj.adjAdjConflicts.content.@each.panelActive', function() {
+    var activeConflicts = this.get('adj').get('adjAdjConflicts').filterBy('panelActive', true).get('length');
     //console.log('observed histories for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
     if (activeConflicts > 0) { return true; } else { return false; }
   }),
-
-
 
   adjorTeam: Ember.computed('adj', function() {
     return this.get('adj'); // normalise to 1-9 like adjs
@@ -120,13 +119,13 @@ export default Ember.Component.extend(DraggableMixin, {
 
   mouseEnter: function(event) {
 
-    this.get('adjorTeam').get('adjAdjConflicts').forEach(function(conflict) {
+    this.get('adj').get('adjAdjConflicts').forEach(function(conflict) {
       conflict.set('hoverActive', true);
     });
-    this.get('adjorTeam').get('adjAdjHistories').forEach(function(history) {
+    this.get('adj').get('adjAdjHistories').forEach(function(history) {
       history.set('hoverActive', true);
     });
-
+    this.set('hovering', true);
     return this._super(event);
 
   },
@@ -134,16 +133,30 @@ export default Ember.Component.extend(DraggableMixin, {
 
   mouseLeave: function(event) {
 
-    this.get('adjorTeam').get('adjAdjConflicts').forEach(function(conflict) {
+    this.get('adj').get('adjAdjConflicts').forEach(function(conflict) {
       conflict.set('hoverActive', false);
     });
-    this.get('adjorTeam').get('adjAdjHistories').forEach(function(history) {
+    this.get('adj').get('adjAdjHistories').forEach(function(history) {
       history.set('hoverActive', false);
     });
-
+    this.set('hovering', false);
     return this._super(event);
 
   },
+
+  dragEnd: function(event) {
+
+    // When dropped stopped the hover effects
+    this.get('adj').get('adjAdjConflicts').forEach(function(conflict) {
+      conflict.set('hoverActive', false);
+    });
+    this.get('adj').get('adjAdjHistories').forEach(function(history) {
+      history.set('hoverActive', false);
+    });
+    this.set('hovering', false);
+    return this._super(event);
+
+  }
 
 
 

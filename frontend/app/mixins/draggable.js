@@ -11,6 +11,9 @@ export default Ember.Mixin.create(AdjorTeam, {
   dragEnd: function(event) {
     //console.log("dragEnd");
     $('.droppable-area').removeClass('dragging-active');
+
+    return this._super(event);
+
   },
 
 });

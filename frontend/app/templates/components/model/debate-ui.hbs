@@ -10,16 +10,16 @@
 <td class="debate-importance-edit preallocation">
     {{input type="range" min="-5" list="debate-ticks" max="5" step="1" value=debate.importanceModifier class="" }}
 </td>
-<td class="debate-deficit text-center">
+<td class="debate-deficit text-center debate-quality-deficits" style="display: none;">
     {{ debate.qualitydeficit }}
 </td>
-<td class="debate-deficit text-center">
+<td class="debate-deficit text-center debate-gender-deficits" style="display: none;">
     {{ debate.genderdeficit }}
 </td>
-<td class="debate-deficit text-center">
+<td class="debate-deficit text-center debate-language-deficits" style="display: none;">
     {{ debate.languagedeficit }}
 </td>
-<td class="debate-deficit text-center">
+<td class="debate-deficit text-center debate-regional-deficits" style="display: none;">
     {{ debate.regionaldeficit }}
 </td>
 {{#each debate.teams as |team|}}

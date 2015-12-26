@@ -122,12 +122,8 @@ span[active="false"].glyphicon {
 }
 
 .table > tbody > tr > td.team-ui:hover {
-  background: #000 !important;
-
-  // Override conflicts
-  color: #fff !important;
-
-  // Override conflicts
+  background: #000 !important;  // Override conflicts
+  color: #fff !important;  // Override conflicts
   cursor: default;
 }
 
@@ -237,10 +233,6 @@ td.head-panel {
   width: 100%;
 }
 
-.js-drag-handle:hover {
-  cursor: move;
-}
-
 /* Adjudicator Component */
 
 .adjudicator-ui {
@@ -254,13 +246,10 @@ td.head-panel {
   float: left;
 }
 
-.adjudicator-ui:hover {
-  background: #000 !important;
-
-  // Override conflicts
-  color: #fff !important;
-
-  // Override conflicts
+.adjudicator-ui.hovering {
+  background: #000 !important;  // Override conflicts
+  color: #fff !important;  // Override conflicts
+  cursor: move;
 }
 
 .adjudicator-ui.locked-true {
