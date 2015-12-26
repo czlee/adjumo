@@ -41,8 +41,8 @@ export default Ember.Component.extend(DroppableMixin, {
         break;
       case 'chair':
         //var currentChair = droppedAdjNewPanel.get('chair');
-        droppedAdjNewPanel.set('chair', droppedAdj);
         removeFromOldPanel(droppedAdj, droppedAdjOldPanel);
+        droppedAdjNewPanel.set('chair', droppedAdj);
 
         // if (droppedAdjOldPanel.get('chair') !== undefined && droppedAdj.get('id') === droppedAdjOldPanel.get('chair').get('id')) {
         //   // If being dropped into an occupied chairship and used to be in a chairship
@@ -50,7 +50,6 @@ export default Ember.Component.extend(DroppableMixin, {
         //   droppedAdjOldPanel.set('chair', currentChair);
         // } else {
         // }
-
         // if (droppedAdjOldPanel.get('panel').get('content') !== undefined) {
         //   // If NOT coming from unused
         //     if (this.get('panel').get('id') === droppedAdjOldPanel.get('id')) {
@@ -65,8 +64,6 @@ export default Ember.Component.extend(DroppableMixin, {
         //   console.log('coming from unused');
         //   this.get('panel').set('chair', droppedAdj); // Will automatically move the current chair to unused, if it exists
         // }
-
-
         // else if (droppedAdjOldPanel.get('panel') === undefined) {
         //   // If coming from unused
         //   console.log('coming from unused');
@@ -95,74 +92,6 @@ export default Ember.Component.extend(DroppableMixin, {
         // }
         break;
     }
-
-
-
-    // if (positionType === 'chair') {
-    //   // If coming from a chair
-    //   var hasCurrentAdj = this.get('panel').get('chair').get('content');
-
-    //   if (droppedAdj === droppedAdjOldPanel.get('chair').get('content')) {
-    //     // If the dropped adj was previously in the chairing position
-    //     if (hasCurrentAdj !== null) {
-    //       droppedAdjOldPanel.set('chair', this.get('panel').get('chair')); // Set the previous chair position as the adj dropped upon
-    //       //this.get('panel').get('chair').set('panel', droppedAdjOldPanel);
-    //     } else {
-    //       droppedAdjOldPanel.set('chair', null); // Set the previous chair position as the adj dropped upon
-    //     }
-    //   } else if (droppedAdjOldPanel.get('panellists').contains(droppedAdj)) {
-    //     // If the dropped adj was previously a panellist
-    //     droppedAdjOldPanel.get('panellists').removeObject(droppedAdj); // Remove the dropped adj from the previous panel
-
-    //     if (hasCurrentAdj !== null) {
-    //       // If the chairing position dropped to is NOT currently occupied
-    //       if (droppedAdjOldPanel.get('panellists').get('length') > 0) {
-    //         // Stupid hack seemingly needed here to reconstruct an array of pannelists
-    //         // For some reason we cant just oldPanellists.pushObject(currentAdj);
-    //         var newPanel = [this.get('panel').get('chair')];
-    //         droppedAdjOldPanel.get('panellists').forEach(function(item) {
-    //           newPanel.push(item);
-    //         });
-    //         droppedAdjOldPanel.set('panellists', newPanel);
-    //       } else {
-    //         droppedAdjOldPanel.set('panellists', [this.get('panel').get('chair')]); // If the previous panel is empty we can just move them directly
-    //       }
-    //     }
-    //   } else if (droppedAdjOldPanel.get('trainees').contains(droppedAdj)) {
-    //     // If the dropped adj was previously a trainee
-    //     droppedAdjOldPanel.get('trainees').removeObject(droppedAdj);
-
-    //     if (hasCurrentAdj !== null) {
-    //       // If the chairing position dropped to is NOT currently occupied
-    //       if (droppedAdjOldPanel.get('trainees').get('length') > 0) {
-    //         // Stupid hack seemingly needed here to reconstruct an array of pannelists
-    //         // For some reason we cant just oldPanellists.pushObject(currentAdj);
-    //         var newPanel = [this.get('panel').get('chair')];
-    //         droppedAdjOldPanel.get('trainees').forEach(function(item) {
-    //           newPanel.push(item);
-    //         });
-    //         droppedAdjOldPanel.set('trainees', newPanel);
-    //       } else {
-    //         droppedAdjOldPanel.set('trainees', [this.get('panel').get('chair')]); // If the previous panel is empty we can just move them directly
-    //       }
-    //     }
-    //   }
-
-    // } else {
-    //   // If coming from not being a chiar
-    //   if (droppedAdjOldPanel.get('content')) {
-    //     if (droppedAdj === droppedAdjOldPanel.get('chair').get('content')) {
-    //       droppedAdjOldPanel.set('chair', null);
-    //     } else if (droppedAdjOldPanel.get('panellists').contains(droppedAdj)) {
-    //       droppedAdjOldPanel.get('panellists').removeObject(droppedAdj);
-    //     } else if (droppedAdjOldPanel.get('trainees').contains(droppedAdj)) {
-    //       droppedAdjOldPanel.get('trainees').removeObject(droppedAdj);
-    //     }
-    //   }
-    // }
-
-
-    //droppedAdj.set('panel', this.get('panel'));
 
     // Remove hover conflicts when dropped
     droppedAdj.get('teamAdjHistories').forEach(function(history) {
