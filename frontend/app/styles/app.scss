@@ -45,24 +45,16 @@ td {
   white-space: normal !important;
 }
 
-.head-venue {
-  width: 3.5%;
-}
+// TABLE SIZING
 
-.head-points {
-  width: 3.5%;
-}
-
-.head-weight {
-  width: 3.5%;
-}
-
-.head-importance {
-  width: 3.5%;
+.head-weight,
+.head-importance,
+.head-deficit {
+  width: 35px;
 }
 
 .head-importance-edit {
-  width: 16%;
+  width: 100px;
 }
 
 .head-og {

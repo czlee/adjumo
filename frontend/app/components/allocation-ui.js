@@ -90,7 +90,7 @@ export default Ember.Component.extend({
   }.property("sortProperties"),
 
   sortedByVenue: function() {
-    if (this.get('sortProperties') === "venue:asc" || this.get('sortProperties') === "venue:desc") {
+    if (this.get('sortProperties') == "venue:asc" || this.get('sortProperties') == "venue:desc") {
       return true;
     } else {
       return false;
@@ -98,7 +98,7 @@ export default Ember.Component.extend({
   }.property("sortProperties"),
 
   sortedByWeight: function() {
-    if (this.get('sortProperties') === "weight:asc" || this.get('sortProperties') === "weight:desc") {
+    if (this.get('sortProperties') == "weight:asc" || this.get('sortProperties') == "weight:desc") {
       return true;
     } else {
       return false;
@@ -106,7 +106,39 @@ export default Ember.Component.extend({
   }.property("sortProperties"),
 
   sortedByImportance: function() {
-    if (this.get('sortProperties') === "importance:asc" || this.get('sortProperties') === "importance:desc") {
+    if (this.get('sortProperties') == "importance:asc" || this.get('sortProperties') == "importance:desc") {
+      return true;
+    } else {
+      return false;
+    }
+  }.property("sortProperties"),
+
+  sortedByQualityDeficit: function() {
+    if (this.get('sortProperties') == "qualityDeficit:asc" || this.get('sortProperties') == "qualityDeficit:desc") {
+      return true;
+    } else {
+      return false;
+    }
+  }.property("sortProperties"),
+
+  sortedByGenderDeficit: function() {
+    if (this.get('sortProperties') == "genderDeficit:asc" || this.get('sortProperties') == "genderDeficit:desc") {
+      return true;
+    } else {
+      return false;
+    }
+  }.property("sortProperties"),
+
+  sortedByLanguageDeficit: function() {
+    if (this.get('sortProperties') == "languageDeficit:asc" || this.get('sortProperties') == "languageDeficit:desc") {
+      return true;
+    } else {
+      return false;
+    }
+  }.property("sortProperties"),
+
+  sortedByRegionalDeficit: function() {
+    if (this.get('sortProperties') == "regionalDeficit:asc" || this.get('sortProperties') == "regionalDeficit:desc") {
       return true;
     } else {
       return false;

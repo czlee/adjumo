@@ -62,7 +62,43 @@
             </th>
             <th class="head-importance-edit preallocation">
               <span data-toggle="tooltip" data-placement="top" title="Edit Importance">
-                Edit Importance
+                Edit <span class="glyphicon glyphicon-dashboard"></span>
+              </span>
+            </th>
+            <th {{action "sortBy" "qualityDeficit"}} class="head-sortable text-center head-deficit debate-quality-deficits" style="display: none;">
+              <span class="glyphicon glyphicon-stats" data-toggle="tooltip" data-placement="top" title="Quality Deficit">
+              {{#if sortAscending}}
+                <span class="glyphicon glyphicon-chevron-up" active={{sortedByQualityDeficit}}></span>
+              {{else}}
+                <span class="glyphicon glyphicon-chevron-down" active={{sortedByQualityDeficit}}></span>
+              {{/if}}
+              </span>
+            </th>
+            <th {{action "sortBy" "genderDeficit"}} class="head-sortable text-center head-deficit debate-gender-deficits" style="display: none;">
+              <span class="glyphicon glyphicon-queen" data-toggle="tooltip" data-placement="top" title="Gender Deficit">
+              {{#if sortAscending}}
+                <span class="glyphicon glyphicon-chevron-up" active={{sortedByGenderDeficit}}></span>
+              {{else}}
+                <span class="glyphicon glyphicon-chevron-down" active={{sortedByGenderDeficit}}></span>
+              {{/if}}
+              </span>
+            </th>
+            <th {{action "sortBy" "languageDeficit"}} class="head-sortable text-center head-deficit debate-language-deficits" style="display: none;">
+              <span class="glyphicon glyphicon-comment" data-toggle="tooltip" data-placement="top" title="Language Deficit">
+              {{#if sortAscending}}
+                <span class="glyphicon glyphicon-chevron-up" active={{sortedByLanguageDeficit}}></span>
+              {{else}}
+                <span class="glyphicon glyphicon-chevron-down" active={{sortedByLanguageDeficit}}></span>
+              {{/if}}
+              </span>
+            </th>
+            <th {{action "sortBy" "regionalDeficit"}} class="head-sortable text-center head-deficit debate-regional-deficits" style="display: none;">
+              <span class="glyphicon glyphicon-globe" data-toggle="tooltip" data-placement="top" title="Regional Deficit">
+              {{#if sortAscending}}
+                <span class="glyphicon glyphicon-chevron-up" active={{sortedByRegionalDeficit}}></span>
+              {{else}}
+                <span class="glyphicon glyphicon-chevron-down" active={{sortedByRegionalDeficit}}></span>
+              {{/if}}
               </span>
             </th>
             <th class="head-og">OG</th>
