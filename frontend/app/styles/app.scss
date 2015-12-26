@@ -567,14 +567,18 @@ td.head-panel {
 //
 
 // HISTORY CONFLICTS
-.team-ui.panel-team-adj-history, .adjudicator-ui.panel-team-adj-history,
-.team-ui.panel-adj-adj-history, .adjudicator-ui.panel-adj-adj-history {
+.team-ui.panel-team-adj-history,
+.panel-ui .adjudicator-ui.panel-team-adj-history,
+.team-ui.panel-adj-adj-history,
+.panel-ui .adjudicator-ui.panel-adj-adj-history {
   @include conflict-bg(#37a5c8, #2d86a3, 0.66);
   border-color: #37a5c8;
 }
 .history-conflict-key,
-.team-ui.hover-team-adj-history, .adjudicator-ui.hover-team-adj-history,
-.team-ui.hover-adj-adj-history, .adjudicator-ui.hover-adj-adj-history,
+.team-ui.hover-team-adj-history,
+.adjudicator-ui.hover-team-adj-history,
+.team-ui.hover-adj-adj-history,
+.adjudicator-ui.hover-adj-adj-history,
 .popover-highlight.panel-team-adj-history,
 .popover-highlight.panel-adj-adj-history,
  {
@@ -583,25 +587,31 @@ td.head-panel {
 }
 
 // INSTITUTION CONFLICTS
-.team-ui.panel-institution-conflict, .adjudicator-ui.panel-institution-conflict {
+.team-ui.panel-institution-conflict,
+.panel-ui .adjudicator-ui.panel-institution-conflict {
   @include conflict-bg(#da1ac1, #ae319e, 0.66);
   border-color: #da1ac1;
 }
 .institution-conflict-key,
-.team-ui.hover-institution-conflict, .adjudicator-ui.hover-institution-conflict,
+.team-ui.hover-institution-conflict,
+.adjudicator-ui.hover-institution-conflict,
 .popover-highlight.panel-institution-conflict {
   @include conflict-bg(#da1ac1, #ae319e, 1);
 }
 
 // PERSONAL CONFLICTS
-.team-ui.panel-team-adj-conflict, .adjudicator-ui.panel-team-adj-conflict,
-.team-ui.panel-adj-adj-conflict, .adjudicator-ui.panel-adj-adj-conflict, {
+.team-ui.panel-team-adj-conflict,
+.panel-ui .adjudicator-ui.panel-team-adj-conflict,
+.team-ui.panel-adj-adj-conflict,
+.panel-ui .adjudicator-ui.panel-adj-adj-conflict, {
   @include conflict-bg(#ff0000, #cf0000, 0.66);
   border-color: #ff0000;
 }
 .team-conflict-key,
-.team-ui.hover-team-adj-conflict, .adjudicator-ui.hover-team-adj-conflict,
-.team-ui.hover-adj-adj-conflict, .adjudicator-ui.hover-adj-adj-conflict,
+.team-ui.hover-team-adj-conflict,
+.adjudicator-ui.hover-team-adj-conflict,
+.team-ui.hover-adj-adj-conflict,
+.adjudicator-ui.hover-adj-adj-conflict,
 .popover-highlight.panel-team-adj-conflict,
 .popover-highlight.panel-adj-adj-conflict {
   @include conflict-bg(#ff0000, #cf0000, 1);

@@ -36,6 +36,24 @@ export default Ember.Mixin.create({
     $('.droppable-area').removeClass('dragging-active');
     $(".hover-key").show();
 
+    var droppedAdjID = event.originalEvent.dataTransfer.getData('AdjID');
+    var droppedAdj = this.get('adjudicators').findBy('id', droppedAdjID);
+
+    // When dropped remove panel conflicts
+    droppedAdj.get('teamAdjHistories').forEach(function(conflict) {
+      conflict.set('hoverActive', false);
+    });
+    droppedAdj.get('adjAdjHistories').forEach(function(history) {
+      history.set('hoverActive', false);
+    });
+    droppedAdj.get('adjAdjConflicts').forEach(function(conflict) {
+      conflict.set('hoverActive', false);
+    });
+    droppedAdj.get('teamAdjConflicts').forEach(function(history) {
+      history.set('hoverActive', false);
+    });
+    droppedAdj.get('institution').set('hoverActive', false);
+
     return false;
   }
 
