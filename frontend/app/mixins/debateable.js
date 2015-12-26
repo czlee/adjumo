@@ -65,8 +65,10 @@ export default Ember.Mixin.create({
   languageName: Ember.computed('language', function() {
     var language = this.get('language');
     if (language === 0) {
-      return "EPL";
+      return "No Lnaguage";
     } else if (language === 1){
+      return "EPL";
+    } else if (language === 2){
       return "ESL";
     } else if (language === 2){
       return "EFL";

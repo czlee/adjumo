@@ -18,34 +18,56 @@
     <div class="panel panel-default">
 
         <ul class="list-group">
-            <li class="list-group-item">
-                <div class="row">
-                    <div class="col-md-6">
-                        <strong>{{ adj.name }}</strong> of <strong>{{ adj.institution.name }}</strong>
+            <li class="list-group-item text-center">
+                <strong>{{ adj.name }}</strong> of <strong>{{ adj.institution.name }}</strong>
+            </li>
+            <li class="list-group-item btn-toolbar-holder">
+
+                <div class="btn-toolbar pull-left">
+                    <div class="btn-group" role="group">
+                        <div class="btn btn-default btn-sm region-display {{ region }}">
+                            <span class="glyphicon glyphicon-globe"></span>
+                        </div>
+                        <div class="btn btn-default btn-sm region-display {{ region }}">
+                            {{ adj.regionName }}
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <span class="glyphicon glyphicon-globe text-muted"></span> {{ adj.regionName }}
+                    <div class="btn-group" role="group">
+                        <div class="btn btn-default btn-sm gender-display gender-{{adj.gender}}">
+                            <span class="glyphicon glyphicon-queen"></span>
+                        </div>
+                        <div class="btn btn-default btn-sm gender-display gender-{{adj.gender}}">
+                            {{ adj.genderName }}
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <span class="glyphicon glyphicon-queen text-muted"></span> {{ adj.genderName }}
+                    <div class="btn-group" role="group">
+                        <div class="btn btn-default btn-sm language-display language-{{adj.language}}">
+                            <span class="glyphicon glyphicon-comment"></span>
+                        </div>
+                        <div class="btn btn-default btn-sm language-display language-{{adj.language}}">
+                            {{ adj.languageName }}
+                        </div>
                     </div>
-                    <div class="col-md-1">
-                        <span class="glyphicon glyphicon-comment text-muted"></span> {{ adj.languageName }}
-                    </div>
-                    <div class="col-md-1">
-                        <span class="glyphicon glyphicon-stats text-muted"></span> {{ adj.get_ranking }}
+                    <div class="btn-group" role="group">
+                        <div class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-stats ranking-display {{ ranking }}"></span>
+                        </div>
+                        <div class="btn btn-default btn-sm  ranking-display {{ ranking }}">
+                            {{ adj.get_ranking }}
+                        </div>
                     </div>
                 </div>
-            </li>
 
-            <li class="list-group-item btn-toolbar-holder">
-                <div class="btn-toolbar">
+                <div class="btn-toolbar pull-right">
                     {{#if adj.teamAdjConflicts }}
                         <div class="btn-group" role="group">
                             {{#each adj.teamAdjConflicts as |conflict| }}
                                 {{#if conflict.panelActive }}
                                     <div class="popover-highlight btn btn-default btn-sm panel-adj-team-conflict">
-                                        <span class="glyphicon glyphicon-remove"></span> {{conflict.team.name}}
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </div>
+                                    <div class="popover-highlight btn btn-default btn-sm panel-adj-team-conflict">
+                                        {{conflict.team.name}}
                                     </div>
                                 {{/if}}
                             {{/each}}
@@ -54,7 +76,10 @@
                     {{#if adj.hasInstitutionalConflict }}
                         <div class="btn-group" role="group">
                             <div class="popover-highlight btn btn-default btn-sm panel-institution-conflict">
-                                <span class="glyphicon glyphicon-remove"></span> {{adj.institution.name}}
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </div>
+                            <div class="popover-highlight btn btn-default btn-sm panel-institution-conflict">
+                                {{adj.institution.name}}
                             </div>
                         </div>
                     {{/if}}
@@ -63,7 +88,10 @@
                             {{#each adj.adjAdjConflicts as |conflict| }}
                                 {{#if conflict.panelActive }}
                                     <div class="popover-highlight btn btn-default panel-team-adj-conflict btn-sm">
-                                        <span class="glyphicon glyphicon-remove"></span> {{conflict.adj1.name}} {{conflict.adj2.name}}
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </div>
+                                    <div class="popover-highlight btn btn-default panel-team-adj-conflict btn-sm">
+                                        {{conflict.adj1.name}} {{conflict.adj2.name}}
                                     </div>
                                 {{/if}}
                             {{/each}}
@@ -74,7 +102,10 @@
                             {{#each adj.teamAdjHistories as |history| }}
                                 {{#if history.panelActive }}
                                     <div class="popover-highlight btn btn-default panel-team-adj-history btn-sm">
-                                        <span class="glyphicon glyphicon-time"></span> {{history.rounds}} {{history.team.name }}
+                                        <span class="glyphicon glyphicon-time"></span>{{history.rounds}}
+                                    </div>
+                                    <div class="popover-highlight btn btn-default panel-team-adj-history btn-sm">
+                                        {{history.team.name }}
                                     </div>
                                 {{/if}}
                             {{/each}}
@@ -85,7 +116,10 @@
                             {{#each adj.adjAdjHistories as |history| }}
                                 {{#if history.panelActive }}
                                     <div class="popover-highlight btn btn-default panel-adj-adj-history btn-sm">
-                                        <span class="glyphicon glyphicon-time"></span> {{history.rounds}} {{ history.adj1.short_name }} {{ history.adj2.short_name }}
+                                        <span class="glyphicon glyphicon-time"></span>{{history.rounds}}
+                                    </div>
+                                    <div class="popover-highlight btn btn-default panel-adj-adj-history btn-sm">
+                                        {{ history.adj1.short_name }} {{ history.adj2.short_name }}
                                     </div>
                                 {{/if}}
                             {{/each}}
