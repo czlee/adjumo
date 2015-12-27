@@ -7,7 +7,7 @@ export exporttabbiejson
 
 function exporttabbiejson(allocations::Vector{PanelAllocation}, directory::AbstractString)
     filename = joinpath(directory, "allocationsfortabbie2.json")
-    println("Writing $filename")
+    println("exporttabbiejson: Writing $filename")
     f = open(filename, "w")
     printtabbiejson(f, allocations)
     close(f)

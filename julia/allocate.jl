@@ -14,17 +14,20 @@ argsettings = ArgParseSettings()
         help = "Current round number"
         arg_type = Int
         default = 5
-    "--solver"
+    "-S", "--solver"
         help = "Solver to use ('gurobi', 'cbc' or 'glpk')"
         default = "default"
         range_tester = x -> x ∈ ["default", "gurobi", "cbc", "glpk"] || startswith(x, "gurobicloud/")
-    "--enforce-team-conflicts"
+    "--enforceteamconflicts", "--enfteam"
         help = "Enforce team-adjudicator conflicts (as opposed to just penalize)"
         action = :store_true
-    "--json-dir"
+    "--enforceallocateall", "--enfall"
+        help = "Require all accredited adjudicators to be allocated"
+        action = :store_true
+    "--jsondir"
         help = "Where to write JSON files upon completion."
         default = joinpath(Base.source_dir(), "../frontend/public/data")
-    "--weights-file"
+    "--weightsfile"
         help = "Where to find the component weights JSON file."
         default = joinpath(Base.source_dir(), "../backend/data/allocation-config.json")
     "--tabbie1"
@@ -42,98 +45,78 @@ argsettings = ArgParseSettings()
         help = "Tolerance gap"
         arg_type = Float64
         default = 1.2e-2
-    "-t", "--threads"
+    "-t", "--solverthreads"
         help = "Number of threads to use for solver"
         arg_type = Int
-        default = CPU_CORES
-    "-l", "--limitpanels"
+    "-p", "--nfeasiblepanels"
         help = "Limit how many panels it samples"
         arg_type = Int
-        default = 50000
-    "-f", "--feasible-panels"
+        default = -1
+    "--feasiblepanelsfile"
         help = "Feasible panels file"
         default = ""
-    "--timelimit"
+    "-T", "--timelimit"
         help = "Time limit for Gurobi solver"
-        default = 300
-    "--randomize-blanks"
+        arg_type = Int
+        default = 600
+    "--randomizeblanks"
         help = "Randomize blank regions, genders, languages and rankings"
         action = :store_true
+    "-f", "--fpgmethod"
+        help = "Feasible panels generation method"
+        arg_type = Symbol
+        default = :exhaustive
 end
-args = parse_args(ARGS, argsettings)
+args = parse_args(ARGS, argsettings; as_symbols=true)
+for (k, v) in args
+    println("argument $k = $v")
+end
 
-ndebates = args["ndebates"]
-currentround = args["currentround"]
+ndebates = args[:ndebates]
+currentround = args[:currentround]
 
-if length(args["tabbie2"]) > 0
-    tabbie2file = open(args["tabbie2"])
+if length(args[:tabbie2]) > 0
+    tabbie2file = open(args[:tabbie2])
     roundinfo = importtabbiejson(tabbie2file)
-elseif length(args["tabbie1"]) > 0
+elseif length(args[:tabbie1]) > 0
     using DBI
     using PostgreSQL
-    username, password, database = args["tabbie1"]
+    username, password, database = args[:tabbie1]
     dbconnection = connect(Postgres, "localhost", username, password, database, 5432)
     roundinfo = gettabbie1roundinfo(dbconnection, currentround)
 else
     roundinfo = randomroundinfo(ndebates, currentround)
 end
 
-if args["randomize-blanks"]
-    println("Randomizing blanks...")
-    for adj in roundinfo.adjudicators
-        if NoRegion in adj.regions
-            randomregions!(adj)
-        end
-        if adj.gender == PersonNoGender
-            randomgender!(adj)
-        end
-        if adj.language == NoLanguage
-            randomlanguage!(adj)
-        end
-        randomranking!(adj)
-    end
-    for team in roundinfo.teams
-        if team.region == NoRegion
-            randomregion!(team)
-        end
-        if team.gender == TeamNoGender
-            randomgender!(team)
-        end
-        if team.language == NoLanguage
-            randomlanguage!(team)
-        end
-    end
+if args[:randomizeblanks]
+    randomizeblanks!(roundinfo)
 end
 
-componentweightsfile = open(args["weights-file"])
+componentweightsfile = open(args[:weightsfile])
 importcomponentweightsjsonintoroundinfo!(roundinfo, componentweightsfile)
 close(componentweightsfile)
 
 println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 
-kwargs = Dict(:solver=>args["solver"],
-        :enforceteamconflicts=>args["enforce-team-conflicts"],
-        :gap=>args["gap"], :threads=>args["threads"], :timelimit=>args["timelimit"])
-
-if length(args["feasible-panels"]) > 0
-    f = open(args["feasible-panels"])
+if length(args[:feasiblepanelsfile]) > 0
+    f = open(args[:feasiblepanelsfile])
     feasiblepanels = importfeasiblepanels(f, roundinfo)
     close(f)
     feasiblepanels = feasiblepanels[1:5:end]
     println("Imported $(length(feasiblepanels)) feasible panels")
-    allocations = allocateadjudicators(roundinfo, feasiblepanels; kwargs...)
+    allocations = allocateadjudicators(roundinfo, feasiblepanels; args...)
 else
-    allocations = allocateadjudicators(roundinfo; limitpanels=args["limitpanels"], kwargs...)
+    allocations = allocateadjudicators(roundinfo; args...)
 end
 
 println("Writing JSON files...")
-directory = args["json-dir"]
+directory = args[:jsondir]
 
 exportroundinfo(roundinfo, directory)
 exportallocations(allocations, directory)
 exporttabbiejson(allocations, directory)
 
-if args["show"]
+if args[:show]
     showconstraints(roundinfo)
     for allocation in allocations
         showdebatedetail(roundinfo, allocation)

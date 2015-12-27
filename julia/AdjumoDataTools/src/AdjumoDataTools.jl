@@ -18,8 +18,6 @@ __precompile__()
 
 module AdjumoDataTools
     using Adjumo
-    export randomroundinfo, gettabbie1roundinfo
-    export showteams, showadjudicators, showconstraints, showdebatedetail
     include("random.jl")
     include("importtabbie1.jl")
     include("display.jl")
