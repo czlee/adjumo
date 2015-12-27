@@ -48,19 +48,15 @@ router.post('/debate-scores/', function(req, res) {
 
   // Import the relevant script
   var julia = require('node-julia');
-  julia.exec('include', '../julia/interface.jl');
+  julia.exec('include', '../julia/Adjumo/src/frontendinterface.jl');
 
   var json = JSON.stringify(req.body); // PIPE this into the proper function
 
-  // Redundant test variables
-  var parameterA = 10;
-  var teams = 10;
-  var adjs = 10;
-
-  julia.exec('calculateDebateScores', parameterA, teams, adjs, function(err,regional,gender,language) {
+  julia.exec('scoresfordisplay', json, function(err,regional,gender,language) {
     if(err) {
       console.log("error in computation ",err);
     } else {
+      console.log("success in calling julia");
       var fakeScores = {
         regionalRepresentation: regional,
         genderRepresentation: gender,
