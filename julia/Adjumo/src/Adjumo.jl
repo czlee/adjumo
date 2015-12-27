@@ -141,18 +141,20 @@ function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(I
     end
 
     panels = AdjudicatorPanel[]
-    sizehint!(panels, limitpanels)
+    sizehint!(panels, limitpanels*2)
     for i in 1:limitpanels
-        adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
-        while !feasible(adjs)
+        for panelsize in panelsizes
             adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
+            while !feasible(adjs)
+                adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
+            end
+            possiblechairindices = find(adj -> adj.ranking == adjs[1].ranking, adjs)
+            chairindex = rand(possiblechairindices)
+            chair = adjs[chairindex]
+            deleteat!(adjs, chairindex)
+            panel = AdjudicatorPanel(chair, adjs)
+            push!(panels, panel)
         end
-        possiblechairindices = find(adj -> adj.ranking == adjs[1].ranking, adjs)
-        chairindex = rand(possiblechairindices)
-        chair = adjs[chairindex]
-        deleteat!(adjs, chairindex)
-        panel = AdjudicatorPanel(chair, adjs)
-        push!(panels, panel)
     end
 
     # Take a very brute force approach
