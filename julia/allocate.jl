@@ -66,6 +66,7 @@ argsettings = ArgParseSettings()
         default = :exhaustive
 end
 args = parse_args(ARGS, argsettings; as_symbols=true)
+@show args
 
 ndebates = args[:ndebates]
 currentround = args[:currentround]
