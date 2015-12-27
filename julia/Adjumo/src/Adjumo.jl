@@ -44,12 +44,6 @@ end
 feasible panels."
 function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, timelimit=300)
 
-    procstoadd = threads - nprocs()
-    if procstoadd > 0
-        println("Adding $procstoadd processes to make $threads processes in total")
-        procsadded = addprocs(procstoadd)
-    end
-
     println("score matrix:")
     @time Σ = scorematrix(roundinfo, feasiblepanels)
 
@@ -85,10 +79,6 @@ function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{Adjud
 
     println("conversion:")
     @time allocations = convertallocations(roundinfo.debates, feasiblepanels, debateindices, panelindices, scores)
-
-    if procstoadd > 0
-        rmprocs(procsadded)
-    end
 
     return allocations
 end
