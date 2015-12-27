@@ -18,8 +18,11 @@ argsettings = ArgParseSettings()
         help = "Solver to use ('gurobi', 'cbc' or 'glpk')"
         default = "default"
         range_tester = x -> x ∈ ["default", "gurobi", "cbc", "glpk"] || startswith(x, "gurobicloud/")
-    "--enforceteamconflicts"
+    "--enforceteamconflicts", "--enfteam"
         help = "Enforce team-adjudicator conflicts (as opposed to just penalize)"
+        action = :store_true
+    "--enforceallocateall", "--enfall"
+        help = "Require all accredited adjudicators to be allocated"
         action = :store_true
     "--jsondir"
         help = "Where to write JSON files upon completion."
