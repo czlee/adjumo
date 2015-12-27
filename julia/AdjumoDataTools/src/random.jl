@@ -124,7 +124,7 @@ function randomizeblanks!(roundinfo::RoundInfo)
 end
 
 function randomroundinfo(ndebates::Int, currentround::Int)
-    nadjs = Integer(7ndebates÷2)
+    nadjs = Integer(9ndebates÷2)
     nteams = 4ndebates
     ninstitutions = 2ndebates
 

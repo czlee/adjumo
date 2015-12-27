@@ -19,10 +19,8 @@ end
 Generates a list of feasible panels using the information about the round.
 Returns a list of AdjudicatorPanel instances.
 """
-function generatefeasiblepanels(roundinfo::RoundInfo, panelsizes::Vector{Int}; options...)
-    optionsdict = Dict(options)
+function generatefeasiblepanels(roundinfo::RoundInfo; options...)
 
-    adjssorted = sort(roundinfo.adjudicators, by=adj->adj.ranking, rev=true)
     averagepanelsize = count(x -> x.ranking >= PanellistMinus, roundinfo.adjudicators) / numdebates(roundinfo)
     panels = AdjudicatorPanel[]
 
@@ -34,12 +32,13 @@ function generatefeasiblepanels(roundinfo::RoundInfo, panelsizes::Vector{Int}; o
 
     println("generatefeasiblepanels: The average panel size is $averagepanelsize, trying these panel sizes: $panelsizes.")
 
-    methodoption = get(optionsdict, :fpgmethod, :exhaustive)
+    methodoption = get(Dict(options), :fpgmethod, :exhaustive)
     println("generatefeasiblepanels: Feasible panel generation method is $methodoption")
     method = FEASIBLE_PANEL_GENERATION_METHODS[methodoption]
     panels = method(roundinfo, panelsizes; options...)
 
     println("generatefeasiblepanels: There are $(length(panels)) panels to choose from.")
+    return panels
 end
 
 function generatefeasiblepanelsrandom(roundinfo::RoundInfo, panelsizes::Vector{Int}; options...)
@@ -52,6 +51,7 @@ function generatefeasiblepanelsrandom(roundinfo::RoundInfo, panelsizes::Vector{I
             while !feasible(adjs)
                 adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
             end
+            sort!(adjs, by=adj->adj.ranking, rev=true)
             possiblechairindices = find(adj -> adj.ranking == adjs[1].ranking, adjs)
             chairindex = rand(possiblechairindices)
             chair = adjs[chairindex]
@@ -64,7 +64,7 @@ function generatefeasiblepanelsrandom(roundinfo::RoundInfo, panelsizes::Vector{I
     return panels
 end
 
-function generatefeasiblepanelspermutations(roundinfo::RoundInfo; options...)
+function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Vector{Int}; options...)
     # panels = AdjudicatorPanel[]
     # sizehint!(panels, limitpanels)
     # while length(panels) < limitpanels
@@ -79,6 +79,8 @@ function generatefeasiblepanelspermutations(roundinfo::RoundInfo; options...)
 end
 
 function generatefeasiblepanelsexhaustive(roundinfo::RoundInfo, panelsizes::Vector{Int}; options...)
+
+    adjssorted = sort(roundinfo.adjudicators, by=adj->adj.ranking, rev=true)
 
     panels = AdjudicatorPanel[]
     sizehint!(panels, binomial(numadjs(roundinfo), maximum(panelsizes)))
@@ -101,7 +103,7 @@ function generatefeasiblepanelsexhaustive(roundinfo::RoundInfo, panelsizes::Vect
         end
     end
 
-    limitpanels = get(optionsdict, :limitpanels, typemax(Int))
+    limitpanels = get(Dict(options), :limitpanels, typemax(Int))
     if length(panels) > limitpanels
         println("There are $(length(panels)) feasible panels, but limiting to $limitpanels panels, picking at random.")
         panels = sample(panels, limitpanels; replace=false)
