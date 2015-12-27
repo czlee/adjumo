@@ -141,9 +141,10 @@ function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(I
     end
 
     panels = AdjudicatorPanel[]
-    sizehint!(panels, limitpanels*2)
-    for i in 1:limitpanels
-        for panelsize in panelsizes
+    sizehint!(panels, limitpanels)
+    # TODO select in proportion to averagepanelsize
+    for panelsize in panelsizes
+        for i in 1:limitpanels÷2
             adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
             while !feasible(adjs)
                 adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
@@ -183,10 +184,10 @@ function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(I
     #     end
     # end
 
-    if length(panels) > limitpanels
-        println("There are $(length(panels)) feasible panels, but limiting to $limitpanels panels, picking at random.")
-        panels = sample(panels, limitpanels; replace=false)
-    end
+    # if length(panels) > limitpanels
+    #     println("There are $(length(panels)) feasible panels, but limiting to $limitpanels panels, picking at random.")
+    #     panels = sample(panels, limitpanels; replace=false)
+    # end
     println("There are $(length(panels)) panels to choose from.")
 
     return panels
