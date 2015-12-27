@@ -57,6 +57,7 @@ argsettings = ArgParseSettings()
         default = ""
     "-T", "--timelimit"
         help = "Time limit for Gurobi solver"
+        arg_type = Int
     "--randomizeblanks"
         help = "Randomize blank regions, genders, languages and rankings"
         action = :store_true
