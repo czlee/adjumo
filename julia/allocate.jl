@@ -52,7 +52,7 @@ argsettings = ArgParseSettings()
     "--feasiblepanelsfile"
         help = "Feasible panels file"
         default = ""
-    "--timelimit"
+    "-T", "--timelimit"
         help = "Time limit for Gurobi solver"
     "--randomizeblanks"
         help = "Randomize blank regions, genders, languages and rankings"
