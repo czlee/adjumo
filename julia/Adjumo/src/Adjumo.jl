@@ -266,7 +266,7 @@ function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
         @time @addConstraint(m, ones(1,ndebates)*X*Q[:, istrainee] .<= 1)
     else
         println("all adjudicators should be allocated at most once:")
-        @time @addConstraint(m, ones(1,ndebates)*X*Q[:, istrainee] .<= 1)
+        @time @addConstraint(m, ones(1,ndebates)*X*Q .<= 1)
     end
 
     # adjudicator constraints
