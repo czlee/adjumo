@@ -49,7 +49,7 @@ argsettings = ArgParseSettings()
     "-l", "--limitpanels"
         help = "Limit how many panels it samples"
         arg_type = Int
-        default = typemax(Int)
+        default = 50000
     "-f", "--feasible-panels"
         help = "Feasible panels file"
         default = ""
