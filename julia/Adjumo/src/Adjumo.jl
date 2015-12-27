@@ -122,6 +122,7 @@ function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(I
     else
         panelsizes = Int[floor(averagepanelsize), ceil(averagepanelsize)]
     end
+    println("The average panel size is $averagepanelsize, trying $panelsizes.")
 
     function feasible(adjs)
         if panelquality(adjs) <= -20
@@ -139,13 +140,14 @@ function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(I
         return true
     end
 
-    # Take a very brute force approach
     panels = AdjudicatorPanel[]
-    sizehint!(panels, binomial(numadjs(roundinfo), maximum(panelsizes)))
+    sizehint!(panels, limitpanels)
+    # TODO select in proportion to averagepanelsize
     for panelsize in panelsizes
-        for adjs in combinations(adjssorted, panelsize)
-            if !feasible(adjs)
-                continue
+        for i in 1:limitpanels÷2
+            adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
+            while !feasible(adjs)
+                adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
             end
             possiblechairindices = find(adj -> adj.ranking == adjs[1].ranking, adjs)
             chairindex = rand(possiblechairindices)
@@ -156,10 +158,36 @@ function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(I
         end
     end
 
-    if length(panels) > limitpanels
-        println("There are $(length(panels)) feasible panels, but limiting to $limitpanels panels, picking at random.")
-        panels = sample(panels, limitpanels; replace=false)
-    end
+    # Take a very brute force approach
+    # CONTINUE HERE - TODO - don't generate exhaustive list.
+    # Probably provide options for different methods, actually:
+    #  - random, exhaustive and sample, permuations
+
+    # panels = AdjudicatorPanel[]
+    # sizehint!(panels, binomial(numadjs(roundinfo), maximum(panelsizes)))
+    # lastprint = 0
+    # for panelsize in panelsizes
+    #     for adjs in combinations(adjssorted, panelsize)
+    #         if !feasible(adjs)
+    #             continue
+    #         end
+    #         possiblechairindices = find(adj -> adj.ranking == adjs[1].ranking, adjs)
+    #         chairindex = rand(possiblechairindices)
+    #         chair = adjs[chairindex]
+    #         deleteat!(adjs, chairindex)
+    #         panel = AdjudicatorPanel(chair, adjs)
+    #         push!(panels, panel)
+    #         if length(panels) - lastprint >= 100000
+    #             println("Up to $(length(panels)) panels")
+    #             lastprint = length(panels)
+    #         end
+    #     end
+    # end
+
+    # if length(panels) > limitpanels
+    #     println("There are $(length(panels)) feasible panels, but limiting to $limitpanels panels, picking at random.")
+    #     panels = sample(panels, limitpanels; replace=false)
+    # end
     println("There are $(length(panels)) panels to choose from.")
 
     return panels

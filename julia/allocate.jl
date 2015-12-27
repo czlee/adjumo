@@ -49,13 +49,16 @@ argsettings = ArgParseSettings()
     "-l", "--limitpanels"
         help = "Limit how many panels it samples"
         arg_type = Int
-        default = typemax(Int)
+        default = 50000
     "-f", "--feasible-panels"
         help = "Feasible panels file"
         default = ""
     "--timelimit"
         help = "Time limit for Gurobi solver"
         default = 300
+    "--randomize-blanks"
+        help = "Randomize blank regions, genders, languages and rankings"
+        action = :store_true
 end
 args = parse_args(ARGS, argsettings)
 
@@ -73,6 +76,33 @@ elseif length(args["tabbie1"]) > 0
     roundinfo = gettabbie1roundinfo(dbconnection, currentround)
 else
     roundinfo = randomroundinfo(ndebates, currentround)
+end
+
+if args["randomize-blanks"]
+    println("Randomizing blanks...")
+    for adj in roundinfo.adjudicators
+        if NoRegion in adj.regions
+            randomregions!(adj)
+        end
+        if adj.gender == PersonNoGender
+            randomgender!(adj)
+        end
+        if adj.language == NoLanguage
+            randomlanguage!(adj)
+        end
+        randomranking!(adj)
+    end
+    for team in roundinfo.teams
+        if team.region == NoRegion
+            randomregion!(team)
+        end
+        if team.gender == TeamNoGender
+            randomgender!(team)
+        end
+        if team.language == NoLanguage
+            randomlanguage!(team)
+        end
+    end
 end
 
 componentweightsfile = open(args["weights-file"])

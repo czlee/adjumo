@@ -13,6 +13,7 @@ Pkg.add("Iterators")
 Pkg.clone("https://github.com/czlee/Formatting.jl.git")
 if "gurobi" ∈ ARGS
     Pkg.clone("https://github.com/czlee/Gurobi.jl.git")
+    Pkg.build("Gurobi")
 end
 if "cbc" ∈ ARGS || ("gurobi" ∉ ARGS && "glpk" ∉ ARGS)
     Pkg.add("Cbc")
