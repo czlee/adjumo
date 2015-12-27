@@ -23,6 +23,7 @@ SUPPORTED_SOLVERS = [
 ]
 
 include("types.jl")
+include("feasiblepanels.jl")
 include("score.jl")
 include("importjson.jl")
 include("exportjson.jl")
@@ -34,15 +35,16 @@ include("frontendinterface.jl")
 export allocateadjudicators, generatefeasiblepanels
 
 "Top-level adjudicator allocation function."
-function allocateadjudicators(roundinfo::RoundInfo; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, limitpanels=typemax(Int), timelimit=300)
+function allocateadjudicators(roundinfo::RoundInfo; options...)
     println("feasible panels:")
-    @time feasiblepanels = generatefeasiblepanels(roundinfo; limitpanels=limitpanels)
-    return allocateadjudicators(roundinfo, feasiblepanels; solver=solver, enforceteamconflicts=enforceteamconflicts, gap=gap, threads=threads)
+    @time feasiblepanels = generatefeasiblepanels(roundinfo; options...)
+    return allocateadjudicators(roundinfo, feasiblepanels; options...)
 end
 
 "Top-level adjudicator allocation function, but takes in a pre-generated set of
 feasible panels."
-function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; solver="default", enforceteamconflicts=false, gap=1e-2, threads=1, timelimit=300)
+function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; options...)
+    optionsdict = Dict(options)
 
     procstoadd = threads - nprocs()
     if procstoadd > 0
@@ -65,7 +67,7 @@ function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{Adjud
     println("blocked adjudicator constraint conversion:")
     @time blockedadjs = convertconstraints(roundinfo, roundinfo.blockedadjs)
 
-    if enforceteamconflicts
+    if get(optionsdict, :enforceteamconflicts, false)
         println("team-adjudicator conflict conversion:")
         @time teamadjconflicts = convertteamadjconflicts(roundinfo)
 
@@ -73,7 +75,7 @@ function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{Adjud
         @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
     end
 
-    @time status, debateindices, panelindices, scores = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; solver=solver, gap=gap, threads=threads)
+    @time status, debateindices, panelindices, scores = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; options...)
 
     if status != :Optimal
         warn("Problem was not solved to optimality. Status was: $status")
@@ -106,91 +108,6 @@ function checkincompatibleconstraints(roundinfo::RoundInfo)
         end
     end
     return feasible
-end
-
-"""
-Generates a list of feasible panels using the information about the round.
-Returns a list of AdjudicatorPanel instances.
-"""
-function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(Int))
-    adjssorted = sort(roundinfo.adjudicators, by=adj->adj.ranking, rev=true)
-    averagepanelsize = count(x -> x.ranking >= PanellistMinus, roundinfo.adjudicators) / numdebates(roundinfo)
-    panels = AdjudicatorPanel[]
-
-    if isinteger(averagepanelsize)
-        panelsizes = Int[averagepanelsize]
-    else
-        panelsizes = Int[floor(averagepanelsize), ceil(averagepanelsize)]
-    end
-    println("The average panel size is $averagepanelsize, trying $panelsizes.")
-
-    function feasible(adjs)
-        if panelquality(adjs) <= -20
-            return false
-        end
-        if hasconflict(roundinfo, adjs)
-            return false
-        end
-        for groupedadjs in roundinfo.groupedadjs
-            overlap = length(adjs ∩ groupedadjs)
-            if overlap != 0 && overlap != length(groupedadjs)
-                return false
-            end
-        end
-        return true
-    end
-
-    panels = AdjudicatorPanel[]
-    sizehint!(panels, limitpanels)
-    # TODO select in proportion to averagepanelsize
-    for panelsize in panelsizes
-        for i in 1:limitpanels÷2
-            adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
-            while !feasible(adjs)
-                adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
-            end
-            possiblechairindices = find(adj -> adj.ranking == adjs[1].ranking, adjs)
-            chairindex = rand(possiblechairindices)
-            chair = adjs[chairindex]
-            deleteat!(adjs, chairindex)
-            panel = AdjudicatorPanel(chair, adjs)
-            push!(panels, panel)
-        end
-    end
-
-    # Take a very brute force approach
-    # CONTINUE HERE - TODO - don't generate exhaustive list.
-    # Probably provide options for different methods, actually:
-    #  - random, exhaustive and sample, permuations
-
-    # panels = AdjudicatorPanel[]
-    # sizehint!(panels, binomial(numadjs(roundinfo), maximum(panelsizes)))
-    # lastprint = 0
-    # for panelsize in panelsizes
-    #     for adjs in combinations(adjssorted, panelsize)
-    #         if !feasible(adjs)
-    #             continue
-    #         end
-    #         possiblechairindices = find(adj -> adj.ranking == adjs[1].ranking, adjs)
-    #         chairindex = rand(possiblechairindices)
-    #         chair = adjs[chairindex]
-    #         deleteat!(adjs, chairindex)
-    #         panel = AdjudicatorPanel(chair, adjs)
-    #         push!(panels, panel)
-    #         if length(panels) - lastprint >= 100000
-    #             println("Up to $(length(panels)) panels")
-    #             lastprint = length(panels)
-    #         end
-    #     end
-    # end
-
-    # if length(panels) > limitpanels
-    #     println("There are $(length(panels)) feasible panels, but limiting to $limitpanels panels, picking at random.")
-    #     panels = sample(panels, limitpanels; replace=false)
-    # end
-    println("There are $(length(panels)) panels to choose from.")
-
-    return panels
 end
 
 """
@@ -264,10 +181,14 @@ function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorP
     return allocations
 end
 
+function resolvesolveroptions(;kwargs...)
+
+end
+
 "Given a user option, returns a solver for use in solving the optimization problem."
 function choosesolver(solver::AbstractString; kwargs...)
-    defaults = Dict(:gap=>1e-2, :threads=>1, :timelimit=>300)
-    resolvedkwargs = merge(defaults, Dict(kwargs))
+    useroptions = Dict(:gap=>1e-2, :threads=>1, :timelimit=>300) # defaults
+    merge!(useroptions, Dict(kwargs))
 
     if startswith(solver, "gurobicloud/")
         solver, host, password = split(solver, "/"; limit=3)
@@ -280,8 +201,9 @@ function choosesolver(solver::AbstractString; kwargs...)
         println("Using solver: GurobiCloudSolver at $host (password $password)")
         solverargs = Tuple{Symbol,Any}[]
         for (name, value) in options
-            push!(solverargs, (name, isa(value, Symbol) ? resolvedkwargs[value] : value))
+            push!(solverargs, (name, isa(value, Symbol) ? useroptions[value] : value))
         end
+        println("Solver arguments: $solverargs")
         return :GurobiCloudSolver, GurobiCloudSolver(host, password; solverargs...)
     end
 
@@ -300,8 +222,9 @@ function choosesolver(solver::AbstractString; kwargs...)
             println("Using solver: $solversym")
             solverargs = Tuple{Symbol,Any}[]
             for (name, value) in options
-                push!(solverargs, (name, isa(value, Symbol) ? resolvedkwargs[value] : value))
+                push!(solverargs, (name, isa(value, Symbol) ? useroptions[value] : value))
             end
+            println("Solver arguments: $solverargs")
             return solversym, eval(solversym)(;solverargs...)
         end
     end
