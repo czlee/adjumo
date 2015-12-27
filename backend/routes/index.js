@@ -48,7 +48,9 @@ router.post('/debate-scores/', function(req, res) {
 
   // Import the relevant script
   var julia = require('node-julia');
-  julia.exec('include', '../julia/Adjumo/src/frontendinterface.jl');
+  julia.exec('include', '../julia/Adjumo/src/Adjumo.jl');
+  // julia.exec('include', '../julia/Adjumo/src/importjson.jl');
+  // julia.exec('include', '../julia/Adjumo/src/frontendinterface.jl');
 
   var json = JSON.stringify(req.body); // PIPE this into the proper function
 

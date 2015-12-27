@@ -394,99 +394,71 @@ td.head-panel {
 }
 
 .gender-display {
-  &.gender-0 {
+  .gender-0 {
     background: #CCC;
   }
 
-  &.gender-2 {
+  .gender-2 {
     /* F */
     background: #fd64ff;
     color: #fff;
   }
 
-  &.gender-3 {
+  .gender-3 {
     /* Only show this for teams as for them it represnts M+F*/
     background: #fedbff;
   }
 }
 
 .language-display {
-  &.language-2 {
+  .language-2 {
     background: #ec91af;
     color: #fff;
   }
 
-  &.language-3 {
+  .language-3 {
     background: #91ece9;
   }
 }
 
 .region-display {
-  &.region-display.region-9 {
+
+  .region-9 { /* Europe */
     background: lighten(#330831, 6%);
-
-    /* Europe */
     color: #fff;
   }
-
-  &.region-display.region-10 {
+  .region-10 { /* IONA */
     background: lighten(#180833, 6%);
-
-    /* IONA */
     color: #fff;
   }
-
-  &.region-display.region-6 {
+  .region-6 {    /* ANZ */
     background: lighten(#002339, 6%);
-
-    /* ANZ */
     color: #fff;
   }
-
-  &.region-display.region-7 {
+  .region-7 { /* North America */
     background: lighten(#003937, 6%);
-
-    /* North America */
     color: #fff;
   }
-
-  &.region-display.region-1 {
-    background: #57f8fa;
-
-    /* North Asia */
+  .region-1 {
+    background: #57f8fa; /* North Asia */
   }
-
-  &.region-display.region-2 {
-    background: #eaff00;
-
-    /* SE Asia */
+  .region-2 {
+    background: #eaff00; /* SE Asia */
   }
-
-  &.region-display.region-4 {
-    background: #40ff71;
-
-    /* S Asia */
+  .region-4 {
+    background: #40ff71; /* S Asia */
   }
-
-  &.region-display.region-8 {
-    background: lighten(#c0e7ff, 8%);
-
-    /* Latin America */
+  .region-8 {
+    background: lighten(#c0e7ff, 8%); /* Latin America */
   }
-
-  &.region-display.region-3 {
-    background: lighten(#ffc0f1, 8%);
-
-    /* Middle East */
-  }
-
-  &.region-display.region-5 {
+  .region-3 {
+    background: lighten(#ffc0f1, 8%); /* Middle East */
+   }
+  .region-5 { /* Africa */
     background: lighten(#c7ffc0, 8%);
-
-    /* Africa */
   }
 
-  &.region-display.multiple-regions {
+  .multiple-regions {
     background: #fff;
     color: #000;
   }
@@ -494,60 +466,49 @@ td.head-panel {
 
 .ranking-display {
 
-  &.ranking-0,
   .ranking-0 {
     background: #bdac7c;     // T-
   }
 
-  &.ranking-1,
   .ranking-1 {
     background: #e9b771;
   }
 
-  &.ranking-2,
   .ranking-2 {
     background: #ffbe63;
   }
 
-  &.ranking-3,
   .ranking-3 {
     background: #ffdf53;
     color: #000;
   }
 
-  &.ranking-4,
   .ranking-4 {
     background: #fcff41;
     color: #000;
   }
 
-  &.ranking-5,
   .ranking-5 {
     background: #b6ff2f;
     color: #000;
   }
 
-  &.ranking-6,
   .ranking-6 {
     background: #58ff1f;
   }
 
-  &.ranking-7,
   .ranking-7 {
     background: #19e910;
   }
 
-  &.ranking-8,
   .ranking-8 {
     background: #1aa71c;
   }
 
-  &.ranking-9,
   .ranking-9 {
     background: #0b880d;  // C+
   }
 
-  &.ranking-10,
   .ranking-10 {
     background: #007102;  // C+
   }
