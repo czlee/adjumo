@@ -1,8 +1,9 @@
-# This file is part of the AdjumoDataTools module, or you can include("display.jl")
-# it if you prefer.
+# This file is part of the AdjumoDataTools module.
 
 using Formatting
 import Adjumo: debateregionclass, namewithrolelist
+
+export showteams, showadjudicators, showconstraints, showdebatedetail
 
 const TEAM_GENDER_ABBRS = ["-", "M", "F", "X"]
 const PERSON_GENDER_ABBRS = ["-", "m", "f", "o"]

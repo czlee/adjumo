@@ -6,14 +6,14 @@
 #   ndebates = 50
 #   currentround = 5
 #   ri = randomroundinfo(ndebates, currentround)
-#
-# You can also include("random.jl") this file rather than use the
-# AdjumoDataTools module, if you prefer.
 
 using Iterators
+using StatsBase
 include("randomdata.jl")
 
-export randomgender!, randomlanguage!, randomranking!, randomregion!, randomregions!
+export randomroundinfo,
+    randomgender!, randomlanguage!, randomranking!, randomregion!, randomregions!,
+    randomizeblanks!
 
 function randdiscrete(valuesandprobs)
     r = rand()
@@ -25,6 +25,8 @@ function randdiscrete(valuesandprobs)
         end
     end
 end
+
+randpair(v::Vector) = sample(v, 2; replace=false)
 
 function randomregion()
     randdiscrete([
@@ -94,15 +96,31 @@ function randomranking!(adj::Adjudicator)
     ])
 end
 
-function randpair(v::Vector)
-    for i = 1:100
-        p = rand(v, 2)
-        if p[1] != p[2]
-            return p
+function randomizeblanks!(roundinfo::RoundInfo)
+    println("randomizeblanks: Randomizing blank regions, genders, languages and rankings...")
+    for adj in roundinfo.adjudicators
+        if NoRegion in adj.regions
+            randomregions!(adj)
+        end
+        if adj.gender == PersonNoGender
+            randomgender!(adj)
+        end
+        if adj.language == NoLanguage
+            randomlanguage!(adj)
+        end
+        randomranking!(adj)
+    end
+    for team in roundinfo.teams
+        if team.region == NoRegion
+            randomregion!(team)
+        end
+        if team.gender == TeamNoGender
+            randomgender!(team)
+        end
+        if team.language == NoLanguage
+            randomlanguage!(team)
         end
     end
-    warn("Could not draw pair of two distinct items after 100 attempts")
-    return p
 end
 
 function randomroundinfo(ndebates::Int, currentround::Int)

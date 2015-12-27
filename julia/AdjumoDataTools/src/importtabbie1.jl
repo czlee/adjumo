@@ -38,6 +38,8 @@
 
 using DBI
 
+export gettabbie1roundinfo
+
 function hasobjectwithid(v::Vector, id::Int)
     return findfirst(x -> x.id == id, v) > 0
 end

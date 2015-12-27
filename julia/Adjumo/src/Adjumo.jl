@@ -15,9 +15,9 @@ typealias JsonDict Dict{AbstractString,Any}
 
 SUPPORTED_SOLVERS = [
     ("gurobi", :Gurobi, :GurobiSolver,
-            (:MIPGap=>:gap, :Threads=>:threads, :LogToConsole=>1, :MIPFocus=>1, :TimeLimit=>:timelimit)),
+            (:MIPGap=>:gap, :Threads=>:solverthreads, :LogToConsole=>1, :MIPFocus=>1, :TimeLimit=>:timelimit)),
     ("cbc", :Cbc, :CbcSolver,
-            (:ratioGap=>:gap, :threads=>:threads, :logLevel=>1, :SolveType=>1)),
+            (:ratioGap=>:gap, :threads=>:solverthreads, :logLevel=>1, :SolveType=>1)),
     ("glpk", :GLPKMathProgInterface, :GLPKSolverMIP,
             (:tol_obj=>:gap, :msg_lev=>3)),
 ]
@@ -44,7 +44,6 @@ end
 "Top-level adjudicator allocation function, but takes in a pre-generated set of
 feasible panels."
 function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel}; options...)
-    optionsdict = Dict(options)
 
     println("score matrix:")
     @time Σ = scorematrix(roundinfo, feasiblepanels)
@@ -61,7 +60,7 @@ function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{Adjud
     println("blocked adjudicator constraint conversion:")
     @time blockedadjs = convertconstraints(roundinfo, roundinfo.blockedadjs)
 
-    if get(optionsdict, :enforceteamconflicts, false)
+    if get(Dict(options), :enforceteamconflicts, false)
         println("team-adjudicator conflict conversion:")
         @time teamadjconflicts = convertteamadjconflicts(roundinfo)
 
@@ -92,7 +91,7 @@ function checkincompatibleconstraints(roundinfo::RoundInfo)
     for adjs in roundinfo.groupedadjs
         for (adj1, adj2) in combinations(adjs, 2)
             if conflicted(roundinfo, adj1, adj2)
-                println("Error: $(adj1.name) and $(adj2.name) are both grouped and conflicted.")
+                println("Incompatible constraint: $(adj1.name) and $(adj2.name) are both grouped and conflicted.")
                 feasible = false
             end
         end
@@ -171,33 +170,37 @@ function convertallocations(debates::Vector{Debate}, panels::Vector{AdjudicatorP
     return allocations
 end
 
-function resolvesolveroptions(;kwargs...)
-
+"Resolves user options into argument for the solver."
+function resolvesolveroptions(solveroptions, useroptions)
+    completeuseroptions = Dict(:gap=>1e-2, :solverthreads=>1, :timelimit=>300) # defaults
+    merge!(completeuseroptions, Dict(useroptions))
+    solverargs = Tuple{Symbol,Any}[]
+    for (name, value) in solveroptions
+        push!(solverargs, (name, isa(value, Symbol) ? completeuseroptions[value] : value))
+    end
+    println("Solve arguments: $solverargs")
+    return solverargs
 end
 
 "Given a user option, returns a solver for use in solving the optimization problem."
 function choosesolver(solver::AbstractString; kwargs...)
-    useroptions = Dict(:gap=>1e-2, :threads=>1, :timelimit=>300) # defaults
-    merge!(useroptions, Dict(kwargs))
 
+    # Gurobi Cloud gets special treatment, to deal with the password bit
     if startswith(solver, "gurobicloud/")
         solver, host, password = split(solver, "/"; limit=3)
-        options = SUPPORTED_SOLVERS[1][4]
+        solveroptions = SUPPORTED_SOLVERS[1][4]
         try
             @eval using Gurobi
         catch
             error("Gurobi does not appear to be installed.")
         end
+        @show isdefined(:GurobiCloudSolver)
         println("Using solver: GurobiCloudSolver at $host (password $password)")
-        solverargs = Tuple{Symbol,Any}[]
-        for (name, value) in options
-            push!(solverargs, (name, isa(value, Symbol) ? useroptions[value] : value))
-        end
-        println("Solver arguments: $solverargs")
+        solverargs = resolvesolveroptions(solveroptions, kwargs)
         return :GurobiCloudSolver, GurobiCloudSolver(host, password; solverargs...)
     end
 
-    for (solvername, solvermod, solversym, options) in SUPPORTED_SOLVERS
+    for (solvername, solvermod, solversym, solveroptions) in SUPPORTED_SOLVERS
         if (solver == "default" || solver == solvername)
             try
                 @eval using $solvermod
@@ -210,11 +213,7 @@ function choosesolver(solver::AbstractString; kwargs...)
                 end
             end
             println("Using solver: $solversym")
-            solverargs = Tuple{Symbol,Any}[]
-            for (name, value) in options
-                push!(solverargs, (name, isa(value, Symbol) ? useroptions[value] : value))
-            end
-            println("Solver arguments: $solverargs")
+            solverargs = resolvesolveroptions(solveroptions, kwargs)
             return solversym, eval(solversym)(;solverargs...)
         end
     end
@@ -244,11 +243,13 @@ Returns a list of 2-tuples, `(d, p)`, where `d` is the column number of the
 function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
         Q::AbstractMatrix{T2}, lockedadjs::Vector{Tuple{Int,Int}},
         blockedadjs::Vector{Tuple{Int,Int}}, istrainee::Vector{Bool};
-        solver="default", gap=1e-2, threads=1)
+        options...)
 
+    optionsdict = Dict(options)
     (ndebates, npanels) = size(Σ)
 
-    modeltype, modelsolver = choosesolver(solver; gap=gap, threads=threads)
+    solver = get(optionsdict, :solver, "default")
+    modeltype, modelsolver = choosesolver(solver; options...)
     m = Model(solver=modelsolver)
 
     println("define variables:")
@@ -256,11 +257,17 @@ function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
     println("set objective:")
     @time @setObjective(m, Max, sum(Σ.*X))
     println("every debate has one panel:")
-    @time @addConstraint(m, X*ones(npanels) .== 1)          # each debate has exactly one panel
-    println("accredited adjudicators should be allocated once:")
-    @time @addConstraint(m, ones(1,ndebates)*X*Q[:,~istrainee] .== 1) # each accredited adjudicator is allocated once
-    println("trainee adjudicators should be allocated at most once:")
-    @time @addConstraint(m, ones(1,ndebates)*X*Q[:, istrainee] .<= 1) # each trainee adjudicator is allocated at most once
+    @time @addConstraint(m, X*ones(npanels) .== 1)
+
+    if get(optionsdict, :enforceallocateall, false)
+        println("accredited adjudicators should be allocated once:")
+        @time @addConstraint(m, ones(1,ndebates)*X*Q[:,~istrainee] .== 1)
+        println("trainee adjudicators should be allocated at most once:")
+        @time @addConstraint(m, ones(1,ndebates)*X*Q[:, istrainee] .<= 1)
+    else
+        println("all adjudicators should be allocated at most once:")
+        @time @addConstraint(m, ones(1,ndebates)*X*Q[:, istrainee] .<= 1)
+    end
 
     # adjudicator constraints
     println("locked adjudicators ($(length(lockedadjs))):")
@@ -272,11 +279,11 @@ function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
         @addConstraint(m, X[d,:]*Q[:,a] .== 0)
     end
 
-    println("Starting solver at $(now())")
+    println("solveoptimizationproblem: Starting solver at $(now())")
     @time status = solve(m)
-    println("Solver done at $(now())")
+    println("solveoptimizationproblem: Solver done at $(now())")
 
-    println("Objective value: ", getObjectiveValue(m))
+    println("solveoptimizationproblem: Objective value: ", getObjectiveValue(m))
     Xval = Array{Bool}(getValue(X))
     debates, panels = findn(Xval)
     scores = Σ[Xval]
