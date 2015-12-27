@@ -27,15 +27,14 @@ export default DS.Model.extend(DebateableMixin, {
   calculateConflicts: function() {
     // This will only fire once if you set two properties at the same time, and
     // will also happen in the next run loop once all properties are synchronized
-    console.log('calculating conflicts');
     var thisAdjudicator = this;
 
     this.get('panel').then((panel) => {
 
-      console.log('has panel');
 
       if (panel !== null) {
         // If not being moved to unused
+        console.log('calculating conflicts for ' + thisAdjudicator.get('name'));
 
         var debateAdjs = panel.get('panellists');
         var debateAdjs = [];
@@ -155,6 +154,8 @@ export default DS.Model.extend(DebateableMixin, {
 
         });
       } else {
+
+        console.log('removing all conflicts for ' + thisAdjudicator.get('name'));
 
         // UNSET ADJ TEAM CONFLICTS
         if (thisAdjudicator.get('teamAdjConflicts') !== undefined) {
