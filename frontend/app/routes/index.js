@@ -17,17 +17,21 @@ export default Ember.Route.extend({
         this.store.createRecord('region', { id: 10, name: "IONA" })
       ];
 
+      var fetchRoundInfo = $.getJSON( '/data/roundinfo.json', {}).done(function( data ) {
+        return data.currentround;
+      });
+
       return Ember.RSVP.hash({ // Need this to return multiple model types (these load in parallel as promises)
 
           config:                 this.defaultConfig,
           regions:                regions,
+          round:                  fetchRoundInfo,
           institutions:           this.store.findAll('institution'),
           adjudicators:           this.store.findAll('adjudicator'),
           teams:                  this.store.findAll('team'),
           debates:                this.store.findAll('debate'),
-          allocations:            this.store.findAll('allocation-iteration'),
-
-          groups:                 this.store.findAll('group'),
+          allocations:            this.store.findAll('allocation-iteration'), // Permanent file; is blank
+          groups:                 this.store.findAll('group'), // Permanent file; has 2 blanks
 
           teamadjconflicts:       this.store.findAll('teamadjudicator'),
           adjadjconflicts:        this.store.findAll('adjudicatorpair'),
@@ -35,11 +39,14 @@ export default Ember.Route.extend({
           teamadjhistory:         this.store.findAll('teamadjhistory'),
           adjadjhistory:          this.store.findAll('adjadjhistory'),
 
+
       });
 
   },
 
   setupController(controller, models) {
+
+
     // This is called after all the previous promises resolve
     controller.set('config', models.config);
     controller.set('regions', models.regions);
@@ -51,6 +58,8 @@ export default Ember.Route.extend({
     controller.set('allocations', models.allocations);
     // or, more concisely:
     // controller.setProperties(models);
+    controller.set('round', models.round);
+
   },
 
   currentAllocationIteration: 0,
