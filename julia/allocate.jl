@@ -58,6 +58,7 @@ argsettings = ArgParseSettings()
     "-T", "--timelimit"
         help = "Time limit for Gurobi solver"
         arg_type = Int
+        default = 600
     "--randomizeblanks"
         help = "Randomize blank regions, genders, languages and rankings"
         action = :store_true
@@ -67,7 +68,9 @@ argsettings = ArgParseSettings()
         default = :exhaustive
 end
 args = parse_args(ARGS, argsettings; as_symbols=true)
-@show args
+for (k, v) in args
+    println("argument $k = $v")
+end
 
 ndebates = args[:ndebates]
 currentround = args[:currentround]
