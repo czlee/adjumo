@@ -15,6 +15,15 @@ function feasible(roundinfo, adjs)
     return true
 end
 
+function makepanelwithrandomchair(adjs::Vector{Adjudicator})
+    maxranking = maximum([adj.ranking for adj in adjs])
+    possiblechairindices = find(adj -> adj.ranking == maxranking, adjs)
+    chairindex = rand(possiblechairindices)
+    chair = adjs[chairindex]
+    deleteat!(adjs, chairindex)
+    return AdjudicatorPanel(chair, adjs)
+end
+
 """
 Generates a list of feasible panels using the information about the round.
 Returns a list of AdjudicatorPanel instances.
@@ -25,12 +34,15 @@ function generatefeasiblepanels(roundinfo::RoundInfo; options...)
     panels = AdjudicatorPanel[]
 
     if isinteger(averagepanelsize)
-        panelsizes = Int[averagepanelsize]
+        panelsizes = [(Int(averagepanelsize), 1.0)]
     else
-        panelsizes = Int[floor(averagepanelsize), ceil(averagepanelsize)]
+        proportionbigger = mod(averagepanelsize, 1.0)
+        panelsizes = [(ceil(Int, averagepanelsize),  proportionbigger),
+                      (floor(Int, averagepanelsize), 1 - proportionbigger)]
     end
 
-    println("generatefeasiblepanels: The average panel size is $averagepanelsize, trying these panel sizes: $panelsizes.")
+    println("generatefeasiblepanels: The average panel size is $averagepanelsize.")
+    println("generatefeasiblepanels: Panel sizes and proportions: $panelsizes.")
 
     methodoption = get(Dict(options), :fpgmethod, :exhaustive)
     println("generatefeasiblepanels: Feasible panel generation method is $methodoption")
@@ -41,22 +53,25 @@ function generatefeasiblepanels(roundinfo::RoundInfo; options...)
     return panels
 end
 
-function generatefeasiblepanelsrandom(roundinfo::RoundInfo, panelsizes::Vector{Int}; options...)
+function generatefeasiblepanelsrandom(roundinfo::RoundInfo, panelsizes::Vector{Tuple{Int,Float64}}; options...)
+
+    nfeasiblepanels = get(Dict(options), :nfeasiblepanels, -1)
+    if nfeasiblepanels == -1
+        nfeasiblepanels = 10000
+    end
+
     panels = AdjudicatorPanel[]
-    sizehint!(panels, limitpanels)
-    # TODO select in proportion to averagepanelsize
-    for panelsize in panelsizes
-        for i in 1:limitpanels÷2
+    sizehint!(panels, nfeasiblepanels)
+
+    for (panelsize, proportion) in panelsizes
+        npanelsforthissize = round(Int, nfeasiblepanels * proportion)
+        println("generatefeasiblepanelsrandom: Generating $npanelsforthissize panels of size $panelsize at random")
+        for i in 1:npanelsforthissize
             adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
-            while !feasible(adjs)
+            while !feasible(roundinfo, adjs)
                 adjs = sample(roundinfo.adjudicators, panelsize; replace=false)
             end
-            sort!(adjs, by=adj->adj.ranking, rev=true)
-            possiblechairindices = find(adj -> adj.ranking == adjs[1].ranking, adjs)
-            chairindex = rand(possiblechairindices)
-            chair = adjs[chairindex]
-            deleteat!(adjs, chairindex)
-            panel = AdjudicatorPanel(chair, adjs)
+            panel = makepanelwithrandomchair(adjs)
             push!(panels, panel)
         end
     end
@@ -64,57 +79,93 @@ function generatefeasiblepanelsrandom(roundinfo::RoundInfo, panelsizes::Vector{I
     return panels
 end
 
-function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Vector{Int}; options...)
-    # panels = AdjudicatorPanel[]
-    # sizehint!(panels, limitpanels)
-    # while length(panels) < limitpanels
-    #     # Try the permutations method here
-    # end
+function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Vector{Tuple{Int,Float64}}; options...)
 
+    nfeasiblepanels = get(Dict(options), :nfeasiblepanels, -1)
+    if nfeasiblepanels == -1
+        nfeasiblepanels = 10000
+    end
+    accreditedadjs = filter(adj -> adj.ranking >= TraineePlus, roundinfo.adjudicators)
+    nadjs = length(accreditedadjs)
 
-    # Take a very brute force approach
-    # CONTINUE HERE - TODO - don't generate exhaustive list.
-    # Probably provide options for different methods, actually:
-    #  - random, exhaustive and sample, permuations
+    allpanels = AdjudicatorPanel[]
+    sizehint!(allpanels, nfeasiblepanels)
+
+    for (panelsize, proportion) in panelsizes
+        npanelsforthissize = round(Int, proportion * nfeasiblepanels)
+        panels = AdjudicatorPanel[]
+        sizehint!(panels, npanelsforthissize)
+        println("generatefeasiblepanelspermutations: Generating $npanelsforthissize panels of size $panelsize by permutation")
+        while length(panels) < npanelsforthissize
+            shuffledadjs = shuffle(accreditedadjs)
+            runpanels = AdjudicatorPanel[]
+            sizehint!(panels, nadjs)
+            for j in 1:nadjs-panelsize+1
+                adjs = shuffledadjs[j:j+panelsize-1]
+                if !feasible(roundinfo, adjs)
+                    continue
+                end
+                push!(runpanels, makepanelwithrandomchair(adjs))
+            end
+            for j in 1:panelsize-1
+                adjs = [shuffledadjs[end-panelsize+1+j:end]; shuffledadjs[1:j]]
+                if !feasible(roundinfo, adjs)
+                    continue
+                end
+                push!(runpanels, makepanelwithrandomchair(adjs))
+            end
+            append!(panels, runpanels)
+        end
+        println("generatefeasiblepanelspermutations: There are $(length(panels)) panels of size $panelsize")
+        append!(allpanels, panels)
+    end
+
+    return allpanels
 end
 
-function generatefeasiblepanelsexhaustive(roundinfo::RoundInfo, panelsizes::Vector{Int}; options...)
+function generatefeasiblepanelsexhaustive(roundinfo::RoundInfo, panelsizes::Vector{Tuple{Int,Float64}}; options...)
 
+    nfeasiblepanels = get(Dict(options), :nfeasiblepanels, typemax(Int))
     adjssorted = sort(roundinfo.adjudicators, by=adj->adj.ranking, rev=true)
 
-    panels = AdjudicatorPanel[]
-    sizehint!(panels, binomial(numadjs(roundinfo), maximum(panelsizes)))
+    allpanels = AdjudicatorPanel[]
     lastprint = 0
-    for panelsize in panelsizes
+    for (panelsize, proportion) in panelsizes
+        estimatednpanels = binomial(numadjs(roundinfo), panelsize)
+        println("generatefeasiblepanelsexhaustive: Estimated number of panels of size $panelsize: $(numadjs(roundinfo)) choose $panelsize makes $estimatednpanels")
+        panels = AdjudicatorPanel[]
+        sizehint!(panels, estimatednpanels)
         for adjs in combinations(adjssorted, panelsize)
             if !feasible(roundinfo, adjs)
                 continue
             end
-            possiblechairindices = find(adj -> adj.ranking == adjs[1].ranking, adjs)
-            chairindex = rand(possiblechairindices)
-            chair = adjs[chairindex]
-            deleteat!(adjs, chairindex)
-            panel = AdjudicatorPanel(chair, adjs)
+            panel = makepanelwithrandomchair(adjs)
             push!(panels, panel)
             if length(panels) - lastprint >= 100000
-                println("Up to $(length(panels)) panels")
+                println("generatefeasiblepanelsexhaustive: Up to $(length(panels)) panels")
                 lastprint = length(panels)
             end
         end
+
+        if nfeasiblepanels != -1
+            npanelsforthissize = round(Int, nfeasiblepanels * proportion)
+            if length(panels) > npanelsforthissize
+                println("generatefeasiblepanelsexhaustive: There are $(length(panels)) feasible panels of size $panelsize, but limiting to $npanelsforthissize panels, picking at random")
+                panels = sample(panels, npanelsforthissize; replace=false)
+            end
+        else
+                println("generatefeasiblepanelsexhaustive: There are $(length(panels)) feasible panels of size $panelsize")
+        end
+
+        append!(allpanels, panels)
     end
 
-    limitpanels = get(Dict(options), :limitpanels, typemax(Int))
-    if length(panels) > limitpanels
-        println("There are $(length(panels)) feasible panels, but limiting to $limitpanels panels, picking at random.")
-        panels = sample(panels, limitpanels; replace=false)
-    end
-
-    return panels
+    return allpanels
 end
 
 FEASIBLE_PANEL_GENERATION_METHODS = Dict(
     :exhaustive => generatefeasiblepanelsexhaustive,
     :random => generatefeasiblepanelsrandom,
-    :permuations => generatefeasiblepanelspermutations,
+    :permutations => generatefeasiblepanelspermutations,
 )
 

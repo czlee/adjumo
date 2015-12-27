@@ -45,21 +45,19 @@ argsettings = ArgParseSettings()
     "-t", "--solverthreads"
         help = "Number of threads to use for solver"
         arg_type = Int
-        default = CPU_CORES
-    "-l", "--limitpanels"
+    "-p", "--nfeasiblepanels"
         help = "Limit how many panels it samples"
         arg_type = Int
-        default = 50000
-    "-f", "--feasiblepanels"
+        default = -1
+    "--feasiblepanelsfile"
         help = "Feasible panels file"
         default = ""
     "--timelimit"
         help = "Time limit for Gurobi solver"
-        default = 300
     "--randomizeblanks"
         help = "Randomize blank regions, genders, languages and rankings"
         action = :store_true
-    "-p", "--fpgmethod"
+    "-f", "--fpgmethod"
         help = "Feasible panels generation method"
         arg_type = Symbol
         default = :exhaustive
@@ -92,8 +90,8 @@ close(componentweightsfile)
 
 println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 
-if length(args[:feasiblepanels]) > 0
-    f = open(args[:feasiblepanels])
+if length(args[:feasiblepanelsfile]) > 0
+    f = open(args[:feasiblepanelsfile])
     feasiblepanels = importfeasiblepanels(f, roundinfo)
     close(f)
     feasiblepanels = feasiblepanels[1:5:end]

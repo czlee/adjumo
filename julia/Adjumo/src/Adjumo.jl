@@ -172,11 +172,15 @@ end
 
 "Resolves user options into argument for the solver."
 function resolvesolveroptions(solveroptions, useroptions)
-    completeuseroptions = Dict(:gap=>1e-2, :solverthreads=>1, :timelimit=>300) # defaults
+    completeuseroptions = Dict(:gap=>1.2e-2, :solverthreads=>nothing, :timelimit=>nothing) # defaults
     merge!(completeuseroptions, Dict(useroptions))
     solverargs = Tuple{Symbol,Any}[]
     for (name, value) in solveroptions
-        push!(solverargs, (name, isa(value, Symbol) ? completeuseroptions[value] : value))
+        optionvalue = isa(value, Symbol) ? completeuseroptions[value] : value
+        if optionvalue == nothing
+            continue
+        end
+        push!(solverargs, (name, optionvalue))
     end
     println("Solve arguments: $solverargs")
     return solverargs
