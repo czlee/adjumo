@@ -588,7 +588,9 @@ td.head-panel {
 
 // ALL HOVERS MUST TAKE PRECEDENCE OVER PANELS; ie be last
 
-.history-conflict-key,
+.history-conflict-key {
+  @include conflict-bg(#37a5c8, #2d86a3, 1);
+}
 .team-ui.hover-team-adj-history,
 .position-holder .adjudicator-ui.hover-team-adj-history,
 .adj-bottom-panel .adjudicator-ui.hover-team-adj-history,
@@ -597,7 +599,28 @@ td.head-panel {
 .adjudicator-ui.hover-adj-adj-history,
 .popover-highlight.panel-team-adj-history,
 .popover-highlight.panel-adj-adj-history {
-  @include conflict-bg(#37a5c8, #2d86a3, 1);
+
+  &.tah-intensity-1, &.aah-intensity-1 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.16);
+    color: #2d86a3;
+  }
+  &.tah-intensity-2, &.aah-intensity-2 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.32);
+    color: #2d86a3;
+  }
+  &.tah-intensity-3, &.aah-intensity-3 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.5);
+    color: #2d86a3;
+  }
+  &.tah-intensity-4, &.aah-intensity-4 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.66);
+  }
+  &.tah-intensity-5, &.aah-intensity-5 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.83);
+  }
+  &.tah-intensity-6, &.aah-intensity-6 {
+    @include conflict-bg(#37a5c8, #2d86a3, 1);
+  }
 }
 .institution-conflict-key,
 .team-ui.hover-institution-conflict,
