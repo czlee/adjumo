@@ -260,6 +260,9 @@ function panelregionbreakdown(teamregions::Vector{Region}, panel::AdjudicatorPan
     uniqueexternaladjscount = 0
     for adj in adjlist(panel)
         internalfound = false
+
+        # If any region matches, the judge is an internal judge for every region
+        # they are from (so they count more than once).
         for region in adj.regions
             index = findfirst(teamregions, region)
             if index != 0 # i.e., if region is internal
@@ -267,6 +270,10 @@ function panelregionbreakdown(teamregions::Vector{Region}, panel::AdjudicatorPan
                 internalcounts[index] += 1
             end
         end
+
+        # If no regions match, the judge is an external judge, and only one
+        # external judge, but counts as another "unique" external judge if
+        # any one region matches one not already on the panel.
         if !internalfound # i.e., all regions are external
             externaladjscount += 1
             uniqueexternalfound = false
@@ -322,6 +329,10 @@ function panelregionalrepresentationscore(regionclass::DebateRegionClass, teamre
             if nadjs == 3
                 balancedruleapplies = true
             end
+            # All external, applies to classes B4, C4 (instead of the balanced rule)
+            if nadjs == 4 && externaladjscount == 4
+                score += 7
+            end
 
         # Majority are internal (interested majority), applies to classes D and E
         else
@@ -335,6 +346,7 @@ function panelregionalrepresentationscore(regionclass::DebateRegionClass, teamre
         if balancedruleapplies && maximum(internalcounts) == minimum(internalcounts)
             score += 7
         end
+
     end
 
     score *= REGION_CLASS_WEIGHTS[Integer(regionclass)+1]
