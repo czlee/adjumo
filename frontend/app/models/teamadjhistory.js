@@ -12,4 +12,14 @@ export default DS.Model.extend({
 
   roundInfo: Ember.inject.service('round-info'),
 
+  historyIntensity: Ember.computed('rounds', 'roundInfo', function() {
+    var currentRound = this.get('roundInfo').get('sequence');
+    var seenRounds = this.get('rounds');
+    var intensity = 0;
+    seenRounds.forEach(function(seenRound) {
+      intensity += 1 / (currentRound - Number(seenRound));
+    });
+    return intensity;
+  }),
+
 });
