@@ -58,6 +58,7 @@ argsettings = ArgParseSettings()
         default = 300
     "--randomize-blanks"
         help = "Randomize blank regions, genders, languages and rankings"
+        action = :store_true
 end
 args = parse_args(ARGS, argsettings)
 
