@@ -13,31 +13,85 @@
 using Iterators
 include("randomdata.jl")
 
+export randomgender!, randomlanguage!, randomranking!, randomregion!, randomregions!
+
+function randdiscrete(valuesandprobs)
+    r = rand()
+    s = 0.0
+    for (v, p) in valuesandprobs
+        s += p
+        if r < s
+            return v
+        end
+    end
+end
+
+function randomregion()
+    randdiscrete([
+        (NorthAsia, 0.1),
+        (SouthEastAsia, 0.13),
+        (MiddleEast, 0.05),
+        (SouthAsia, 0.04),
+        (Africa, 0.05),
+        (Oceania, 0.08),
+        (NorthAmerica, 0.19),
+        (LatinAmerica, 0.04),
+        (Europe, 0.14),
+        (IONA, 0.18),
+    ])
+end
+
+function randomregion!(team::Team)
+    team.region = randomregion()
+end
+
+function randomregions!(adj::Adjudicator)
+    adj.regions = Region[randomregion()]
+    addrandomregions!(adj)
+end
+
 function addrandomregions!(adj::Adjudicator)
     # TODO replace these with more realistic distributions
     while rand() < 0.05
-        push!(adj.regions, rand([instances(Region)[2:end]...]))
+        push!(adj.regions, randomregion())
     end
 end
 
 function randomgender!(team::Team)
-    # TODO replace these with more realistic distributions
-    team.gender = rand([instances(TeamGender)[2:end]...])
+    team.gender = randdiscrete([
+        (TeamMale, 0.4),
+        (TeamFemale, 0.4),
+        (TeamMixed, 0.2)
+    ])
 end
 
 function randomgender!(adj::Adjudicator)
-    # TODO replace these with more realistic distributions
-    adj.gender = rand([instances(PersonGender)[2:end]...])
+    team.gender = randdiscrete([
+        (PersonMale, 0.65),
+        (PersonFemale, 0.35),
+    ])
 end
 
 function randomlanguage!(item)
-    # TODO replace these with more realistic distributions
-    item.language = rand([instances(LanguageStatus)[2:end]...])
+    item.language = randdiscrete([
+        (EnglishPrimary, 0.66)
+        (EnglishSecond, 0.24)
+        (EnglishForeign, 0.1)
+    ])
 end
 
 function randomranking!(adj::Adjudicator)
-    # TODO replace these with more realistic distributions
-    adj.ranking = rand([instances(Wudc2015AdjudicatorRank)[2:end]...])
+    adj.ranking = randdiscrete([
+        (TraineeMinus, 0.04),
+        (Trainee, 0.06),
+        (TraineePlus, 0.1),
+        (PanellistMinus, 0.15),
+        (Panellist, 0.25),
+        (PanellistPlus, 0.15),
+        (ChairMinus, 0.08),
+        (Chair, 0.12),
+        (ChairPlus, .05),
+    ])
 end
 
 function randpair(v::Vector)

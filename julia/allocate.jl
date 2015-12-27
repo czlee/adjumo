@@ -56,6 +56,8 @@ argsettings = ArgParseSettings()
     "--timelimit"
         help = "Time limit for Gurobi solver"
         default = 300
+    "--randomize-blanks"
+        help = "Randomize blank regions, genders, languages and rankings"
 end
 args = parse_args(ARGS, argsettings)
 
@@ -94,6 +96,33 @@ if length(args["feasible-panels"]) > 0
     allocations = allocateadjudicators(roundinfo, feasiblepanels; kwargs...)
 else
     allocations = allocateadjudicators(roundinfo; limitpanels=args["limitpanels"], kwargs...)
+end
+
+if args["randomize-blanks"]
+    println("Randomizing blanks...")
+    for adj in roundinfo.adjudicators
+        if NoRegion in adj.regions
+            randomregions!(adj)
+        end
+        if adj.gender == PersonNoGender
+            randomgender!(adj)
+        end
+        if adj.language == NoLanguage
+            randomlanguage!(adj)
+        end
+        randomranking!(adj)
+    end
+    for team in roundinfo.teams
+        if team.region == NoRegion
+            randomregion!(team)
+        end
+        if team.gender == TeamNoGender
+            randomgender!(team)
+        end
+        if team.language == NoLanguage
+            randomlanguage!(team)
+        end
+    end
 end
 
 println("Writing JSON files...")
