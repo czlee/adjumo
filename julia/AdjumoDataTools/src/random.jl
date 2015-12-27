@@ -82,15 +82,15 @@ end
 
 function randomranking!(adj::Adjudicator)
     adj.ranking = randdiscrete([
-        (TraineeMinus, 0.04),
-        (Trainee, 0.06),
-        (TraineePlus, 0.1),
-        (PanellistMinus, 0.15),
-        (Panellist, 0.25),
-        (PanellistPlus, 0.15),
-        (ChairMinus, 0.08),
-        (Chair, 0.12),
-        (ChairPlus, .05),
+        (TraineeMinus, 0.1),
+        (Trainee, 0.1),
+        (TraineePlus, 0.15),
+        (PanellistMinus, 0.12),
+        (Panellist, 0.12),
+        (PanellistPlus, 0.12),
+        (ChairMinus, 0.1),
+        (Chair, 0.1),
+        (ChairPlus, .09),
     ])
 end
 
