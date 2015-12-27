@@ -1,80 +1,85 @@
+<div class="btn-toolbar pull-left">
 
   <div class="btn-group btn-group-sm">
-  {{#if showingRegion }}
-    <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRegion"}}>
-      <span class="glyphicon glyphicon-eye-close"> </span> Region
-    </button>
-  {{else}}
-    <button class="btn btn-default nav-link hoverable" onclick={{action "showRegion"}}>
-      <span class="glyphicon glyphicon glyphicon-eye-open"> </span> Region
-    </button>
-  {{/if}}
-  {{#if showingGender }}
-    <button class="btn btn-default nav-link hoverable active" onclick={{action "hideGender"}}>
-      <span class="glyphicon glyphicon-eye-close"> </span> Gender
-    </button>
-  {{else}}
-    <button class="btn btn-default nav-link hoverable" onclick={{action "showGender"}}>
-      <span class="glyphicon glyphicon glyphicon-eye-open"> </span> Gender
-    </button>
-  {{/if}}
-  {{#if showingLanguage }}
-    <button class="btn btn-default nav-link hoverable active" onclick={{action "hideLanguage"}}>
-      <span class="glyphicon glyphicon-eye-close"> </span> Language
-    </button>
-  {{else}}
-    <button class="btn btn-default nav-link hoverable" onclick={{action "showLanguage"}}>
-      <span class="glyphicon glyphicon glyphicon-eye-open"></span> Language
-    </button>
-  {{/if}}
-  {{#if showingRanking }}
-    <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRanking"}} >
-      <span class="glyphicon glyphicon-eye-close"> </span> Rank
-    </button>
-  {{else}}
-    <button class="btn btn-default nav-link hoverable" onclick={{action "showRanking"}}>
-      <span class="glyphicon glyphicon glyphicon-eye-open"> </span> Rank
-    </button>
-  {{/if}}
+
+    {{#if showingRegion }}
+      <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRegion"}}>
+        <span class="glyphicon glyphicon-eye-close"> </span> Region
+      </button>
+    {{else}}
+      <button class="btn btn-default nav-link hoverable" onclick={{action "showRegion"}}>
+        <span class="glyphicon glyphicon glyphicon-eye-open"> </span> Region
+      </button>
+    {{/if}}
+    {{#if showingGender }}
+      <button class="btn btn-default nav-link hoverable active" onclick={{action "hideGender"}}>
+        <span class="glyphicon glyphicon-eye-close"> </span> Gender
+      </button>
+    {{else}}
+      <button class="btn btn-default nav-link hoverable" onclick={{action "showGender"}}>
+        <span class="glyphicon glyphicon glyphicon-eye-open"> </span> Gender
+      </button>
+    {{/if}}
+    {{#if showingLanguage }}
+      <button class="btn btn-default nav-link hoverable active" onclick={{action "hideLanguage"}}>
+        <span class="glyphicon glyphicon-eye-close"> </span> Language
+      </button>
+    {{else}}
+      <button class="btn btn-default nav-link hoverable" onclick={{action "showLanguage"}}>
+        <span class="glyphicon glyphicon glyphicon-eye-open"></span> Language
+      </button>
+    {{/if}}
+    {{#if showingRanking }}
+      <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRanking"}} >
+        <span class="glyphicon glyphicon-eye-close"> </span> Rank
+      </button>
+    {{else}}
+      <button class="btn btn-default nav-link hoverable" onclick={{action "showRanking"}}>
+        <span class="glyphicon glyphicon glyphicon-eye-open"> </span> Rank
+      </button>
+    {{/if}}
+
   </div>
 
   {{#if showingGender }}
-  <div class="btn-group-sm btn-group hover-key">
-    <button class="btn btn-default gender-display gender-0">None</button>
-    <button class="btn btn-default gender-display gender-1">Male</button>
-    <button class="btn btn-default gender-display gender-3">Male+Female</button>
-    <button class="btn btn-default gender-display gender-2">Female</button>
-  </div>
+    <div class="btn-group-sm btn-group hover-key">
+      <button class="btn btn-default gender-display gender-0">None</button>
+      <button class="btn btn-default gender-display gender-1">Male</button>
+      <button class="btn btn-default gender-display gender-3">Male+Female</button>
+      <button class="btn btn-default gender-display gender-2">Female</button>
+    </div>
   {{/if}}
 
   {{#if showingRegion }}
-  <div class="btn-group-sm btn-group hover-key">
-    <button class="btn btn-default region-display region-9">Europe</button>
-    <button class="btn btn-default region-display region-10">IONA</button>
-    <button class="btn btn-default region-display region-6">Oceania</button>
-    <button class="btn btn-default region-display region-7">N. America</button>
-    <button class="btn btn-default region-display region-2">SE. Asia</button>
-    <button class="btn btn-default region-display region-1">N. Asia</button>
-    <button class="btn btn-default region-display region-4">S. Asia</button>
-    <button class="btn btn-default region-display region-3">Middle East</button>
-    <button class="btn btn-default region-display region-8">L. America</button>
-    <button class="btn btn-default region-display region-5">Africa</button>
-    <button class="btn btn-default region-display multiple-regions">Multiple</button>
-  </div>
+    <div class="btn-group-sm btn-group hover-key">
+      <button class="btn btn-default region-display region-9">Europe</button>
+      <button class="btn btn-default region-display region-10">IONA</button>
+      <button class="btn btn-default region-display region-6">Oceania</button>
+      <button class="btn btn-default region-display region-7">N. America</button>
+      <button class="btn btn-default region-display region-2">SE. Asia</button>
+      <button class="btn btn-default region-display region-1">N. Asia</button>
+      <button class="btn btn-default region-display region-4">S. Asia</button>
+      <button class="btn btn-default region-display region-3">Middle East</button>
+      <button class="btn btn-default region-display region-8">L. America</button>
+      <button class="btn btn-default region-display region-5">Africa</button>
+      <button class="btn btn-default region-display multiple-regions">Multiple</button>
+    </div>
   {{/if}}
 
   {{#if showingLanguage }}
-  <div class="btn-group-sm btn-group hover-key">
-    <button class="btn btn-default language-display language-1">English Primary</button>
-    <button class="btn btn-default language-display language-2">English Secondary</button>
-    <button class="btn btn-default language-display language-3">English Foreign</button>
-  </div>
+    <div class="btn-group-sm btn-group hover-key">
+      <button class="btn btn-default language-display language-1">English Primary</button>
+      <button class="btn btn-default language-display language-2">English Secondary</button>
+      <button class="btn btn-default language-display language-3">English Foreign</button>
+    </div>
   {{/if}}
 
   {{#unless showingRegion }}
-  <div class="btn-group-sm btn-group">
-    <button class="btn btn-default team-conflict-key">Personal Conflict</button>
-    <button class="btn btn-default institution-conflict-key">Institutional Conflict</button>
-    <button class="btn btn-default history-conflict-key">History Conflict</button>
-  </div>
+    <div class="btn-group-sm btn-group">
+      <button class="btn btn-default team-conflict-key">Personal Conflict</button>
+      <button class="btn btn-default institution-conflict-key">Institutional Conflict</button>
+      <button class="btn btn-default history-conflict-key">History Conflict</button>
+    </div>
   {{/unless}}
+
+</div>

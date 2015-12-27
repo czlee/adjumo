@@ -16,13 +16,14 @@ export default Ember.Mixin.create({
     'hasActiveHoverInstitutionConflict:hover-institution-conflict',
     'hasActivePanelInstitutionalConflicts:panel-institution-conflict',
 
-    'hasActiveHoverTeamAdjHistories:hover-team-adj-history',
+    'hasActiveHoverTeamAdjHistories',
     'hasActivePanelTeamAdjHistories:panel-team-adj-history',
 
     'hasActiveHoverTeamAdjConflicts:hover-team-adj-conflict',
     'hasActivePanelTeamAdjConflicts:panel-team-adj-conflict',
 
   ],
+
 
   hasActiveHoverInstitutionConflict: Ember.computed('adjorTeam.institution.hoverActive', function() {
     return this.get('adjorTeam').get('institution').get('hoverActive');
@@ -33,9 +34,13 @@ export default Ember.Mixin.create({
   }),
 
   hasActiveHoverTeamAdjHistories: Ember.computed('adjorTeam.teamAdjHistories.content.@each.hoverActive', function() {
-    var activeConflicts = this.get('adjorTeam').get('teamAdjHistories').filterBy('hoverActive', true).get('length');
-    if (activeConflicts > 0) { return true; } else { return false; }
+    var intensities = this.get('adjorTeam').get('teamAdjHistories').filterBy('hoverActive', true);
+    if (intensities.get('length') === 1) {
+      // If its zero there are no conflicts; if its > 1 its the adj or team we are hovering over
+      return 'hover-team-adj-history tah-intensity-' + intensities.get('firstObject').get('historyIntensity'); // Fetch the class from the conflict object
+    } else { return false; }
   }),
+
   hasActivePanelTeamAdjHistories: Ember.computed('adjorTeam.teamAdjHistories.content.@each.panelActive', function() {
     var activeConflicts = this.get('adjorTeam').get('teamAdjHistories').filterBy('panelActive', true).get('length');
     //console.log('computed change in hasActivePanelTeamAdjHistories for ' + this.get('adjorTeam').get('name') + 'set to ' + activeConflicts);
@@ -51,8 +56,6 @@ export default Ember.Mixin.create({
     //console.log('computed change in hasActivePanelTeamAdjConflicts for ' + this.get('adjorTeam').get('name') + 'set to ' + activeConflicts);
     if (activeConflicts > 0) { return true; } else { return false; }
   }),
-
-
 
   // CSS Getters
   gender: function(){

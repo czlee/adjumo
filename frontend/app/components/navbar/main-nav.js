@@ -4,6 +4,8 @@ export default Ember.Component.extend({
 
   showingLockBans: true,
 
+  roundInfo: Ember.inject.service('round-info'),
+
   actions: {
 
     toggleLockAndBans: function() {
