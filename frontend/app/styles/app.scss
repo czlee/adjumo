@@ -11,20 +11,18 @@
 }
 
 /* Nav */
-
-.btn-group-sm > .btn,
-.btn-sm {
-  padding: 5px 7px;
-
-  // free up space with the hover keys
-}
-
 .navbar {
+  min-height: 46px; // To fit properly with the small button sizes used
   margin-bottom: 10px;
 }
 
+.btn-group-sm > .btn,
+.btn-sm {
+  padding: 5px 7px; // free horizontal space with all the hover keys
+}
+
 .debate-search-form {
-  width: 170px;
+  width: 172px;
   margin-left: 5px;
 }
 

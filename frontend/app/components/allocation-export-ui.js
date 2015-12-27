@@ -8,7 +8,6 @@ export default Ember.Component.extend({
     exportAllocation: function() {
 
       var allocation = this.get('allocation');
-      console.log('starting to create a new allocation for #' + allocation.get('id'));
 
       var exportData = [];
 
@@ -42,7 +41,7 @@ export default Ember.Component.extend({
 
       if (exportData.length > 0) { // Only post is groups exist
         // Replace with a straight up POST to the tabbie2 endpoint
-        console.log('exporting: ');
+        console.log('ALLOCATIONS EXPORT: exporting allocation #' + allocation.get('id'));
         //console.log(JSON.stringify(exportData));
 
         $.ajax({

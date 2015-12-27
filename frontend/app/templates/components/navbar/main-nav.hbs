@@ -1,21 +1,21 @@
 <nav class="navbar navbar-static-top navbar-default">
 
   <div class="nav navbar-nav navbar-form btn-group">
-    <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#setAllocationParameters">
+    <button type="submit" class="btn btn-default  btn-sm" data-toggle="modal" data-target="#setAllocationParameters">
       Set Parameters
     </button>
-    <button type="submit" class="btn btn-default" {{action "startNewAllocation"}}>
+    <button type="submit" class="btn btn-default  btn-sm" {{action "startNewAllocation"}}>
       Load Allocation
     </button>
   </div>
 
   <div class="form-inline pull-left navbar-form">
     {{#if showingLockBans }}
-      <button class="active btn btn-default lock-ban-nav" {{action "toggleLockAndBans" }}>
+      <button class="active btn btn-default lock-ban-nav  btn-sm" {{action "toggleLockAndBans" }}>
         <span class="glyphicon glyphicon-eye-close"> </span> Locks/Bans/Groups
       </button>
     {{else}}
-      <button class="btn btn-default lock-ban-nav" {{action "toggleLockAndBans" }}>
+      <button class="btn btn-default lock-ban-nav  btn-sm" {{action "toggleLockAndBans" }}>
         <span class="glyphicon glyphicon-eye-open"> </span> Locks/Bans/Groups
       </button>
     {{/if}}
@@ -28,8 +28,8 @@
   </div>
 
   <div class="form-inline pull-right navbar-form">
-    <button type="submit" class="btn btn-success" data-toggle="modal" data-target="#exportAllocation">
-      <span class="glyphicon glyphicon-share-alt"> </span> Export R{{ round.currentround }} Allocation
+    <button type="submit" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exportAllocation">
+      <span class="glyphicon glyphicon-share-alt"> </span> Export Round {{ roundInfo.sequence }} Allocation
     </button>
   </div>
 

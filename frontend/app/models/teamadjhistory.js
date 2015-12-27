@@ -10,4 +10,6 @@ export default DS.Model.extend({
   hoverActive: DS.attr('bool', { default: false }), // If the conflict is active when panel hovering
   panelActive: DS.attr('bool', { default: false }), // If the conflict is active when panel hovering
 
+  roundInfo: Ember.inject.service('round-info'),
+
 });

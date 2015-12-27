@@ -2,6 +2,8 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
 
+  roundInfo: Ember.inject.service('round-info'), // Setup service to pass roundinfo to
+
   model: function() {
 
       var regions = [
@@ -25,7 +27,7 @@ export default Ember.Route.extend({
 
           config:                 this.defaultConfig,
           regions:                regions,
-          round:                  fetchRoundInfo,
+          round:                  fetchRoundInfo, // single param json
           institutions:           this.store.findAll('institution'),
           adjudicators:           this.store.findAll('adjudicator'),
           teams:                  this.store.findAll('team'),
@@ -39,13 +41,13 @@ export default Ember.Route.extend({
           teamadjhistory:         this.store.findAll('teamadjhistory'),
           adjadjhistory:          this.store.findAll('adjadjhistory'),
 
-
       });
 
   },
 
   setupController(controller, models) {
-
+    // or, more concisely:
+    // controller.setProperties(models);
 
     // This is called after all the previous promises resolve
     controller.set('config', models.config);
@@ -56,9 +58,8 @@ export default Ember.Route.extend({
     controller.set('teams', models.teams);
     controller.set('debates', models.debates);
     controller.set('allocations', models.allocations);
-    // or, more concisely:
-    // controller.setProperties(models);
-    controller.set('round', models.round);
+
+    this.get('roundInfo').set('sequence', models.round.currentround); // Setup the persistant state
 
   },
 
