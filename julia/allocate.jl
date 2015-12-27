@@ -78,27 +78,6 @@ else
     roundinfo = randomroundinfo(ndebates, currentround)
 end
 
-componentweightsfile = open(args["weights-file"])
-importcomponentweightsjsonintoroundinfo!(roundinfo, componentweightsfile)
-close(componentweightsfile)
-
-println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
-
-kwargs = Dict(:solver=>args["solver"],
-        :enforceteamconflicts=>args["enforce-team-conflicts"],
-        :gap=>args["gap"], :threads=>args["threads"], :timelimit=>args["timelimit"])
-
-if length(args["feasible-panels"]) > 0
-    f = open(args["feasible-panels"])
-    feasiblepanels = importfeasiblepanels(f, roundinfo)
-    close(f)
-    feasiblepanels = feasiblepanels[1:5:end]
-    println("Imported $(length(feasiblepanels)) feasible panels")
-    allocations = allocateadjudicators(roundinfo, feasiblepanels; kwargs...)
-else
-    allocations = allocateadjudicators(roundinfo; limitpanels=args["limitpanels"], kwargs...)
-end
-
 if args["randomize-blanks"]
     println("Randomizing blanks...")
     for adj in roundinfo.adjudicators
@@ -124,6 +103,27 @@ if args["randomize-blanks"]
             randomlanguage!(team)
         end
     end
+end
+
+componentweightsfile = open(args["weights-file"])
+importcomponentweightsjsonintoroundinfo!(roundinfo, componentweightsfile)
+close(componentweightsfile)
+
+println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
+
+kwargs = Dict(:solver=>args["solver"],
+        :enforceteamconflicts=>args["enforce-team-conflicts"],
+        :gap=>args["gap"], :threads=>args["threads"], :timelimit=>args["timelimit"])
+
+if length(args["feasible-panels"]) > 0
+    f = open(args["feasible-panels"])
+    feasiblepanels = importfeasiblepanels(f, roundinfo)
+    close(f)
+    feasiblepanels = feasiblepanels[1:5:end]
+    println("Imported $(length(feasiblepanels)) feasible panels")
+    allocations = allocateadjudicators(roundinfo, feasiblepanels; kwargs...)
+else
+    allocations = allocateadjudicators(roundinfo; limitpanels=args["limitpanels"], kwargs...)
 end
 
 println("Writing JSON files...")
