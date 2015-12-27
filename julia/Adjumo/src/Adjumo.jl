@@ -117,6 +117,8 @@ function generatefeasiblepanels(roundinfo::RoundInfo; limitpanels::Int=typemax(I
     averagepanelsize = count(x -> x.ranking >= PanellistMinus, roundinfo.adjudicators) / numdebates(roundinfo)
     panels = AdjudicatorPanel[]
 
+    println("The average panel size is $averagepanelsize.")
+
     if isinteger(averagepanelsize)
         panelsizes = Int[averagepanelsize]
     else
