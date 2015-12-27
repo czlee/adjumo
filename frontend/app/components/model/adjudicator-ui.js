@@ -12,14 +12,14 @@ export default Ember.Component.extend(DraggableMixin, {
   classNameBindings: ['ranking', 'hovering:hovering:not-hovering',
 
     'hasActiveHoverAdjAdjHistories',
-    'hasActivePanelAdjAdjHistories:panel-adj-adj-history',
+    'hasActivePanelAdjAdjHistories',
 
     'hasActiveHoverAdjAdjConflicts:hover-adj-adj-conflict',
     'hasActivePanelAdjAdjConflicts:panel-adj-adj-conflict',
 
   ],
 
-  // These observes changes in the conflict objects that are trigger by the mouseover/mouseleaves
+  // ADJ ADJ HISTORIES
   hasActiveHoverAdjAdjHistories: Ember.computed('adj.adjAdjHistories.content.@each.hoverActive', function() {
     var intensities = this.get('adj').get('adjAdjHistories').filterBy('hoverActive', true);
     if (intensities.get('length') === 1) { // If its zero there are no conflicts; if its > 1 its the adj or team we are hovering over
@@ -27,11 +27,12 @@ export default Ember.Component.extend(DraggableMixin, {
     } else { return false; }
   }),
   hasActivePanelAdjAdjHistories: Ember.computed('adj.adjAdjHistories.content.@each.panelActive', function() {
-    var activeConflicts = this.get('adj').get('adjAdjHistories').filterBy('panelActive', true).get('length');
-    //console.log('observed histories for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
-    if (activeConflicts > 0) { return true; } else { return false; }
+    var intensities = this.get('adj').get('adjAdjHistories').filterBy('panelActive', true);
+    if (intensities.get('length') === 1) { // If its zero there are no conflicts; if its > 1 its the adj or team we are hovering over
+      return 'panel-adj-adj-history aah-intensity-' + intensities.get('firstObject').get('historyIntensity'); // Fetch the class from the conflict object
+    } else { return false; }
   }),
-
+  // ADJ ADJ CONFLICTS
   hasActiveHoverAdjAdjConflicts: Ember.computed('adj.adjAdjConflicts.content.@each.hoverActive', function() {
     var activeConflicts = this.get('adj').get('adjAdjConflicts').filterBy('hoverActive', true).get('length');
     if (activeConflicts > 0) { return true; } else { return false; }

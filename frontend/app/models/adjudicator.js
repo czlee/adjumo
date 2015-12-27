@@ -27,11 +27,16 @@ export default DS.Model.extend(DebateableMixin, {
   calculateConflicts: function() {
     // This will only fire once if you set two properties at the same time, and
     // will also happen in the next run loop once all properties are synchronized
-    // console.log('calculating conflicts');
+    console.log('calculating conflicts');
+    var thisAdjudicator = this;
 
     this.get('panel').then((panel) => {
 
-      if (panel !== null) {         // Seems to be null when stuff is being set/unset?
+      console.log('has panel');
+
+      if (panel !== null) {
+        // If not being moved to unused
+
         var debateAdjs = panel.get('panellists');
         var debateAdjs = [];
         if (panel.get('chair').get('content') !== null ) { debateAdjs.push(panel.get('chair')); }
@@ -149,6 +154,35 @@ export default DS.Model.extend(DebateableMixin, {
           });
 
         });
+      } else {
+
+        // UNSET ADJ TEAM CONFLICTS
+        if (thisAdjudicator.get('teamAdjConflicts') !== undefined) {
+          thisAdjudicator.get('teamAdjConflicts').forEach(function(conflict) {
+            conflict.set('panelActive', false);
+          });
+        }
+        // UNSET ADJ ADJ CONFLICTS
+        if (thisAdjudicator.get('adjAdjConflicts') !== undefined) {
+          thisAdjudicator.get('adjAdjConflicts').forEach(function(conflict) {
+            conflict.set('panelActive', false);
+          });
+        }
+        // UNSET ADJ TEAM HISTORIES
+        if (thisAdjudicator.get('teamAdjHistories') !== undefined) {
+          thisAdjudicator.get('teamAdjHistories').forEach(function(history) {
+            history.set('panelActive', false);
+          });
+        }
+        // UNSET ADJ ADJ HISTORIES
+        if (thisAdjudicator.get('adjAdjHistories') !== undefined) {
+          thisAdjudicator.get('adjAdjHistories').forEach(function(history) {
+            history.set('panelActive', false);
+          });
+        }
+        //ADJ ADJ INSTITUTIONS
+        thisAdjudicator.set('hasInstitutionalConflict', true);
+
       }
 
 

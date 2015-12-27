@@ -97,10 +97,10 @@
                         <div class="btn-group" role="group">
                             {{#each team.teamAdjHistories as |history| }}
                                 {{#if history.panelActive }}
-                                    <div class="popover-highlight btn btn-default btn-sm panel-team-adj-history">
+                                    <div class="popover-highlight btn btn-default btn-sm panel-team-adj-history tah-intensity-{{history.historyIntensity}}">
                                         <span class="glyphicon glyphicon-time"></span> {{ history.rounds }}
                                     </div>
-                                    <div class="popover-highlight btn btn-default btn-sm panel-team-adj-history">
+                                    <div class="popover-highlight btn btn-default btn-sm panel-team-adj-history tah-intensity-{{history.historyIntensity}}">
                                         {{ history.adjudicator.short_name }}
                                     </div>
                                 {{/if}}

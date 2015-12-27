@@ -101,10 +101,10 @@
                         <div class="btn-group" role="group">
                             {{#each adj.teamAdjHistories as |history| }}
                                 {{#if history.panelActive }}
-                                    <div class="popover-highlight btn btn-default panel-team-adj-history btn-sm">
+                                    <div class="popover-highlight btn btn-default panel-team-adj-history tah-intensity-{{history.historyIntensity}} btn-sm">
                                         <span class="glyphicon glyphicon-time"></span> {{history.rounds}}
                                     </div>
-                                    <div class="popover-highlight btn btn-default panel-team-adj-history btn-sm">
+                                    <div class="popover-highlight btn btn-default panel-team-adj-history tah-intensity-{{history.historyIntensity}} btn-sm">
                                         {{history.team.name }}
                                     </div>
                                 {{/if}}
@@ -115,10 +115,10 @@
                         <div class="btn-group" role="group">
                             {{#each adj.adjAdjHistories as |history| }}
                                 {{#if history.panelActive }}
-                                    <div class="popover-highlight btn btn-default panel-adj-adj-history btn-sm">
+                                    <div class="popover-highlight btn btn-default panel-adj-adj-history aah-intensity-{{history.historyIntensity}} btn-sm">
                                         <span class="glyphicon glyphicon-time"></span> {{history.rounds}}
                                     </div>
-                                    <div class="popover-highlight btn btn-default panel-adj-adj-history btn-sm">
+                                    <div class="popover-highlight btn btn-default panel-adj-adj-history aah-intensity-{{history.historyIntensity}} btn-sm">
                                         {{ history.adj1.short_name }} {{ history.adj2.short_name }}
                                     </div>
                                 {{/if}}
