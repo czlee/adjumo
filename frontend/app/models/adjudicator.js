@@ -34,7 +34,7 @@ export default DS.Model.extend(DebateableMixin, {
 
       if (panel !== null) {
         // If not being moved to unused
-        console.log('calculating conflicts for ' + thisAdjudicator.get('name'));
+        // console.log('calculating conflicts for ' + thisAdjudicator.get('name'));
 
         var debateAdjs = panel.get('panellists');
         var debateAdjs = [];
@@ -153,7 +153,7 @@ export default DS.Model.extend(DebateableMixin, {
         });
       } else {
 
-        console.log('removing all conflicts for ' + thisAdjudicator.get('name'));
+        // console.log('removing all conflicts for ' + thisAdjudicator.get('name'));
 
         // UNSET ADJ TEAM CONFLICTS
         if (thisAdjudicator.get('teamAdjConflicts') !== undefined) {

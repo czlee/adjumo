@@ -400,13 +400,13 @@ td.head-panel {
 
   .gender-2 {
     /* F */
-    background: #fd64ff;
+    background: #7700FF;
     color: #fff;
   }
 
   .gender-3 {
     /* Only show this for teams as for them it represnts M+F*/
-    background: #fedbff;
+    background: #D5AFFF;
   }
 }
 
@@ -559,8 +559,8 @@ td.head-panel {
 // INSTITUTION CONFLICTS
 .team-ui.panel-institution-conflict,
 .position-holder .adjudicator-ui.panel-institution-conflict {
-  @include conflict-bg(#da1ac1, #ae319e, 0.5);
-  border-color: #da1ac1;
+  @include conflict-bg(#ff0062, #d40051, 0.5);
+  border-color: #ff0062;
 }
 .team-ui.panel-team-adj-conflict,
 .position-holder .adjudicator-ui.panel-team-adj-conflict,
@@ -612,7 +612,7 @@ td.head-panel {
 .position-holder .adjudicator-ui.hover-institution-conflict,
 .adj-bottom-panel .adjudicator-ui.hover-institution-conflict,
 .popover-highlight.panel-institution-conflict {
-  @include conflict-bg(#da1ac1, #ae319e, 1);
+  @include conflict-bg(#ff0062, #d40051, 1);
 }
 .team-conflict-key,
 .team-ui.hover-team-adj-conflict,
