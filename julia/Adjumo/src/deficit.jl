@@ -1,6 +1,8 @@
 # Deficit points.
 # This file is part of the Adjumo module.
 
+export DeficitPointEntry
+
 type DeficitPointEntry
     team::Team
     round::Int
@@ -16,5 +18,10 @@ of the previous round. Does not take into account the results of the previous
 round. Returns a list of DeficitPointEntry objects.
 """
 function computedeficitpointentries(rinfo::RoundInfo, allocations::Vector{PanelAllocation})
+
+
+    for alloc in allocations
+
+    end
 
 end
