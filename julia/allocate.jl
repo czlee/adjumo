@@ -24,12 +24,12 @@ argsettings = ArgParseSettings()
     "--enforceallocateall", "--enfall"
         help = "Require all accredited adjudicators to be allocated"
         action = :store_true
-    "--jsondir"
+    "--jsonoutdir"
         help = "Where to write JSON files upon completion."
-        default = joinpath(Base.source_dir(), "../frontend/public/data")
-    "--weightsfile"
-        help = "Where to find the component weights JSON file."
-        default = joinpath(Base.source_dir(), "../backend/data/allocation-config.json")
+        default = joinpath(Base.source_dir(), "../frontend/public/data/")
+    "--backenddir"
+        help = "Where to find inputs from the web-based UI (not the tab data)"
+        default = joinpath(Base.source_dir(), "../backend/data/")
     "--tabbie1"
         help = "Import a Tabbie1 database: <username> <password> <database>"
         metavar = "ARG"
@@ -92,11 +92,10 @@ if args[:randomizeblanks]
     randomizeblanks!(roundinfo)
 end
 
-componentweightsfile = open(args[:weightsfile])
-importcomponentweightsjsonintoroundinfo!(roundinfo, componentweightsfile)
-close(componentweightsfile)
+importsupplementaryinfofromjson!(roundinfo, args[:backenddir])
 
 println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
+println("$(length(roundinfo.lockedadjs)) locks, $(length(roundinfo.blockedadjs)) blocks, $(length(roundinfo.groupedadjs)) groups")
 
 if length(args[:feasiblepanelsfile]) > 0
     f = open(args[:feasiblepanelsfile])
@@ -110,7 +109,7 @@ else
 end
 
 println("Writing JSON files...")
-directory = args[:jsondir]
+directory = args[:jsonoutdir]
 
 exportroundinfo(roundinfo, directory)
 exportallocations(allocations, directory)
