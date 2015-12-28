@@ -71,7 +71,7 @@ function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{Adjud
     @time status, debateindices, panelindices, scores = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; options...)
 
     if status != :Optimal
-        warn("Problem was not solved to optimality. Status was: $status")
+        warn(STDOUT, "Problem was not solved to optimality. Status was: $status")
     end
     if status == :Infeasible
         println("Checking for incompatible constraints...")
@@ -80,6 +80,9 @@ function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{Adjud
 
     println("conversion:")
     @time allocations = convertallocations(roundinfo.debates, feasiblepanels, debateindices, panelindices, scores)
+
+    println("allocate trainees:")
+    @time allocatetrainees!(allocations, roundinfo)
 
     return allocations
 end
@@ -293,6 +296,50 @@ function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
     scores = Σ[Xval]
 
     return (status, debates, panels, scores)
+end
+
+function anyconflict(roundinfo::RoundInfo, trainee::Adjudicator, alloc::PanelAllocation)
+    for adj in adjlist(alloc)
+        if conflicted(roundinfo, adj, trainee)
+            return true
+        end
+    end
+    for team in alloc.debate.teams
+        if conflicted(roundinfo, team, trainee)
+            return true
+        end
+    end
+    return false
+end
+
+function allocatetrainees!(allocations::Vector{PanelAllocation}, roundinfo::RoundInfo)
+    allocatedadjudicators = vcat([adjlist(alloc) for alloc in allocations])
+    unallocatedtrainees = filter(adj -> adj.ranking <= TraineePlus && adj ∉ allocatedadjudicators, roundinfo.adjudicators)
+    shuffle!(unallocatedtrainees)
+    sort!(unallocatedtrainees, by=adj -> adj.ranking, rev=true) # best to worst
+    chairplusallocs = filter(alloc -> alloc.chair.ranking == ChairPlus, allocations)
+    nonchairplusallocs = filter(alloc -> alloc.chair.ranking != ChairPlus, allocations)
+    sort!(nonchairplusallocs, by=alloc -> alloc.chair.ranking)
+
+    for alloc in [nonchairplusallocs; nonchairplusallocs; chairplusallocs; chairplusallocs]
+        if length(unallocatedtrainees) == 0
+            break
+        end
+        shelvedtrainees = Adjudicator[]
+        nexttrainee = pop!(unallocatedtrainees)
+        traineefound = true
+        while anyconflict(roundinfo, nexttrainee, alloc)
+            push!(shelvedtrainees, nexttrainee)
+            if length(unallocatedtrainees) == 0
+                traineefound = false
+                break
+            end
+            nexttrainee = pop!(unallocatedtrainees)
+        end
+        if traineefound
+            push!(alloc.trainees, nexttrainee)
+        end
+    end
 end
 
 end # module

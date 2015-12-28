@@ -32,7 +32,7 @@ function regionalrepresentationmatrix1(feasiblepanels::Vector{AdjudicatorPanel},
 
     panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
     for (i, panel) in enumerate(feasiblepanels)
-        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
+        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in accreditedadjs(panel)]...))
     end
 
     βr = Matrix{Float64}(ndebates, npanels)
@@ -54,7 +54,7 @@ function regionalrepresentationmatrix2(feasiblepanels::Vector{AdjudicatorPanel},
 
     panelinfos = Vector{Tuple{Int, Vector{Region}}}(npanels)
     for (i, panel) in enumerate(feasiblepanels)
-        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in adjlist(panel)]...))
+        panelinfos[i] = (numadjs(panel), vcat(Vector{Region}[adj.regions for adj in accreditedadjs(panel)]...))
     end
 
     βr = Matrix{Float64}(ndebates, npanels)

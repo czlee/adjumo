@@ -126,7 +126,7 @@ adjudicator at index `a`.
 qualityvector(feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo) = qualityvector(feasiblepanels)
 qualityvector(feasiblepanels::Vector{AdjudicatorPanel}) = Float64[panelquality(panel) for panel in feasiblepanels]
 panelquality(adjs::Vector{Adjudicator}) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in adjs])
-panelquality(panel::AdjudicatorPanel) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in adjlist(panel)])
+panelquality(panel::AdjudicatorPanel) = panelquality(Wudc2015AdjudicatorRank[adj.ranking for adj in accreditedadjs(panel)])
 
 const JUDGE_SCORES = Float64[
 #  T-    T0    T+    P-    P0   P+  C-  C0  C+
@@ -258,7 +258,7 @@ function panelregionbreakdown(teamregions::Vector{Region}, panel::AdjudicatorPan
     internalcounts = zeros(Int, length(teamregions))
     externaladjscount = 0
     uniqueexternaladjscount = 0
-    for adj in adjlist(panel)
+    for adj in accreditedadjs(panel)
         internalfound = false
 
         # If any region matches, the judge is an internal judge for every region
@@ -413,7 +413,7 @@ Number of EPL judges 0   1 2 3 4
                Score 3 2.5 2 1 0
 """
 function panellanguagescore(panel::AdjudicatorPanel)
-    nnonprimary = count(a -> a.language != EnglishPrimary, adjlist(panel))
+    nnonprimary = count(a -> a.language != EnglishPrimary, accreditedadjs(panel))
     if nnonprimary == 0
         return -1.5
     elseif nnonprimary == 1
@@ -490,7 +490,7 @@ end
 Returns the gender score for the panel.
 """
 function panelgenderscore(panel::AdjudicatorPanel)
-    nfemale = count(a -> a.gender == PersonFemale, adjlist(panel))
+    nfemale = count(a -> a.gender == PersonFemale, accreditedadjs(panel))
     proportion = nfemale / numadjs(panel)
     return proportion - 0.5
 end
@@ -530,7 +530,7 @@ function sumteamadjscoresmatrix(teamadjscore::Function,
         D[d, indices] = true
     end
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[indices, p] = true
     end
     return D*Ξ*Q
@@ -545,7 +545,7 @@ where ∑ denotes summation.
 """
 function sumteamadjscores(teamadjscore::Function, roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
     score = 0
-    for team in debate.teams, adj in adjlist(panel)
+    for team in debate.teams, adj in accreditedadjs(panel)
         score += teamadjscore(roundinfo, team, adj)
     end
     return score
@@ -576,7 +576,7 @@ function sumadjadjscoresvector(adjadjscore::Function, feasiblepanels::Vector{Adj
     npanels = length(feasiblepanels)
     γ = zeros(npanels)
     for (p, panel) in enumerate(feasiblepanels)
-        for (adj1, adj2) in combinations(adjlist(panel), 2)
+        for (adj1, adj2) in combinations(accreditedadjs(panel), 2)
             γ[p] += get!(ξ, (adj1, adj2)) do
                 adjadjscore(roundinfo, adj1, adj2)
             end
@@ -597,7 +597,7 @@ evaluated.
 """
 function sumadjadjscores(adjadjscore::Function, roundinfo::RoundInfo, panel::AdjudicatorPanel)
     score = 0
-    for (adj1, adj2) in combinations(adjlist(panel), 2)
+    for (adj1, adj2) in combinations(accreditedadjs(panel), 2)
         score += adjadjscore(roundinfo, adj1, adj2)
     end
     return score

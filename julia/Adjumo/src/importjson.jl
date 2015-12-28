@@ -17,7 +17,7 @@ function importjsonfile!(func::Function, filename::AbstractString, rinfo::RoundI
         open(filename)
     catch e
         if isa(e, SystemError)
-            warn("Could not open $filename, skipping: $(Libc.strerror(e.errnum))")
+            warn(STDOUT, "Could not open $filename, skipping: $(Libc.strerror(e.errnum))")
         else
             throw(e)
         end
@@ -64,19 +64,19 @@ function importadjudicatordebates!(f::Function, name::AbstractString, rinfo::Rou
     for datum in data
         datatype = datum["type"]
         if datatype != "adjudicatordebate"
-            warn("Object of wrong type in $name file: $datatype, expected adjudicatordebate")
+            warn(STDOUT, "Object of wrong type in $name file: $datatype, expected adjudicatordebate")
             continue
         end
         debatedict = datum["relationships"]["debate"]["data"]
         debatetype = debatedict["type"]
         if debatetype != "debate"
-            warn("$name file: adjudicatordebate's debate has wrong type: $debatetype")
+            warn(STDOUT, "$name file: adjudicatordebate's debate has wrong type: $debatetype")
             continue
         end
         adjdict = datum["relationships"]["adjudicator"]["data"]
         adjtype = adjdict["type"]
         if adjtype != "adjudicator"
-            warn("$name file: adjudicatordebate's adjudicator has wrong type: $adjtype")
+            warn(STDOUT, "$name file: adjudicatordebate's adjudicator has wrong type: $adjtype")
             continue
         end
         debateid = parse(Int, debatedict["id"])
@@ -94,7 +94,7 @@ function importgroupedadjs!(rinfo::RoundInfo, io::IO)
     for datum in data
         datatype = datum["type"]
         if datatype != "groupedadjudicators"
-            warn("Object of wrong type in grouped adjudicators file: $datatype, expected groupedadjudicators")
+            warn(STDOUT, "Object of wrong type in grouped adjudicators file: $datatype, expected groupedadjudicators")
             continue
         end
         adjdicts = datum["relationships"]["adjudicators"]["data"]
@@ -102,7 +102,7 @@ function importgroupedadjs!(rinfo::RoundInfo, io::IO)
         for adjdict in adjdicts
             adjtype = adjdict["type"]
             if adjtype != "adjudicator"
-                warn("groupedadjudicators's adjudicator has wrong type: $adjtype, expected adjudicator")
+                warn(STDOUT, "groupedadjudicators's adjudicator has wrong type: $adjtype, expected adjudicator")
                 continue
             end
             adjid = parse(Int, adjdict["id"])

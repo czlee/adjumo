@@ -12,7 +12,7 @@ function panelmembershipmatrix1(roundinfo::RoundInfo, feasiblepanels::Vector{Adj
     nadjs = numadjs(roundinfo)
     Q = zeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[p, indices] = true
     end
     return Q
@@ -34,7 +34,7 @@ function panelmembershipmatrix3(roundinfo::RoundInfo, feasiblepanels::Vector{Adj
     nadjs = numadjs(roundinfo)
     Q = spzeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[p, indices] = 1.0
     end
     return Q
@@ -56,7 +56,7 @@ function panelmembershipmatrix5(roundinfo::RoundInfo, feasiblepanels::Vector{Adj
     nadjs = numadjs(roundinfo)
     Q = zeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[p, indices] = 1.0
     end
     return sparse(Q)
@@ -67,7 +67,7 @@ function panelmembershipmatrix6(roundinfo::RoundInfo, feasiblepanels::Vector{Adj
     nadjs = numadjs(roundinfo)
     Q = spzeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
-        for index in Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        for index in Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
             Q[p, index] = 1.0
         end
     end
@@ -79,7 +79,7 @@ function panelmembershipmatrix7(roundinfo::RoundInfo, feasiblepanels::Vector{Adj
     nadjs = numadjs(roundinfo)
     Q = zeros(npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
-        for index in Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        for index in Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
             Q[p, index] = 1.0
         end
     end

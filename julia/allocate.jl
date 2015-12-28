@@ -38,9 +38,8 @@ argsettings = ArgParseSettings()
         help = "Import a Tabbie2 export file"
         metavar = "JSONFILE"
         default = ""
-    "--show"
-        help = "Print result to console"
-        action = :store_true
+    "-R", "--printresult"
+        help = "Print result to file, or '-' (a hyphen) for stdout"
     "-g", "--gap"
         help = "Tolerance gap"
         arg_type = Float64
@@ -115,9 +114,19 @@ exportroundinfo(roundinfo, directory)
 exportallocations(allocations, directory)
 exporttabbiejson(allocations, directory)
 
-if args[:show]
-    showconstraints(roundinfo)
+if length(args[:printresult]) > 0
+    if args[:printresult] == "-"
+        resultfile = STDOUT
+    else
+        resultfile = open(args[:printresult], "w")
+    end
+
+    showconstraints(resultfile, roundinfo)
     for allocation in allocations
-        showdebatedetail(roundinfo, allocation)
+        showdebatedetail(resultfile, roundinfo, allocation)
+    end
+
+    if resultfile != STDOUT
+        close(resultfile)
     end
 end

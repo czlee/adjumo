@@ -41,7 +41,7 @@ for i = 1:n
     teamregions = generatetestregions()
     @show teamregions
     panel = generatepanel()
-    adjregions = [adj.regions for adj in adjlist(panel)]
+    adjregions = [adj.regions for adj in accreditedadjs(panel)]
     @show adjregions
     @show panelregionbreakdown(teamregions, panel)
 end

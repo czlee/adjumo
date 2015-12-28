@@ -4,7 +4,7 @@ using Adjumo
 if length(ARGS) < 1
     error("Requires one argument.")
 elseif length(ARGS) > 1
-    warn("Ignoring all arguments after the first.")
+    warn(STDOUT, "Ignoring all arguments after the first.")
 end
 arg = ARGS[1]
 

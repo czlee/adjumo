@@ -69,7 +69,7 @@ function gettabbie1roundinfo(dbconnection, currentround)
 
         csvrows = find(x -> x == id, csv_ids)
         if length(csvrows) != 1
-            warn("Institution $code (id $id) occurred $(length(csvrows)) times in institutions-augmented.csv")
+            warn(STDOUT, "Institution $code (id $id) occurred $(length(csvrows)) times in institutions-augmented.csv")
             region = NoRegion
         else
             region = interpretregion(csv_regions[csvrows[1]])
@@ -96,7 +96,7 @@ function gettabbie1roundinfo(dbconnection, currentround)
 
         csvrows = find(x -> x == id, csv_ids)
         if length(csvrows) != 2
-            warn("Team $name (id $id) had $(length(csvrows)) speakers in speakers-augmented.csv")
+            warn(STDOUT, "Team $name (id $id) had $(length(csvrows)) speakers in speakers-augmented.csv")
             gender = TeamNoGender
         else
             genders = map(interpretpersongender, csv_genders[csvrows])
@@ -124,7 +124,7 @@ function gettabbie1roundinfo(dbconnection, currentround)
 
         csvrows = find(x -> x == id, csv_ids)
         if length(csvrows) != 1
-            warn("Adjudicator $name (id $id) occurred $(length(csvrows)) times in adjudicators-augmented.csv")
+            warn(STDOUT, "Adjudicator $name (id $id) occurred $(length(csvrows)) times in adjudicators-augmented.csv")
             ranking = TraineeMinus
             gender = PersonNoGender
             language = NoLanguage

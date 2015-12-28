@@ -170,6 +170,7 @@ trainees(panel::AdjudicatorPanel) = panel.adjs[panel.np+2:end]
 
 in(adj::Adjudicator, panel::AdjudicatorPanel) = in(adj, panel.adjs)
 adjlist(panel::AdjudicatorPanel) = panel.adjs
+accreditedadjs(panel::AdjudicatorPanel) = panel.adjs[1:panel.np+1]
 show(io::Base.IO, panel::AdjudicatorPanel) = print(io, "Panel[" * join(namewithrolelist(panel), ", ") * "]")
 
 function adjlist(alloc::PanelAllocation)
@@ -179,6 +180,14 @@ function adjlist(alloc::PanelAllocation)
     adjs[1] = alloc.chair
     adjs[2:np+1] = [alloc.panellists...]
     adjs[np+2:end] = [alloc.trainees...]
+    return adjs
+end
+
+function adjlist(alloc::PanelAllocation)
+    np = length(alloc.panellists)
+    adjs = Vector{Adjudicator}(1+np)
+    adjs[1] = alloc.chair
+    adjs[2:np+1] = [alloc.panellists...]
     return adjs
 end
 

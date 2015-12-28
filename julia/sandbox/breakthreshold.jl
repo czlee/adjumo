@@ -32,29 +32,22 @@ result_1032(r, teamspoints) = [1,0,3,2]
 function result_pulltostraights(r, teamspoints)
     straights = r*2
     result = [-1,-1,-1,-1]
-    pointsunused = [0,1,2,3]
+    placeallocated = [false,false,false,false]
     for p in 0:3
         index = findfirst(teamspoints, straights - p)
         if index != 0
             result[index] = p
+            placeallocated[index+1] = true
         else
+    end
+    for (i, allocated) in enumerate(placeallocated)
+        index = findfirst(result, index)
+
 
 
     for (i, tp) in enumerate(teamspoints)
         if straights - teamspoints in [0,1,2,3]
 end
-
-7,7,6,6
-0,1,2,3
-
-7,6,6,6
-1,0,2,3
-
-7,7,7,6
-0,1,3,2
-
-6,6,7,7
-3,2,1,0
 
 resultfuncs = [
     result_pulluplose, result_pullupwin, result_1032, result_pulltostraights

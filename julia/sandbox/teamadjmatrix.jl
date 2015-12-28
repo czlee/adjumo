@@ -83,7 +83,7 @@ function panelmembershipmatrix(roundinfo::RoundInfo, feasiblepanels::Vector{Adju
     nadjs = numadjs(roundinfo)
     Q = zeros(Bool, npanels, nadjs)
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[p, indices] = true
     end
     return Q
@@ -129,7 +129,7 @@ function sumteamadjscoresmatrix1(teamadjscore::Function,
     for (d, debate) in enumerate(roundinfo.debates)
         for (p, panel) in enumerate(feasiblepanels)
             for team in debate
-                for adj in adjlist(panel)
+                for adj in accreditedadjs(panel)
                     Γ[d,p] += ξ[(team,adj)]
                 end
             end
@@ -157,7 +157,7 @@ function sumteamadjscoresmatrix2(teamadjscore::Function,
         D[d, indices] = true
     end
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[indices, p] = true
     end
     return D*Ξ*Q
@@ -181,7 +181,7 @@ function sumteamadjscoresmatrix3(teamadjscore::Function,
         D[d, indices] = true
     end
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[indices, p] = true
     end
     return D*Ξ*Q
@@ -206,7 +206,7 @@ function sumteamadjscoresmatrix4(teamadjscore::Function,
         D[d, indices] = true
     end
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[indices, p] = true
     end
     return D*Ξ*Q

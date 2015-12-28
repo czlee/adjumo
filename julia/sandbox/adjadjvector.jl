@@ -86,7 +86,7 @@ function sumadjadjscoresvector1(adjadjscore::Function, feasiblepanels::Vector{Ad
     npanels = length(feasiblepanels)
     γ = zeros(1, npanels)
     for (p, panel) in enumerate(feasiblepanels)
-        for (adj1, adj2) in combinations(adjlist(panel), 2)
+        for (adj1, adj2) in combinations(accreditedadjs(panel), 2)
             γ[p] += get!(ξ, (adj1, adj2)) do
                 adjadjscore(roundinfo, adj1, adj2)
             end
@@ -106,7 +106,7 @@ function sumadjadjscoresvector2(adjadjscore::Function,
         Ξ[a1,a2] = adjadjscore(roundinfo, adj1, adj2)
     end
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[indices, p] = true
     end
     return (ones(1,nadjs)*((Ξ*Q).*Q))/2
@@ -123,7 +123,7 @@ function sumadjadjscoresvector3(adjadjscore::Function,
         Ξ[a1,a2] = adjadjscore(roundinfo, adj1, adj2)
     end
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[indices, p] = true
     end
     return ones(1,nadjs)*((Ξ*Q).*Q)
@@ -141,7 +141,7 @@ function sumadjadjscoresvector4(adjadjscore::Function,
         Ξ[a1,a2] = adjadjscore(roundinfo, adj1, adj2)
     end
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[indices, p] = true
     end
     return diag(Q'*Ξ*Q).'/2
@@ -159,7 +159,7 @@ function sumadjadjscoresvector5(adjadjscore::Function,
         Ξ[a1,a2] = adjadjscore(roundinfo, adj1, adj2)
     end
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[indices, p] = true
     end
     return diag(Q'*Ξ*Q).'
@@ -178,7 +178,7 @@ function sumadjadjscoresvector6(adjadjscore::Function,
     end
     Ξtri = LowerTriangular(Ξ)
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[indices, p] = true
     end
     return diag(Q'*Ξtri*Q).'
@@ -196,7 +196,7 @@ function sumadjadjscoresvector7(adjadjscore::Function,
     end
     Ξtri = LowerTriangular(Ξ)
     for (p, panel) in enumerate(feasiblepanels)
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         Q[indices, p] = true
     end
     return ones(1,nadjs)*((Ξtri*Q).*Q)
@@ -214,7 +214,7 @@ function sumadjadjscoresvector8(adjadjscore::Function, feasiblepanels::Vector{Ad
     end
     for (p, panel) in enumerate(feasiblepanels)
         q[:] = false
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         q[indices] = true
         γ[p] = q⋅(Ξ*q)
     end
@@ -234,7 +234,7 @@ function sumadjadjscoresvector9(adjadjscore::Function, feasiblepanels::Vector{Ad
     Ξtri = LowerTriangular(Ξ)
     for (p, panel) in enumerate(feasiblepanels)
         q[:] = false
-        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in adjlist(panel)]
+        indices = Int64[findfirst(roundinfo.adjudicators, adj) for adj in accreditedadjs(panel)]
         q[indices] = true
         γ[p] = q⋅(Ξtri*q)
     end
@@ -247,7 +247,7 @@ function sumadjadjscoresvector10(adjadjscore::Function, feasiblepanels::Vector{A
     npanels = length(feasiblepanels)
     γ = zeros(1, npanels)
     for (p, panel) in enumerate(feasiblepanels)
-        for (a1, adj1) in enumerate(adjlist(panel)), adj2 in adjlist(panel)[1:a1]
+        for (a1, adj1) in enumerate(accreditedadjs(panel)), adj2 in accreditedadjs(panel)[1:a1]
             γ[p] += get!(ξ, (adj1, adj2)) do
                 adjadjscore(roundinfo, adj1, adj2)
             end
@@ -262,7 +262,7 @@ function sumadjadjscoresvector11(adjadjscore::Function, feasiblepanels::Vector{A
     npanels = length(feasiblepanels)
     γ = zeros(1, npanels)
     for (p, panel) in enumerate(feasiblepanels)
-        for adj1 in adjlist(panel), adj2 in adjlist(panel)
+        for adj1 in accreditedadjs(panel), adj2 in accreditedadjs(panel)
             γ[p] += get!(ξ, (adj1, adj2)) do
                 adjadjscore(roundinfo, adj1, adj2)
             end
@@ -277,7 +277,7 @@ function sumadjadjscoresvector12(adjadjscore::Function, feasiblepanels::Vector{A
     npanels = length(feasiblepanels)
     γ = zeros(1, npanels)
     for (p, panel) in enumerate(feasiblepanels)
-        for adj1 in adjlist(panel), adj2 in adjlist(panel)
+        for adj1 in accreditedadjs(panel), adj2 in accreditedadjs(panel)
             γ[p] += get!(ξ, (adj1, adj2)) do
                 adjadjscore(roundinfo, adj1, adj2)
             end

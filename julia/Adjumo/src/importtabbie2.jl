@@ -144,7 +144,7 @@ function interpretregion(countryalpha2::AbstractString)
             return region
         end
     end
-    warn("Country code $countryalpha2 has no region defined.")
+    warn(STDOUT, "Country code $countryalpha2 has no region defined.")
     return NoRegion
 end
 
@@ -225,7 +225,7 @@ function addadjudicatorrelationships!(ri::RoundInfo, d::JsonDict)
         try
             rd = parse(Int, seenteamiddict["label"])
         catch e
-            warn("Adj $(adj.id) $(adj.name), pastTeamIDs: $(e.msg)")
+            warn(STDOUT, "Adj $(adj.id) $(adj.name), pastTeamIDs: $(e.msg)")
             continue
         end
         for pos in ["og", "oo", "cg", "co"]
