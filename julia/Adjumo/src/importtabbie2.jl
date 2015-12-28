@@ -130,14 +130,15 @@ end
 function interpretteamgender(speakersdict::JsonDict)
     genderA = interpretpersongender(speakersdict["A"]["gender"])
     if !haskey(speakersdict, "B")
+        name = speakersdict["A"]["name"]
+        println("Found iron-person team with speaker $name")
         if genderA == PersonMale
             return TeamMale
         else
             return TeamFemale
         end
-    else
-        genderB = interpretpersongender(speakersdict["B"]["gender"])
     end
+    genderB = interpretpersongender(speakersdict["B"]["gender"])
     return aggregategender(genderA, genderB)
 end
 
