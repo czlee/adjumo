@@ -104,15 +104,20 @@ function addteam!(ri::RoundInfo, d::JsonDict)
         error("Duplicate team ID: $id")
     end
     name = d["name"]
-    institution = getobjectwithid(ri.institutions, d["society_id"])
-    if d["isSwing"] == 0
-        gender = interpretteamgender(d["speakers"])
-        language = interpretlanguage(d["language_status"])
-        points = d["points"]
-        return addteam!(ri, id, name, institution, institution.region, language, gender, points)
-    else
-        println("Team $name is a swing team")
-        return addteam!(ri, id, name, institution, Europe, EnglishPrimary, TeamMixed)
+    try
+        institution = getobjectwithid(ri.institutions, d["society_id"])
+        if d["isSwing"] == 0
+            gender = interpretteamgender(d["speakers"])
+            language = interpretlanguage(d["language_status"])
+            points = d["points"]
+            return addteam!(ri, id, name, institution, institution.region, language, gender, points)
+        else
+            println("Team $name is a swing team")
+            return addteam!(ri, id, name, institution, Europe, EnglishPrimary, TeamMixed)
+        end
+    catch e
+        println("Team is $name")
+        throw(e)
     end
 end
 
