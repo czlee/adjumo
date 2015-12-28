@@ -4,6 +4,6 @@
 export scoresfordisplay
 
 function scoresfordisplay(json::AbstractString)
-    debate, panel = parsedebatepaneljson(s)
+    debate, panel = parsedebatepaneljson(json)
     return scoresfordisplay(debate, panel)
 end

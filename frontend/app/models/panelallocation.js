@@ -60,11 +60,12 @@ export default DS.Model.extend({
           debateData.adjudicators.push(createAdjJSON(adj));
         });
       }
-      if (thisPanel.get('trainees').get('length') > 0 ) {
-        thisPanel.get('trainees').forEach(function(adj) {
-          debateData.adjudicators.push(createAdjJSON(adj));
-        });
-      }
+      // Don't include trainees in this calculation.
+      // if (thisPanel.get('trainees').get('length') > 0 ) {
+      //   thisPanel.get('trainees').forEach(function(adj) {
+      //     debateData.adjudicators.push(createAdjJSON(adj));
+      //   });
+      // }
       thisPanel.get('debate').get('teams').forEach(function(team) {
         debateData.teams.push(createTeamJSON(team));
       });
@@ -127,7 +128,19 @@ export default DS.Model.extend({
       return 0;
     }
 
-  }.property('chair', 'panellists', 'trainees')
+  }.property('chair', 'panellists', 'trainees'),
+
+  regionalRepresentationStr: function() {
+    return this.get('regionalRepresentation').toFixed(0);
+  }.property('regionalRepresentation'),
+
+  genderRepresentationStr: function() {
+    return this.get('genderRepresentation').toFixed(1);
+  }.property('genderRepresentation'),
+
+  languageRepresentationStr: function() {
+    return this.get('languageRepresentation').toFixed(1);
+  }.property('languageRepresentation')
 
 });
 

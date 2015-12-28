@@ -12,7 +12,7 @@
 export importtabbiejson, converttabbiedicttoroundinfo
 
 # These are set by the adjudicator core. Tabbie2's regions are ignored.
-REGIONS = [
+REGIONS = Dict(
     NorthAsia     => ["cn","jp","kr"],
     SouthEastAsia => ["my","id","ph","sg"],
     MiddleEast    => ["il","lb"],
@@ -23,7 +23,7 @@ REGIONS = [
     LatinAmerica  => ["mx","br"],
     Europe        => ["fr","de","it","at","hr","gr","rs","ro","kz","nl","se","az","pt","ee","tr","dk","mk","hu","ru","ua","cz","es","fi","pl","lv","si"],
     IONA          => ["gb","ie"],
-]
+)
 
 # These are taken from tabbie2.git/common/models/User.php
 const TABBIE_GENDER_NOTREVEALING = 0

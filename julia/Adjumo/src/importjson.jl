@@ -144,10 +144,16 @@ function parsedebatepaneljson(s::AbstractString)
     adjs = Adjudicator[]
     for adjdict in d["adjudicators"]
         ranking = Wudc2015AdjudicatorRank(adjdict["ranking"])
-        region = [Region(r) for r in adjdict["regions"]]
+        if haskey(adjdict, "regions")
+            regions = [Region(r) for r in adjdict["regions"]]
+        else
+            # TODO remove this redundant one when node.js part is fixed
+            regions = [Region(adjdict["region"])]
+        end
+
         language = LanguageStatus(adjdict["language"])
         gender = PersonGender(adjdict["gender"])
-        adj = Adjudicator(1, "", dudinst, ranking, region, language, gender)
+        adj = Adjudicator(1, "", dudinst, ranking, regions, language, gender)
         push!(adjs, adj)
     end
     panel = AdjudicatorPanel(adjs, length(adjs)-1)

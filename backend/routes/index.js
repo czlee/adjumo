@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var julia = require('node-julia');
+julia.eval('push!(LOAD_PATH, \"../julia\")')
+var adjumoJulia = julia.import('Adjumo')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -46,32 +48,18 @@ router.post('/debate-scores/', function(req, res) {
   var adjs = req.body.adjudicators;
   var teams = req.body.teams;
 
-  // Import the relevant script
-  var julia = require('node-julia');
-  julia.exec('include', '../julia/Adjumo/src/Adjumo.jl');
-  // julia.exec('include', '../julia/Adjumo/src/importjson.jl');
-  // julia.exec('include', '../julia/Adjumo/src/frontendinterface.jl');
-
   var json = JSON.stringify(req.body); // PIPE this into the proper function
 
-  julia.exec('scoresfordisplay', json, function(err,regional,gender,language) {
-    if(err) {
-      console.log("error in computation ",err);
-    } else {
-      console.log("success in calling julia");
-      var fakeScores = {
-        regionalRepresentation: regional,
-        genderRepresentation: gender,
-        languageRepresentation: language,
-      }
-      console.log(fakeScores);
-      res.setHeader('Content-Type', 'application/json');
-      res.send(JSON.stringify(fakeScores));
-
-    }
-  });
-
-
+  var result = adjumoJulia.scoresfordisplay(json);
+  console.log(result);
+  var scores = {
+    panelQuality: result[0],
+    regionalRepresentation: result[1],
+    languageRepresentation: result[2],
+    genderRepresentation: result[3],
+  }
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(scores));
 
 }),
 
