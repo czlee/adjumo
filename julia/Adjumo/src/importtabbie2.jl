@@ -105,13 +105,13 @@ function addteam!(ri::RoundInfo, d::JsonDict)
     end
     name = d["name"]
     institution = getobjectwithid(ri.institutions, d["society_id"])
-    if haskey(d, "speakers")
+    if d["isSwing"] == 1
         gender = interpretteamgender(d["speakers"])
         language = interpretlanguage(d["language_status"])
         points = d["points"]
         return addteam!(ri, id, name, institution, institution.region, language, gender, points)
     else
-        println("Treating team $name as a swing team (it has no speakers)")
+        println("Team $name is a swing team")
         return addteam!(ri, id, name, institution, Europe, EnglishPrimary, TeamMixed)
     end
 end
