@@ -257,6 +257,6 @@ end
 """Imports the panel allocations of the form used to pass back to Tabbie2.
 The purpose of this import is to pull in the final panel allocations to
 calculate deficit points."""
-function importpanelallocationstabbie2(rinfo::RounfInfo, io::IO)
+function importpanelallocationstabbie2(rinfo::RoundInfo, io::IO)
 
 end
