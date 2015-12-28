@@ -82,7 +82,7 @@ export default Ember.Route.extend({
 
   actions: {
 
-    createAllocation: function() {
+    createNewAllocation: function() {
 
       var store = this.store;
       var currentAllocationIteration = this.currentAllocationIteration;

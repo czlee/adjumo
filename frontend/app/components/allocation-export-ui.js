@@ -38,6 +38,7 @@ export default Ember.Component.extend({
 
       });
 
+      $('#exportAllocation').modal('hide')
 
       if (exportData.length > 0) { // Only post is groups exist
         // Replace with a straight up POST to the tabbie2 endpoint

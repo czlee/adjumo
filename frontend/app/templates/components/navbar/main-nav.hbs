@@ -1,4 +1,6 @@
-<nav class="navbar navbar-static-top navbar-default">
+<!-- MAIN NAV -->
+
+<nav class="navbar navbar-static-top navbar-default navbar-fixed-top">
 
   <div class="nav navbar-nav navbar-form btn-group">
     <button type="submit" class="btn btn-default  btn-sm" data-toggle="modal" data-target="#setAllocationParameters">
@@ -27,13 +29,114 @@
     {{/each}}
   </div>
 
-  <div class="form-inline pull-right navbar-form">
-    <button type="submit" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exportAllocation">
-      <span class="glyphicon glyphicon-share-alt"> </span> Export Round {{ roundInfo.sequence }} Allocation
+  <div class="nav navbar-nav navbar-form btn-group btn-group-sm pull-right">
+    <button type="submit" class="btn btn-sm" data-toggle="modal" data-target="#exportAllocation">
+      <span class="glyphicon glyphicon-share-alt"> </span> Export R{{ roundInfo.sequence }} Allocation
     </button>
   </div>
 
+  <div class="nav navbar-nav navbar-form btn-group btn-group-sm pull-right">
+
+    {{#if showingRegion }}
+      <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRegion"}}>
+        <span class="glyphicon glyphicon-eye-close"> </span> Region
+      </button>
+    {{else}}
+      <button class="btn btn-default nav-link hoverable" onclick={{action "showRegion"}}>
+        <span class="glyphicon glyphicon glyphicon-eye-open"> </span> Region
+      </button>
+    {{/if}}
+    {{#if showingGender }}
+      <button class="btn btn-default nav-link hoverable active" onclick={{action "hideGender"}}>
+        <span class="glyphicon glyphicon-eye-close"> </span> Gender
+      </button>
+    {{else}}
+      <button class="btn btn-default nav-link hoverable" onclick={{action "showGender"}}>
+        <span class="glyphicon glyphicon glyphicon-eye-open"> </span> Gender
+      </button>
+    {{/if}}
+    {{#if showingLanguage }}
+      <button class="btn btn-default nav-link hoverable active" onclick={{action "hideLanguage"}}>
+        <span class="glyphicon glyphicon-eye-close"> </span> Language
+      </button>
+    {{else}}
+      <button class="btn btn-default nav-link hoverable" onclick={{action "showLanguage"}}>
+        <span class="glyphicon glyphicon glyphicon-eye-open"></span> Language
+      </button>
+    {{/if}}
+    {{#if showingRanking }}
+      <button class="btn btn-default nav-link hoverable active" onclick={{action "hideRanking"}} >
+        <span class="glyphicon glyphicon-eye-close"> </span> Rank
+      </button>
+    {{else}}
+      <button class="btn btn-default nav-link hoverable" onclick={{action "showRanking"}}>
+        <span class="glyphicon glyphicon glyphicon-eye-open"> </span> Rank
+      </button>
+    {{/if}}
+  </div>
 </nav>
+
+<!-- SUB NAV -->
+
+<div class="row">
+
+  <div class="container-fluid">
+
+  {{#if showingGender }}
+    <div class="btn-group-sm btn-group hover-key">
+      <button class="btn btn-default gender-display gender-0">None</button>
+      <button class="btn btn-default gender-display gender-1">Male</button>
+      <button class="btn btn-default gender-display gender-3">Male+Female</button>
+      <button class="btn btn-default gender-display gender-2">Female</button>
+    </div>
+  {{/if}}
+
+  {{#if showingRegion }}
+    <div class="btn-group-sm btn-group hover-key">
+      <button class="btn btn-default region-display region-9">Europe</button>
+      <button class="btn btn-default region-display region-10">IONA</button>
+      <button class="btn btn-default region-display region-6">Oceania</button>
+      <button class="btn btn-default region-display region-7">N. America</button>
+      <button class="btn btn-default region-display region-2">SE. Asia</button>
+      <button class="btn btn-default region-display region-1">N. Asia</button>
+      <button class="btn btn-default region-display region-4">S. Asia</button>
+      <button class="btn btn-default region-display region-3">Middle East</button>
+      <button class="btn btn-default region-display region-8">L. America</button>
+      <button class="btn btn-default region-display region-5">Africa</button>
+      <button class="btn btn-default region-display multiple-regions">Multiple</button>
+    </div>
+  {{/if}}
+
+  {{#if showingLanguage }}
+    <div class="btn-group-sm btn-group hover-key">
+      <button class="btn btn-default language-display language-1">English Primary</button>
+      <button class="btn btn-default language-display language-2">English Secondary</button>
+      <button class="btn btn-default language-display language-3">English Foreign</button>
+    </div>
+  {{/if}}
+
+  {{#unless showingRegion }}
+    <div class="btn-group-sm btn-group">
+      <button class="btn btn-default team-conflict-key">Personal Conflict</button>
+      <button class="btn btn-default institution-conflict-key">Institutional Conflict</button>
+      <button class="btn btn-default history-conflict-key">History Conflict</button>
+    </div>
+  {{/unless}}
+
+<!--
+    <div class="form-group pull-right debate-search-form">
+      <div class="input-group input-group-sm">
+        <div class="input-group-addon">
+          <span class="glyphicon glyphicon-search"></span>
+        </div>
+        {{input value=theFilter type='text' class="form-control col-sm-10" placeholder='Search debates'}}
+      </div>
+    </div>
+-->
+
+  </div>
+
+</div>
 
 {{navbar/export-ui allocations=allocations}}
 

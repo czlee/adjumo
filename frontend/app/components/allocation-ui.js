@@ -55,6 +55,10 @@ export default Ember.Component.extend({
       }
     },
 
+    createNewAllocation: function() {
+      this.sendAction('createNewAllocation');
+    },
+
     checkWhetherToAddNewGroups: function() {
 
       var store = this.get('store'); // Reference the service injection at the top
