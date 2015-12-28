@@ -13,15 +13,15 @@ export importtabbiejson, converttabbiedicttoroundinfo
 
 # These are set by the adjudicator core. Tabbie2's regions are ignored.
 REGIONS = Dict(
-    NorthAsia     => ["cn","jp","kr"],
-    SouthEastAsia => ["my","id","ph","sg"],
-    MiddleEast    => ["il","lb"],
-    SouthAsia     => ["in","pk","bd"],
-    Africa        => ["za","bw","na"],
+    NorthAsia     => ["jp","cn","hk","kr","kz","mn"],
+    SouthEastAsia => ["my","ph","id","sg"],
+    MiddleEast    => ["af","qa"],
+    SouthAsia     => ["bd","pk","io","in","lk","np"],
+    Africa        => ["za","gh","zw"],
     Oceania       => ["au","nz"],
-    NorthAmerica  => ["ca","us"],
-    LatinAmerica  => ["mx","br"],
-    Europe        => ["fr","de","it","at","hr","gr","rs","ro","kz","nl","se","az","pt","ee","tr","dk","mk","hu","ru","ua","cz","es","fi","pl","lv","si"],
+    NorthAmerica  => ["us","ca"],
+    LatinAmerica  => ["tt","mx","pe","jm","pa","co"],
+    Europe        => ["ro","il","de","tr","nl","rs","se","ru","ua","pt","hr","fr","gr","fi","si","at","pl","lv","ee","es","mk"],
     IONA          => ["gb","ie"],
 )
 
@@ -105,10 +105,15 @@ function addteam!(ri::RoundInfo, d::JsonDict)
     end
     name = d["name"]
     institution = getobjectwithid(ri.institutions, d["society_id"])
-    gender = interpretteamgender(d["speakers"])
-    language = interpretlanguage(d["language_status"])
-    points = d["points"]
-    addteam!(ri, id, name, institution, institution.region, language, gender, points)
+    if haskey(d, "speakers")
+        gender = interpretteamgender(d["speakers"])
+        language = interpretlanguage(d["language_status"])
+        points = d["points"]
+        return addteam!(ri, id, name, institution, institution.region, language, gender, points)
+    else
+        println("Treating team $name as a swing team (it has no speakers)")
+        return addteam!(ri, id, name, institution, Europe, EnglishPrimary, TeamMixed)
+    end
 end
 
 function addinstitution!(ri::RoundInfo, d::JsonDict)
