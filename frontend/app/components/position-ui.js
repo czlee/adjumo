@@ -40,9 +40,16 @@ export default Ember.Component.extend(DroppableMixin, {
         droppedAdjNewPanel.get('panellists').addObject(droppedAdj);
         break;
       case 'chair':
-        //var currentChair = droppedAdjNewPanel.get('chair');
-        removeFromOldPanel(droppedAdj, droppedAdjOldPanel);
-        droppedAdjNewPanel.set('chair', droppedAdj);
+        if (droppedAdjOldPanel.get('chair') !== undefined && droppedAdj.get('id') === droppedAdjOldPanel.get('chair').get('id')) {
+          // If being dropped into an occupied chairship and used to be in a chairship
+          console.log('used to be a cahir');
+          droppedAdjOldPanel.set('chair', droppedAdjNewPanel.get('chair'));
+          droppedAdjNewPanel.set('chair', droppedAdj);
+        } else {
+          //var currentChair = droppedAdjNewPanel.get('chair');
+          removeFromOldPanel(droppedAdj, droppedAdjOldPanel);
+          droppedAdjNewPanel.set('chair', droppedAdj);
+        }
 
         // if (droppedAdjOldPanel.get('chair') !== undefined && droppedAdj.get('id') === droppedAdjOldPanel.get('chair').get('id')) {
         //   // If being dropped into an occupied chairship and used to be in a chairship
