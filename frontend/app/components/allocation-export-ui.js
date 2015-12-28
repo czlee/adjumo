@@ -19,7 +19,7 @@ export default Ember.Component.extend({
         });
 
         var traineeIDs = [];
-        panel.get('panellists').forEach(function(adj) {
+        panel.get('trainees').forEach(function(adj) {
           traineeIDs.push(adj.get('id'));
         });
 
