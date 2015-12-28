@@ -18,13 +18,13 @@ export default Ember.Component.extend({
       match = true;
     } else if (theObject.get('importance').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
-    } else if (theObject.get('og').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
+    } else if (theObject.get('teams').objectAt(0).get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
-    } else if (theObject.get('oo').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
+    } else if (theObject.get('teams').objectAt(1).get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
-    } else if (theObject.get('cg').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
+    } else if (theObject.get('teams').objectAt(2).get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
-    } else if (theObject.get('co').get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
+    } else if (theObject.get('teams').objectAt(3).get('name').toString().toLowerCase().slice(0, searchString.length) === searchString) {
       match = true;
     }
     return match;
