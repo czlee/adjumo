@@ -134,7 +134,7 @@ function randomroundinfo(ndebates::Int, currentround::Int)
     teams = roundinfo.teams
     adjudicators = roundinfo.adjudicators
 
-    for args in rand(INSTITUTIONS, ninstitutions)
+    for args in sample(INSTITUTIONS, ninstitutions; replace=false)
         addinstitution!(roundinfo, rand(1:10000), args...)
     end
 
@@ -144,7 +144,7 @@ function randomroundinfo(ndebates::Int, currentround::Int)
         addteam!(roundinfo, rand(1:100000), "$(inst.code) $(existing+1)", inst)
     end
 
-    adjnames = rand(PERSON_NAMES, nadjs)
+    adjnames = sample(PERSON_NAMES, nadjs; replace=false)
     for (name, gender) in adjnames
         addadjudicator!(roundinfo, rand(1:100000), name, rand(institutions), gender)
     end

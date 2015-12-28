@@ -38,7 +38,6 @@ function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPan
     @time Σ += componentweights.teamconflict * teamadjconflictsmatrix(feasiblepanels, roundinfo)
     @time Σ += componentweights.adjconflict  * matrixfromvector(adjadjconflictsvector, feasiblepanels, roundinfo)
     return weightedαfairness(debateweights, Σ, componentweights.α)
-    return Σ
 end
 
 function matrixfromvector(f::Function, feasiblepanels::Vector{AdjudicatorPanel}, roundinfo::RoundInfo)
@@ -102,7 +101,6 @@ function weightedαfairness(w::Vector{Float64}, Σ::Matrix{Float64}, α::Float64
     elseif α == 1.0
         Σ = max(Σ, eps()*ones(Σ))
         return spdiagm(w) * log(Σ)
-        # return max(Σ, nextfloat(-Inf)*ones(Σ))
     else
         Σ = max(Σ, eps()*ones(Σ))
         return -spdiagm(w.^α) * Σ.^(1.0-α)
@@ -317,7 +315,7 @@ function panelregionalrepresentationscore(regionclass::DebateRegionClass, teamre
         numregionsabsent = count(x -> x == 0, internalcounts)
         score += numregionsabsent * -4
 
-        nadjs = numadjs(panel)
+        nadjs = numaccreditedadjs(panel)
         majority = nadjs - (nadjs // 2)
         balancedruleapplies = false
 
@@ -491,7 +489,7 @@ Returns the gender score for the panel.
 """
 function panelgenderscore(panel::AdjudicatorPanel)
     nfemale = count(a -> a.gender == PersonFemale, accreditedadjs(panel))
-    proportion = nfemale / numadjs(panel)
+    proportion = nfemale / numaccreditedadjs(panel)
     return proportion - 0.5
 end
 

@@ -5,7 +5,8 @@ export importsupplementaryinfofromjson!, importfeasiblepanels, parsedebatepanelj
     importcomponentweightsjson!, importblockedadjs!, importlockedadjs!, importgroupedadjs!
 
 function importsupplementaryinfofromjson!(rinfo::RoundInfo, directory::AbstractString)
-    importjsonfile!(importcomponentweightsjson!, "allocation-config.json", rinfo, directory)
+    importjsonfile!(importdebateweights!, "debate-importances.json", rinfo, directory)
+    importjsonfile!(importcomponentweights!, "allocation-config.json", rinfo, directory)
     importjsonfile!(importlockedadjs!, "lockedadjs.json", rinfo, directory)
     importjsonfile!(importblockedadjs!, "blockedadjs.json", rinfo, directory)
     importjsonfile!(importgroupedadjs!, "grouped-adjs.json", rinfo, directory)
@@ -28,24 +29,30 @@ function importjsonfile!(func::Function, filename::AbstractString, rinfo::RoundI
     end
 end
 
-function importcomponentweightsjson!(rinfo::RoundInfo, io::IO)
-    weights = importcomponentweightsjson(io)
+function importcomponentweights!(rinfo::RoundInfo, io::IO)
+    weights = importcomponentweights(io)
     rinfo.componentweights = weights
 end
 
-function importcomponentweightsjson(io::IO)
+function importcomponentweights(io::IO)
     d = JSON.parse(io)
-    return convertcomponentweightsdict(d)
-end
-
-function convertcomponentweightsdict(dict::JsonDict)
     weights = AdjumoComponentWeights()
-    for (key, value) in dict
+    for (key, value) in d
         sym = symbol(key)
         valuefloat = parse(Float64, value)
         setfield!(weights, sym, valuefloat)
     end
     return weights
+end
+
+function importdebateweights!(rinfo::RoundInfo, io::IO)
+    d = JSON.parse(io)
+    for (kstr, vstr) in d
+        debateid = parse(Int, kstr)
+        weight = parse(Float64, vstr)
+        debate = getobjectwithid(rinfo.debates, debateid)
+        debate.weight = weight
+    end
 end
 
 function importfeasiblepanels(io::IO, rinfo::RoundInfo)

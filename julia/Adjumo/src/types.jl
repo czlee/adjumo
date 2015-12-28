@@ -164,6 +164,7 @@ end
 AdjudicatorPanel(chair::Adjudicator, panellists::Vector{Adjudicator}) = AdjudicatorPanel(chair, panellists, Adjudicator[])
 convert(::Type{AdjudicatorPanel}, a::PanelAllocation) = AdjudicatorPanel(a.chair, a.panellists, a.trainees)
 numadjs(panel::AdjudicatorPanel) = length(panel.adjs)
+numaccreditedadjs(panel::AdjudicatorPanel) = panel.np+1
 chair(panel::AdjudicatorPanel) = panel.adjs[1]
 panellists(panel::AdjudicatorPanel) = panel.adjs[2:panel.np+1]
 trainees(panel::AdjudicatorPanel) = panel.adjs[panel.np+2:end]
@@ -192,6 +193,7 @@ function adjlist(alloc::PanelAllocation)
 end
 
 numadjs(alloc::PanelAllocation) = 1 + length(alloc.panellists) + length(alloc.trainees)
+numaccreditedadjs(alloc::PanelAllocation) = 1 + length(alloc.panellists)
 chair(alloc::PanelAllocation) = alloc.chair
 panellists(alloc::PanelAllocation) = alloc.panellists
 trainees(alloc::PanelAllocation) = alloc.trainees

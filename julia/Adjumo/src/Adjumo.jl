@@ -185,7 +185,7 @@ function resolvesolveroptions(solveroptions, useroptions)
         end
         push!(solverargs, (name, optionvalue))
     end
-    println("Solve arguments: $solverargs")
+    println("Solver arguments: $solverargs")
     return solverargs
 end
 
@@ -336,6 +336,7 @@ function allocatetrainees!(allocations::Vector{PanelAllocation}, roundinfo::Roun
             end
             nexttrainee = pop!(unallocatedtrainees)
         end
+        append!(unallocatedtrainees, shelvedtrainees) # put shelved trainees back
         if traineefound
             push!(alloc.trainees, nexttrainee)
         end
