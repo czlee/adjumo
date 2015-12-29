@@ -251,12 +251,6 @@ td.head-panel {
   float: left;
 }
 
-.adjudicator-ui.hovering {
-  background: #000 !important;  // Override conflicts
-  color: #fff !important;  // Override conflicts
-  cursor: move;
-}
-
 .adjudicator-ui.locked-true {
   border: 2px solid rgb(0, 0, 255);
 }
@@ -368,10 +362,7 @@ td.head-panel {
   }
 
   .ranking-display .panel-title {
-    color: #000;
-
-    // white doesnt work with rank bg
-
+    color: #000; // white doesnt work with rank bg
   }
 
   .popover-content {
@@ -396,36 +387,31 @@ td.head-panel {
   margin-bottom: 0px;
 }
 
+
+// HIGHLIGHTS
+
 .gender-display {
   .gender-0 {
     background: #CCC;
   }
-
   .gender-2 {
-    /* F */
-    background: #7700FF;
+    background: #7700FF;     /* F */
     color: #fff;
   }
-
   .gender-3 {
-    /* Only show this for teams as for them it represnts M+F*/
-    background: #D5AFFF;
+    background: #D5AFFF;  /* Only show this for teams as for them it represnts M+F*/
   }
 }
-
 .language-display {
   .language-2 {
     background: #ec91af;
     color: #fff;
   }
-
   .language-3 {
     background: #91ece9;
   }
 }
-
 .region-display {
-
   .region-9 { /* Europe */
     background: lighten(#330831, 6%);
     color: #fff;
@@ -460,58 +446,45 @@ td.head-panel {
   .region-5 { /* Africa */
     background: lighten(#c7ffc0, 8%);
   }
-
   .multiple-regions {
     background: #fff;
     color: #000;
   }
 }
-
 .ranking-display {
-
   .ranking-0 {
     background: #bdac7c;     // T-
   }
-
   .ranking-1 {
     background: #e9b771;
   }
-
   .ranking-2 {
     background: #ffbe63;
   }
-
   .ranking-3 {
     background: #ffdf53;
     color: #000;
   }
-
   .ranking-4 {
     background: #fcff41;
     color: #000;
   }
-
   .ranking-5 {
     background: #b6ff2f;
     color: #000;
   }
-
   .ranking-6 {
     background: #58ff1f;
   }
-
   .ranking-7 {
     background: #19e910;
   }
-
   .ranking-8 {
     background: #1aa71c;
   }
-
   .ranking-9 {
     background: #0b880d;  // C+
   }
-
   .ranking-10 {
     background: #007102;  // C+
   }
@@ -526,108 +499,128 @@ td.head-panel {
   color: #fff;
 }
 
+.hover-display, .permanent-display { // Attached to the wrap topic
+
+  .hover-institution-conflict {
+    @include conflict-bg(#ff0062, #d40051, 1);
+  }
+
+  .hover-team-adj-conflict,
+  .hover-adj-adj-conflict {
+    @include conflict-bg(#ff0000, #cf0000, 1);
+  }
+
+  .hovering { // The adj being hovered over
+    background: #000 !important;
+    color: #fff !important;
+    cursor: move;
+  }
+
+
+}
+
 // NOTE: ORDERS MATTER. NEED HISTORY > INST > PERSONAL otherwise stuff gets hidden
 
 // HISTORY CONFLICTS
-.team-ui.panel-team-adj-history,
-.position-holder .adjudicator-ui.panel-team-adj-history,
-.team-ui.panel-adj-adj-history,
-.position-holder .adjudicator-ui.panel-adj-adj-history {
-  // @include conflict-bg(#37a5c8, #2d86a3, 0.5);
+// .team-ui.panel-team-adj-history,
+// .position-holder .adjudicator-ui.panel-team-adj-history,
+// .team-ui.panel-adj-adj-history,
+// .position-holder .adjudicator-ui.panel-adj-adj-history {
+//   // @include conflict-bg(#37a5c8, #2d86a3, 0.5);
 
-  &.aah-intensity-1 {
-    @include conflict-bg(#37a5c8, #2d86a3, 0.16);
-    color: #2d86a3;
-  }
-  &.aah-intensity-2 {
-    @include conflict-bg(#37a5c8, #2d86a3, 0.32);
-    color: #2d86a3;
-  }
-  &.aah-intensity-3 {
-    @include conflict-bg(#37a5c8, #2d86a3, 0.5);
-    color: #2d86a3;
-  }
-  &.aah-intensity-4 {
-    @include conflict-bg(#37a5c8, #2d86a3, 0.66);
-  }
-  &.aah-intensity-5 {
-    @include conflict-bg(#37a5c8, #2d86a3, 0.83);
-  }
-  &.aah-intensity-6 {
-    @include conflict-bg(#37a5c8, #2d86a3, 1);
-  }
+//   &.aah-intensity-1 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 0.16);
+//     color: #2d86a3;
+//   }
+//   &.aah-intensity-2 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 0.32);
+//     color: #2d86a3;
+//   }
+//   &.aah-intensity-3 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 0.5);
+//     color: #2d86a3;
+//   }
+//   &.aah-intensity-4 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 0.66);
+//   }
+//   &.aah-intensity-5 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 0.83);
+//   }
+//   &.aah-intensity-6 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 1);
+//   }
 
-  border-color: #37a5c8;
-}
-// INSTITUTION CONFLICTS
-.team-ui.panel-institution-conflict,
-.position-holder .adjudicator-ui.panel-institution-conflict {
-  @include conflict-bg(#ff0062, #d40051, 0.5);
-  border-color: #ff0062;
-}
-.team-ui.panel-team-adj-conflict,
-.position-holder .adjudicator-ui.panel-team-adj-conflict,
-.team-ui.panel-adj-adj-conflict,
-.position-holder .adjudicator-ui.panel-adj-adj-conflict, {
-  @include conflict-bg(#ff0000, #cf0000, 0.5);
-  border-color: #ff0000;
-}
+//   border-color: #37a5c8;
+// }
+// // INSTITUTION CONFLICTS
+// .team-ui.panel-institution-conflict,
+// .position-holder .adjudicator-ui.panel-institution-conflict {
+//   @include conflict-bg(#ff0062, #d40051, 0.5);
+//   border-color: #ff0062;
+// }
+// .team-ui.panel-team-adj-conflict,
+// .position-holder .adjudicator-ui.panel-team-adj-conflict,
+// .team-ui.panel-adj-adj-conflict,
+// .position-holder .adjudicator-ui.panel-adj-adj-conflict, {
+//   @include conflict-bg(#ff0000, #cf0000, 0.5);
+//   border-color: #ff0000;
+// }
 
-// ALL HOVERS MUST TAKE PRECEDENCE OVER PANELS; ie be last
+// // ALL HOVERS MUST TAKE PRECEDENCE OVER PANELS; ie be last
 
-.history-conflict-key {
-  @include conflict-bg(#37a5c8, #2d86a3, 1);
-}
-.team-ui.hover-team-adj-history,
-.position-holder .adjudicator-ui.hover-team-adj-history,
-.adj-bottom-panel .adjudicator-ui.hover-team-adj-history,
-.position-holder .team-ui.hover-adj-adj-history,
-.adj-bottom-panel .team-ui.hover-adj-adj-history,
-.adjudicator-ui.hover-adj-adj-history,
-.popover-highlight.panel-team-adj-history,
-.popover-highlight.panel-adj-adj-history {
+// .history-conflict-key {
+//   @include conflict-bg(#37a5c8, #2d86a3, 1);
+// }
+// .team-ui.hover-team-adj-history,
+// .position-holder .adjudicator-ui.hover-team-adj-history,
+// .adj-bottom-panel .adjudicator-ui.hover-team-adj-history,
+// .position-holder .team-ui.hover-adj-adj-history,
+// .adj-bottom-panel .team-ui.hover-adj-adj-history,
+// .adjudicator-ui.hover-adj-adj-history,
+// .popover-highlight.panel-team-adj-history,
+// .popover-highlight.panel-adj-adj-history {
 
-  &.tah-intensity-1, &.aah-intensity-1 {
-    @include conflict-bg(#37a5c8, #2d86a3, 0.16);
-    color: #2d86a3;
-  }
-  &.tah-intensity-2, &.aah-intensity-2 {
-    @include conflict-bg(#37a5c8, #2d86a3, 0.32);
-    color: #2d86a3;
-  }
-  &.tah-intensity-3, &.aah-intensity-3 {
-    @include conflict-bg(#37a5c8, #2d86a3, 0.5);
-    color: #2d86a3;
-  }
-  &.tah-intensity-4, &.aah-intensity-4 {
-    @include conflict-bg(#37a5c8, #2d86a3, 0.66);
-  }
-  &.tah-intensity-5, &.aah-intensity-5 {
-    @include conflict-bg(#37a5c8, #2d86a3, 0.83);
-  }
-  &.tah-intensity-6, &.aah-intensity-6 {
-    @include conflict-bg(#37a5c8, #2d86a3, 1);
-  }
+//   &.tah-intensity-1, &.aah-intensity-1 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 0.16);
+//     color: #2d86a3;
+//   }
+//   &.tah-intensity-2, &.aah-intensity-2 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 0.32);
+//     color: #2d86a3;
+//   }
+//   &.tah-intensity-3, &.aah-intensity-3 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 0.5);
+//     color: #2d86a3;
+//   }
+//   &.tah-intensity-4, &.aah-intensity-4 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 0.66);
+//   }
+//   &.tah-intensity-5, &.aah-intensity-5 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 0.83);
+//   }
+//   &.tah-intensity-6, &.aah-intensity-6 {
+//     @include conflict-bg(#37a5c8, #2d86a3, 1);
+//   }
 
-}
-.institution-conflict-key,
-.team-ui.hover-institution-conflict,
-.position-holder .adjudicator-ui.hover-institution-conflict,
-.adj-bottom-panel .adjudicator-ui.hover-institution-conflict,
-.popover-highlight.panel-institution-conflict {
-  @include conflict-bg(#ff0062, #d40051, 1);
-}
-.team-conflict-key,
-.team-ui.hover-team-adj-conflict,
-.position-holder .adjudicator-ui.hover-team-adj-conflict,
-.adj-bottom-panel .adjudicator-ui.hover-team-adj-conflict,
-.team-ui.hover-adj-adj-conflict,
-.position-holder .adjudicator-ui.hover-adj-adj-conflict,
-.adj-bottom-panel .adjudicator-ui.hover-adj-adj-conflict,
-.popover-highlight.panel-team-adj-conflict,
-.popover-highlight.panel-adj-adj-conflict {
-  @include conflict-bg(#ff0000, #cf0000, 1);
-}
+// }
+// .institution-conflict-key,
+// .team-ui.hover-institution-conflict,
+// .position-holder .adjudicator-ui.hover-institution-conflict,
+// .adj-bottom-panel .adjudicator-ui.hover-institution-conflict,
+// .popover-highlight.panel-institution-conflict {
+//   @include conflict-bg(#ff0062, #d40051, 1);
+// }
+// .team-conflict-key,
+// .team-ui.hover-team-adj-conflict,
+// .position-holder .adjudicator-ui.hover-team-adj-conflict,
+// .adj-bottom-panel .adjudicator-ui.hover-team-adj-conflict,
+// .team-ui.hover-adj-adj-conflict,
+// .position-holder .adjudicator-ui.hover-adj-adj-conflict,
+// .adj-bottom-panel .adjudicator-ui.hover-adj-adj-conflict,
+// .popover-highlight.panel-team-adj-conflict,
+// .popover-highlight.panel-adj-adj-conflict {
+//   @include conflict-bg(#ff0000, #cf0000, 1);
+// }
 
 // .btn.hover-institution-conflict,
 // .ember-view.hover-institution-conflict,

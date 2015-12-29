@@ -92,6 +92,7 @@ export default Ember.Mixin.create({
     this.get('adjorTeam').get('institution').set('hoverActive', true);
 
     $(".hover-key").hide();
+    $("#wrap").addClass("hover-display");
 
   },
 
@@ -106,6 +107,7 @@ export default Ember.Mixin.create({
     this.get('adjorTeam').get('institution').set('hoverActive', false);
 
     $(".hover-key").show();
+    $("#wrap").removeClass("hover-display");
 
   },
 
