@@ -350,7 +350,7 @@ function allocatetrainees!(allocations::Vector{PanelAllocation}, roundinfo::Roun
         smallroomallocations = PanelAllocation[]
     end
 
-    allocationsgettingtrainees = allocations;#[bigroomallocations; smallroomallocations; reallysmallroomallocations]
+    allocationsgettingtrainees = [bigroomallocations; smallroomallocations; reallysmallroomallocations]
     println("allocatetrainees: There are $(length(allocations)) rooms, of which $(length(allocationsgettingtrainees)) will be allocated $(length(unallocatedtrainees)) trainees.")
 
     chairplusallocs = filter(alloc -> alloc.chair.ranking == ChairPlus, allocationsgettingtrainees)
