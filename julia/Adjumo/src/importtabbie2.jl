@@ -21,7 +21,7 @@ REGIONS = Dict(
     Oceania       => ["au","nz"],
     NorthAmerica  => ["us","ca"],
     LatinAmerica  => ["tt","mx","pe","jm","pa","co","ve"],
-    Europe        => ["ro","il","de","tr","nl","rs","se","ru","ua","pt","hr","fr","gr","fi","si","at","pl","lv","ee","es","mk"],
+    Europe        => ["ro","il","de","tr","nl","rs","se","ru","ua","pt","hr","fr","gr","fi","si","at","pl","lv","ee","es","mk","hu"],
     IONA          => ["gb","ie"],
 )
 
