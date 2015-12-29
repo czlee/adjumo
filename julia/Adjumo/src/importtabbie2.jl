@@ -17,10 +17,10 @@ REGIONS = Dict(
     SouthEastAsia => ["my","ph","id","sg"],
     MiddleEast    => ["af","qa"],
     SouthAsia     => ["bd","pk","io","in","lk","np"],
-    Africa        => ["za","gh","zw"],
+    Africa        => ["za","gh","zw","bw"],
     Oceania       => ["au","nz"],
     NorthAmerica  => ["us","ca"],
-    LatinAmerica  => ["tt","mx","pe","jm","pa","co"],
+    LatinAmerica  => ["tt","mx","pe","jm","pa","co","ve"],
     Europe        => ["ro","il","de","tr","nl","rs","se","ru","ua","pt","hr","fr","gr","fi","si","at","pl","lv","ee","es","mk"],
     IONA          => ["gb","ie"],
 )
