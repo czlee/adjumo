@@ -40,6 +40,7 @@ argsettings = ArgParseSettings()
         default = ""
     "-R", "--printresult"
         help = "Print result to file, or '-' (a hyphen) for stdout"
+        default = "result.txt"
     "-g", "--gap"
         help = "Tolerance gap"
         arg_type = Float64
