@@ -17,11 +17,11 @@ REGIONS = Dict(
     SouthEastAsia => ["my","ph","id","sg"],
     MiddleEast    => ["af","qa"],
     SouthAsia     => ["bd","pk","io","in","lk","np"],
-    Africa        => ["za","gh","zw"],
+    Africa        => ["za","gh","zw","bw"],
     Oceania       => ["au","nz"],
     NorthAmerica  => ["us","ca"],
-    LatinAmerica  => ["tt","mx","pe","jm","pa","co"],
-    Europe        => ["ro","il","de","tr","nl","rs","se","ru","ua","pt","hr","fr","gr","fi","si","at","pl","lv","ee","es","mk"],
+    LatinAmerica  => ["tt","mx","pe","jm","pa","co","ve"],
+    Europe        => ["ro","il","de","tr","nl","rs","se","ru","ua","pt","hr","fr","gr","fi","si","at","pl","lv","ee","es","mk","hu"],
     IONA          => ["gb","ie"],
 )
 
@@ -257,7 +257,7 @@ function addadjudicatorrelationships!(ri::RoundInfo, d::JsonDict)
     end
 end
 
-BOUNDARIES = [10, 20, 30, 40, 50, 60, 70, 80]
+BOUNDARIES = [5, 15, 25, 35, 45, 55, 65, 75, 85]
 
 function interpretranking(val::Int)
     for (boundary, rank) in zip(BOUNDARIES, instances(Wudc2015AdjudicatorRank))

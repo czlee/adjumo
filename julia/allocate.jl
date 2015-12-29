@@ -113,7 +113,7 @@ directory = args[:jsonoutdir]
 
 exportroundinfo(roundinfo, directory)
 exportallocations(allocations, directory)
-exporttabbiejson(allocations, directory)
+# exporttabbiejson(allocations, directory)
 
 if length(args[:printresult]) > 0
     if args[:printresult] == "-"
