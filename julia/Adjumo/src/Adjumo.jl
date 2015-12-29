@@ -68,7 +68,10 @@ function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{Adjud
         @time append!(blockedadjs, teamadjconflicts) # these are the same to the solver
     end
 
-    @time status, debateindices, panelindices, scores = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; options...)
+    @time status, debateindices, panelindices, scores, duplicateadjindices = solveoptimizationproblem(Σ, Q, lockedadjs, blockedadjs, istrainee; options...)
+
+    duplicateadjs = [roundinfo.adjudicators[i].id for i in duplicateadjindices]
+    println("Duplicate adjudicator IDs after optimization (no trainees): $duplicateadjs")
 
     if status != :Optimal
         warn(STDOUT, "Problem was not solved to optimality. Status was: $status")
@@ -295,7 +298,11 @@ function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
     debates, panels = findn(Xval)
     scores = Σ[Xval]
 
-    return (status, debates, panels, scores)
+    println("solveoptimizationproblem: Checking for duplicate adjudicators:")
+    @time adjoccurrences = ones(1,ndebates) * Xval * Q
+    duplicateadjindices = find(x -> x > 1, adjoccurrences)
+
+    return (status, debates, panels, scores, duplicateadjindices)
 end
 
 function anyconflict(roundinfo::RoundInfo, trainee::Adjudicator, alloc::PanelAllocation)
@@ -313,15 +320,44 @@ function anyconflict(roundinfo::RoundInfo, trainee::Adjudicator, alloc::PanelAll
 end
 
 function allocatetrainees!(allocations::Vector{PanelAllocation}, roundinfo::RoundInfo)
-    allocatedadjudicators = vcat([adjlist(alloc) for alloc in allocations])
+    allocatedadjudicators = vcat([adjlist(alloc) for alloc in allocations]...)
     unallocatedtrainees = filter(adj -> adj.ranking <= TraineePlus && adj ∉ allocatedadjudicators, roundinfo.adjudicators)
     shuffle!(unallocatedtrainees)
     sort!(unallocatedtrainees, by=adj -> adj.ranking, rev=true) # best to worst
-    chairplusallocs = filter(alloc -> alloc.chair.ranking == ChairPlus, allocations)
-    nonchairplusallocs = filter(alloc -> alloc.chair.ranking != ChairPlus, allocations)
+
+    # split by room size, cut rooms then merge
+    bigroomallocations = filter(alloc -> numadjs(alloc) >= 5, allocations)
+    smallroomallocations = filter(alloc -> numadjs(alloc) == 4, allocations)
+    reallysmallroomallocations = filter(alloc -> numadjs(alloc) <= 3, allocations)
+
+    nreallysmall = length(reallysmallroomallocations)
+    println("allocatetrainees: There are $nreallysmall really small rooms (3 people).")
+    if nreallysmall > 20
+        nreallysmalltopick = nreallysmall - 20
+        println("allocatetrainees: ... Choosing $nreallysmalltopick of them.")
+        reallysmallroomallocations = sample(reallysmallroomallocations, nreallysmalltopick; replace=false)
+    else
+        reallysmallroomallocations = PanelAllocation[]
+    end
+
+    nsmall = length(smallroomallocations)
+    println("allocatetrainees: There are $nsmall small rooms (4 people).")
+    if nsmall > 37
+        nsmalltopick = nsmall - 37
+        println("allocatetrainees: ... Choosing $nsmalltopick of them.")
+        smallroomallocations = sample(reallysmallroomallocations, nsmalltopick; replace=false)
+    else
+        smallroomallocations = PanelAllocation[]
+    end
+
+    allocationsgettingtrainees = allocations;#[bigroomallocations; smallroomallocations; reallysmallroomallocations]
+    println("allocatetrainees: There are $(length(allocations)) rooms, of which $(length(allocationsgettingtrainees)) will be allocated $(length(unallocatedtrainees)) trainees.")
+
+    chairplusallocs = filter(alloc -> alloc.chair.ranking == ChairPlus, allocationsgettingtrainees)
+    nonchairplusallocs = filter(alloc -> alloc.chair.ranking != ChairPlus, allocationsgettingtrainees)
     sort!(nonchairplusallocs, by=alloc -> alloc.chair.ranking)
 
-    for alloc in [nonchairplusallocs; nonchairplusallocs; chairplusallocs; chairplusallocs]
+    for alloc in [nonchairplusallocs; nonchairplusallocs; chairplusallocs; chairplusallocs; nonchairplusallocs; chairplusallocs]
         if length(unallocatedtrainees) == 0
             break
         end
@@ -341,6 +377,10 @@ function allocatetrainees!(allocations::Vector{PanelAllocation}, roundinfo::Roun
             push!(alloc.trainees, nexttrainee)
         end
     end
+
+    finalallocatedadjudicators = vcat([adjlist(alloc) for alloc in allocations]...)
+    duplicateadjs = filter(adj -> count(x -> x == adj, finalallocatedadjudicators) > 1, finalallocatedadjudicators)
+    println("allocatetrainees: Duplicate adjudicators (with trainees): $duplicateadjs")
 end
 
 end # module
