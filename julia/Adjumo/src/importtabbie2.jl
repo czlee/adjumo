@@ -257,7 +257,7 @@ function addadjudicatorrelationships!(ri::RoundInfo, d::JsonDict)
     end
 end
 
-BOUNDARIES = [20, 30, 40, 50, 60, 70, 80, 90]
+BOUNDARIES = [10, 20, 30, 40, 50, 60, 70, 80]
 
 function interpretranking(val::Int)
     for (boundary, rank) in zip(BOUNDARIES, instances(Wudc2015AdjudicatorRank))
