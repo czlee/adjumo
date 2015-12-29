@@ -78,7 +78,9 @@ function converttabbiedicttoroundinfo(dict::JsonDict)
     for debate in dict["draw"]
         addadjudicatorsrelationships!(ri, debate["panel"]["adjudicators"])
     end
-
+    for debate in dict["draw"]
+        addinstitutionteamconflicts!(ri, debate["teams"])
+    end
     return ri
 end
 
@@ -252,6 +254,26 @@ function addadjudicatorrelationships!(ri::RoundInfo, d::JsonDict)
             seenteamid = parse(Int, seenteamiddict[seenteamidkey])
             onobjectwithid(ri.teams, seenteamid) do seenteam
                 addteamadjhistory!(ri, seenteam, adj, rd)
+            end
+        end
+    end
+end
+
+function addinstitutionteamconflicts!(ri::RoundInfo, d::JsonDict)
+    for teamdict in values(d)
+        team = getobjectwithid(ri.teams, teamdict["id"])
+        for speakerdict in values(teamdict["speakers"])
+            if !haskey(speakerdict, "societies")
+                println("No societies dict for a spaeaker in $(team.name)")
+                continue
+            end
+            for instid in speakerdict["societies"]
+                if instid == team.institution.id
+                    continue
+                end
+                institution = getobjectwithid(ri.institutions, instid)
+                addinstteamconflict!(ri, institution, team)
+                println("Added institution $(institution.name), team $(team.name)")
             end
         end
     end

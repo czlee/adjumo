@@ -131,6 +131,12 @@ function showconstraints(io::IO, roundinfo::RoundInfo)
         debatestr = join([t.name for t in roundinfo.debates[debateindex].teams], ", ")
         printfmtln(io, "   {} conflicts with {}, so blocked from [{}]", ta.adjudicator.name, ta.team.name, debatestr)
     end
+    for ia in roundinfo.instadjconflicts
+        printfmtln(io, "   {} conflicts with {}", ia.institution.name, ia.adjudicator.name)
+    end
+    for it in roundinfo.instteamconflicts
+        printfmtln(io, "   {} conflicts with {}", it.institution.name, it.team.name)
+    end
     for ad in roundinfo.lockedadjs
         debatestr = join([team.name for team in ad.debate.teams], ", ")
         printfmtln(io, "   {} is locked to debate [{}]", ad.adjudicator.name, debatestr)
