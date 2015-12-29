@@ -23,7 +23,11 @@
   {{/if}}
 </div>
 <div class="debate-panel-strength text-center flex-icon panel-stats">
-  {{ panel.ranking }}
+  {{#if panel.panelQuality }}
+    {{panel.panelQuality }}
+  {{else}}
+    0
+  {{/if}}
 </div>
 <div class="panel-ui">
     {{position-ui adjudicators=adjudicators panel=panel type="chair" isChairPosition=true }}

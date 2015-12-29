@@ -14,6 +14,7 @@ export default DS.Model.extend({
 
   score: DS.attr('number'), // deprecate, move to the JSON post
 
+  panelQuality: DS.attr('number'),
   regionalRepresentation: DS.attr('number'),
   genderRepresentation: DS.attr('number'),
   languageRepresentation: DS.attr('number'),
@@ -88,6 +89,7 @@ export default DS.Model.extend({
 
       request.then(function(response) {
         //console.log('request success');
+        thisPanel.set('panelQuality', response.panelQuality);
         thisPanel.set('regionalRepresentation', response.regionalRepresentation);
         thisPanel.set('genderRepresentation', response.genderRepresentation);
         thisPanel.set('languageRepresentation', response.languageRepresentation);
