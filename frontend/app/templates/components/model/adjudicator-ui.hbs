@@ -21,7 +21,7 @@
             <li class="list-group-item text-center">
                 <strong>{{ adj.name }}</strong> of <strong>{{ adj.institution.name }}</strong>
             </li>
-            <li class="list-group-item btn-toolbar-holder">
+            <li class="list-group-item btn-toolbar-holder permanent-display">
 
                 <div class="btn-toolbar pull-left">
                     <div class="btn-group" role="group">
@@ -63,10 +63,10 @@
                         <div class="btn-group" role="group">
                             {{#each adj.teamAdjConflicts as |conflict| }}
                                 {{#if conflict.panelActive }}
-                                    <div class="popover-highlight btn btn-default btn-sm panel-adj-team-conflict">
+                                    <div class="popover-highlight btn btn-default btn-sm panel-team-adj-conflict">
                                         <span class="glyphicon glyphicon-remove"></span>
                                     </div>
-                                    <div class="popover-highlight btn btn-default btn-sm panel-adj-team-conflict">
+                                    <div class="popover-highlight btn btn-default btn-sm panel-team-adj-conflict">
                                         {{conflict.team.name}}
                                     </div>
                                 {{/if}}
@@ -87,10 +87,10 @@
                         <div class="btn-group" role="group">
                             {{#each adj.adjAdjConflicts as |conflict| }}
                                 {{#if conflict.panelActive }}
-                                    <div class="popover-highlight btn btn-default panel-team-adj-conflict btn-sm">
+                                    <div class="popover-highlight btn btn-default panel-adj-adj-conflict btn-sm">
                                         <span class="glyphicon glyphicon-remove"></span>
                                     </div>
-                                    <div class="popover-highlight btn btn-default panel-team-adj-conflict btn-sm">
+                                    <div class="popover-highlight btn btn-default panel-adj-adj-conflict btn-sm">
                                         {{conflict.adj1.name}} {{conflict.adj2.name}}
                                     </div>
                                 {{/if}}

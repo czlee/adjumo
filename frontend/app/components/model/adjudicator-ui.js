@@ -155,6 +155,7 @@ export default Ember.Component.extend(DraggableMixin, {
       history.set('hoverActive', false);
     });
     this.set('hovering', false);
+    $("#wrap").removeClass("hover-display");
     return this._super(event);
 
   }
