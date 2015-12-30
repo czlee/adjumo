@@ -19,6 +19,7 @@ export default DS.Model.extend(DebateableMixin, {
   // Only adjudicators have conflicts and histories with each other
   adjAdjConflicts: DS.hasMany('adjudicatorpair', {async: true, inverse: null }), // Need inverse null as multiple possible reversals
   adjAdjHistories: DS.hasMany('adjadjhistory', {async: true, inverse: null }), // Need inverse null as multiple possible reversals
+  adjInstitutionConflicts: DS.hasMany('institutionadjudicator', {async: true, inverse: null }),
 
   watchConflicts: Ember.observer('panel', function() {
     Ember.run.once(this, 'calculateConflicts'); // Delays checking to the next run loop; prevents doubling up of checks with set/unsetting
