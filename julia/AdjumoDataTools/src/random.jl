@@ -168,6 +168,7 @@ function randomroundinfo(ndebates::Int, currentround::Int)
         addadjadjconflict!(roundinfo, randpair(adjudicators)...)
         addteamadjconflict!(roundinfo, rand(teams), rand(adjudicators))
         addinstadjconflict!(roundinfo, rand(institutions), rand(adjudicators))
+        addinstteamconflict!(roundinfo, rand(institutions), rand(teams))
     end
 
     for r in 1:currentround-1

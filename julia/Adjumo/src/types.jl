@@ -15,7 +15,8 @@ export Institution, Team, Adjudicator, AdjumoComponentWeights, AdjudicatorPanel,
     chair, panellists, trainees,
     conflicted, hasconflict, roundsseen,
     addinstitution!, addteam!, addadjudicator!, adddebate!,
-    addadjadjconflict!, addteamadjconflict!, addinstadjconflict!, addadjadjhistory!, addteamadjhistory!,
+    addadjadjconflict!, addteamadjconflict!, addinstadjconflict!, addinstteamconflict!,
+    addadjadjhistory!, addteamadjhistory!,
     addlockedadj!, addblockedadj!, addgroupedadjs!,
     lockedadjs, blockedadjs, groupedadjs, aggregategender
 
@@ -129,6 +130,11 @@ end
 immutable InstitutionAdjudicator
     institution::Institution
     adjudicator::Adjudicator
+end
+
+immutable InstitutionTeam
+    institution::Institution
+    team::Team
 end
 
 # ==============================================================================
@@ -255,6 +261,7 @@ type RoundInfo
     adjadjconflicts::Vector{AdjudicatorPair}
     teamadjconflicts::Vector{TeamAdjudicator}
     instadjconflicts::Vector{InstitutionAdjudicator}
+    instteamconflicts::Vector{InstitutionTeam}
 
     # For history, the integer refers to the round of the conflict
     adjadjhistory::Dict{AdjudicatorPair,Vector{Int}}
@@ -270,11 +277,11 @@ type RoundInfo
     currentround::Int
 end
 
-RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],[],Dict(),Dict(),[],[],[],
+RoundInfo(currentround) = RoundInfo([],[],[],[],[],[],[],[],Dict(),Dict(),[],[],[],
         AdjumoComponentWeights(), currentround)
 RoundInfo(institutions, teams, adjudicators, debates, currentround) =
         RoundInfo(institutions, teams, adjudicators, debates,
-        [],[],[],Dict(),Dict(),[],[],[],
+        [],[],[],[],Dict(),Dict(),[],[],[],
         AdjumoComponentWeights(), currentround)
 
 function conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator)
@@ -286,9 +293,21 @@ function conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator)
 end
 
 function conflicted(rinfo::RoundInfo, team::Team, adj::Adjudicator)
-    TeamAdjudicator(team, adj) ∈ rinfo.teamadjconflicts ||
-    team.institution == adj.institution ||
-    InstitutionAdjudicator(team.institution, adj) ∈ rinfo.instadjconflicts
+    if TeamAdjudicator(team, adj) ∈ rinfo.teamadjconflicts ||
+            team.institution == adj.institution ||
+            InstitutionAdjudicator(team.institution, adj) ∈ rinfo.instadjconflicts ||
+            InstitutionTeam(adj.institution, team) ∈ rinfo.instteamconflicts
+        return true
+    end
+
+    # past institutions for both
+    for instteam in filter(it -> it.team == team, rinfo.instteamconflicts)
+        if InstitutionAdjudicator(instteam.institution, adj) ∈ rinfo.instadjconflicts
+            return true
+        end
+    end
+
+    return false
 end
 
 hasconflict(rinfo::RoundInfo, adjs::Vector{Adjudicator}) =
@@ -353,6 +372,13 @@ function addinstadjconflict!(rinfo::RoundInfo, inst::Institution, adj::Adjudicat
     newobj = InstitutionAdjudicator(inst, adj)
     if newobj ∉ rinfo.instadjconflicts
         push!(rinfo.instadjconflicts, newobj)
+    end
+end
+
+function addinstteamconflict!(rinfo::RoundInfo, inst::Institution, team::Team)
+    newobj = InstitutionTeam(inst, team)
+    if newobj ∉ rinfo.instteamconflicts
+        push!(rinfo.instteamconflicts, newobj)
     end
 end
 
