@@ -10,6 +10,38 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Adjumo' });
 });
 
+
+/* GET home page. */
+router.get('/data/adjudicators.json/:id', function(req, res, next) {
+  console.log('Received a GET for a adjudicator that didnt exist returning dummy');
+  var dummyID = req.params.id;
+  var dummyadj = {
+    data:
+      {
+        attributes: {
+          name: "Dummy Adjudicator",
+          gender: 1,
+          ranking: 8,
+          language: 0,
+          regions: [0]
+        },
+        id: dummyID,
+        type: "adjudicator",
+        relationships: {
+          institution: {
+            data: {
+              id: 1840,
+              type: "institution"
+            }
+          }
+        }
+      }
+    };
+  // console.log(dummyadj),
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(dummyadj));
+});
+
 router.post('/allocation-configs/', function(req, res) {
   //console.log('posting an allocation config');
 
