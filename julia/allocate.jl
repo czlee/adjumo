@@ -94,6 +94,21 @@ end
 
 importsupplementaryinfofromjson!(roundinfo, args[:backenddir])
 
+roundinfo.componentweights.quality = 1
+roundinfo.componentweights.regional = 1
+roundinfo.componentweights.language = 1
+roundinfo.componentweights.gender = 5
+roundinfo.componentweights.teamhistory = 25
+roundinfo.componentweights.adjhistory = 25
+roundinfo.componentweights.teamconflict = 1000
+roundinfo.componentweights.adjconflict = 1000
+roundinfo.componentweights.α = 1
+roundinfo.componentweights.qualitydeficit = 1
+roundinfo.componentweights.regionaldeficit = 1
+roundinfo.componentweights.languagedeficit = 1
+roundinfo.componentweights.genderdeficit = 1
+@show roundinfo.componentweights
+
 println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 println("$(length(roundinfo.lockedadjs)) locks, $(length(roundinfo.blockedadjs)) blocks, $(length(roundinfo.groupedadjs)) groups")
 
@@ -116,7 +131,7 @@ directory = args[:jsonoutdir]
 
 exportroundinfo(roundinfo, directory)
 exportallocations(allocations, directory)
-# exporttabbiejson(allocations, directory)
+exporttabbiejson(allocations, directory)
 
 if length(args[:printresult]) > 0
     if args[:printresult] == "-"
