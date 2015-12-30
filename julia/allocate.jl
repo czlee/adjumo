@@ -95,7 +95,7 @@ end
 importsupplementaryinfofromjson!(roundinfo, args[:backenddir])
 
 roundinfo.componentweights.quality = 1
-roundinfo.componentweights.regional = 1
+roundinfo.componentweights.regional = 0.5
 roundinfo.componentweights.language = 1
 roundinfo.componentweights.gender = 5
 roundinfo.componentweights.teamhistory = 25
