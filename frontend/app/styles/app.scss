@@ -422,7 +422,8 @@ td.head-panel {
     border: 3px solid #37a5c8;
   }
 }
-.adjudicator-ui.panel-institution-conflict, .team-ui.panel-institution-conflict, .panel-institution-conflict, {
+.adjudicator-ui.panel-institution-conflict, .team-ui.panel-institution-conflict, .panel-institution-conflict,
+.panel-adj-inst-conflict {
     @include conflict-bg(#ff0062, #d40051, 0.5);
     border: 3px solid #ff0062;
 }
@@ -585,7 +586,7 @@ td.head-panel {
     @include conflict-bg(#37a5c8, #2d86a3, 1);
   }
   // Hover conflicts
-  .hover-institution-conflict {
+  .hover-institution-conflict, .hover-adj-inst-conflict, {
     @include conflict-bg(#ff0062, #d40051, 1);
   }
   .hover-team-adj-conflict,

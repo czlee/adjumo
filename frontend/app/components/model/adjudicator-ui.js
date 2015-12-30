@@ -47,11 +47,11 @@ export default Ember.Component.extend(DraggableMixin, {
   }),
   // ADJ INSTITUTION CONFLICTS
   hasActiveHoverAdjInstConflicts: Ember.computed('adj.adjInstitutionConflicts.content.@each.hoverActive', function() {
-    var activeConflicts = this.get('adj').get('adjAdjConflicts').filterBy('hoverActive', true).get('length');
+    var activeConflicts = this.get('adj').get('adjInstitutionConflicts').filterBy('hoverActive', true).get('length');
     if (activeConflicts > 0) { return true; } else { return false; }
   }),
   hasActivePanelAdjInstConflicts: Ember.computed('adj.adjInstitutionConflicts.content.@each.panelActive', function() {
-    var activeConflicts = this.get('adj').get('adjAdjConflicts').filterBy('panelActive', true).get('length');
+    var activeConflicts = this.get('adj').get('adjInstitutionConflicts').filterBy('panelActive', true).get('length');
     //console.log('observed conflict for ' + this.get('adjorTeam').get('name') + ' has ' + activeConflicts);
     if (activeConflicts > 0) { return true; } else { return false; }
   }),
