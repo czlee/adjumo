@@ -122,28 +122,50 @@ export default DS.Model.extend(DebateableMixin, {
           });
 
           debateAdjs.forEach(function(adjudicator) {
-
-            // ADJ TEAM INSTITUTIONS
+            // ADJ TEAM INSTITUTIONS (matching institutions)
             debateTeams.forEach(function(debateTeam) {  // Loop through all the teams and check if they match
               if (debateTeam.get('institution').get('id') === adjudicator.get('institution').get('id')) {
                 adjudicator.set('hasInstitutionalConflict', true);
                 debateTeam.set('hasInstitutionalConflict', true);
+                history.set('panelActive', true);
                 //console.log('      setting active instituon team conflict ' + adjudicator.get('name') + ' vs ' + debateTeam.get('name'));
               }
             });
-
-            //ADJ ADJ INSTITUTIONS
+            //ADJ ADJ INSTITUTIONS (by matching institutions)
             debateAdjs.forEach(function(debateAdjudicator) {  // Loop through all the teams and check if they match
               if (debateAdjudicator.get('id') !== adjudicator.get('id')) {
                 if (debateAdjudicator.get('institution').get('id') === adjudicator.get('institution').get('id')) {
                   debateAdjudicator.set('hasInstitutionalConflict', true);
                   adjudicator.set('hasInstitutionalConflict', true);
+                  history.set('panelActive', true);
                 //console.log('      setting active instituon adj conflict ' + adjudicator.get('name') + ' vs ' + debateAdjudicator.get('name'));
                 }
               }
             });
-
           });
+
+          //ADJ ADJ INSTITUTIONS (by using the conflict objects)
+          if (thisAdjudicator.get('adjInstitutionConflicts') !== undefined) {
+            thisAdjudicator.get('adjInstitutionConflicts').forEach(function(history) {
+              var hasHistory = false;
+              debateTeams.forEach(function(debateTeam) {  // Loop through all the teams and check if they match
+                if (debateTeam.get('institution').get('id') === history.get('institution').get('id')) {
+                  thisAdjudicator.set('hasInstitutionalConflict', true);
+                  debateTeam.set('hasInstitutionalConflict', true);
+                  hasHistory = true;
+                }
+              });
+              debateAdjs.forEach(function(debateAdjudicator) {  // Loop through all the teams and check if they match
+                if (debateAdjudicator.get('id') !== thisAdjudicator.get('id')) {
+                  if (debateAdjudicator.get('institution').get('id') === history.get('institution').get('id')) {
+                    debateAdjudicator.set('hasInstitutionalConflict', true);
+                    hasHistory = true;
+                  }
+                }
+              });
+              history.set('panelActive', hasHistory);
+            });
+          }
 
         });
       } else {
@@ -160,6 +182,12 @@ export default DS.Model.extend(DebateableMixin, {
         if (thisAdjudicator.get('adjAdjConflicts') !== undefined) {
           thisAdjudicator.get('adjAdjConflicts').forEach(function(conflict) {
             conflict.set('panelActive', false);
+          });
+        }
+        // UNSET ADJ INSTITUTION CONFLICTS
+        if (thisAdjudicator.get('adjInstitutionConflicts') !== undefined) {
+          thisAdjudicator.get('adjInstitutionConflicts').forEach(function(history) {
+            history.set('panelActive', false);
           });
         }
         // UNSET ADJ TEAM HISTORIES

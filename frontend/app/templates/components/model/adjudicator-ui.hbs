@@ -97,6 +97,20 @@
                             {{/each}}
                         </div>
                     {{/if}}
+                    {{#if adj.adjInstitutionConflicts }}
+                        <div class="btn-group" role="group">
+                            {{#each adj.adjInstitutionConflicts as |conflict| }}
+                                {{#if conflict.panelActive }}
+                                    <div class="popover-highlight btn btn-default panel-adj-inst-conflict btn-sm">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </div>
+                                    <div class="popover-highlight btn btn-default panel-adj-inst-conflict btn-sm">
+                                        {{conflict.institution.name}}
+                                    </div>
+                                {{/if}}
+                            {{/each}}
+                        </div>
+                    {{/if}}
                     {{#if adj.teamAdjHistories }}
                         <div class="btn-group" role="group">
                             {{#each adj.teamAdjHistories as |history| }}

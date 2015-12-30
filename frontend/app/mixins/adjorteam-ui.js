@@ -24,7 +24,7 @@ export default Ember.Mixin.create({
 
   ],
 
-  // INSTITUTIONAL CONFLICTS
+  // INSTITUTIONAL CONFLICTS (via matching institutions)
   hasActiveHoverInstitutionConflict: Ember.computed('adjorTeam.institution.hoverActive', function() {
     return this.get('adjorTeam').get('institution').get('hoverActive');
   }),
@@ -32,7 +32,6 @@ export default Ember.Mixin.create({
     //console.log('observed change in hasInstitutionalConflict for ' + this.get('adjorTeam').get('name'));
     return this.get('adjorTeam').get('hasInstitutionalConflict');
   }),
-
   // TEAM ADJ HISTORIES
   hasActiveHoverTeamAdjHistories: Ember.computed('adjorTeam.teamAdjHistories.content.@each.hoverActive', function() {
     var intensities = this.get('adjorTeam').get('teamAdjHistories').filterBy('hoverActive', true);
