@@ -101,36 +101,37 @@ export default DS.Model.extend({
     }
   },
 
-  ranking: function() {
-    var rankings = [];
+  // Redundant when using julia's panel quality ranking. Possibly usefull to keep around though
+  // ranking: function() {
+  //   var rankings = [];
 
-    if (this.get('chair').get('ranking') !== undefined) {
-        rankings.push(this.get('chair').get('ranking'));
-    }
-    if (this.get('panellists').get('length') > 0) {
-        this.get('panellists').forEach(function(adj) {
-          rankings.push(adj.get('ranking'));
-        });
-    }
-    if (this.get('trainees').get('length') > 0) {
-        this.get('trainees').forEach(function(adj) {
-          rankings.push(adj.get('ranking'));
-        });
-    }
+  //   if (this.get('chair').get('ranking') !== undefined) {
+  //       rankings.push(this.get('chair').get('ranking'));
+  //   }
+  //   if (this.get('panellists').get('length') > 0) {
+  //       this.get('panellists').forEach(function(adj) {
+  //         rankings.push(adj.get('ranking'));
+  //       });
+  //   }
+  //   if (this.get('trainees').get('length') > 0) {
+  //       this.get('trainees').forEach(function(adj) {
+  //         rankings.push(adj.get('ranking'));
+  //       });
+  //   }
 
-    var sum = 0;
-    for( var i = 0; i < rankings.length; i++ ){
-      sum += parseInt( rankings[i], 10 ); //don't forget to add the base
-    }
-    var avg = sum/rankings.length;
+  //   var sum = 0;
+  //   for( var i = 0; i < rankings.length; i++ ){
+  //     sum += parseInt( rankings[i], 10 ); //don't forget to add the base
+  //   }
+  //   var avg = sum/rankings.length;
 
-    if (avg) {
-      return Math.round(avg * 10) / 10;
-    } else {
-      return 0;
-    }
+  //   if (avg) {
+  //     return Math.round(avg * 10) / 10;
+  //   } else {
+  //     return 0;
+  //   }
 
-  }.property('chair', 'panellists', 'trainees'),
+  // }.property('chair', 'panellists', 'trainees'),
 
   regionalRepresentationStr: function() {
     return this.get('regionalRepresentation').toFixed(0);
