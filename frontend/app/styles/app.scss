@@ -45,6 +45,8 @@ table {
 .table > tbody > tr > td {
   text-overflow: normal;
   white-space: normal;
+  line-height: 30px;
+  vertical-align: middle; // Vertically center text
 }
 
 // TABLE SIZING
@@ -111,13 +113,8 @@ span[active="false"].glyphicon {
 
 /* Table Cells */
 
-.table > tbody > tr > td {
-  line-height: 30px;
-}
-
 .table > tbody > tr > td.team-ui {
   line-height: 1.1;
-  border: 1px solid #c8c8c8;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -167,7 +164,7 @@ input[type=range]:hover {
   .chair {
     flex-grow: 1;
     flex-basis: 10px;
-    border: 2px solid rgb(200, 200, 200);
+    border: 1px solid rgb(200, 200, 200);
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
   }
@@ -175,14 +172,14 @@ input[type=range]:hover {
   .panellists {
     flex-grow: 2;
     flex-basis: 10px;
-    border-top: 2px solid rgb(200, 200, 200);
-    border-bottom: 2px solid rgb(200, 200, 200);
+    border-top: 1px solid rgb(200, 200, 200);
+    border-bottom: 1px solid rgb(200, 200, 200);
   }
 
   .trainees {
     flex-grow: 1;
     flex-basis: 10px;
-    border: 2px solid rgb(200, 200, 200);
+    border: 1px solid rgb(200, 200, 200);
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
   }
@@ -244,9 +241,9 @@ td.head-panel {
   background: #fff;
   text-align: left;
   padding: 0 0 0 4px;
-  border: 2px solid rgb(200, 200, 200);
+  border: 3px solid rgb(200, 200, 200);
   border-radius: 3px;
-  margin: 2px 2px;
+  margin: 1px 1px;
   display: flex;
   float: left;
 }
@@ -388,11 +385,61 @@ td.head-panel {
 }
 
 
-// HIGHLIGHTS
+
+@mixin conflict-bg($color1, $color2, $opacity) {
+  background-color: #fff;
+  background-image: repeating-linear-gradient(45deg, rgba($color1, $opacity), rgba($color1, $opacity) 3px, rgba($color2, $opacity) 6px, rgba($color2, $opacity) 6px);
+  color: #fff;
+}
+
+// Panel hovers; these get overrwritten by the latter rules (IE upon hover conflicts/histories; and when representation keys are on)
+.panel-team-adj-history, .panel-adj-adj-history {
+  &.tah-intensity-1, &.aah-intensity-1 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.16);
+    color: #2d86a3;
+    border: 3px solid #37a5c8;
+  }
+  &.tah-intensity-2, &.aah-intensity-2 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.32);
+    color: #2d86a3;
+    border: 3px solid #37a5c8;
+  }
+  &.tah-intensity-3, &.aah-intensity-3 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.5);
+    color: #2d86a3;
+    border: 3px solid #37a5c8;
+  }
+  &.tah-intensity-4, &.aah-intensity-4 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.66);
+    border: 3px solid #37a5c8;
+  }
+  &.tah-intensity-5, &.aah-intensity-5 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.83);
+    border: 3px solid #37a5c8;
+  }
+  &.tah-intensity-6, &.aah-intensity-6 {
+    @include conflict-bg(#37a5c8, #2d86a3, 1);
+    border: 3px solid #37a5c8;
+  }
+}
+.adjudicator-ui.panel-institution-conflict, .team-ui.panel-institution-conflict, .panel-institution-conflict, {
+    @include conflict-bg(#ff0062, #d40051, 0.5);
+    border: 3px solid #ff0062;
+}
+.adjudicator-ui.panel-team-adj-conflict, .adjudicator-ui.panel-adj-adj-conflict, .panel-adj-adj-conflict
+.team-ui.panel-team-adj-conflict, .team-ui.panel-adj-adj-conflict, .panel-adj-adj-conflict {
+    @include conflict-bg(#ff0000, #cf0000, 1);
+    border: 3px solid #ff0000;
+}
+// HIGHLIGHTS; takes priority over in panel conflicts and highlights
 
 .gender-display {
   .gender-0 {
     background: #CCC;
+  }
+  .gender-1 {
+    background: #FFF;
+    color: #000;
   }
   .gender-2 {
     background: #7700FF;     /* F */
@@ -400,9 +447,14 @@ td.head-panel {
   }
   .gender-3 {
     background: #D5AFFF;  /* Only show this for teams as for them it represnts M+F*/
+    color: #000;
   }
 }
 .language-display {
+  .language-1 {
+    background: #FFF;
+    color: #000;
+  }
   .language-2 {
     background: #ec91af;
     color: #fff;
@@ -430,21 +482,27 @@ td.head-panel {
   }
   .region-1 {
     background: #57f8fa; /* North Asia */
+    color: #000;
   }
   .region-2 {
     background: #eaff00; /* SE Asia */
+    color: #000;
   }
   .region-4 {
     background: #40ff71; /* S Asia */
+    color: #000;
   }
   .region-8 {
     background: lighten(#c0e7ff, 8%); /* Latin America */
+    color: #000;
   }
   .region-3 {
     background: lighten(#ffc0f1, 8%); /* Middle East */
+    color: #000;
    }
   .region-5 { /* Africa */
     background: lighten(#c7ffc0, 8%);
+    color: #000;
   }
   .multiple-regions {
     background: #fff;
@@ -454,12 +512,15 @@ td.head-panel {
 .ranking-display {
   .ranking-0 {
     background: #bdac7c;     // T-
+    color: #000;
   }
   .ranking-1 {
     background: #e9b771;
+    color: #000;
   }
   .ranking-2 {
     background: #ffbe63;
+    color: #000;
   }
   .ranking-3 {
     background: #ffdf53;
@@ -474,43 +535,65 @@ td.head-panel {
     color: #000;
   }
   .ranking-6 {
-    background: #58ff1f;
+    background: #58ff1f; // C-
+    color: #000;
   }
   .ranking-7 {
-    background: #19e910;
+    background: #19e910; // C
+    color: #000;
   }
   .ranking-8 {
     background: #1aa71c;
+    color: #000;
   }
   .ranking-9 {
     background: #0b880d;  // C+
+    color: #000;
   }
   .ranking-10 {
     background: #007102;  // C+
+    color: #000;
   }
 }
+ // Attached to the wrap element (hover) and to the legends (permanent)
+.hover-display, .permanent-display {
 
-/* Conflicts */
-// Need to be here and to use .ember-view to overrule ranking/gender/etc displays
-
-@mixin conflict-bg($color1, $color2, $opacity) {
-  background-color: #fff;
-  background-image: repeating-linear-gradient(45deg, rgba($color1, $opacity), rgba($color1, $opacity) 3px, rgba($color2, $opacity) 6px, rgba($color2, $opacity) 6px);
-  color: #fff;
-}
-
-.hover-display, .permanent-display { // Attached to the wrap topic
-
+  .team-ui, .adjudicator-ui {
+    background: #fff; // Stop showing other highlights/conflicts when hovering over an adj/team
+    color: #000;
+  }
+  // Hover histories
+  .tah-intensity-1, .aah-intensity-1 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.16);
+    color: #2d86a3;
+  }
+  .tah-intensity-2, .aah-intensity-2 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.32);
+    color: #2d86a3;
+  }
+  .tah-intensity-3, .aah-intensity-3 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.5);
+    color: #2d86a3;
+  }
+  .tah-intensity-4, .aah-intensity-4 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.66);
+  }
+  .tah-intensity-5, .aah-intensity-5 {
+    @include conflict-bg(#37a5c8, #2d86a3, 0.83);
+  }
+  .tah-intensity-6, .aah-intensity-6 {
+    @include conflict-bg(#37a5c8, #2d86a3, 1);
+  }
+  // Hover conflicts
   .hover-institution-conflict {
     @include conflict-bg(#ff0062, #d40051, 1);
   }
-
   .hover-team-adj-conflict,
   .hover-adj-adj-conflict {
     @include conflict-bg(#ff0000, #cf0000, 1);
   }
-
-  .hovering { // The adj being hovered over
+  // The adj being hovered over
+  .hovering {
     background: #000 !important;
     color: #fff !important;
     cursor: move;
@@ -528,27 +611,7 @@ td.head-panel {
 // .position-holder .adjudicator-ui.panel-adj-adj-history {
 //   // @include conflict-bg(#37a5c8, #2d86a3, 0.5);
 
-//   &.aah-intensity-1 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 0.16);
-//     color: #2d86a3;
-//   }
-//   &.aah-intensity-2 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 0.32);
-//     color: #2d86a3;
-//   }
-//   &.aah-intensity-3 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 0.5);
-//     color: #2d86a3;
-//   }
-//   &.aah-intensity-4 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 0.66);
-//   }
-//   &.aah-intensity-5 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 0.83);
-//   }
-//   &.aah-intensity-6 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 1);
-//   }
+
 
 //   border-color: #37a5c8;
 // }
@@ -580,27 +643,7 @@ td.head-panel {
 // .popover-highlight.panel-team-adj-history,
 // .popover-highlight.panel-adj-adj-history {
 
-//   &.tah-intensity-1, &.aah-intensity-1 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 0.16);
-//     color: #2d86a3;
-//   }
-//   &.tah-intensity-2, &.aah-intensity-2 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 0.32);
-//     color: #2d86a3;
-//   }
-//   &.tah-intensity-3, &.aah-intensity-3 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 0.5);
-//     color: #2d86a3;
-//   }
-//   &.tah-intensity-4, &.aah-intensity-4 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 0.66);
-//   }
-//   &.tah-intensity-5, &.aah-intensity-5 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 0.83);
-//   }
-//   &.tah-intensity-6, &.aah-intensity-6 {
-//     @include conflict-bg(#37a5c8, #2d86a3, 1);
-//   }
+
 
 // }
 // .institution-conflict-key,
