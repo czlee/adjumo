@@ -54,7 +54,9 @@ export default DS.Model.extend({
       }
 
       if (thisPanel.get('chair').get('content') !== null ) {
-        debateData.adjudicators.push(createAdjJSON(thisPanel.get('chair')));
+        if (thisPanel.get('chair').get('name') !== undefined) {
+          debateData.adjudicators.push(createAdjJSON(thisPanel.get('chair')));
+        }
       }
       if (thisPanel.get('panellists').get('length') > 0 ) {
         this.get('panellists').forEach(function(adj) {
