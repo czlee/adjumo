@@ -50,14 +50,18 @@ export default Ember.Component.extend(DraggableMixin, {
   isAdj: true,
 
   region: function() {
-    var regions = "";
-    this.get('adj').get('regions').forEach(function(region) {
-      regions += "region-" + region + " ";
-    });
-    if (this.get('adj').get('regions').length > 1) {
-      regions += "multiple-regions";
+
+    if (this.get('adj').get('regions') !== undefined) {
+      var regions = "";
+      this.get('adj').get('regions').forEach(function(region) {
+        regions += "region-" + region + " ";
+      });
+      if (this.get('adj').get('regions').length > 1) {
+        regions += "multiple-regions";
+      }
+      return regions;
     }
-    return regions;
+
   }.property('adj'),
 
   ranking: function() {

@@ -58,7 +58,9 @@ export default DS.Model.extend({
       }
       if (thisPanel.get('panellists').get('length') > 0 ) {
         this.get('panellists').forEach(function(adj) {
-          debateData.adjudicators.push(createAdjJSON(adj));
+          if (adj.get('name') !== undefined) {
+            debateData.adjudicators.push(createAdjJSON(adj));
+          }
         });
       }
       // Don't include trainees in this calculation.

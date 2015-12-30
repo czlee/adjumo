@@ -185,11 +185,15 @@ export default DS.Model.extend(DebateableMixin, {
 
 
   short_name: Ember.computed('name', function() {
-    var words = this.get('name').split(" ");
-    if (words[1] !== undefined) {
-      return words[0] + " " + words[1][0]; // If they only have a first name in the system
+    if (this.get('name') !== undefined) {
+      var words = this.get('name').split(" ");
+      if (words[1] !== undefined) {
+        return words[0] + " " + words[1][0]; // If they only have a first name in the system
+      } else {
+        return words[0];
+      }
     } else {
-      return words[0];
+      return "undefined";
     }
 
   }),
