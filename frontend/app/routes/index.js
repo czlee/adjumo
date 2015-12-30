@@ -35,6 +35,7 @@ export default Ember.Route.extend({
           allocations:            this.store.findAll('allocation-iteration'), // Permanent file; is blank
           groups:                 this.store.findAll('group'), // Permanent file; has 2 blanks
 
+          instadjconflicts:       this.store.findAll('institutionadjudicator'),
           teamadjconflicts:       this.store.findAll('teamadjudicator'),
           adjadjconflicts:        this.store.findAll('adjudicatorpair'),
 
