@@ -6,10 +6,6 @@ using JsonAPI
 
 argsettings = ArgParseSettings()
 @add_arg_table argsettings begin
-    "-n", "--ndebates"
-        help = "Number of debates in round (for random datasets only)"
-        arg_type = Int
-        default = 5
     "-r", "--currentround"
         help = "Current round number"
         arg_type = Int
@@ -18,6 +14,18 @@ argsettings = ArgParseSettings()
         help = "Solver to use ('gurobi', 'cbc' or 'glpk')"
         default = "default"
         range_tester = x -> x ∈ ["default", "gurobi", "cbc", "glpk"] || startswith(x, "gurobicloud/")
+    "-n", "--ndebates"
+        help = "Number of debates in round (for random datasets only)"
+        arg_type = Int
+        default = 5
+    "--tabbie1"
+        help = "Import a Tabbie1 database: <username> <password> <database>"
+        metavar = "ARG"
+        nargs = 3
+    "--tabbie2"
+        help = "Import a Tabbie2 export file"
+        metavar = "JSONFILE"
+        default = ""
     "--enforceteamconflicts", "--enfteam"
         help = "Enforce team-adjudicator conflicts (as opposed to just penalize)"
         action = :store_true
@@ -30,14 +38,6 @@ argsettings = ArgParseSettings()
     "--backenddir"
         help = "Where to find inputs from the web-based UI (not the tab data)"
         default = joinpath(Base.source_dir(), "../backend/data/")
-    "--tabbie1"
-        help = "Import a Tabbie1 database: <username> <password> <database>"
-        metavar = "ARG"
-        nargs = 3
-    "--tabbie2"
-        help = "Import a Tabbie2 export file"
-        metavar = "JSONFILE"
-        default = ""
     "-R", "--printresult"
         help = "Print result to file, or '-' (a hyphen) for stdout"
         default = "result.txt"
