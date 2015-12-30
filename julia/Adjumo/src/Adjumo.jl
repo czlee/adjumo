@@ -323,6 +323,13 @@ end
 function allocatetrainees!(allocations::Vector{PanelAllocation}, roundinfo::RoundInfo)
     allocatedadjudicators = vcat([adjlist(alloc) for alloc in allocations]...)
     unallocatedtrainees = filter(adj -> adj.ranking <= TraineePlus && adj ∉ allocatedadjudicators, roundinfo.adjudicators)
+
+    unallocatedpanellists = filter(adj -> adj.ranking >= PanellistMinus && adj ∉ allocatedadjudicators, roundinfo.adjudicators)
+    for p in unallocatedpanellists
+        @show p
+        println("Unac: $(p.name)")
+    end
+
     shuffle!(unallocatedtrainees)
     sort!(unallocatedtrainees, by=adj -> adj.ranking, rev=true) # best to worst
 
