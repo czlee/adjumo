@@ -1,6 +1,6 @@
-OPEN_DEBATE_WEIGHT_MAP = Float64[3.8, 4.0, 4.2, 4.4, 4.6, 4.8, 5.0, 5.0, 5.0, 5.0]
-ESL_DEBATE_WEIGHT_MAP = Float64[4.2, 4.4, 4.6, 4.8, 5.0, 5.0, 5.0, 5.0, 4.8, 4.6]
-EFL_DEBATE_WEIGHT_MAP = Float64[4.4, 4.6, 4.8, 5.0, 5.0, 5.0, 5.0, 4.8, 4.6, 4.4]
+OPEN_DEBATE_WEIGHT_MAP = Float64[3.4, 3.6, 3.8, 4.0, 4.2, 4.4, 4.6, 4.8, 5.0, 5.0, 5.0, 5.0, 4.8]
+ESL_DEBATE_WEIGHT_MAP = Float64[3.8, 4.0, 4.2, 4.4, 4.6, 4.8, 5.0, 5.0, 5.0, 5.0, 4.8, 4.6, 4.4]
+EFL_DEBATE_WEIGHT_MAP = Float64[4.0, 4.2, 4.4, 4.6, 4.8, 5.0, 5.0, 5.0, 5.0, 4.8, 4.6, 4.4, 4.2]
 
 export computedebateweights!
 
