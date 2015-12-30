@@ -51,13 +51,11 @@ table {
 
 // TABLE SIZING
 
+.head-points,
 .head-weight,
 .head-importance,
 .head-deficit {
   width: 35px;
-}
-.head-points {
-  width: 42px; // slightly large as has decimals
 }
 
 .head-importance-edit {
