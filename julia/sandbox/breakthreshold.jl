@@ -39,18 +39,21 @@ function result_pulltostraights(r, teamspoints)
             result[index] = p
             placeallocated[index+1] = true
         else
+        end
     end
     for (i, allocated) in enumerate(placeallocated)
         index = findfirst(result, index)
-
+    end
 
 
     for (i, tp) in enumerate(teamspoints)
         if straights - teamspoints in [0,1,2,3]
+        end
+    end
 end
 
 resultfuncs = [
-    result_pulluplose, result_pullupwin, result_1032, result_pulltostraights
+    result_pulluplose, result_pullupwin, result_1032#, result_pulltostraights
     # result_shuffle, result_shuffle, result_shuffle
 ]
 

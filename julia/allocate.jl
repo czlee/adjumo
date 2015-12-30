@@ -13,7 +13,7 @@ argsettings = ArgParseSettings()
     "-r", "--currentround"
         help = "Current round number"
         arg_type = Int
-        default = 5
+        required = true
     "-S", "--solver"
         help = "Solver to use ('gurobi', 'cbc' or 'glpk')"
         default = "default"
@@ -108,6 +108,9 @@ roundinfo.componentweights.regionaldeficit = 1
 roundinfo.componentweights.languagedeficit = 1
 roundinfo.componentweights.genderdeficit = 1
 @show roundinfo.componentweights
+
+roundinfo.currentround = currentround
+@show roundinfo.currentround
 
 println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 println("$(length(roundinfo.lockedadjs)) locks, $(length(roundinfo.blockedadjs)) blocks, $(length(roundinfo.groupedadjs)) groups")
