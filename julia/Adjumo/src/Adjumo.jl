@@ -31,6 +31,7 @@ include("importtabbie2.jl")
 include("exporttabbie2.jl")
 include("deficit.jl")
 include("frontendinterface.jl")
+include("debateweights.jl")
 
 export allocateadjudicators, generatefeasiblepanels
 

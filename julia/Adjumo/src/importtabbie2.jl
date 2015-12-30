@@ -279,7 +279,7 @@ function addinstitutionteamconflicts!(ri::RoundInfo, d::JsonDict)
     end
 end
 
-BOUNDARIES = [5, 15, 25, 35, 45, 55, 65, 75, 85]
+BOUNDARIES = [15, 25, 35, 45, 55, 65, 75, 85, 95]
 
 function interpretranking(val::Int)
     for (boundary, rank) in zip(BOUNDARIES, instances(Wudc2015AdjudicatorRank))
@@ -287,6 +287,7 @@ function interpretranking(val::Int)
             return rank
         end
     end
+    warn(STDOUT, "Uninterpretable rank, making ChairPlus: $val")
     return ChairPlus
 end
 
