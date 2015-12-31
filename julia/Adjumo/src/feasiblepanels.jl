@@ -84,11 +84,11 @@ function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Ve
     # round 7
     testeesids = [2411, 2503, 2588, 2449, 2593, 2787, 2825, 2533, 2786, 2520, 2826, 2552, 2499, 2509, 2595, 2472, 2494, 2544, 2827, 2508, 2594, 2470, 2587, 2493, 2536, 2404, 2504, 2487, 2534, 2796]
 
-    # round 8
-    testeesids = [2650, 2644, 2510, 2584, 2632, 2669, 2582, 2577, 2690, 2697, 2641, 2702, 2730, 2704, 2716]
-
     # round 9
     testeesids = [2758, 2764, 2766, 2769, 2770, 2777, 2785, 2801, 2803, 2809, 2815, 2820, 2836, 2845, 2855]
+
+    # round 8
+    testeesids = [2650, 2644, 2510, 2584, 2632, 2669, 2582, 2577, 2690, 2697, 2641, 2702, 2730, 2704, 2716]
 
     testees = Adjudicator[getobjectwithid(roundinfo.adjudicators, id) for id in testeesids]
     filter!(adj -> adj.ranking != ChairPlus, testees)
