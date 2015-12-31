@@ -287,7 +287,7 @@ RoundInfo(institutions, teams, adjudicators, debates, currentround) =
 function conflicted(rinfo::RoundInfo, adj1::Adjudicator, adj2::Adjudicator)
     AdjudicatorPair(adj1, adj2) ∈ rinfo.adjadjconflicts ||
     AdjudicatorPair(adj2, adj1) ∈ rinfo.adjadjconflicts ||
-    (adj1.institution == adj2.institution && adj1.institution.id != 1840) || # Independent
+    (adj1.institution == adj2.institution) || # && adj1.institution.id != 1840) || # Independent
     InstitutionAdjudicator(adj1.institution, adj2) ∈ rinfo.instadjconflicts ||
     InstitutionAdjudicator(adj2.institution, adj1) ∈ rinfo.instadjconflicts
 end
