@@ -19,18 +19,21 @@ EFL_DEBATE_WEIGHT_MAPS = Dict{Int,Vector{Float64}}(
 export computedebateweights!
 
 function computedebateweights!(roundinfo::RoundInfo)
+    open_map = OPEN_DEBATE_WEIGHT_MAPS[roundinfo.currentround]
+    esl_map = ESL_DEBATE_WEIGHT_MAPS[roundinfo.currentround]
+    efl_map = EFL_DEBATE_WEIGHT_MAPS[roundinfo.currentround]
     for debate in roundinfo.debates
         weight = 0.0
         for team in debate.teams
-            weight = OPEN_DEBATE_WEIGHT_MAPS[roundinfo.currentround][team.points+1]
+            weight = open_map[team.points+1]
             if team.language == EnglishSecond || team.language == EnglishForeign
-                eslweight = ESL_DEBATE_WEIGHT_MAPS[roundinfo.currentround][team.points+1]
+                eslweight = esl_map[team.points+1]
                 if eslweight > weight
                     weight = eslweight
                 end
             end
             if team.language == EnglishForeign
-                eflweight = EFL_DEBATE_WEIGHT_MAPS[roundinfo.currentround][team.points+1]
+                eflweight = efl_map[team.points+1]
                 if eflweight > weight
                     weight = eflweight
                 end

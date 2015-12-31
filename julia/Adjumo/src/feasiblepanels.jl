@@ -81,6 +81,14 @@ end
 
 function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Vector{Tuple{Int,Float64}}; options...)
 
+    testeesids = []
+    testees = Adjudicator[getobjectwithid(roundinfo.adjudicators, id) for id in testeesids]
+    println("Testees:")
+    for testee in testees
+        println(" $(testee.name), $(testee.institution.name), $(testee.ranking)")
+    end
+    filter!(adj -> adj.ranking != ChairPlus, testees)
+
     nfeasiblepanels = get(Dict(options), :nfeasiblepanels, -1)
     if nfeasiblepanels == -1
         nfeasiblepanels = 10000
@@ -105,11 +113,29 @@ function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Ve
                 if !feasible(roundinfo, adjs)
                     continue
                 end
+                remove = false
+                for adj in adjs
+                    if adj in testees
+                        remove = true
+                    end
+                end
+                if remove
+                    continue
+                end
                 push!(runpanels, makepanelwithrandomchair(adjs))
             end
             for j in 1:panelsize-1
                 adjs = [shuffledadjs[end-panelsize+1+j:end]; shuffledadjs[1:j]]
                 if !feasible(roundinfo, adjs)
+                    continue
+                end
+                remove = false
+                for adj in adjs
+                    if adj in testees
+                        remove = true
+                    end
+                end
+                if remove
                     continue
                 end
                 push!(runpanels, makepanelwithrandomchair(adjs))
@@ -119,6 +145,29 @@ function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Ve
         println("generatefeasiblepanelspermutations: There are $(length(panels)) panels of size $panelsize")
         append!(allpanels, panels)
     end
+
+    # panellistjudges = filter(adj -> adj.ranking >= PanellistMinus, roundinfo.adjudicators)
+    # for group in roundinfo.groupedadjs
+    #     println("Special panels for")
+    #     @show group
+    #     runpanels = AdjudicatorPanel[]
+    #     for i = 1:200
+    #         panellist = rand(panellistjudges)
+    #         if panellist in group
+    #             continue
+    #         end
+    #         adjs = [group; panellist]
+    #         if conflicted(roundinfo, adjs[1], adjs[2])
+    #             println("Conflict!")
+    #             break
+    #         end
+    #         if feasible(roundinfo, adjs)
+    #             push!(runpanels, makepanelwithrandomchair(adjs))
+    #         end
+    #     end
+    #     @show length(runpanels)
+    #     append!(allpanels, runpanels)
+    # end
 
     return allpanels
 end
@@ -161,6 +210,23 @@ function generatefeasiblepanelsexhaustive(roundinfo::RoundInfo, panelsizes::Vect
     end
 
     return allpanels
+end
+
+function generatefeasiblepanelstesters(roundinfo::RoundInfo, panelsizes::Vector{Tuple{Int,Float64}}; options...)
+
+    testerids = []
+    testeesids = Dict{Int,Vector{Int}}(
+        7 => [],
+        8 => [],
+        9 => [],
+    )
+    testgroups = []
+    panelids = []
+    for testerid in testerids, testeeid in testeesids
+
+    end
+
+
 end
 
 FEASIBLE_PANEL_GENERATION_METHODS = Dict(
