@@ -101,7 +101,7 @@ function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Ve
     if nfeasiblepanels == -1
         nfeasiblepanels = 10000
     end
-    accreditedadjs = filter(adj -> adj.ranking >= TraineePlus, roundinfo.adjudicators)
+    accreditedadjs = filter(adj -> adj.ranking >= PanellistMinus, roundinfo.adjudicators)
     nadjs = length(accreditedadjs)
 
     allpanels = AdjudicatorPanel[]
@@ -137,15 +137,15 @@ function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Ve
                 if !feasible(roundinfo, adjs)
                     continue
                 end
-                # remove = false
-                # for adj in adjs
-                #     if adj in testees
-                #         remove = true
-                #     end
-                # end
-                # if remove
-                #     continue
-                # end
+                remove = false
+                for adj in adjs
+                    if adj in testees
+                        remove = true
+                    end
+                end
+                if remove
+                    continue
+                end
                 push!(runpanels, makepanelwithrandomchair(adjs))
             end
             append!(panels, runpanels)
