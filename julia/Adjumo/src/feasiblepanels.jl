@@ -81,13 +81,13 @@ end
 
 function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Vector{Tuple{Int,Float64}}; options...)
 
-    testeesids = []
+    testeesids = [2411, 2503, 2588, 2449, 2593, 2787, 2825, 2533, 2786, 2520, 2826, 2552, 2499, 2509, 2595, 2472, 2494, 2544, 2827, 2508, 2594, 2470, 2587, 2493, 2536, 2404, 2504, 2487, 2534, 2796]
     testees = Adjudicator[getobjectwithid(roundinfo.adjudicators, id) for id in testeesids]
+    filter!(adj -> adj.ranking != ChairPlus, testees)
     println("Testees:")
     for testee in testees
         println(" $(testee.name), $(testee.institution.name), $(testee.ranking)")
     end
-    filter!(adj -> adj.ranking != ChairPlus, testees)
 
     nfeasiblepanels = get(Dict(options), :nfeasiblepanels, -1)
     if nfeasiblepanels == -1
