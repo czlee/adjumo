@@ -81,27 +81,27 @@ end
 
 function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Vector{Tuple{Int,Float64}}; options...)
 
-    # round 7
-    testeesids = [2411, 2503, 2588, 2449, 2593, 2787, 2825, 2533, 2786, 2520, 2826, 2552, 2499, 2509, 2595, 2472, 2494, 2544, 2827, 2508, 2594, 2470, 2587, 2493, 2536, 2404, 2504, 2487, 2534, 2796]
+    # # round 7
+    # testeesids = [2411, 2503, 2588, 2449, 2593, 2787, 2825, 2533, 2786, 2520, 2826, 2552, 2499, 2509, 2595, 2472, 2494, 2544, 2827, 2508, 2594, 2470, 2587, 2493, 2536, 2404, 2504, 2487, 2534, 2796]
 
-    # round 9
-    testeesids = [2758, 2764, 2766, 2769, 2770, 2777, 2785, 2801, 2803, 2809, 2815, 2820, 2836, 2845, 2855]
+    # # round 9
+    # testeesids = [2758, 2764, 2766, 2769, 2770, 2777, 2785, 2801, 2803, 2809, 2815, 2820, 2836, 2845, 2855]
 
-    # round 8
-    testeesids = [2650, 2644, 2510, 2584, 2632, 2669, 2582, 2577, 2690, 2697, 2641, 2702, 2730, 2704, 2716]
+    # # round 8
+    # testeesids = [2650, 2644, 2510, 2584, 2632, 2669, 2582, 2577, 2690, 2697, 2641, 2702, 2730, 2704, 2716]
 
-    testees = Adjudicator[getobjectwithid(roundinfo.adjudicators, id) for id in testeesids]
-    filter!(adj -> adj.ranking != ChairPlus, testees)
-    println("Testees:")
-    for testee in testees
-        println(" $(testee.name), $(testee.institution.name), $(testee.ranking)")
-    end
+    # testees = Adjudicator[getobjectwithid(roundinfo.adjudicators, id) for id in testeesids]
+    # filter!(adj -> adj.ranking != ChairPlus, testees)
+    # println("Testees:")
+    # for testee in testees
+    #     println(" $(testee.name), $(testee.institution.name), $(testee.ranking)")
+    # end
 
     nfeasiblepanels = get(Dict(options), :nfeasiblepanels, -1)
     if nfeasiblepanels == -1
         nfeasiblepanels = 10000
     end
-    accreditedadjs = filter(adj -> adj.ranking >= PanellistMinus, roundinfo.adjudicators)
+    accreditedadjs = filter(adj -> adj.ranking >= TraineePlus, roundinfo.adjudicators)
     nadjs = length(accreditedadjs)
 
     allpanels = AdjudicatorPanel[]
@@ -118,34 +118,34 @@ function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Ve
             sizehint!(panels, nadjs)
             for j in 1:nadjs-panelsize+1
                 adjs = shuffledadjs[j:j+panelsize-1]
-                if !feasible(roundinfo, adjs)
-                    continue
-                end
-                remove = false
-                for adj in adjs
-                    if adj in testees
-                        remove = true
-                    end
-                end
-                if remove
-                    continue
-                end
+                # if !feasible(roundinfo, adjs)
+                    # continue
+                # end
+                # remove = false
+                # for adj in adjs
+                #     if adj in testees
+                #         remove = true
+                #     end
+                # end
+                # if remove
+                #     continue
+                # end
                 push!(runpanels, makepanelwithrandomchair(adjs))
             end
             for j in 1:panelsize-1
                 adjs = [shuffledadjs[end-panelsize+1+j:end]; shuffledadjs[1:j]]
-                if !feasible(roundinfo, adjs)
-                    continue
-                end
-                remove = false
-                for adj in adjs
-                    if adj in testees
-                        remove = true
-                    end
-                end
-                if remove
-                    continue
-                end
+                # if !feasible(roundinfo, adjs)
+                    # continue
+                # end
+                # remove = false
+                # for adj in adjs
+                #     if adj in testees
+                #         remove = true
+                #     end
+                # end
+                # if remove
+                #     continue
+                # end
                 push!(runpanels, makepanelwithrandomchair(adjs))
             end
             append!(panels, runpanels)

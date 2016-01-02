@@ -29,9 +29,10 @@ feasible panels. The element `Σ[d,p]` is the score of allocating debate of inde
 function scorematrix(roundinfo::RoundInfo, feasiblepanels::Vector{AdjudicatorPanel})
     componentweights = roundinfo.componentweights
     debateweights = getdebateweights(roundinfo)
-    @time Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
+    Σ = 100 * ones(numdebates(roundinfo), length(feasiblepanels))
+    # @time Σ  = componentweights.quality      * matrixfromvector(qualityvector, feasiblepanels, roundinfo)
     @time Σ += componentweights.regional     * regionalrepresentationmatrix(feasiblepanels, roundinfo)
-    @time Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
+    # @time Σ += componentweights.language     * languagerepresentationmatrix(feasiblepanels, roundinfo)
     @time Σ += componentweights.gender       * genderrepresentationmatrix(feasiblepanels, roundinfo)
     @time Σ += componentweights.teamhistory  * teamadjhistorymatrix(feasiblepanels, roundinfo)
     @time Σ += componentweights.adjhistory   * matrixfromvector(adjadjhistoryvector, feasiblepanels, roundinfo)
@@ -53,9 +54,10 @@ for weighted α-fairness.
 """
 function score(roundinfo::RoundInfo, debate::Debate, panel::AdjudicatorPanel)
     componentweights = roundinfo.componentweights
-    σ  = componentweights.quality      * panelquality(panel)
+    σ = 100
+    # σ  = componentweights.quality      * panelquality(panel)
     σ += componentweights.regional     * panelregionalrepresentationscore(debate, panel)
-    σ += componentweights.language     * panellanguagerepresentationscore(debate, panel)
+    # σ += componentweights.language     * panellanguagerepresentationscore(debate, panel)
     σ += componentweights.gender       * panelgenderrepresentationscore(debate, panel)
     σ += componentweights.teamhistory  * teamadjhistoryscore(roundinfo, debate, panel)
     σ += componentweights.adjhistory   * adjadjhistoryscore(roundinfo, panel)

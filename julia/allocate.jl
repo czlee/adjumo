@@ -92,7 +92,7 @@ if args[:randomizeblanks]
     randomizeblanks!(roundinfo)
 end
 
-importsupplementaryinfofromjson!(roundinfo, args[:backenddir])
+# importsupplementaryinfofromjson!(roundinfo, args[:backenddir])
 
 roundinfo.componentweights.quality = 5
 roundinfo.componentweights.regional = 0.5
@@ -115,8 +115,8 @@ roundinfo.currentround = currentround
 println("There are $(numdebates(roundinfo)) debates and $(numadjs(roundinfo)) adjudicators.")
 println("$(length(roundinfo.lockedadjs)) locks, $(length(roundinfo.blockedadjs)) blocks, $(length(roundinfo.groupedadjs)) groups")
 
-println("debate weights:")
-@time computedebateweights!(roundinfo)
+# println("debate weights:")
+# @time computedebateweights!(roundinfo)
 
 if length(args[:feasiblepanelsfile]) > 0
     f = open(args[:feasiblepanelsfile])

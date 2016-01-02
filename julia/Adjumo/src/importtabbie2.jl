@@ -126,7 +126,8 @@ end
 function addinstitution!(ri::RoundInfo, d::JsonDict)
     id = d["id"]
     if hasobjectwithid(ri.institutions, id)
-        error("Duplicate institution ID: $id")
+        warn("Ignoring duplicate institution ID: $id")
+        return
     end
     name = d["fullname"]
     code = d["abr"]
