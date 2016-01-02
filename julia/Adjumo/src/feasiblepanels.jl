@@ -81,6 +81,8 @@ end
 
 function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Vector{Tuple{Int,Float64}}; options...)
 
+
+    # HACK: Hard-code testee ids because it's easier and we didn't have much time
     # # round 7
     # testeesids = [2411, 2503, 2588, 2449, 2593, 2787, 2825, 2533, 2786, 2520, 2826, 2552, 2499, 2509, 2595, 2472, 2494, 2544, 2827, 2508, 2594, 2470, 2587, 2493, 2536, 2404, 2504, 2487, 2534, 2796]
 
@@ -118,9 +120,12 @@ function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Ve
             sizehint!(panels, nadjs)
             for j in 1:nadjs-panelsize+1
                 adjs = shuffledadjs[j:j+panelsize-1]
+                # HACK: Commented out for outrounds (first set)
                 # if !feasible(roundinfo, adjs)
                     # continue
                 # end
+                #
+                # HACK: Additional part to prevent testees from being allocated
                 # remove = false
                 # for adj in adjs
                 #     if adj in testees
@@ -134,9 +139,12 @@ function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Ve
             end
             for j in 1:panelsize-1
                 adjs = [shuffledadjs[end-panelsize+1+j:end]; shuffledadjs[1:j]]
+                # HACK: Commented out for outrounds (first set)
                 # if !feasible(roundinfo, adjs)
                     # continue
                 # end
+                #
+                # HACK: Additional part to prevent testees from being allocated
                 # remove = false
                 # for adj in adjs
                 #     if adj in testees
@@ -154,6 +162,9 @@ function generatefeasiblepanelspermutations(roundinfo::RoundInfo, panelsizes::Ve
         append!(allpanels, panels)
     end
 
+    # HACK: This grouped adjudicators idea didn't work, it seemed to make the
+    # problem infeasible. Not sure why.
+    #
     # panellistjudges = filter(adj -> adj.ranking >= PanellistMinus, roundinfo.adjudicators)
     # for group in roundinfo.groupedadjs
     #     println("Special panels for")
@@ -220,19 +231,8 @@ function generatefeasiblepanelsexhaustive(roundinfo::RoundInfo, panelsizes::Vect
     return allpanels
 end
 
-function generatefeasiblepanelstesters(roundinfo::RoundInfo, panelsizes::Vector{Tuple{Int,Float64}}; options...)
+function generatefeasiblepanelsoutrounds(roundinfo::RoundInfo, panelsizes::Vector{Tuple{Int,Float64}}; options...)
 
-    testerids = []
-    testeesids = Dict{Int,Vector{Int}}(
-        7 => [],
-        8 => [],
-        9 => [],
-    )
-    testgroups = []
-    panelids = []
-    for testerid in testerids, testeeid in testeesids
-
-    end
 
 
 end
@@ -241,5 +241,6 @@ FEASIBLE_PANEL_GENERATION_METHODS = Dict(
     :exhaustive => generatefeasiblepanelsexhaustive,
     :random => generatefeasiblepanelsrandom,
     :permutations => generatefeasiblepanelspermutations,
+    :outrounds => generatefeasiblepanelsoutrounds,
 )
 
