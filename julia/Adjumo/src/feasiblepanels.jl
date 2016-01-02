@@ -242,9 +242,8 @@ function generatefeasiblepanelsoutrounds(roundinfo::RoundInfo, panelsizes::Vecto
         (3, 4, 0),
     ]
 
-    activeadjids = []
-    # activeadjudicators = filter(adj -> adj.id ∈ activeadjids, roundinfo.adjudicators)
-    activeadjudicators = roundinfo.adjudicators
+    activeadjids = [2598, 2419, 2488, 2587, 2796, 2826, 2494, 2827, 2795, 2404, 2787, 2504, 2594, 2512, 2788, 2519, 2592, 2531, 2591, 2702, 2747, 2443, 2537, 2517, 2508, 2509, 2687, 2505, 2523, 2602, 2526, 2601, 2759, 2553, 2540, 2734, 2542, 2737, 2527, 2521, 2586, 2545, 2662, 2535, 2502, 2472, 2533, 2582, 2506, 2417, 2766, 2458, 2617, 2435]
+    activeadjudicators = filter(adj -> adj.id ∈ activeadjids, roundinfo.adjudicators)
     plusadjs  = filter(adj -> adj.ranking == ChairPlus, activeadjudicators)
     zeroadjs  = filter(adj -> adj.ranking == Chair, activeadjudicators)
     minusadjs = filter(adj -> adj.ranking == ChairMinus || adj.ranking == PanellistPlus, activeadjudicators)
