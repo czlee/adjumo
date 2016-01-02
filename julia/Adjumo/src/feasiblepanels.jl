@@ -242,12 +242,12 @@ function generatefeasiblepanelsoutrounds(roundinfo::RoundInfo, panelsizes::Vecto
         (3, 4, 0),
     ]
 
-    # activeadjids = []
+    activeadjids = []
     # activeadjudicators = filter(adj -> adj.id ∈ activeadjids, roundinfo.adjudicators)
     activeadjudicators = roundinfo.adjudicators
     plusadjs  = filter(adj -> adj.ranking == ChairPlus, activeadjudicators)
     zeroadjs  = filter(adj -> adj.ranking == Chair, activeadjudicators)
-    minusadjs = filter(adj -> adj.ranking == ChairMinus, activeadjudicators)
+    minusadjs = filter(adj -> adj.ranking == ChairMinus || adj.ranking == PanellistPlus, activeadjudicators)
     ntotalplusadjs = length(plusadjs)
     ntotalzeroadjs = length(zeroadjs)
     ntotalminusadjs = length(minusadjs)
@@ -263,7 +263,7 @@ function generatefeasiblepanelsoutrounds(roundinfo::RoundInfo, panelsizes::Vecto
         nzerocombs = binomial(ntotalzeroadjs, nzero)
         nminuscombs = binomial(ntotalminusadjs, nminus)
         println("generatefeasiblepaneloutrounds: $npluscombs C+ combinations ($ntotalplusadjs choose $nplus)")
-        println("generatefeasiblepaneloutrounds: $nzerocombs C  combinations ($ntotalzeroadjs choose $nzero)")
+        println("generatefeasiblepaneloutrounds: $nzerocombs C0 combinations ($ntotalzeroadjs choose $nzero)")
         println("generatefeasiblepaneloutrounds: $nminuscombs C- combinations ($ntotalminusadjs choose $nminus)")
 
         for pluscomb in combinations(plusadjs, nplus),
@@ -277,11 +277,11 @@ function generatefeasiblepanelsoutrounds(roundinfo::RoundInfo, panelsizes::Vecto
         if nfeasiblepanels != -1
             npanelsforthissize = round(Int, nfeasiblepanels * proportion)
             if length(panels) > npanelsforthissize
-                println("generatefeasiblepanelsexhaustive: There are $(length(panels)) feasible panels of size $panelsize, but limiting to $npanelsforthissize panels, picking at random")
+                println("generatefeasiblepaneloutrounds: There are $(length(panels)) feasible panels of size $panelsize, but limiting to $npanelsforthissize panels, picking at random")
                 panels = sample(panels, npanelsforthissize; replace=false)
             end
         else
-            println("generatefeasiblepanelsexhaustive: There are $(length(panels)) feasible panels of size $panelsize")
+            println("generatefeasiblepaneloutrounds: There are $(length(panels)) feasible panels of size $panelsize")
         end
 
         append!(allpanels, panels)
