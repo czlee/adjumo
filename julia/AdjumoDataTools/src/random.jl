@@ -132,6 +132,7 @@ function randomroundinfo(ndebates::Int, currentround::Int)
 
     institutions = roundinfo.institutions
     teams = roundinfo.teams
+
     adjudicators = roundinfo.adjudicators
 
     for args in sample(INSTITUTIONS, ninstitutions; replace=false)
@@ -144,9 +145,23 @@ function randomroundinfo(ndebates::Int, currentround::Int)
         addteam!(roundinfo, rand(1:100000), "$(inst.code) $(existing+1)", inst)
     end
 
-    adjnames = sample(PERSON_NAMES, nadjs; replace=false)
-    for (name, gender) in adjnames
-        addadjudicator!(roundinfo, rand(1:100000), name, rand(institutions), gender)
+    # adjnames = sample(PERSON_NAMES, nadjs; replace=false)
+    # for (name, gender) in adjnames
+    #     addadjudicator!(roundinfo, rand(1:100000), name, rand(institutions), gender)
+    # end
+
+    # HACK: Generate exactly the right number of judges for outrounds
+    ranks = [ChairPlus, Chair, ChairMinus]
+    composition = (8*1+2*3,
+                   8*1+2*4,
+                   8*3)
+    for (rank, nadjs) in zip(ranks, composition)
+        adjnames = sample(PERSON_NAMES, nadjs; replace=false)
+        println("randomroundinfo: $nadjs adjudicators of rank $rank")
+        for (name, gender) in adjnames
+            adj = addadjudicator!(roundinfo, rand(1:100000), name, rand(institutions), gender)
+            adj.ranking = rank
+        end
     end
 
     for team in teams
@@ -154,14 +169,15 @@ function randomroundinfo(ndebates::Int, currentround::Int)
         randomlanguage!(team)
     end
     for adj in adjudicators
-        randomranking!(adj)
+        # randomranking!(adj)
         randomlanguage!(adj)
         addrandomregions!(adj)
     end
 
     teams_shuffled = reshape(shuffle(teams), (4, ndebates))
     for i in 1:ndebates
-        adddebate!(roundinfo, rand(1:100000), 10rand(), teams_shuffled[:,i])
+        # adddebate!(roundinfo, rand(1:100000), 10rand(), teams_shuffled[:,i])
+        adddebate!(roundinfo, rand(1:100000), 1, teams_shuffled[:,i])
     end
 
     for i in 1:nadjs÷4

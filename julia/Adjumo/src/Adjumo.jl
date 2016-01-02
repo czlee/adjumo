@@ -85,8 +85,8 @@ function allocateadjudicators(roundinfo::RoundInfo, feasiblepanels::Vector{Adjud
     println("conversion:")
     @time allocations = convertallocations(roundinfo.debates, feasiblepanels, debateindices, panelindices, scores)
 
-    println("allocate trainees:")
-    @time allocatetrainees!(allocations, roundinfo)
+    # println("allocate trainees:")
+    # @time allocatetrainees!(allocations, roundinfo)
 
     return allocations
 end

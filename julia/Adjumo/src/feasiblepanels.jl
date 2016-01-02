@@ -33,13 +33,15 @@ function generatefeasiblepanels(roundinfo::RoundInfo; options...)
     averagepanelsize = count(x -> x.ranking >= PanellistMinus, roundinfo.adjudicators) / numdebates(roundinfo)
     panels = AdjudicatorPanel[]
 
-    if isinteger(averagepanelsize)
-        panelsizes = [(Int(averagepanelsize), 1.0)]
-    else
-        proportionbigger = mod(averagepanelsize, 1.0)
-        panelsizes = [(ceil(Int, averagepanelsize),  proportionbigger),
-                      (floor(Int, averagepanelsize), 1 - proportionbigger)]
-    end
+    # if isinteger(averagepanelsize)
+    #     panelsizes = [(Int(averagepanelsize), 1.0)]
+    # else
+    #     proportionbigger = mod(averagepanelsize, 1.0)
+    #     panelsizes = [(ceil(Int, averagepanelsize),  proportionbigger),
+    #                   (floor(Int, averagepanelsize), 1 - proportionbigger)]
+    # end
+    # HACK for outrounds
+    panelsizes = [(5, 0.8), (7, 0.2)]
 
     println("generatefeasiblepanels: The average panel size is $averagepanelsize.")
     println("generatefeasiblepanels: Panel sizes and proportions: $panelsizes.")
@@ -222,7 +224,7 @@ function generatefeasiblepanelsexhaustive(roundinfo::RoundInfo, panelsizes::Vect
                 panels = sample(panels, npanelsforthissize; replace=false)
             end
         else
-                println("generatefeasiblepanelsexhaustive: There are $(length(panels)) feasible panels of size $panelsize")
+            println("generatefeasiblepanelsexhaustive: There are $(length(panels)) feasible panels of size $panelsize")
         end
 
         append!(allpanels, panels)
@@ -233,7 +235,59 @@ end
 
 function generatefeasiblepanelsoutrounds(roundinfo::RoundInfo, panelsizes::Vector{Tuple{Int,Float64}}; options...)
 
+    nfeasiblepanels = get(Dict(options), :nfeasiblepanels, typemax(Int))
+    compositions = [
+    #    C+ C  C-
+        (1, 1, 3),
+        (3, 4, 0),
+    ]
 
+    # activeadjids = []
+    # activeadjudicators = filter(adj -> adj.id ∈ activeadjids, roundinfo.adjudicators)
+    activeadjudicators = roundinfo.adjudicators
+    plusadjs  = filter(adj -> adj.ranking == ChairPlus, activeadjudicators)
+    zeroadjs  = filter(adj -> adj.ranking == Chair, activeadjudicators)
+    minusadjs = filter(adj -> adj.ranking == ChairMinus, activeadjudicators)
+    ntotalplusadjs = length(plusadjs)
+    ntotalzeroadjs = length(zeroadjs)
+    ntotalminusadjs = length(minusadjs)
+
+    allpanels = AdjudicatorPanel[]
+
+    for ((panelsize, proportion), (nplus, nzero, nminus)) in zip(panelsizes, compositions)
+
+        panels = AdjudicatorPanel[]
+
+        # Print estimates of how many there are
+        npluscombs = binomial(ntotalplusadjs, nplus)
+        nzerocombs = binomial(ntotalzeroadjs, nzero)
+        nminuscombs = binomial(ntotalminusadjs, nminus)
+        println("generatefeasiblepaneloutrounds: $npluscombs C+ combinations ($ntotalplusadjs choose $nplus)")
+        println("generatefeasiblepaneloutrounds: $nzerocombs C  combinations ($ntotalzeroadjs choose $nzero)")
+        println("generatefeasiblepaneloutrounds: $nminuscombs C- combinations ($ntotalminusadjs choose $nminus)")
+
+        for pluscomb in combinations(plusadjs, nplus),
+                zerocomb in combinations(zeroadjs, nzero),
+                minuscomb in combinations(minusadjs, nminus)
+            adjs = [pluscomb; zerocomb; minuscomb]
+            panel = makepanelwithrandomchair(adjs)
+            push!(panels, panel)
+        end
+
+        if nfeasiblepanels != -1
+            npanelsforthissize = round(Int, nfeasiblepanels * proportion)
+            if length(panels) > npanelsforthissize
+                println("generatefeasiblepanelsexhaustive: There are $(length(panels)) feasible panels of size $panelsize, but limiting to $npanelsforthissize panels, picking at random")
+                panels = sample(panels, npanelsforthissize; replace=false)
+            end
+        else
+            println("generatefeasiblepanelsexhaustive: There are $(length(panels)) feasible panels of size $panelsize")
+        end
+
+        append!(allpanels, panels)
+    end
+
+    return allpanels
 
 end
 
