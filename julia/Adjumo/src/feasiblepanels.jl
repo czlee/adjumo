@@ -251,6 +251,19 @@ function generatefeasiblepanelsoutrounds(roundinfo::RoundInfo, panelsizes::Vecto
     ntotalzeroadjs = length(zeroadjs)
     ntotalminusadjs = length(minusadjs)
 
+    println("Plus judges:")
+    for adj in plusadjs
+        println("  $(adj.name) from $(adj.institution.name)")
+    end
+    println("Zero judges:")
+    for adj in zeroadjs
+        println("  $(adj.name) from $(adj.institution.name)")
+    end
+    println("Minus judges:")
+    for adj in minusadjs
+        println("  $(adj.name) from $(adj.institution.name)")
+    end
+
     allpanels = AdjudicatorPanel[]
 
     for ((panelsize, proportion), (nplus, nzero, nminus)) in zip(panelsizes, compositions)
