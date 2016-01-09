@@ -490,7 +490,11 @@ Returns the gender score for the panel.
 function panelgenderscore(panel::AdjudicatorPanel)
     nfemale = count(a -> a.gender == PersonFemale, accreditedadjs(panel))
     proportion = nfemale / numaccreditedadjs(panel)
-    return proportion - 0.5
+    if proportion > 0.5
+        return 0.0
+    else
+        return proportion - 0.5
+    end
 end
 
 # ==============================================================================
