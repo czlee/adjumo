@@ -6,28 +6,22 @@
 ### Julia & Julia Packages
 
 You need to install Julia, and then install a bunch of Julia packages. Julia downloads are at http://julialang.org/downloads/.
-Download and install the latest **stable** version, which is currently **0.4.1**.
+Download and install the latest **stable** version, which is currently **0.4.2**.
 
-*Lazy package install:* `julia julia/installrequirements.txt` will install all required and optional packages except Gurobi.
-
-You then need to install the required packages:
-``` julia
-Pkg.add("JuMP")
-Pkg.add("JSON")
-Pkg.add("StatsBase")
-Pkg.clone("https://github.com/czlee/JsonAPI.jl.git")
+To install the required packages, run:
+``` bash
+julia julia/installrequirements.jl [gurobi] [cbc] [glpk] [psql]
 ```
 
-Some functions also require the following:
-``` julia
-Pkg.add("ArgParse")                                        # required only for command-line scripts
-Pkg.clone("https://github.com/czlee/Formatting.jl.git")    # required only for command-line scripts
-Pkg.add("Iterators")                                       # required only for AdjumoDataTools
-Pkg.clone("https://github.com/JuliaDB/DBI.jl.git")         # required only for Tabbie1 data use
-Pkg.clone("https://github.com/JuliaDB/PostgreSQL.jl.git")  # required only for Tabbie1 data use
-```
+**If you're not familiar with optimisation solvers, read the below material on the solver libraries first!**
 
-You also need to install a solver. There are three options: Gurobi, CBC and GLPK. You only need one of them.
+With no arguments, it will install CBC.jl and GLPKMathProgInterface.jl, but not Gurobi.jl or PostgresQL.jl. If any solver (`gurobi`, `cbc`, `glpk`) is specified, it will install only those specified. It will only install PostgreSQL.jl if `psql` is specified. The order of arguments does not matter.
+
+To see what this installs, inspect `installrequirements.jl` (it's a simple enough file).
+
+#### Solvers
+
+There are three options: Gurobi, CBC and GLPK. You only need one of them.
 
 **Option 1: Gurobi.** At the moment, I'm using Gurobi on an academic license. Gurobi is a commercial optimization solver.
 To use it, you need to register for an account at http://www.gurobi.com/ and request an academic
@@ -101,22 +95,23 @@ Note: the front end requires that there are json files present in ```public/data
 
 ### Julia part only
 
-The file that tests the Julia part is called `trial.jl` and can be run directly from the shell:
+The file that runs the allocations the Julia part is called `allocate.jl` and can be run directly from the shell:
 ``` bash
-julia trial.jl
+julia allocate.jl
 ```
 
 This generates random data for a pretend round and runs the algorithm on it. You can run it with a different number of debates, or pretend the current round is something else. For example, to run it with a round comprising 10 debates, pretending it is currently round 3:
 ``` bash
-julia trial.jl -n 10 -r 3
+julia allocate.jl -n 10 -r 3
 ```
 
 If you installed more than one of the solvers above, you can choose which one to use with `--solver`. For example, to use GLPK:
 ``` bash
-julia trial.jl --solver glpk
+julia allocate.jl --solver glpk
 ```
 The other options are `cbc` and `gurobi`. If you don't specify, it'll try Gurobi, then CBC if Gurobi isn't installed, then GLPK if neither of the other two are installed.
 
-GLPK (and Gurobi) supports MIP callbacks and CBC doesn't, and we might want MIP callbacks
-in order to pull multiple solutions and have premature termination in there, so I'll probably want
-to try harder with GLPK at some point.
+For more options:
+``` bash
+julia allocate.jl --help
+```
