@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "type": "group",
+      "relationships": {
+        "groupAdjudicators": {
+          "data": []
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": "group",
+      "relationships": {
+        "groupAdjudicators": {
+          "data": []
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"data":[{"id":1,"type":"adjudicatordebate","relationships":{"debate":{"data":{"id":20891,"type":"debate"}},"adjudicator":{"data":{"id":90426,"type":"adjudicator"}}}},{"id":2,"type":"adjudicatordebate","relationships":{"debate":{"data":{"id":20719,"type":"debate"}},"adjudicator":{"data":{"id":88881,"type":"adjudicator"}}}}]}
