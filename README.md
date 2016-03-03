@@ -115,3 +115,17 @@ For more options:
 ``` bash
 julia allocate.jl --help
 ```
+
+## Documentation
+
+Requires ruby, and running:
+
+```bash
+  gem install github-pages
+```
+
+Then checking out the gh-pages branch and runningL
+
+```bash
+  jekyll s
+```
