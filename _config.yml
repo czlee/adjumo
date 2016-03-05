@@ -15,3 +15,5 @@ include:
 - data
 - assets
 - permanent
+
+baseurl: http://czlee.github.io/adjumo
