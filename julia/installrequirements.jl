@@ -10,7 +10,7 @@ Pkg.add("StatsBase")
 Pkg.clone("https://github.com/czlee/JsonAPI.jl.git")
 Pkg.add("ArgParse")
 Pkg.add("Iterators")
-Pkg.clone("https://github.com/czlee/Formatting.jl.git")
+Pkg.add("Formatting")
 if "gurobi" ∈ ARGS
     Pkg.clone("https://github.com/czlee/Gurobi.jl.git")
     Pkg.build("Gurobi")
