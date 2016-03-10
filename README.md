@@ -23,10 +23,10 @@ To see what this installs, inspect `installrequirements.jl` (it's a simple enoug
 
 There are three options: Gurobi, CBC and GLPK. You only need one of them.
 
-**Option 1: Gurobi.** At the moment, I'm using Gurobi on an academic license. Gurobi is a commercial optimization solver.
-To use it, you need to register for an account at http://www.gurobi.com/ and request an academic
-license. Naturally, this requires you to be a student or staff member at a degree-granting institution.
-If you can get hold of a Gurobi license:
+**Option 1: Gurobi.** [Gurobi](http://www.gurobi.com/) is a commercial optimization solver. 
+You need a license to use it.
+If you're a student or staff member at a degree-granting institution, you can request an academic
+license. If you can get hold of a Gurobi license:
 ``` julia
 Pkg.add("Gurobi")
 ```
