@@ -24,9 +24,7 @@ To see what this installs, inspect `installrequirements.jl` (it's a simple enoug
 There are three options: Gurobi, CBC and GLPK. You only need one of them.
 
 **Option 1: Gurobi.** [Gurobi](http://www.gurobi.com/) is a commercial optimization solver. 
-You need a license to use it.
-If you're a student or staff member at a degree-granting institution, you can request an academic
-license. If you can get hold of a Gurobi license:
+You need a license to use it. If you can get hold of a Gurobi license:
 ``` julia
 Pkg.add("Gurobi")
 ```
@@ -124,7 +122,7 @@ Requires ruby, and running:
   gem install github-pages
 ```
 
-Then checking out the gh-pages branch and runningL
+Then check out the gh-pages branch and run:
 
 ```bash
   jekyll s
