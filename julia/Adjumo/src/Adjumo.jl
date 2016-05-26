@@ -264,38 +264,38 @@ function solveoptimizationproblem{T1<:Real,T2<:Real}(Σ::Matrix{T1},
     m = Model(solver=modelsolver)
 
     println("define variables:")
-    @time @defVar(m, X[1:ndebates,1:npanels], Bin)
+    @time @variable(m, X[1:ndebates,1:npanels], Bin)
     println("set objective:")
-    @time @setObjective(m, Max, sum(Σ.*X))
+    @time @objective(m, Max, sum(Σ.*X))
     println("every debate has one panel:")
-    @time @addConstraint(m, X*ones(npanels) .== 1)
+    @time @constraint(m, X*ones(npanels) .== 1)
 
     if get(optionsdict, :enforceallocateall, false)
         println("accredited adjudicators should be allocated once:")
-        @time @addConstraint(m, ones(1,ndebates)*X*Q[:,~istrainee] .== 1)
+        @time @constraint(m, ones(1,ndebates)*X*Q[:,~istrainee] .== 1)
         println("trainee adjudicators should be allocated at most once:")
-        @time @addConstraint(m, ones(1,ndebates)*X*Q[:, istrainee] .<= 1)
+        @time @constraint(m, ones(1,ndebates)*X*Q[:, istrainee] .<= 1)
     else
         println("all adjudicators should be allocated at most once:")
-        @time @addConstraint(m, ones(1,ndebates)*X*Q .<= 1)
+        @time @constraint(m, ones(1,ndebates)*X*Q .<= 1)
     end
 
     # adjudicator constraints
     println("locked adjudicators ($(length(lockedadjs))):")
     @time for (a, d) in lockedadjs
-        @addConstraint(m, X[d,:]*Q[:,a] .== 1)
+        @constraint(m, X[d,:]*Q[:,a] .== 1)
     end
     println("blocked adjudicators ($(length(blockedadjs))):")
     @time for (a, d) in blockedadjs
-        @addConstraint(m, X[d,:]*Q[:,a] .== 0)
+        @constraint(m, X[d,:]*Q[:,a] .== 0)
     end
 
     println("solveoptimizationproblem: Starting solver at $(now())")
     @time status = solve(m)
     println("solveoptimizationproblem: Solver done at $(now())")
 
-    println("solveoptimizationproblem: Objective value: ", getObjectiveValue(m))
-    Xval = Array{Bool}(getValue(X))
+    println("solveoptimizationproblem: Objective value: ", getobjectivevalue(m))
+    Xval = Array{Bool}(getvalue(X))
     debates, panels = findn(Xval)
     scores = Σ[Xval]
 
