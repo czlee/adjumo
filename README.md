@@ -1,6 +1,8 @@
 # Adjumo
 *Allocating Debate Judges Using Mathematical Optimization*
 
+A demo of the interface (excluding the allocations solver) is [available here](http://czlee.github.io/adjumo/).
+
 ## Getting started
 
 ### Julia & Julia Packages
@@ -23,7 +25,7 @@ To see what this installs, inspect `installrequirements.jl` (it's a simple enoug
 
 There are three options: Gurobi, CBC and GLPK. You only need one of them.
 
-**Option 1: Gurobi.** [Gurobi](http://www.gurobi.com/) is a commercial optimization solver. 
+**Option 1: Gurobi.** [Gurobi](http://www.gurobi.com/) is a commercial optimization solver.
 You need a license to use it. If you can get hold of a Gurobi license:
 ``` julia
 Pkg.add("Gurobi")
