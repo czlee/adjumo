@@ -1,7 +1,10 @@
 # Adjumo
 *Allocating Debate Judges Using Mathematical Optimization*
 
-A demo of the interface (excluding the allocations solver) is [available here](http://czlee.github.io/adjumo/).
+## General information
+
+- A demo of the interface (excluding the allocations solver) is [available here](http://czlee.github.io/adjumo/).
+- A report describing challenges involved in using the system at WUDC 2016 is [available here](https://czlee.github.io/adjumo.pdf).
 
 ## Getting started
 
